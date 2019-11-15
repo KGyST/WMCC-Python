@@ -1,0 +1,47 @@
+{
+   "family_name":"NazwaRodziny",
+   "family_types":[
+      {
+         "type_name":"Family1",
+         "parameters":[
+            {
+               "name":"Rough Height",
+               "value":"1500"
+            },
+            {
+               "name":"Rough Width",
+               "value":"2500"
+            },
+            {
+               "name":"Inner frame material",
+               "value":"RAL3005-Wine_Red"
+            },
+            {
+               "name":"Outer frame material",
+               "value":"RAL7001-Silver_Grey"
+            }
+         ]
+      },
+      {
+         "type_name":"Family2",
+         "parameters":[
+            {
+               "name":"Rough Height",
+               "value":"3000"
+            },
+            {
+               "name":"Rough Width",
+               "value":"3000"
+            },
+            {
+               "name":"Inner frame material",
+               "value":"RAL9003-White"
+            },
+            {
+               "name":"Outer frame material",
+               "value":"RAL8001-Golden_Oak"
+            }
+         ]
+      }
+   ]
+}
