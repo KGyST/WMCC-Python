@@ -5,14 +5,15 @@ import re
 import tempfile
 from subprocess import check_output
 import shutil
+import sys
 
-import string
+# import string
 
 import copy
 import argparse
 
-import httplib, urllib, json, webbrowser, urlparse, os, hashlib, base64
-import pip
+import http.client, urllib.request, urllib.parse, urllib.error, json, webbrowser, urllib.parse, os, hashlib, base64
+# import pip
 
 #------------------ External modules------------------
 
@@ -22,7 +23,7 @@ from lxml import etree
 
 #------------------ Temporary constants------------------
 
-DEBUG                       = False
+DEBUG                       = True
 OUTPUT_XML                  = False     # To retain xmls
 SOURCE_XML_DIR_NAME         = "F:\_GDL_SVN\WMCC\DoorWindowTemplate\library"
 TARGET_GDL_DIR_NAME         = "Z:\GDL\WMCC_Automation\Target"
@@ -32,12 +33,19 @@ WMCC_BRAND_NAME             = "WMCC"
 NEW_BRAND_NAME              = "Test_Brand"
 ARCHICAD_LOCATION           = "Z:\GDL\WMCC_Automation\LP_XML"
 
-TARGET_IMAGE_DIR_NAME = "" #REMOVE
-TARGET_XML_DIR_NAME = "" #REMOVE
+BO_AUTHOR                   = "BIMobject"
+BO_LICENSE                  = "CC BY-ND"
+BO_LICENSE_VERSION          = "3.0"
+
+TARGET_IMAGE_DIR_NAME       = "" #REMOVE
+TARGET_XML_DIR_NAME         = "" #REMOVE
+
+DATA_JSON                   = "window.json"
+TRANSLATIONS_JSON           = "translations.json"
 
 #------------------/Temporary constants------------------
 
-ADD_STRING = ""
+ADD_STRING = True   # If sourceFile has not WMCC_BRAND_NAME then add "_" + NEW_BRAND_NAME to at its end
 OVERWRITE = False
 
 PERSONAL_ID = "ac4e5af2-7544-475c-907d-c7d91c810039"    #FIXME to be deleted after BO API v1 is removed
@@ -74,14 +82,14 @@ PARFLG_HIDDEN   = 4
 
 app = None
 
-dest_sourcenames    = {}   #source name     -> DestXMLs, idx by original filename #FIXME could be a set
-dest_guids          = {}   #dest guid       -> DestXMLs, idx by
-source_guids        = {}   #Source GUID     -> Source XMLs, idx by
-id_dict             = {}   #Source GUID     -> dest GUID
-dest_dict           = {}   #dest name       -> DestXML
-replacement_dict    = {}   #source filename -> SourceXMLs
-pict_dict           = {}
-source_pict_dict    = {}
+dest_sourcenames    = {}   #source name             -> DestXMLs, idx by original filename #FIXME could be a set
+dest_guids          = {}   #dest guid               -> DestXMLs, idx by
+source_guids        = {}   #Source GUID             -> Source XMLs, idx by
+id_dict             = {}   #Source GUID             -> dest GUID
+dest_dict           = {}   #dest name               -> DestXML
+replacement_dict    = {}   #source filename, w/o ext-> SourceXMLs
+pict_dict           = {}   #dest image filename     ->
+source_pict_dict    = {}   #source image filename   ->
 
 all_keywords = set()
 
@@ -121,7 +129,7 @@ class ParamSection:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.__index >= len(self.__paramList) - 1:
             raise StopIteration
         else:
@@ -231,14 +239,14 @@ class ParamSection:
         #FIXME code for unsuccessful updates, BO_edinum to -1, removing BO_productguid
         #FIXME new authentication
         headers = {"Content-type": "application/x-www-form-urlencoded"}
-        _xml = urllib.urlencode({"value": "<?xml version='1.0' encoding='UTF-8'?>"
+        _xml = urllib.parse.urlencode({"value": "<?xml version='1.0' encoding='UTF-8'?>"
                                             "<Bim API='%s'>"
                                                 "<Objects>"
                                                     "<Object ProductId='%s'/>"
                                                 "</Objects>"
                                             "</Bim>" % (PERSONAL_ID, prodatURL, )})
 
-        conn = httplib.HTTPSConnection("api.bimobject.com")
+        conn = http.client.HTTPSConnection("api.bimobject.com")
         conn.request("POST", "/GetBimObjectInfoXml2", _xml, headers)
         response = conn.getresponse()
         resp = response.read()
@@ -750,7 +758,7 @@ class GeneralFile(object) :
     SourceImage     DestImage       SourceXML       DestXML
     """
     def __init__(self, relPath, **kwargs):
-        self.relPath            = relPath           #.replace("\\", "/")
+        self.relPath            = relPath
         self.fileNameWithExt    = os.path.basename(relPath)
         self.fileNameWithOutExt = os.path.splitext(self.fileNameWithExt)[0]
         self.ext                = os.path.splitext(self.fileNameWithExt)[1]
@@ -760,19 +768,18 @@ class GeneralFile(object) :
             self.fullDirName         = os.path.dirname(self.fullPath)
 
 
-    def refreshFileNames(self):
-        self.fileNameWithExt    = self.name + self.ext
-        self.fileNameWithOutExt = self.name
-        self.relPath            = os.path.join(self.dirName, self.fileNameWithExt)
-
-    def __lt__(self, other):
-        return self.fileNameWithOutExt < other.name
+    # def refreshFileNames(self):
+    #     self.fileNameWithExt    = self.name + self.ext
+    #     self.fileNameWithOutExt = self.name
+    #     self.relPath            = os.path.join(self.dirName, self.fileNameWithExt)
+    #
+    # def __lt__(self, other):
+    #     return self.fileNameWithOutExt < other.name
 
 
 class SourceFile(GeneralFile):
     def __init__(self, relPath, **kwargs):
         super(SourceFile, self).__init__(relPath, **kwargs)
-        # self.fullPath = SOURCE_XML_DIR_NAME + "/" + relPath.replace("\\", "/")
         self.fullPath = os.path.join(SOURCE_XML_DIR_NAME, relPath)
 
 
@@ -798,9 +805,8 @@ class DestImage(DestFile):
         else:
             self._name               = sourceFile.name
         self.sourceFile         = sourceFile
-        self.relPath            = sourceFile.dirName + "//" + self._name
+        self.relPath            = os.path.join(sourceFile.dirName, self._name)
         super(DestImage, self).__init__(self.relPath, sourceFile=self.sourceFile)
-        # self.path               = TARGET_IMAGE_DIR_NAME + "/" + self.relPath
         self.ext                = self.sourceFile.ext
 
         if stringTo not in self._name and ADD_STRING and not sourceFile.isEncodedImage:
@@ -808,9 +814,8 @@ class DestImage(DestFile):
             self._name           = self.fileNameWithOutExt + self.ext
         self.fileNameWithExt = self._name
 
-        self.relPath            = sourceFile.dirName + "//" + self._name
+        self.relPath            = os.path.join(sourceFile.dirName, self._name)
         super(DestImage, self).__init__(self.relPath, sourceFile=self.sourceFile)
-        # self.path               = TARGET_IMAGE_DIR_NAME + "/" + self.relPath
 
     @property
     def name(self):
@@ -834,13 +839,14 @@ class XMLFile(GeneralFile):
         self._name       = self.fileNameWithOutExt
         self.bPlaceable  = False
         self.prevPict    = ''
+        self.gdlPicts    = []
 
-    def __lt__(self, other):
-        if self.bPlaceable and not other.bPlaceable:
-            return True
-        if not self.bPlaceable and other.bPlaceable:
-            return False
-        return self._name < other.name
+    # def __lt__(self, other):
+    #     if self.bPlaceable and not other.bPlaceable:
+    #         return True
+    #     if not self.bPlaceable and other.bPlaceable:
+    #         return False
+    #     return self._name < other.name
 
     @property
     def name(self):
@@ -849,12 +855,9 @@ class XMLFile(GeneralFile):
     @name.setter
     def name(self, inName):
         self._name   = inName
-        # self.relPath = self.dirName + "/" + self._name
-        # self.fileNameWithExt = self._name + self.ext
 
 
 class SourceXML (XMLFile, SourceFile):
-
     def __init__(self, relPath):
         global all_keywords
         super(SourceXML, self).__init__(relPath)
@@ -863,7 +866,7 @@ class SourceXML (XMLFile, SourceFile):
         self.scripts        = {}
 
         mroot = etree.parse(self.fullPath, etree.XMLParser(strip_cdata=False))
-        self.iVersion = mroot.getroot().attrib['Version']
+        self.iVersion = int(mroot.getroot().attrib['Version'])
 
         global ID
         if int(self.iVersion) <= AC_18:
@@ -881,11 +884,10 @@ class SourceXML (XMLFile, SourceFile):
 
         #Filtering params in source in place of dest cos it's feasible and in dest later added params are unused
         # FIXME getting calledmacros' guids.
-
-        if self.iVersion >= AC_18:
-            ID = "MainGUID"
-        else:
-            ID = "UNID"
+        # if self.iVersion >= AC_18:
+        #     ID = "MainGUID"
+        # else:
+        #     ID = "UNID"
 
         for a in mroot.findall("./Ancestry"):
             for ancestryID in a.findall(ID):
@@ -893,7 +895,12 @@ class SourceXML (XMLFile, SourceFile):
 
         for m in mroot.findall("./CalledMacros/Macro"):
             calledMacroID = m.find(ID).text
-            self.calledMacros[calledMacroID] = string.strip(m.find("MName").text, "'" + '"')
+            self.calledMacros[calledMacroID] = str.strip(m.find("MName").text, "'" + '"')
+
+        for gdlPict in mroot.findall("./GDLPict"):
+            if 'path' in gdlPict.attrib:
+                _path = os.path.basename(gdlPict.attrib['path'])
+                self.gdlPicts += [_path.upper()]
 
         #Parameter manipulation: checking usage and later add custom pars
         self.parameters = ParamSection(mroot.find("./ParamSection"))
@@ -933,7 +940,7 @@ class SourceXML (XMLFile, SourceFile):
             if inPar.name in script:
                 return True
 
-        for _, macroName in self.calledMacros.iteritems():
+        for _, macroName in self.calledMacros.items():
             if macroName in replacement_dict:
                 if macroName not in inMacroSet:
                     if replacement_dict[macroName].checkParameterUsage(inPar, inMacroSet):
@@ -954,13 +961,10 @@ class DestXML (XMLFile, DestFile):
                 self.name += stringTo
         if self.name.upper() in dest_dict:
             i = 1
-            while self.name.upper() + "_" + str(i) in dest_dict.keys():
+            while self.name.upper() + "_" + str(i) in list(dest_dict.keys()):
                 i += 1
             self.name += "_" + str(i)
 
-            # if "XML Target file exists!" in self.warnings:
-            #     self.warnings.remove("XML Target file exists!")
-            #     self.refreshFileNames()
         self.relPath                = os.path.join(sourceFile.dirName, self.name + sourceFile.ext)
 
         super(DestXML, self).__init__(self.relPath, sourceFile=sourceFile)
@@ -976,47 +980,35 @@ class DestXML (XMLFile, DestFile):
 
         self.parameters             = copy.deepcopy(sourceFile.parameters)
 
-        fullPath                    = os.path.join(TARGET_XML_DIR_NAME, self.relPath)
-        if os.path.isfile(fullPath):
-            #for overwriting existing xmls while retaining GUIDs etx
-            if OVERWRITE:
-                #FIXME to finish it
-                self.bOverWrite             = True
-                self.bRetainCalledMacros    = True
-                mdp = etree.parse(fullPath, etree.XMLParser(strip_cdata=False))
-                # self.iVersion = mdp.getroot().attrib['Version']
-                # if self.iVersion >= AC_18:
-                #     self.ID = "MainGUID"
-                # else:
-                #     self.ID = "UNID"
-                self.guid = mdp.getroot().attrib[ID]
-                print mdp.getroot().attrib[ID]
-            else:
-                self.warnings += ["XML Target file exists!"]
+        # fullPath                    = os.path.join(TARGET_XML_DIR_NAME, self.relPath)
+        # if os.path.isfile(fullPath):
+        #     #for overwriting existing xmls while retaining GUIDs etx
+        #     if OVERWRITE:
+        #         #FIXME to finish it
+        #         self.bOverWrite             = True
+        #         self.bRetainCalledMacros    = True
+        #         mdp = etree.parse(fullPath, etree.XMLParser(strip_cdata=False))
+        #         self.guid = mdp.getroot().attrib[ID]
+        #         print(mdp.getroot().attrib[ID])
+        #     else:
+        #         self.warnings += ["XML Target file exists!"]
 
         fullGDLPath                 = os.path.join(TARGET_GDL_DIR_NAME, self.fileNameWithOutExt + ".gsm")
         if os.path.isfile(fullGDLPath):
             self.warnings += ["GDL Target file exists!"]
 
         if self.iVersion >= AC_18:
-            # AC18 and over: adding licensing statically, can be manually owerwritten on GUI
-            self.author         = "BIMobject"
-            self.license        = "CC BY-ND"
-            self.licneseVersion = "3.0"
+            # AC18 and over: adding licensing statically
+            self.author         = BO_AUTHOR
+            self.license        = BO_LICENSE
+            self.licneseVersion = BO_LICENSE_VERSION
 
         if self.sourceFile.guid.upper() not in id_dict:
             # if id_dict[self.sourceFile.guid.upper()] == "":
             id_dict[self.sourceFile.guid.upper()] = self.guid.upper()
 
-    def getCalledMacro(self):
-        """
-        getting called marco scripts
-        FIXME to be removed
-        :return:
-        """
 
 # -------------------/data classes -------------------------------------------------------------------------------------
-
 
 def scanFolders (inFile, inRootFolder):
     """
@@ -1035,9 +1027,10 @@ def scanFolders (inFile, inRootFolder):
                 if not os.path.isdir(src):
                     if os.path.splitext(os.path.basename(f))[1].upper() in (".XML", ):
                         sf = SourceXML(os.path.relpath(src, inRootFolder))
-                        replacement_dict[sf._name.upper()] = sf
+                        # replacement_dict[sf._name.upper()] = sf
+                        replacement_dict[sf.name.upper()] = sf
                     else:
-                        # set up replacement dict for other files
+                        # set up replacement dict for other files (not only images, indeed)
                         if os.path.splitext(os.path.basename(f))[0].upper() not in source_pict_dict:
                             sI = SourceImage(os.path.relpath(src, inRootFolder), root=inRootFolder)
                             SIDN = SOURCE_IMAGE_DIR_NAME
@@ -1046,27 +1039,26 @@ def scanFolders (inFile, inRootFolder):
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
                 else:
                     scanFolders(src, inRootFolder)
-
             except KeyError:
-                print "KeyError %s" % f
+                print("KeyError %s" % f)
                 continue
     except WindowsError:
         pass
 
 def addImageFile(fileName):
     if not fileName.upper() in pict_dict:
-
         destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME)
         pict_dict[destItem.fileNameWithExt.upper()] = destItem
 
-def addFile(sourceFileName):
+def addFile(sourceFileName, **kwargs):
     if sourceFileName.upper() in replacement_dict:
-        destItem = DestXML(replacement_dict[sourceFileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME)
+        destItem = DestXML(replacement_dict[sourceFileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME, **kwargs)
         dest_dict[destItem.name.upper()] = destItem
         dest_guids[destItem.guid] = destItem
         dest_sourcenames[destItem.sourceFile.name] = destItem
     else:
-        #File should be in library_additional, possibly worth of checking it or add a warning
+        #FIXME File should be in library_additional, possibly worth of checking it or add a warning
+        print("Warning: %s not in replacement_dict" % sourceFileName)
         return
     return destItem
 
@@ -1077,6 +1069,59 @@ def addAllFiles():
     for imageFileName in source_pict_dict:
         addImageFile(imageFileName)
 
+def addFileRecursively(sourceFileName='', **kwargs):
+        destItem = addFile(sourceFileName, **kwargs)
+
+        if sourceFileName.upper() not in replacement_dict:
+            #should be in library_additional
+            return
+
+        x = replacement_dict[sourceFileName.upper()]
+
+        for k, v in x.calledMacros.items():
+            if v not in dest_sourcenames:
+                addFileRecursively(v)
+
+        for parentGUID in x.parentSubTypes:
+            if parentGUID not in id_dict:
+                if parentGUID in source_guids:
+                    addFileRecursively(source_guids[parentGUID])
+
+        for pict in source_pict_dict.values():
+            for script in x.scripts.values():
+                if pict.fileNameWithExt.upper() in script or pict.fileNameWithOutExt.upper() in script.upper():
+                    addImageFile(pict.fileNameWithExt)
+            if pict.fileNameWithExt.upper() in x.gdlPicts:
+                addImageFile(pict.fileNameWithExt)
+
+        if x.prevPict:
+            bN = os.path.basename(x.prevPict)
+            addImageFile(bN)
+
+        if 'targetFileName' in kwargs:
+            destItem.name = kwargs['targetFileName']
+
+        return destItem
+
+def unitConvert(inParameterName, inParameterValue, inTranslationLib):
+    """
+    Converts source units into destination units
+    #FIXME
+    :param inParameter:
+    :param inTranslation:
+    :return:            float; NOT string
+    """
+    _UnitLib = {"m": 1, "mm" : 0.001}
+    if "Measurement" in inTranslationLib['parameters'][inParameterName]:
+        if "Measurement" in inTranslationLib['parameters'][inParameterName]["ARCHICAD"]:
+            return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
+                   _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
+    elif inParameterName in {"Inner frame material", "Outer frame material"}:
+        #FIXME fixing it
+        return 1
+    else:
+        return inParameterValue
+
 def startConversion():
     """
     :return:
@@ -1084,26 +1129,26 @@ def startConversion():
     tempdir = os.path.join(tempfile.mkdtemp(), "library")
     tempPicDir = tempfile.mkdtemp()
 
-    print "tempdir: %s" % tempdir
-    print "tempPicDir: %s" % tempPicDir
+    print("tempdir: %s" % tempdir)
+    print("tempPicDir: %s" % tempPicDir)
 
-    for k in dest_dict.keys():
+    for k in list(dest_dict.keys()):
         dest        = dest_dict[k]
         src         = dest.sourceFile
         srcPath     = src.fullPath
         destPath    = os.path.join(tempdir, dest.relPath)
         destDir     = os.path.dirname(destPath)
 
-        print "%s -> %s" % (srcPath, destPath,)
+        print("%s -> %s" % (srcPath, destPath,))
 
         #FIXME multithreading, map-reduce
         mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
         mdp.getroot().attrib[ID] = dest.guid
 
         for m in mdp.findall("./CalledMacros/Macro"):
-            for dI in dest_dict.keys():
+            for dI in list(dest_dict.keys()):
                 d = dest_dict[dI]
-                if  string.strip(m.find("MName").text, "'" + '"')  == d.sourceFile.name:
+                if  str.strip(m.find("MName").text, "'" + '"')  == d.sourceFile.name:
                     m.find("MName").text = etree.CDATA('"' + d.name + '"')
                     m.find(ID).text = d.guid
 
@@ -1112,10 +1157,10 @@ def startConversion():
             if section is not None:
                 t = section.text
 
-                for dI in dest_dict.keys():
+                for dI in list(dest_dict.keys()):
                     t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
 
-                for pr in pict_dict.keys():
+                for pr in list(pict_dict.keys()):
                     #Replacing images
                     t = re.sub(pict_dict[pr].sourceFile.fileNameWithOutExt + '(?!' + NEW_BRAND_NAME + ')', pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
 
@@ -1126,10 +1171,10 @@ def startConversion():
             if isinstance(section, etree._Element) and 'path' in section.attrib:
                 path = os.path.basename(section.attrib['path']).upper()
                 if path:
-                    n = next((pict_dict[p].relPath for p in pict_dict.keys() if
+                    n = next((pict_dict[p].relPath for p in list(pict_dict.keys()) if
                               os.path.basename(pict_dict[p].sourceFile.relPath).upper() == path), None)
                     if n:
-                        section.attrib['path'] = os.path.dirname(n) +"/" + os.path.basename(n)
+                        section.attrib['path'] = os.path.join(os.path.dirname(n), os.path.basename(n))
 
         if dest.iVersion >= AC_18:
             for cr in mdp.getroot().findall("Copyright"):
@@ -1170,7 +1215,7 @@ def startConversion():
         for m in mdp.findall("./Ancestry/" + ID):
             guid = m.text
             if guid.upper() in id_dict:
-                print "ANCESTRY: %s" % guid
+                print("ANCESTRY: %s" % guid)
                 par = m.getparent()
                 par.remove(m)
 
@@ -1182,8 +1227,8 @@ def startConversion():
             os.makedirs(destDir)
         except WindowsError:
             pass
-        with open(destPath, "w") as file_handle:
-            mdp.write(file_handle, pretty_print=True, encoding="UTF-8", )
+        with open(destPath, "wb") as file_handle:
+            file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -1193,7 +1238,7 @@ def startConversion():
             dirs_to_delete |= {f}
             shutil.copytree(os.path.join(_picdir, f), os.path.join(tempPicDir, f))
 
-    for f in pict_dict.keys():
+    for f in list(pict_dict.keys()):
         if pict_dict[f].sourceFile.isEncodedImage:
             try:
                 shutil.copyfile(os.path.join(SOURCE_IMAGE_DIR_NAME, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
@@ -1207,22 +1252,22 @@ def startConversion():
                 os.makedirs(os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].dirName))
                 shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].relPath))
 
-    print "x2l Command being executed..."
+    print("x2l Command being executed...")
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, TARGET_GDL_DIR_NAME)
 
     if DEBUG:
-        print "ac command:"
-        print x2lCommand
+        print("ac command:")
+        print(x2lCommand)
         with open(tempdir + "\dict.txt", "w") as d:
-            for k in dest_dict.keys():
+            for k in list(dest_dict.keys()):
                 d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
 
         with open(tempdir + "\pict_dict.txt", "w") as d:
-            for k in pict_dict.keys():
+            for k in list(pict_dict.keys()):
                 d.write(pict_dict[k].sourceFile.fullPath + "->" + pict_dict[k].relPath+ "\n")
 
         with open(tempdir + "\id_dict.txt", "w") as d:
-            for k in id_dict.keys():
+            for k in list(id_dict.keys()):
                 d.write(id_dict[k] + "\n")
 
     check_output(x2lCommand, shell=True)
@@ -1235,16 +1280,32 @@ def startConversion():
         if not OUTPUT_XML:
             shutil.rmtree(tempdir)
     else:
-        print "tempdir: %s" % tempdir
-        print "tempPicDir: %s" % tempPicDir
+        print("tempdir: %s" % tempdir)
+        print("tempPicDir: %s" % tempPicDir)
 
-    print "*****FINISHED SUCCESFULLY******"
+    print("*****FINISHED SUCCESFULLY******")
 
 def main():
     scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
     scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
-    addAllFiles()
+
+    #--------------------------------------------------------
+
+    with open(DATA_JSON, "r") as dataJSON:
+        data = json.loads(dataJSON.read())
+        with open(TRANSLATIONS_JSON, "r") as translatorJSON:
+            translation = json.loads(translatorJSON.read())
+            for family in data['family_types']:
+                testDestItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
+
+                for parameter in family['parameters']:
+                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                    testDestItem.parameters[translatedParameter] = unitConvert(parameter, family['parameters'][parameter], translation)
+
+    #--------------------------------------------------------
+
     startConversion()
+
 
 if __name__ == "__main__":
     main()
