@@ -1,0 +1,56 @@
+{
+  "parameters": {
+    "Rough Width": {
+      "Measurement": "mm",
+      "ARCHICAD": {
+        "Name": "A",
+        "Type": "PAR_LENGTH",
+        "Measurement": "m"
+      },
+      "Revit ENU": {
+        "Name": "Rough Width"
+      },
+      "Revit GER": {
+        "Name": "Öffnungslichte Breite"
+      }
+    },
+    "Rough Height": {
+      "Measurement": "mm",
+      "ARCHICAD": {
+        "Name": "B",
+        "Type": "PAR_LENGTH",
+        "Measurement": "m"
+      },
+      "Revit ENU": {
+        "Name": "Rough Height"
+      },
+      "Revit GER": {
+        "Name": "Öffnungslichte Höhe"
+      }
+    },
+    "Inner frame material": {
+      "ARCHICAD": {
+        "Name": "gs_frame_mat",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Inner frame material"
+      },
+      "Revit GER": {
+        "Name": "Innenmaterial"
+      }
+    },
+    "Outer frame material": {
+      "ARCHICAD": {
+        "Name": "gs_frame_mat_in",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Outer frame material"
+      },
+      "Revit GER": {
+        "Name": "Außenmaterial"
+      }
+    }
+  }
+}

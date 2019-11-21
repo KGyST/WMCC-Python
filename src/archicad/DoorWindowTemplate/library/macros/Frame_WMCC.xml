@@ -1,0 +1,829 @@
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="2C9583C8-4CCB-4501-88F8-617AEBC52009" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>B2970E4C-8680-4061-8670-2F4B638F3953</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["Profil_WMCC"]]></MName>
+		<MainGUID>38D7C161-614B-45E5-9FF0-A3726F441B49</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+resol gs_resol
+
+! ==================================================================
+! Frame Hotspots
+! ==================================================================
+
+
+HOTSPOT -A/2, 0, 0, unID	: UnID = UnID+1
+HOTSPOT  A/2, 0, 0, unID	: UnID = UnID+1
+HOTSPOT -A/2, B, 0, unID	: UnID = UnID+1
+HOTSPOT  A/2, B, 0, unID	: UnID = UnID+1
+
+HOTSPOT -A/2, 0, gs_frame_thk, unID	: UnID = UnID+1
+HOTSPOT  A/2, 0, gs_frame_thk, unID	: UnID = UnID+1
+HOTSPOT -A/2, B, gs_frame_thk, unID	: UnID = UnID+1
+HOTSPOT  A/2, B, gs_frame_thk, unID	: UnID = UnID+1
+
+
+! ==================================================================
+! Flipping at Inward Opening
+! ==================================================================
+if not(bOpenOut) then
+	mulz -1
+	addz -gs_frame_thk
+endif
+
+!!!!!!!!!!!!!!*****************************************************************************************
+!!!!!!!!!!!!!!********************************   	Frame Profiles     ********************************
+!!!!!!!!!!!!!!*****************************************************************************************
+
+pen gs_frame_pen
+
+gosub "FrameType1"
+
+if not(bOpenOut) then
+	del 2
+endif
+
+! ==================================================================
+END	! END ! END ! END ! END ! END ! END ! END ! END ! END ! END ! END
+! ==================================================================
+
+! ==================================================================
+"baseTexture":
+! ==================================================================
+	base
+	vert 0,   0,   0	!#1
+	vert 0,   0,   0.1	!#2
+	vert 0.1, 0,   0	!#3
+	vert 0,   0.1, 0	!#4
+	coor 258, -1, -2, -3, -4
+	body -1 
+return
+
+
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+! ==================================================================
+! Frame Hotspots
+! ==================================================================
+
+if iDetLevel2D < DETLEVEL_2D_100 then
+	HOTSPOT2 -A/2,			0, 				unID	: unID = unID + 1
+	HOTSPOT2  A/2, 			0, 				unID	: unID = unID + 1
+	HOTSPOT2 -A/2,			-gs_frame_thk,	unID	: unID = unID + 1
+	HOTSPOT2  A/2,			-gs_frame_thk,	unID	: unID = unID + 1
+endif
+
+
+! ==================================================================
+! Flipping at Inward Opening
+! ==================================================================
+if not(bOpenOut) then
+	mul2 1, -1
+	add2 0, gs_frame_thk
+endif
+
+! ==================================================================
+! Frame Background Fill
+! ==================================================================
+
+if isWindow then
+
+	pen 		pFills[FILL_EMPTY][FP_CONTPEN]
+	line_type	lFillS[FILL_EMPTY]
+	Fill		fFillS[FILL_EMPTY]
+	
+	FillStatus	= 1 + 2 !+ 4
+	FillOffsetZ= 0
+	
+	if iDetLevel2D < DETLEVEL_2D_100 then
+		FillOffsetLout	= 0.028
+		FillOffsetRout	= 0.028
+	else
+		FillOffsetLout	= 0.04
+		FillOffsetRout	= 0.04
+	endif
+	FillOffsetLin	= 0.04
+	FillOffsetRin	= 0.04
+	
+	
+	POLY2_B 4, FillStatus, pFillS[FILL_EMPTY][FP_FGPEN], pFillS[FILL_EMPTY][FP_BGPEN],
+		-A/2 + FillOffsetLout,	FillOffsetZ,				1,
+		A/2 - FillOffsetRout,	FillOffsetZ,				0, 
+		A/2 - FillOffsetRin,	FillOffsetZ - gs_frame_thk,	1,
+		-A/2 + FillOffsetLin,	FillOffsetZ - gs_frame_thk,	0
+
+endif
+
+!!!!!!!!!!!!!!*****************************************************************************************
+!!!!!!!!!!!!!!********************************   	Frame Profiles     ********************************
+!!!!!!!!!!!!!!*****************************************************************************************
+
+pen			pFillS[FILL_FRAME][FP_CONTPEN]
+line_type	lFillS[FILL_FRAME]
+
+gosub "FrameType1"
+
+if not(bOpenOut) then
+	del 2
+endif
+
+END
+!!!!!!!*****************************************************************************
+!!!!!!!*END END END END END END END END END END END END END END END END END END ****
+!!!!!!!*****************************************************************************
+
+!!!!!!!!!=======================================================================  Put The Profile on Both side - Left + Right
+! Incoming Parameters
+! [nsp] - Profile Contour parameters [X,Y,Status]
+! Pen_FG - Fill Pen 
+! Pen_BG - Background Fill Pen
+! OffsetR - Rigth Frame Offset
+! OffsetL - Left Frame Offset
+!
+! Returning Parameters
+! None
+!
+! Returning Model
+! Profile Polygon fill
+!!!!!!!!------------------------------------------------------------------------
+"DrawFill2D":
+	if nsp>8 then 
+		ADD2 A/2,0
+		POLY2_B nsp/3, 1+2, Pen_FG, Pen_BG,
+			use(nsp)
+		DEL 1
+		ADD2 -A/2,0
+		MUL2 -1,1
+		POLY2_B nsp/3, 1+2, Pen_FG, Pen_BG,
+			get(nsp)
+		DEL 2
+	else
+		for i=1 to nsp
+			temp = get(1)
+		next i
+	endif
+
+return
+
+
+!!!!!!!!!=======================================================================  Place 2D Polygons
+
+"Place2DPolys":
+	if nsp>8 then 
+		poly2_b nsp/3, 1+2, Pen_FG, Pen_BG,
+			get(nsp)
+		gosub "CleanStack"
+	else
+		gosub "CleanStack"
+	endif
+return
+
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+EPS = 0.001
+
+TubeStatus 	= 1+2+32+16 + 64	!!!! Default Tube Status
+ShowHoles	= 1					!!!! If you want to hide the holes in the profiles switch it to 0
+ShowArcs	= 1					!!!! Show Profile Arcs in 3D
+
+! iDetLevel2D
+	DETLEVEL_2D_MVO		= -2
+	DETLEVEL_2D_SCALE	= -1
+	DETLEVEL_2D_OFF		= 0
+	DETLEVEL_2D_10		= 10
+	DETLEVEL_2D_50		= 50
+	DETLEVEL_2D_100		= 100
+	DETLEVEL_2D_200		= 200
+
+! iDetLevel3D
+	DETLEVEL_3D_MVO		= -2
+	DETLEVEL_3D_SCALE	= -1
+	DETLEVEL_3D_OFF		= 0
+	DETLEVEL_3D_10		= 10
+	DETLEVEL_3D_50		= 50
+	DETLEVEL_3D_100		= 100
+
+! Profile array indexes
+	PAI_PRNUM		= 1
+	PAI_MOVX		= 2
+	PAI_MOVY		= 3
+	PAI_ROT			= 4
+	PAI_MIRRX		= 5
+	PAI_MIRRY		= 6
+	PAI_STARTOFFS	= 7
+	PAI_ENDOFFS		= 8
+	PAI_MAT			= 9
+	PAI_STARTROT	= 10
+	PAI_ENDROT		= 11
+	PAI_FILL		= 12
+
+! Fill/contour array column positions as seen in sect_attrs
+	FP_BGPEN		= 1		! Background pen
+	FP_FGPEN		= 2		! Foreground pen
+	FP_CONTPEN		= 3		! Contour pen
+
+! iType3D
+	MAT_IN			= 1		! Inner side surface
+	MAT_OUT			= 2		! Outer side surface
+	MAT_SHUTBOX		= 3		! Shutter box
+	MAT_STEEL		= 4 	! Steel surface
+	MAT_SEALANT		= 5		! Sealant surface
+	MAT_THERMAL		= 6		! Thermal blocker
+	MAT_GLASSBACK 	= 7		! Glassback
+	MAT_BRUSH		= 8		! Brush
+	MAT_GLASS		= 9		! Glass surface
+	MAT_HANDLE		= 10	! Operator (handle, hinge) surfaces
+	MAT_THRESHOLD	= 11	! Threshold
+	MAT_SASH_IN		= 12	! Sash inner, if differs from frame
+	MAT_SASH_OUT	= 13	! Sash outer, if differs from frame
+	MAT_FOAM 		= 14 	! Foam fillings
+	MAT_SHUTSLAT	= 15	! Shutter slats
+	
+!iType2D - 2d pen settings
+	FILL_EMPTY			= 1 ! Non section lines
+	FILL_ALU			= 2 ! Aluminium
+	FILL_WOOD			= 3 ! Timber
+	FILL_PVC			= 4 ! PVC
+	FILL_STEEL			= 5 ! Steel
+	FILL_FOAM			= 6 ! Foam
+	FILL_SEALANT		= 7 ! Gum
+	FILL_THERMAL		= 8 ! Thermal blocker
+	FILL_GLASS			= 9 ! Glass
+	FILL_SASH			= 10 ! Sash
+	FILL_FRAME			= 11 ! Frame
+	FILL_HANDLE			= 12 ! Operator (kilincs, vasalat) szín
+	FILL_WALLHOLE		= 13 ! Wallhole fill
+	FILL_ORIGFRAME		= 14 ! Original frame fill
+
+! ==================================================================
+! Static Materials 
+! ==================================================================
+
+	define material	"Black_WMCC" 20,
+		  0.1,   0.1,   0.1,
+		 0.98,   0.4,  0.33,     0,    7.8,     0,
+		  0.909804,   0.909804,   0.909804,
+		  0.027451,  0.0392157,  0.0392157,
+				 0, 0,    -1,
+		0
+
+materialS[MAT_SEALANT]		= IND(MATERIAL,"Black_WMCC")
+
+! ==============================================================================
+!
+! End of Master Script
+!
+! ==============================================================================
+
+goto "endMasterSript"
+
+! ==============================================================================
+!
+! SubRoutines
+!
+! ==============================================================================
+
+! ==============================================================================
+!  Profile definitons
+! ==============================================================================
+
+"FrameType1":
+	dim ProfArr[][]
+	PN = 1
+
+	ProfArr[PN][PAI_PRNUM] = 1		: ProfArr[PN][PAI_MOVX] = 0		: ProfArr[PN][PAI_MOVY] = 0
+	ProfArr[PN][PAI_ROT] = 90		: ProfArr[PN][PAI_MIRRX] = 1	: ProfArr[PN][PAI_MIRRY] = 0
+	ProfArr[PN][PAI_STARTOFFS] = 0	: ProfArr[PN][PAI_ENDOFFS] = 0	: ProfArr[PN][PAI_MAT] = MAT_OUT
+	ProfArr[PN][PAI_STARTROT] = 0	: ProfArr[PN][PAI_ENDROT] = 0	: ProfArr[PN][PAI_FILL] = FILL_FRAME
+	PN = PN+1
+
+	ProfArr[PN][PAI_PRNUM] = 2		: ProfArr[PN][PAI_MOVX] = 0		: ProfArr[PN][PAI_MOVY] = 0
+	ProfArr[PN][PAI_ROT] = 90		: ProfArr[PN][PAI_MIRRX] = 1	: ProfArr[PN][PAI_MIRRY] = 0
+	ProfArr[PN][PAI_STARTOFFS] = 0	: ProfArr[PN][PAI_ENDOFFS] = 0	: ProfArr[PN][PAI_MAT] = MAT_IN
+	ProfArr[PN][PAI_STARTROT] = 0	: ProfArr[PN][PAI_ENDROT] = 0	: ProfArr[PN][PAI_FILL] = FILL_FRAME
+	PN = PN+1
+
+	ProfArr[PN][PAI_PRNUM] = 201	: ProfArr[PN][PAI_MOVX] = 0		: ProfArr[PN][PAI_MOVY] = 0
+	ProfArr[PN][PAI_ROT] = 90		: ProfArr[PN][PAI_MIRRX] = 1	: ProfArr[PN][PAI_MIRRY] = 0
+	ProfArr[PN][PAI_STARTOFFS] = 0	: ProfArr[PN][PAI_ENDOFFS] = 0	: ProfArr[PN][PAI_MAT] = MAT_SEALANT
+	ProfArr[PN][PAI_STARTROT] = 0	: ProfArr[PN][PAI_ENDROT] = 0	: ProfArr[PN][PAI_FILL] = FILL_SEALANT
+	PN = PN+1
+
+	if GLOB_SCRIPT_TYPE = 3 then
+		if isWindow then
+			PUT  1,		 0,	0, 0 
+			PUT -A/2,	 0,	0, 0 
+			PUT -A/2,	B,	0, 0 
+			PUT  A/2,	B,	0, 0 
+			PUT  A/2,	 0,	0, 0 
+			PUT -A/2,	 0,	0, 0 
+			PUT -A/2,	 1,	0, 0 
+		else
+			PUT -A/2,	-1, 0, 0 
+			PUT -A/2,	 0, 0, 0 
+			PUT -A/2,	B,	0, 0 
+			PUT  A/2,	B,	0, 0 
+			PUT  A/2,	 0,	0, 0 
+			PUT  A/2,	-1,	0, 0 
+		endif
+	else
+			put -A/2,  0, -1
+			put  A/2,  0,  1
+	endif
+
+	gosub "PlaceFrameGroup"
+return
+
+! ==============================================================================
+! /Profile definitons
+! ==============================================================================
+
+! ==============================================================================
+! Calculate VECTOR Angle Normal Angle
+! ------------------------------------------------------------------------------
+
+"VectorAngle":
+	!!!  INCOMING: dx, dy
+	!!!  RETURNING: VectAng
+		
+	VectAng = 90
+	if ABS(dx)>EPS then 
+		VectAng = ATN(dy/dx)
+		if VectAng>0 and dx<EPS then VectAng = VectAng+180
+		if VectAng<=0 and dx<EPS then VectAng = VectAng+180
+	else
+		if dy>EPS then 
+			VectAng = 90 
+		else
+			VectAng = 270 
+		endif
+	endif
+
+	if VectAng<EPS then VectAng=VectAng+360
+return
+
+! ==============================================================================
+
+"CleanStack":
+	for z=1 to nsp
+		temp = get(1)
+	next z
+return
+
+!!!!!!!!!!!!!!!!*********************************************************** Place FrameGroup
+"PlaceFrameGroup":
+	dim TubeCoordS[][]
+	if GLOB_SCRIPT_TYPE = 2 then
+		PathNum = nsp / 3
+		for tp=1 to PathNum
+			TubeCoordS[tp][1] = get(1)	!X
+			TubeCoordS[tp][2] = get(1)	!Y
+			TubeCoordS[tp][3] = get(1)	!scale x -1 means mirrored
+		next tp
+	else
+		PathNum = nsp / 4
+		for tp=1 to PathNum
+			TubeCoordS[tp][1] = get(1)	!X
+			TubeCoordS[tp][2] = get(1)	!Y
+			TubeCoordS[tp][3] = get(1)	!Z
+			TubeCoordS[tp][4] = get(1)	!Rotation, should be 0
+		next tp
+	endif
+
+	for fnm = 1 to PN-1
+		CALL "Profil_WMCC" PARAMETERS 	all	\
+			ShowHoles 		= ShowHoles,
+			ShowArcs 		= ShowArcs,
+			ProfArr 		= ProfArr[fnm],				!
+			TubeCoordS		= TubeCoordS, 				!
+			PathNum			= PathNum
+		ProfilNum = nsp/3	
+	next fnm
+return
+
+! ==============================================================================
+!
+! End of Macros Script
+!
+! ==============================================================================
+
+"endMasterSript":
+
+
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_BWM>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Keywords>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>25</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="isWindow">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bOpenOut">
+			<Description><![CDATA["Opening Direction"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="iFrameType">
+			<Description><![CDATA["Frame Type"]]></Description>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="gs_resol">
+			<Description><![CDATA[""]]></Description>
+			<Value>18</Value>
+		</Integer>
+		<Length Name="gs_frame_thk">
+			<Description><![CDATA[""]]></Description>
+			<Value>0.06</Value>
+		</Length>
+		<Integer Name="iDoublage">
+			<Description><![CDATA[""]]></Description>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="DoublageThk">
+			<Description><![CDATA[""]]></Description>
+			<Value>0.1</Value>
+		</Length>
+		<Integer Name="UnID">
+			<Description><![CDATA[""]]></Description>
+			<Value>100</Value>
+		</Integer>
+
+		<!-- t_Surfaces: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="t_Surfaces">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Material Name="gs_frame_mat_out">
+			<Description><![CDATA["Frame Surface Outside"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>15</Value>
+		</Material>
+		<Material Name="gs_frame_mat_in">
+			<Description><![CDATA["Frame Surface Inside"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>15</Value>
+		</Material>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D and Section Representation"]]></Description>
+		</Title>
+		<Integer Name="iDetLevel2D">
+			<Description><![CDATA["2D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>10</Value>
+		</Integer>
+		<PenColor Name="gs_pen_2D">
+			<Description><![CDATA["Uncut Line Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</PenColor>
+		<PenColor Name="gs_frame_pen_cont">
+			<Description><![CDATA["Frame Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</PenColor>
+
+		<!-- gs_3D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_3D_representation">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Integer Name="iDetLevel3D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>10</Value>
+		</Integer>
+		<PenColor Name="gs_frame_pen">
+			<Description><![CDATA["Frame Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</PenColor>
+
+		<!-- t_Fills: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="t_Fills">
+			<Description><![CDATA["Fills"]]></Description>
+		</Title>
+		<FillPattern Name="gs_fillFr">
+			<Description><![CDATA["Frame Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_penFr_fg">
+			<Description><![CDATA["Frame Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>103</Value>
+		</PenColor>
+		<PenColor Name="gs_penFr_bg">
+			<Description><![CDATA["Frame Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<FillPattern Name="fillType_sealant">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="fillPenFg_sealant">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="fillPenBg_sealant">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<FillPattern Name="fillType_thermal">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="fillPenFg_thermal">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="fillPenBg_thermal">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="pFillS">
+			<Description><![CDATA["Fill pens"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="17" SecondDimension="3">
+				<AVal Column="1" Row="1">19</AVal>
+				<AVal Column="2" Row="1">19</AVal>
+				<AVal Column="3" Row="1">1</AVal>
+				<AVal Column="1" Row="2">19</AVal>
+				<AVal Column="2" Row="2">19</AVal>
+				<AVal Column="3" Row="2">1</AVal>
+				<AVal Column="1" Row="3">19</AVal>
+				<AVal Column="2" Row="3">19</AVal>
+				<AVal Column="3" Row="3">1</AVal>
+				<AVal Column="1" Row="4">19</AVal>
+				<AVal Column="2" Row="4">19</AVal>
+				<AVal Column="3" Row="4">1</AVal>
+				<AVal Column="1" Row="5">19</AVal>
+				<AVal Column="2" Row="5">19</AVal>
+				<AVal Column="3" Row="5">1</AVal>
+				<AVal Column="1" Row="6">19</AVal>
+				<AVal Column="2" Row="6">19</AVal>
+				<AVal Column="3" Row="6">1</AVal>
+				<AVal Column="1" Row="7">19</AVal>
+				<AVal Column="2" Row="7">19</AVal>
+				<AVal Column="3" Row="7">1</AVal>
+				<AVal Column="1" Row="8">19</AVal>
+				<AVal Column="2" Row="8">19</AVal>
+				<AVal Column="3" Row="8">1</AVal>
+				<AVal Column="1" Row="9">19</AVal>
+				<AVal Column="2" Row="9">19</AVal>
+				<AVal Column="3" Row="9">1</AVal>
+				<AVal Column="1" Row="10">19</AVal>
+				<AVal Column="2" Row="10">19</AVal>
+				<AVal Column="3" Row="10">1</AVal>
+				<AVal Column="1" Row="11">19</AVal>
+				<AVal Column="2" Row="11">19</AVal>
+				<AVal Column="3" Row="11">1</AVal>
+				<AVal Column="1" Row="12">19</AVal>
+				<AVal Column="2" Row="12">19</AVal>
+				<AVal Column="3" Row="12">1</AVal>
+				<AVal Column="1" Row="13">19</AVal>
+				<AVal Column="2" Row="13">19</AVal>
+				<AVal Column="3" Row="13">1</AVal>
+				<AVal Column="1" Row="14">19</AVal>
+				<AVal Column="2" Row="14">19</AVal>
+				<AVal Column="3" Row="14">1</AVal>
+				<AVal Column="1" Row="15">19</AVal>
+				<AVal Column="2" Row="15">19</AVal>
+				<AVal Column="3" Row="15">1</AVal>
+				<AVal Column="1" Row="16">91</AVal>
+				<AVal Column="2" Row="16">19</AVal>
+				<AVal Column="3" Row="16">1</AVal>
+				<AVal Column="1" Row="17">19</AVal>
+				<AVal Column="2" Row="17">19</AVal>
+				<AVal Column="3" Row="17">1</AVal>
+			</ArrayValues>
+		</PenColor>
+		<FillPattern Name="fFillS">
+			<Description><![CDATA["Fill fill types"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="17" SecondDimension="0">
+				<AVal Row="1">65</AVal>
+				<AVal Row="2">1</AVal>
+				<AVal Row="3">1</AVal>
+				<AVal Row="4">1</AVal>
+				<AVal Row="5">1</AVal>
+				<AVal Row="6">1</AVal>
+				<AVal Row="7">1</AVal>
+				<AVal Row="8">1</AVal>
+				<AVal Row="9">1</AVal>
+				<AVal Row="10">1</AVal>
+				<AVal Row="11">1</AVal>
+				<AVal Row="12">1</AVal>
+				<AVal Row="13">1</AVal>
+				<AVal Row="14">1</AVal>
+				<AVal Row="15">1</AVal>
+				<AVal Row="16">1</AVal>
+				<AVal Row="17">1</AVal>
+			</ArrayValues>
+		</FillPattern>
+		<LineType Name="lFillS">
+			<Description><![CDATA["Fill linetypes"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="17" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">1</AVal>
+				<AVal Row="3">1</AVal>
+				<AVal Row="4">1</AVal>
+				<AVal Row="5">1</AVal>
+				<AVal Row="6">1</AVal>
+				<AVal Row="7">1</AVal>
+				<AVal Row="8">1</AVal>
+				<AVal Row="9">1</AVal>
+				<AVal Row="10">1</AVal>
+				<AVal Row="11">1</AVal>
+				<AVal Row="12">1</AVal>
+				<AVal Row="13">1</AVal>
+				<AVal Row="14">1</AVal>
+				<AVal Row="15">1</AVal>
+				<AVal Row="16">1</AVal>
+				<AVal Row="17">1</AVal>
+			</ArrayValues>
+		</LineType>
+		<Material Name="materialS">
+			<Description><![CDATA["Materials' array"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="14" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">2</AVal>
+				<AVal Row="3">3</AVal>
+				<AVal Row="4">4</AVal>
+				<AVal Row="5">5</AVal>
+				<AVal Row="6">6</AVal>
+				<AVal Row="7">7</AVal>
+				<AVal Row="8">8</AVal>
+				<AVal Row="9">9</AVal>
+				<AVal Row="10">10</AVal>
+				<AVal Row="11">11</AVal>
+				<AVal Row="12">12</AVal>
+				<AVal Row="13">13</AVal>
+				<AVal Row="14">14</AVal>
+			</ArrayValues>
+		</Material>
+	</Parameters>
+</ParamSection>
+</Symbol>

@@ -1,0 +1,1 @@
+LP_XMLConverter.exe x2l -img ".\Images" ".\Source" ".\Target">output.txt

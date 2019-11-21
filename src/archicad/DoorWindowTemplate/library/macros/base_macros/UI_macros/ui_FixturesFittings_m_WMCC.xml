@@ -1,0 +1,1718 @@
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="7D855D80-40F5-4FEE-95B5-E1209B05C9B3" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>6ACDA889-69B2-4EC5-936C-CB1DA7032A92</MainGUID>
+	<MainGUID>F6AE9687-2BC7-4D47-88C9-8F793E1DE2D6</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+! const values for parameter: iNORCasingType
+ARCHITRAV_NONE                  = 1
+ARCHITRAV_SILL                  = 2
+ARCHITRAV_LEFT                  = 3
+ARCHITRAV_LEFT_SILL             = 4
+ARCHITRAV_RIGHT                 = 5
+ARCHITRAV_RIGHT_SILL            = 6
+ARCHITRAV_LEFT_RIGHT            = 7
+ARCHITRAV_LEFT_RIGHT_SILL       = 8
+ARCHITRAV_ENTAB                 = 9
+ARCHITRAV_ENTAB_SILL            = 10
+ARCHITRAV_ENTAB_LEFT            = 11
+ARCHITRAV_ENTAB_LEFT_SILL       = 12
+ARCHITRAV_ENTAB_RIGHT           = 13
+ARCHITRAV_ENTAB_RIGHT_SILL      = 14
+ARCHITRAV_ENTAB_LEFT_RIGHT      = 15
+ARCHITRAV_ENTAB_LEFT_RIGHT_SILL = 16
+ARCHITRAV_ALL                   = 17
+ARCHITRAV_SIMPLE_CASING         = 18
+
+! iWindowShape:
+SHAPE_RECTANGULAR			= 0
+SHAPE_ARCHED				= 1
+SHAPE_ROUND					= 2
+SHAPE_EYEBROWS				= 3
+SHAPE_HALFCIRCLE			= 4 	! straight side is horizontal
+SHAPE_MULTISIDE				= 5
+SHAPE_OCTAGONAL				= 6
+SHAPE_HALFARCH				= 7
+SHAPE_PENTAGON				= 8
+SHAPE_QUARTERROUND			= 9
+SHAPE_HALFROUND				= 10 	! straight side is vertical
+SHAPE_TRAPEZOID				= 11
+SHAPE_TRIANGLE				= 12
+SHAPE_GOTHICARCH			= 13
+SHAPE_ELLIPSEARCH			= 14
+SHAPE_ROMBUS				= 15
+SHAPE_HORSESHOE				= 16
+SHAPE_OGEECENTERED			= 17
+SHAPE_SARACENIC				= 18
+SHAPE_T						= 19
+SHAPE_HALF_T_LEFT			= 20
+SHAPE_ARCHED_T				= 21
+SHAPE_ARCHED_HALF_T_LEFT	= 22
+SHAPE_PARALLELOGRAM			= 23
+SHAPE_ELLIPSE				= 24
+SHAPE_CORNER_TRIANGLE		= 25
+SHAPE_QUARTERROUND_NOFRAME	= 26
+SHAPE_HALF_T_RIGHT			= 27
+SHAPE_ARCHED_HALF_T_RIGHT	= 28
+
+! const values for parameter: iThresholdType
+TRESHOLD_OFF          = 1
+TRESHOLD_NORMAL       = 2
+TRESHOLD_EXTENDED     = 3
+TRESHOLD_BOTHEXTENDED = 4
+TRESHOLD_BENEATHPANEL = 5
+TRESHOLD_PROFILED     = 6
+TRESHOLD_FLAT         = 7
+TRESHOLD_ANSLAG       = 8
+TRESHOLD_GUMMI        = 9
+TRESHOLD_HEVE         = 10
+TRESHOLD_HC           = 11
+TRESHOLD_BRANN        = 12
+TRESHOLD_BADEROMS     = 13
+TRESHOLD_AKKUSTIKK    = 14
+TRESHOLD_SIMPLE       = 15
+TRESHOLD_SLOPINGEXT   = 16
+TRESHOLD_METAL        = 17
+TRESHOLD_EXTENDED_SWE = 18
+TRESHOLD_NOTAVAILABLE = -1
+
+! const values for parameter: iSillType
+SILL_TIMBER			= 1
+SILL_BRICK			= 2
+SILL_STONE			= 3
+SILL_CERAMIC		= 4
+SILL_ETHERNIT		= 5
+SILL_CONCRETE_TUB	= 6
+SILL_ALUMINIUM		= 7
+SILL_SOLID_11		= 8
+SILL_SOLID_12		= 9
+SILL_SOLID_22		= 10
+SILL_METAL_1		= 11
+SILL_PARALLEL		= 12
+SILL_METAL_2		= 13
+SILL_PARALLEL_2		= 14
+SILL_SIMPLEBLOCK	= 15
+SILL_BLOCK			= 16
+SILL_DUTCH			= 17
+
+
+SUNSHADE_NONE			= 0
+SUNSHADE_DECORATIVE		= 1
+SUNSHADE_SHUTTER		= 2
+SUNSHADE_FOLDING		= 3
+SUNSHADE_OUTFOLDING		= 4
+SUNSHADE_SLIDING		= 5
+SUNSHADE_ROLLING		= 6
+SUNSHADE_EXTVENETIAN	= 7
+SUNSHADE_VENETIAN		= 8
+
+! iUiCellPosition
+POS_LEFT_TOP		= 1
+POS_LEFT_MIDDLE		= 2
+POS_LEFT_BOTTOM		= 3
+POS_RIGHT_TOP		= 4
+POS_RIGHT_MIDDLE	= 5
+POS_RIGHT_BOTTOM	= 6
+
+
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+bShowCasing					= bEnableCasing
+bShowGanging				= (not(isWindow) & bEnableGanging) | \
+								(isWindow) & not(isEmptyOpening) & \
+								(iWindowShape = SHAPE_RECTANGULAR |\
+								iWindowShape = SHAPE_ARCHED |\
+								iWindowShape = SHAPE_TRAPEZOID |\
+								iWindowShape = SHAPE_HALFCIRCLE |\
+								iWindowShape = SHAPE_PENTAGON |\
+								iWindowShape = SHAPE_QUARTERROUND |\
+								iWindowShape = SHAPE_TRIANGLE |\
+								iWindowShape = SHAPE_ELLIPSEARCH)
+bShowThreshold				= bEnableThreshold | bForceToShowThresholdUI
+bShowSill					= bEnableSill
+bShowShutter				= bEnableShutter
+bShowBoard					= bEnableBoard & (isWindow | ((bTShapedOpening | bArchedTShapedOpening) & not(isWindow)))
+bShowRail					= bEnableRail
+bShowCustomCorner			= isWindow & (bEnableCustomCornerLeft | bEnableCustomCornerRight)
+
+bPopupControlForSillType	= not(bUSASillPage)
+_bUseLineControls			= bTShapedOpening | bArchedTShapedOpening
+numLineFeed					= 0
+
+pageStartY 	= 0 + 30
+if bSlidingLeaf then
+	dyLineControls = 25
+else
+	dyLineControls = 28
+endif
+dy			= 24
+
+
+! --------------------------------------------------------------------------------
+! Cell position conditions for blocks
+! --------------------------------------------------------------------------------
+iUiCellPosition_Casing = 0
+if bShowCasing then
+	iUiCellPosition_Casing = 1		! POS_LEFT_TOP
+endif
+
+iUiCellPosition_Ganging = 0
+if bShowGanging then
+	iUiCellPosition_Ganging = 4		! POS_RIGHT_TOP
+endif
+
+iUiCellPosition_CustCorner = 0
+if bShowCustomCorner then
+	iUiCellPosition_CustCorner = 4 + 2*(bShowGanging&bShowShutter) + 1*(not(bShowShutter)&bShowGanging) ! POS_RIGHT_TOP | POS_RIGHT_BOTTOM | POS_RIGHT_MIDDLE
+endif
+
+iUiCellPosition_Shutter = 0
+if bShowShutter then
+	iUiCellPosition_Shutter = 4 + 1*(bShowGanging|bShowCustomCorner)		! POS_RIGHT_MIDDLE | POS_RIGHT_TOP
+endif
+
+iUiCellPosition_Threshold = 0
+if bShowThreshold then
+	iUiCellPosition_Threshold = 1 + 1*bShowCasing		! POS_LEFT_TOP | POS_LEFT_MIDDLE
+endif
+
+iUiCellPosition_Rail = 0		! exclusive to Threshold, except in normal sliding doors
+if bShowRail then
+	iUiCellPosition_Rail = not(bSlidingLeaf)*(1 + 1*bShowCasing) + bSlidingLeaf*(4+1*bShowGanging+1*bShowShutter)	! POS_LEFT_TOP | POS_LEFT_MIDDLE | POS_RIGHT_BOTTOM
+endif
+
+iUiCellPosition_Sill = 0
+if bShowSill then
+	iUiCellPosition_Sill = 1 + 1*bShowThreshold + 1*bShowCasing
+endif
+
+iUiCellPosition_Board = 0
+if bShowBoard then
+	iUiCellPosition_Board = iUiCellPosition_Sill + 1		! Always under Sill cell
+endif
+
+! --------------------------------------------------------------------------------
+! Variables for separator handling
+! --------------------------------------------------------------------------------
+_bCellOccupied_1 = 0
+_bCellOccupied_2 = 0
+_bCellOccupied_3 = 0
+_bCellOccupied_4 = 0
+_bCellOccupied_5 = 0
+_bCellOccupied_6 = 0
+
+
+! ======================================================================
+! Casing
+! ======================================================================
+
+if bShowCasing then
+	__bCellPosition = iUiCellPosition_Casing
+	__bEnableLineControls = 0
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+
+	y = yCell
+
+	ui_style 0,1
+	ui_outfield st_uiFixtureFitting[1], x1, y+4, xCellEnd-x1-1, 15	! Casing
+	ui_style 0,0
+
+	y = y + dy
+
+	if	bEnableCasingNORUI then
+		ui_infield{3} "gs_trim_outside", x1, y, 73 - x1, 19,
+			7, "",
+			1, 1,
+			0, 0, 0, 0,
+			"", st_uiFixtureFitting[2], 0,	! Outside
+			"", st_uiFixtureFitting[2], 1	! Outside
+
+		ui_infield{3} "iNORCasingType", x1 + 70, y, xJumpButton - x1 - 78, 19,
+			8, "",
+			18,
+			1, 20, 20, 20, 20,
+			18,	stNORCasingTypes[1],	ARCHITRAV_SIMPLE_CASING,
+			17,	stNORCasingTypes[17],	ARCHITRAV_ALL,
+			2,	stNORCasingTypes[2],	ARCHITRAV_SILL,
+			3,	stNORCasingTypes[3],	ARCHITRAV_LEFT,
+			4,	stNORCasingTypes[4],	ARCHITRAV_LEFT_SILL,
+			5,	stNORCasingTypes[5],	ARCHITRAV_RIGHT,
+			6,	stNORCasingTypes[6],	ARCHITRAV_RIGHT_SILL,
+			7,	stNORCasingTypes[7], 	ARCHITRAV_LEFT_RIGHT,
+			8,	stNORCasingTypes[8],	ARCHITRAV_LEFT_RIGHT_SILL,
+			9,	stNORCasingTypes[9],	ARCHITRAV_ENTAB,
+			10,	stNORCasingTypes[10],	ARCHITRAV_ENTAB_SILL,
+			11,	stNORCasingTypes[11],	ARCHITRAV_ENTAB_LEFT,
+			12,	stNORCasingTypes[12],	ARCHITRAV_ENTAB_LEFT_SILL,
+			13,	stNORCasingTypes[13],	ARCHITRAV_ENTAB_RIGHT,
+			14,	stNORCasingTypes[14],	ARCHITRAV_ENTAB_RIGHT_SILL,
+			15,	stNORCasingTypes[15],	ARCHITRAV_ENTAB_LEFT_RIGHT,
+			16,	stNORCasingTypes[16],	ARCHITRAV_ENTAB_LEFT_RIGHT_SILL
+	else
+		ui_infield{3} "gs_trim_outside", x1, y, xJumpButton - x1 - 49, 19,
+			7, "",
+			1, 1,
+			0, 0, 0, 0,
+			"", st_uiFixtureFitting[2], 0,	! Outside
+			"", st_uiFixtureFitting[2], 1	! Outside
+	endif
+
+	if not(bUSACasingPage) then
+		ui_pict_button ui_function, "...", "uiFunctionDOutsideCasing_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_CasingOut
+	endif
+
+	y = y + dy
+	ui_infield{3} "gs_trim_inside", x1, y, xJumpButton - x1 - 49, 19,
+		7, "",
+		1, 1,
+		0, 0, 0, 0,
+		"", st_uiFixtureFitting[3], 0,	! Inside
+		"", st_uiFixtureFitting[3], 1	! Inside
+
+	if bUSACasingPage then
+		ui_pict_button ui_function, "...", "uiFunctionDWCasing_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Casing_USA
+	else
+		ui_pict_button ui_function, "...", "uiFunctionDInsideCasing_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_CasingIn
+	endif
+endif
+
+! ======================================================================
+! Ganging
+! ======================================================================
+
+if bShowGanging then
+	__bCellPosition = iUiCellPosition_Ganging
+	__bEnableLineControls = 0
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+
+	y = yCell
+	xPic = xCellEnd - 105
+
+	ui_style 0,1
+	ui_outfield st_uiFixtureFitting[4], x1, y+4, xPic-x1-5, 15		! Ganging
+	ui_style 0,0
+
+	y = y + 23
+
+	stx = 0
+	slx = 0
+	srx = 0
+	sbx = 0
+	if bEnableCasingAtGanging then
+		if gs_stack_top 	then stx = -10
+		if gs_stack_left 	then slx = -10
+		if gs_stack_right 	then srx = -10
+		if gs_stack_bottom 	then sbx = -10
+	endif
+
+	if isWindow then
+		if iWindowShape = SHAPE_RECTANGULAR then
+			ui_pict 5, xPic, y, 29, 39, 1	! ui_window_shape_0.png
+
+			if isEmptyOpening then
+				ui_infield "gs_stack_left_contour",		xPic-20, y+10, 18, 19
+				ui_infield "gs_stack_right_contour",	xPic+35, y+10, 18, 19
+			else
+				gosub "stackTop"
+				gosub "stackLeft"
+				gosub "stackRight"
+				gosub "stackBottom"
+			endif
+		endif
+		if iWindowShape = SHAPE_ARCHED then
+			ui_pict 6,xPic, y, 29, 39, 1	! ui_window_shape_1.png
+			if isEmptyOpening then
+				ui_infield "gs_stack_left_contour",	xPic-20,y+10, 18, 19
+				ui_infield "gs_stack_right_contour",	xPic+35,y+10, 18, 19
+			else
+				gosub "stackBottom"
+			endif
+		endif
+		if iWindowShape = SHAPE_TRAPEZOID then
+			ui_pict 7, xPic,y, 29,39, 1	! ui_window_shape_11.png
+		endif
+		if iWindowShape = SHAPE_HALFCIRCLE then
+			ui_pict 9, xPic,y+19, 29, 15, 1	! ui_window_shape_HalfRound.png
+		endif
+		if iWindowShape = SHAPE_PENTAGON then
+			ui_pict 10, xPic,y, 29, 39, 1	! ui_window_shape_Pentagon.png
+		endif
+		if iWindowShape = SHAPE_QUARTERROUND then
+			ui_pict 11, xPic,y, 29, 30, 1	! ui_window_shape_QuartRound.png
+		endif
+		if iWindowShape = SHAPE_TRIANGLE then
+			ui_pict 12, xPic,y, 29, 30, 1	! ui_window_shape_Triangle.png
+		endif
+		if iWindowShape = SHAPE_ELLIPSEARCH then
+			ui_pict 8, xPic,y, 29, 39, 1	! ui_door_shape_EllipseArch.png
+		endif
+
+		if	iWindowShape = SHAPE_TRAPEZOID |\
+			iWindowShape = SHAPE_HALFCIRCLE |\
+			iWindowShape = SHAPE_PENTAGON |\
+			iWindowShape = SHAPE_QUARTERROUND |\
+			iWindowShape = SHAPE_TRIANGLE |\
+			iWindowShape = SHAPE_ELLIPSEARCH then
+
+			gosub "stackBottom"
+		endif
+		if 	iWindowShape = SHAPE_TRAPEZOID |\
+			iWindowShape = SHAPE_PENTAGON then
+
+			gosub "stackLeft"
+			gosub "stackRight"
+		endif
+		if 	iWindowShape = SHAPE_QUARTERROUND then
+			gosub "stackLeft"
+		endif
+	else
+		if	iWindowShape = SHAPE_RECTANGULAR | \
+			iWindowShape = SHAPE_T | \
+			iWindowShape = SHAPE_HALF_T_LEFT | \
+			iWindowShape = SHAPE_HALF_T_RIGHT then
+	
+			ui_pict 1, xPic, y, 29, 49, 1	! ui_door_shape_0.png
+			gosub "stackTop"
+			if not(bD2Sliding)	 then gosub "stackLeft"
+			if not(bSlidingDoor) then gosub "stackRight"
+		endif
+		if	iWindowShape = SHAPE_ARCHED | \
+			iWindowShape = SHAPE_ARCHED_T | \
+			iWindowShape = SHAPE_ARCHED_HALF_T_LEFT | \
+			iWindowShape = SHAPE_ARCHED_HALF_T_RIGHT then
+	
+			ui_pict 2, xPic, y, 29, 49, 1	! ui_door_shape_1.png
+		endif
+	endif
+endif
+
+
+! ======================================================================
+! Threshold
+! ======================================================================
+
+if bShowThreshold then
+	__bCellPosition = iUiCellPosition_Threshold
+	__bEnableLineControls = _bUseLineControls
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+	if _bUseLineControls then
+		y = ySingleLine  + dyLineControls*numLineFeed
+	else
+		y = yCell
+	endif
+
+	ui_style 0,1
+	ui_infield{3} "bThreshold", x1, y, xCellEnd-x1-1, 19,
+		7, "",
+		1, 1,
+		0, 0, 0, 0,
+		"", st_uiFixtureFitting[5], 0,	! Threshold
+		"", st_uiFixtureFitting[5], 1	! Threshold
+	ui_style 0,0
+
+	if	_bUseLineControls then
+		ui_infield{3} "iThresholdType", x2, y, x3 - x2, 19,
+			8, "",
+			1, 1,
+			x2+65-x1-30, 18, x2+65-x1-30, 18,
+			1,	stThresholdTypes[1], TRESHOLD_OFF,			! Off
+			1,	stThresholdTypes[2], TRESHOLD_NORMAL,		! Normal Threshold
+			1,	stThresholdTypes[3], TRESHOLD_EXTENDED,		! Extended Threshold
+			1,	stThresholdTypes[4], TRESHOLD_BOTHEXTENDED,	! Extended Both Sides
+			1,	stThresholdTypes[5], TRESHOLD_BENEATHPANEL,	! Beneath Panel
+			1,	stThresholdTypes[6], TRESHOLD_PROFILED,		! Profiled
+			1,	stThresholdTypes[7], TRESHOLD_FLAT,			! Flat Terskel
+			1,	stThresholdTypes[8], TRESHOLD_ANSLAG,		! Anslagterskel
+			1,	stThresholdTypes[9], TRESHOLD_GUMMI,		! Gummiterskel m slepelist
+			1,	stThresholdTypes[10], TRESHOLD_HEVE,		! Heveterskel
+			1,	stThresholdTypes[11], TRESHOLD_HC,			! H-C Terskel
+			1,	stThresholdTypes[12], TRESHOLD_BRANN,		! Brannterskel
+			1,	stThresholdTypes[13], TRESHOLD_BADEROMS,	! Baderomsterskel
+			1,	stThresholdTypes[14], TRESHOLD_AKKUSTIKK,	! Akkustikkterskel
+			1,	stThresholdTypes[15], TRESHOLD_SIMPLE,		! Simple Threshold
+			1,	stThresholdTypes[16], TRESHOLD_SLOPINGEXT,	! Sloping Extended
+			1,	stThresholdTypes[17], TRESHOLD_METAL		! Metal
+
+		y = y + 20 - 22
+		if bThresholdSillPage then
+			ui_pict_button ui_function, "...", "uiFunctionThreshold_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_ThresholdSill
+		else
+			ui_pict_button ui_function, "...", "uiFunctionThreshold_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Threshold
+		endif
+		numLineFeed = numLineFeed + 1
+	else
+		y = y + 22
+		px = 90
+		py = 45
+		cx = px + 10
+		cy = py + 4
+
+		ui_infield{3} "iThresholdType", x1, y, x2 - x1, 60,
+			2, 3,											! ui_threshold_type_new.png
+			16, 1,
+			cx, cy, px, py,
+			1,	stThresholdTypes[2], TRESHOLD_NORMAL,		! Normal Threshold
+			2,	stThresholdTypes[3], TRESHOLD_EXTENDED,		! Extended Threshold
+			3,	stThresholdTypes[4], TRESHOLD_BOTHEXTENDED,	! Extended Both Sides
+			4,	stThresholdTypes[5], TRESHOLD_BENEATHPANEL,	! Beneath Panel
+			5,	stThresholdTypes[6], TRESHOLD_PROFILED,		! Profiled
+			6,	stThresholdTypes[7], TRESHOLD_FLAT,			! Flat Terskel
+			7,	stThresholdTypes[8], TRESHOLD_ANSLAG,		! Anslagterskel
+			8,	stThresholdTypes[9], TRESHOLD_GUMMI,		! Gummiterskel m slepelist
+			9,	stThresholdTypes[10], TRESHOLD_HEVE,		! Heveterskel
+			10,	stThresholdTypes[11], TRESHOLD_HC,			! H-C Terskel
+			11,	stThresholdTypes[12], TRESHOLD_BRANN,		! Brannterskel
+			12,	stThresholdTypes[13], TRESHOLD_BADEROMS,	! Baderomsterskel
+			13,	stThresholdTypes[14], TRESHOLD_AKKUSTIKK,	! Akkustikkterskel
+			14,	stThresholdTypes[15], TRESHOLD_SIMPLE,		! Simple Threshold
+			15,	stThresholdTypes[16], TRESHOLD_SLOPINGEXT,	! Sloping Extended
+			16,	stThresholdTypes[17], TRESHOLD_METAL		! Metal
+	
+		y = y + 60 - 22 - 2
+		if bThresholdSillPage then
+			ui_pict_button ui_function, "...", "uiFunctionThreshold_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_ThresholdSill
+		else
+			ui_pict_button ui_function, "...", "uiFunctionThreshold_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Threshold
+		endif
+	endif
+endif
+
+! ======================================================================
+! Sunshade
+! ======================================================================
+
+if bShowShutter then
+	__bCellPosition = iUiCellPosition_Shutter
+	__bEnableLineControls = _bUseLineControls
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+	if _bUseLineControls then
+		y = ySingleLine  + dyLineControls*numLineFeed
+	else
+		y = yCell
+	endif
+
+	ui_style 0,1
+	ui_infield{3} "bSunshade", x1, y, xCellEnd-x1-1, 19,
+		7, "",
+		1, 1,
+		0, 0, 0, 0,
+		"", st_uiFixtureFitting[11], 0,	! Sunshade
+		"", st_uiFixtureFitting[11], 1	! Sunshade
+	ui_style 0,0
+
+	if	_bUseLineControls then
+		ui_infield{3} "gs_sunShade_iType", x2, y, x3 - x2, 19,
+			8, "",
+			1, 1,
+			0,0,0,0,
+			1, stSunShadeTypes[1], SUNSHADE_NONE,
+			1, stSunShadeTypes[2], SUNSHADE_DECORATIVE,
+			1, stSunShadeTypes[3], SUNSHADE_SHUTTER,
+			1, stSunShadeTypes[4], SUNSHADE_FOLDING,
+			1, stSunShadeTypes[5], SUNSHADE_OUTFOLDING,
+			1, stSunShadeTypes[6], SUNSHADE_SLIDING,
+			1, stSunShadeTypes[7], SUNSHADE_ROLLING,
+			1, stSunShadeTypes[8], SUNSHADE_EXTVENETIAN,
+			1, stSunShadeTypes[9], SUNSHADE_VENETIAN
+
+		y = y + 20 - 22 - 2
+		ui_pict_button ui_function, "...", "uiFunctionSunshade_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Shutter
+		numLineFeed = numLineFeed + 1
+	else
+		y = y + 22
+
+		px = 90
+		py = 45
+		cx = px + 10
+		cy = py + 4
+
+		ui_infield{3} "gs_sunShade_iType", x1, y, x2 - x1, 60,
+				2, 13,					! ui_shutter_type_new.png
+				8, 1,
+				cx, cy, px, py,
+				1, stSunShadeTypes[2], SUNSHADE_DECORATIVE,
+				2, stSunShadeTypes[3], SUNSHADE_SHUTTER,
+				3, stSunShadeTypes[4], SUNSHADE_FOLDING,
+				4, stSunShadeTypes[5], SUNSHADE_OUTFOLDING,
+				5, stSunShadeTypes[6], SUNSHADE_SLIDING,
+				6, stSunShadeTypes[7], SUNSHADE_ROLLING,
+				7, stSunShadeTypes[8], SUNSHADE_EXTVENETIAN,
+				8, stSunShadeTypes[9], SUNSHADE_VENETIAN
+
+		y = y + 60 - 22 - 2
+		ui_pict_button ui_function, "...", "uiFunctionSunshade_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Shutter
+	endif
+endif
+
+
+! ======================================================================
+! Sill
+! ======================================================================
+
+if bShowSill then
+	__bCellPosition = iUiCellPosition_Sill
+	__bEnableLineControls = _bUseLineControls
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+	if _bUseLineControls then
+		y = ySingleLine  + dyLineControls*numLineFeed
+	else
+		y = yCell
+	endif
+
+	if _bUseLineControls then
+
+		ui_style 0,1
+		ui_outfield st_uiFixtureFitting[6], x1, y+4, xCellEnd-x1-1, 15	!Sill
+		ui_style 0,0
+
+		ui_infield{3} "iSillType", x2, y, x3 - x2, 19,
+			8, "",
+			1, 1,
+			0,0,0,0,
+			1,	stSillTypes[1], SILL_TIMBER,		! Timber Sill
+			1,	stSillTypes[2], SILL_BRICK,			! Brick Sill
+			1,	stSillTypes[3], SILL_STONE,			! Stone Sill
+			1,	stSillTypes[4], SILL_CERAMIC,		! Ceramic Sill
+			1,	stSillTypes[5], SILL_ETHERNIT,		! Eternite Sill
+			1,	stSillTypes[6], SILL_CONCRETE_TUB,	! Concrete Tub
+			1,	stSillTypes[7], SILL_ALUMINIUM,		! Aluminum Sill
+			1,	stSillTypes[8], SILL_SOLID_11,		! Solid Sill 1.1 / Massiv-Fensterbank 1.1 (CHE)
+			1,	stSillTypes[9], SILL_SOLID_12,		! Solid Sill 1.2 / Massiv-Fensterbank 1.2 (CHE)
+			1,	stSillTypes[10], SILL_SOLID_22,		! Solid Sill 2.2 / Massiv-Fensterbank 2.2 (CHE)
+			1,	stSillTypes[11], SILL_METAL_1,		! Metal Sheet / Metallfensterbank 1.1 (CHE)
+			1,	stSillTypes[13], SILL_METAL_2,		! Metal Sheet 2 (CHE)
+			1,	stSillTypes[12], SILL_PARALLEL,		! Solid Parallel (CHE)
+			1,	stSillTypes[14], SILL_PARALLEL_2,	! Solid Parallel 2 (CHE)
+			1,	stSillTypes[15], SILL_SIMPLEBLOCK,	! Simple Block
+			1,	stSillTypes[16], SILL_BLOCK,		! Block Sill
+			1,	stSillTypes[17], SILL_DUTCH			! Dutch Profiled Sill
+
+		if bThresholdSillPage then
+			ui_pict_button ui_function, "...", "uiFunctionSill_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_ThresholdSill
+		else
+			ui_pict_button ui_function, "...", "uiFunctionSill_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Sill
+		endif
+
+		y = y + 25
+		numLineFeed = numLineFeed + 1
+		xSillDoor = x1
+		if iWindowShape = SHAPE_T | iWindowShape = SHAPE_ARCHED_T then
+			ui_infield{3} "gs_sill_outside_sl_right", x1, y, 143, 19,
+				7, "",
+				1, 1,
+				0, 0, 0, 0,
+				"", st_uiFixtureFitting[7], 0,		! Under Sidelight 1
+				"", st_uiFixtureFitting[7], 1		! Under Sidelight 1
+
+			ui_infield{3} "gs_sill_outside_sl_left", x1 + 145, y, 143, 19,
+				7, "",
+				1, 1,
+				0, 0, 0, 0,
+				"", st_uiFixtureFitting[8], 0,		! Under Sidelight 2
+				"", st_uiFixtureFitting[8], 1		! Under Sidelight 2
+			xSillDoor = x1 + 290
+		else
+			if iWindowShape = SHAPE_HALF_T_LEFT | iWindowShape = SHAPE_ARCHED_HALF_T_LEFT then
+				ui_infield{3} "gs_sill_outside_sl_left", x1, y, 143, 19,
+					7, "",
+					1, 1,
+					0, 0, 0, 0,
+					"", st_uiFixtureFitting[9], 0,	! Under Sidelight
+					"", st_uiFixtureFitting[9], 1	! Under Sidelight
+				xSillDoor = x1 + 145
+			else
+				if iWindowShape = SHAPE_HALF_T_RIGHT | iWindowShape = SHAPE_ARCHED_HALF_T_RIGHT then
+					ui_infield{3} "gs_sill_outside_sl_right", x1, y, 143, 19,
+						7, "",
+						1, 1,
+						0, 0, 0, 0,
+						"", st_uiFixtureFitting[9], 0,	! Under Sidelight
+						"", st_uiFixtureFitting[9], 1		! Under Sidelight
+				xSillDoor = x1 + 145
+				endif
+			endif
+		endif
+
+		ui_infield{3} "gs_sill_outside", xSillDoor, y, 145, 19,
+			7, "",
+			1, 1,
+			0, 0, 0, 0,
+			"", st_uiFixtureFitting[10], 0,		! Under Door
+			"", st_uiFixtureFitting[10], 1		! Under Door
+
+		numLineFeed = numLineFeed + 1
+	else
+
+		ui_style 0,1
+		ui_infield{3} "gs_sill_outside", x1, y, xJumpButton - x1 - 1, 19,
+			7, "",
+			1, 1,
+			0, 0, 0, 0,
+			"", st_uiFixtureFitting[6], 0,	! Sill
+			"", st_uiFixtureFitting[6], 1	! Sill
+		ui_style 0,0
+
+		if bPopupControlForSillType then
+			y = y + 22
+
+			px = 90
+			py = 45
+			cx = px + 10
+			cy = py + 4
+
+			ui_infield{3} "iSillType", x1, y, x2 - x1, 60,
+					2, 4,									! ui_sill_type_new.png
+					17, 1,
+					cx, cy, px, py,
+					1,	stSillTypes[1], SILL_TIMBER,		! Timber Sill
+					2,	stSillTypes[2], SILL_BRICK,			! Brick Sill
+					3,	stSillTypes[3], SILL_STONE,			! Stone Sill
+					4,	stSillTypes[4], SILL_CERAMIC,		! Ceramic Sill
+					5,	stSillTypes[5], SILL_ETHERNIT,		! Eternite Sill
+					6,	stSillTypes[6], SILL_CONCRETE_TUB,	! Concrete Tub
+					7,	stSillTypes[7], SILL_ALUMINIUM,		! Aluminum Sill
+					8,	stSillTypes[8], SILL_SOLID_11,		! Solid Sill 1.1 / Massiv-Fensterbank 1.1 (CHE)
+					9,	stSillTypes[9], SILL_SOLID_12,		! Solid Sill 1.2 / Massiv-Fensterbank 1.2 (CHE)
+					10,	stSillTypes[10], SILL_SOLID_22,		! Solid Sill 2.2 / Massiv-Fensterbank 2.2 (CHE)
+					11,	stSillTypes[11], SILL_METAL_1,		! Metal Sheet / Metallfensterbank 1.1 (CHE)
+					13,	stSillTypes[13], SILL_METAL_2,		! Metal Sheet 2 (CHE)
+					12,	stSillTypes[12], SILL_PARALLEL,		! Solid Parallel (CHE)
+					14,	stSillTypes[14], SILL_PARALLEL_2,	! Solid Parallel 2 (CHE)
+					15,	stSillTypes[15], SILL_SIMPLEBLOCK,	! Simple Block
+					16,	stSillTypes[16], SILL_BLOCK,		! Block Sill
+					17,	stSillTypes[17], SILL_DUTCH			! Dutch Profiled Sill
+		endif
+
+		y = y + 36 * bPopupControlForSillType
+		if bThresholdSillPage then
+			ui_pict_button ui_function, "...", "uiFunctionSill_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_ThresholdSill
+		else
+			if bUSASillPage then
+				ui_pict_button ui_function, "...", "uiFunctionSill_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Sill_USA
+			else
+				ui_pict_button ui_function, "...", "uiFunctionSill_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Sill
+			endif
+		endif
+	endif
+endif
+
+
+! ======================================================================
+! Board
+! ======================================================================
+
+if	bShowBoard then
+	__bCellPosition = iUiCellPosition_Board
+	__bEnableLineControls = _bUseLineControls
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+	if _bUseLineControls then
+		y = ySingleLine  + dyLineControls*numLineFeed
+	else
+		y = yCell
+	endif
+
+	if isWindow then
+		ui_style 0, 1
+		ui_infield{3} "gs_board_inside", x1, y, xJumpButton - x1 - 1, 19,
+				7, "",
+				1, 1,
+				0, 0, 0, 0,
+				"", st_uiFixtureFitting[12], 0,		! Board
+				"", st_uiFixtureFitting[12], 1		! Board
+		ui_style 0,0
+	else
+		ui_style 0, 1
+		ui_outfield st_uiFixtureFitting[12], x1, y+4, x2-x1-1, 15	! Board
+		ui_style 0, 0
+	
+		y = y + 25
+		numLineFeed = numLineFeed + 1
+
+		if iWindowShape = SHAPE_T | iWindowShape = SHAPE_ARCHED_T then
+			ui_infield{3} "gs_board_inside_sl_right", x1, y, 143, 19,
+					7, "",
+					1, 1,
+					0, 0, 0, 0,
+					"", st_uiFixtureFitting[7], 0,		! Under Sidelight 1
+					"", st_uiFixtureFitting[7], 1		! Under Sidelight 1
+
+			ui_infield{3} "gs_board_inside_sl_left", x1 + 145, y, 143, 19,
+					7, "",
+					1, 1,
+					0, 0, 0, 0,
+					"", st_uiFixtureFitting[8], 0,		! Under Sidelight 2
+					"", st_uiFixtureFitting[8], 1		! Under Sidelight 2
+		else
+			if iWindowShape = SHAPE_HALF_T_LEFT | iWindowShape = SHAPE_ARCHED_HALF_T_LEFT then
+				ui_infield{3} "gs_board_inside_sl_left", x1, y, 143, 19,
+						7, "",
+						1, 1,
+						0, 0, 0, 0,
+						"", st_uiFixtureFitting[9], 0,	! Under Sidelight
+						"", st_uiFixtureFitting[9], 1	! Under Sidelight
+			else
+				if iWindowShape = SHAPE_HALF_T_RIGHT | iWindowShape = SHAPE_ARCHED_HALF_T_RIGHT then
+					ui_infield{3} "gs_board_inside_sl_right", x1, y, 143, 19,
+						7, "",
+						1, 1,
+						0, 0, 0, 0,
+						"", st_uiFixtureFitting[9], 0,	! Under Sidelight
+						"", st_uiFixtureFitting[9], 1	! Under Sidelight
+				endif
+			endif
+		endif
+		numLineFeed = numLineFeed + 1
+	endif
+
+	if bUSASillPage then
+		ui_pict_button ui_function, "...", "uiFunctionBoard_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Sill_USA	
+	else
+		ui_pict_button ui_function, "...", "uiFunctionBoard_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_Board
+	endif
+endif
+
+! ======================================================================
+! Rail
+! ======================================================================
+
+if bShowRail then
+	__bCellPosition = iUiCellPosition_Rail
+	__bEnableLineControls = _bUseLineControls
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+
+	if _bUseLineControls then
+		y = ySingleLine  + dyLineControls*numLineFeed
+	else
+		y = yCell
+	endif
+
+	ui_style 0,1
+	if bSlidingLeaf | ((bUSARail | bNORRail) & bMultipanelDoor)then
+		stRail = st_uiFixtureFitting[17]	! Rail under Leaves | Leading Track USA
+	else
+		stRail = st_uiFixtureFitting[13]	! Rail
+	endif
+	ui_infield{3} "gs_door_rail", x1, y, xCellEnd-x1-1, 19,
+		7, "",
+		2,
+		1, 20, 20, 20, 20,
+		0, stRail, 0,
+		1, stRail, 1
+
+	numLineFeed = numLineFeed + 1
+	ui_style 0,0
+
+	y = y + 20
+
+	if (bUSARail | bNORRail) and not(bMultipanelDoor) then
+		ui_infield{3} "iRailPosition", x1, y, xJumpButton-x1, 19,
+				8, "",
+				1, 1,
+				0, 0, 0, 0,
+				"", stRailTypes[2], 1,		! Rail at Bottom
+				"", stRailTypes[3], 2,		! Rail at Top
+				"", stRailTypes[4], 3		! Rail at Top and Bottom
+	else
+		if bExtSlidingDoor | bPocketDoor then
+			ui_infield{3} "gs_door_rail_ext_m", x1, y, xJumpButton-x1, 19,
+					8, "",
+					1, 1,
+					0, 0, 0, 0,
+					"", stRailTypes[1], 1,		! Off
+					"", stRailTypes[2], 2,		! Rail at Bottom
+					"", stRailTypes[3], 3,		! Rail at Top
+					"", stRailTypes[4], 4		! Rail at Top and Bottom
+		endif
+	endif
+endif
+
+! ======================================================================
+! Custom Corner
+! ======================================================================
+
+if bShowCustomCorner then
+	__bCellPosition = iUiCellPosition_CustCorner
+	__bEnableLineControls = 0
+	gosub "cellOccupancy"
+	gosub "cellCoordinates"
+
+	dy = 25
+	y = yCell
+
+	ui_style 0,1
+	if ac_cw_function then
+		stCornerWindowTooltip = `Unchecking this option will prevent automatic corner window functions.`
+		ui_infield{3} "ac_corner_window", x1, y, xCellEnd-x1, 19,
+					7, "",
+					1, 1,
+					0, 0, 0, 0,
+					"", `Corner Window Function`, 0,
+					"", `Corner Window Function`, 1 ui_tooltip stCornerWindowTooltip
+
+		dy = 20
+		y = y + dy
+	endif
+
+	ui_outfield st_uiFixtureFitting[14], x1, y+4, xJumpButton-x1-1, 15	! Custom Corner
+	ui_pict_button ui_function, "...", "uiFunctionCustomCorner_flat_WMCC", xJumpButton, y, 36, 22, -iUiID_CustomCorner
+	ui_style 0,0
+
+	y = y + dy
+!	ui_infield{3} "bLeftCornerFunction", x1, y, xCellEnd - x1, 19,
+	ui_infield{3} "bLeftCornerFunction", x1, y, (xCellEnd - x1)/2-2, 19,
+		7, "",
+		2,
+		1, 20, 20, 20, 20,
+		0, st_uiFixtureFitting[16], 0,	! Left
+		1, st_uiFixtureFitting[16], 1	! Left
+
+!	y = y + dy
+!	ui_infield{3} "bRightCornerFunction", x1, y, xCellEnd - x1, 19,
+	ui_infield{3} "bRightCornerFunction", (xCellEnd + x1)/2, y, (xCellEnd - x1)/2-2, 19,
+		7, "",
+		2,
+		1, 20, 20, 20, 20,
+		0, st_uiFixtureFitting[15], 0,	! Right
+		1, st_uiFixtureFitting[15], 1	! Right
+
+		y = y + 20 - 22 - 2
+endif
+
+
+! ================================================================================
+! Separators
+! ===============================================================================
+_bFullHorizontalSep = 0
+
+if bShowCasing and _bCellOccupied_1 and _bCellOccupied_4 and _bCellOccupied_2 then
+	_bFullHorizontalSep = 1
+	ui_separator 0, pageStartY + 85, 444, pageStartY + 85
+endif
+
+if _bCellOccupied_1 and _bCellOccupied_4 then
+	if _bFullHorizontalSep then
+		ui_separator 222, pageStartY + 3, 222, pageStartY + 85-3
+		if not(_bUseLineControls) and _bCellOccupied_2 then
+			ui_separator 222, pageStartY + 85 + 6, 222, 264
+		endif
+	else
+		if _bCellOccupied_4 and _bCellOccupied_5 then
+			ui_separator 222 + 5, pageStartY + 85, 444, pageStartY + 85
+		endif
+		ui_separator 222, pageStartY + 5, 222, 264
+	endif
+endif
+
+if _bCellOccupied_5 and _bCellOccupied_6 and not(_bUseLineControls) then
+	ui_separator 222 + 5, pageStartY + 177, 444, pageStartY + 177
+endif
+
+
+! ================================================================================
+end
+! ================================================================================
+
+
+! --------------------------------------------------------------------------------
+! input parameters
+! __bCellPosition : containing actual parameter position number
+! output parameters
+! bCellOccupied_n: set to 1, if cell is used
+! --------------------------------------------------------------------------------
+"cellOccupancy":
+! --------------------------------------------------------------------------------
+	if __bCellPosition = POS_LEFT_TOP		then _bCellOccupied_1 = 1
+	if __bCellPosition = POS_LEFT_MIDDLE 	then _bCellOccupied_2 = 1
+	if __bCellPosition = POS_LEFT_BOTTOM	then _bCellOccupied_3 = 1
+	if __bCellPosition = POS_RIGHT_TOP		then _bCellOccupied_4 = 1
+	if __bCellPosition = POS_RIGHT_MIDDLE	then _bCellOccupied_5 = 1
+	if __bCellPosition = POS_RIGHT_BOTTOM	then _bCellOccupied_6 = 1
+return
+
+
+! --------------------------------------------------------------------------------
+! input parameters
+! __bCellPosition : containing actual parameter position number
+! __bEnableLineControls: T or ArchedT shape and single line parameter group
+! output parameters
+! x1: cell left coordinate
+! x2: end of popups or checkboxes
+! xJumpButton: start coordinate of jump button
+! xCellEnd: left border of cell
+! yCell: start y coordinate for cell
+! --------------------------------------------------------------------------------
+"cellCoordinates":
+! --------------------------------------------------------------------------------
+	if __bCellPosition = POS_LEFT_TOP | __bCellPosition = POS_RIGHT_TOP then
+		yCell = pageStartY
+	endif
+
+	if __bEnableLineControls then
+		ySingleLine = pageStartY + 95
+		dy = 30
+		x1 = 5
+		x2 = 222
+		x3 = x2+175
+		xJumpButton = 407
+		xCellEnd = x2		
+	else
+		if __bCellPosition = POS_LEFT_MIDDLE | __bCellPosition = POS_RIGHT_MIDDLE then
+			yCell = pageStartY + 88 + 5
+		endif
+		if __bCellPosition = POS_LEFT_BOTTOM | __bCellPosition = POS_RIGHT_BOTTOM then
+			yCell = pageStartY + 177 + 5
+			if __bCellPosition = iUiCellPosition_Board and not(bPopupControlForSillType) then
+			! USA window board controls are right under Sill controls
+				yCell = pageStartY + 88 + 5	 + 30
+			endif
+		endif
+		if __bCellPosition = POS_LEFT_TOP | __bCellPosition = POS_LEFT_MIDDLE | __bCellPosition = POS_LEFT_BOTTOM then
+			x1 = 5
+			x2 = x1+163
+			xJumpButton = x2 + 8
+			xCellEnd = 222
+		endif
+		if __bCellPosition = POS_RIGHT_TOP | __bCellPosition = POS_RIGHT_MIDDLE | __bCellPosition = POS_RIGHT_BOTTOM then
+			x1 = 222+10
+			x2 = x1+163
+			xJumpButton = x2 + 8
+			xCellEnd = 444
+		endif
+	endif
+return
+
+
+! --------------------------------------------------------------------------------
+"stackTop":
+! --------------------------------------------------------------------------------
+
+	ui_infield "gs_stack_top",		xPic+7+stx, y-20, 18, 19
+	if bEnableCasingAtGanging & gs_stack_top then
+		ui_infield "gs_trim_stack_top",		xPic+7+stx+20, y-20, 18, 19
+		ui_outfield st_uiFixtureFitting[1], xPic+7+stx+40, y-20+2, 40, 15, 4 * not(gs_trim_inside | gs_trim_outside)	! Casing
+	endif
+
+return
+
+
+! --------------------------------------------------------------------------------
+"stackLeft":
+! --------------------------------------------------------------------------------
+
+	ui_infield "gs_stack_left",	xPic-20, y+12+slx, 18, 19
+	if bEnableCasingAtGanging & gs_stack_left then
+		ui_infield "gs_trim_stack_left",	xPic-20, y+12+slx+20, 18, 19
+		ui_outfield st_uiFixtureFitting[1], xPic-62, y+12+slx+20+2, 40, 15, 4 * not(gs_trim_inside | gs_trim_outside)	! Casing
+	endif
+
+return
+
+
+! --------------------------------------------------------------------------------
+"stackRight":
+! --------------------------------------------------------------------------------
+
+	ui_infield "gs_stack_right",	xPic+35, y+12+srx, 18, 19
+	if bEnableCasingAtGanging & gs_stack_right then
+		ui_infield "gs_trim_stack_right",	xPic+35,	y+12+srx+20, 18, 19
+		ui_outfield st_uiFixtureFitting[1], xPic+35+20,	y+12+srx+20+2, 50, 15, 4 * not(gs_trim_inside | gs_trim_outside)	! Casing
+	endif
+
+return
+
+
+! --------------------------------------------------------------------------------
+"stackBottom":
+! --------------------------------------------------------------------------------
+
+	ui_infield "gs_stack_bottom",	xPic+7+sbx, y+42, 18, 19
+	if bEnableCasingAtGanging & gs_stack_bottom then
+		ui_infield "gs_trim_stack_bottom",	xPic+7+sbx+20, y+42, 18, 19
+		ui_outfield st_uiFixtureFitting[1], xPic+7+sbx+40, y+42+2, 40, 15, 4 * not(gs_trim_inside | gs_trim_outside)	! Casing
+	endif
+
+return
+
+
+
+
+
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_BWM>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_door_shape_0.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="2" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_door_shape_1.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="3" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_threshold_type_new.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="4" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_sill_type_new.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="5" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_0.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="6" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_1.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="7" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_11.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="8" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_door_shape_EllipseArch.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="9" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_HalfRound.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="10" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_Pentagon.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="11" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_QuartRound.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="12" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_window_shape_Triangle.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="13" path="uipicts/DW UI Macros/ui_FixturesFittings_m/ui_shutter_type_new.png">
+</GDLPict>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Keywords>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>25</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>-1</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Width"]]></Description>
+			<Value>1.8</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>1.5</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Integer Name="AC_WallContours">
+			<Description><![CDATA["Wall Contours (0-None,1-Full,2-Side,3-Length)"]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="AC_Hole_Hotspot_Control">
+			<Description><![CDATA["Hotspots 0-None,1-2D,2-3D,3-All"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>3</Value>
+		</Integer>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Automatic Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="AC_HoleSideMaterial">
+			<Description><![CDATA["Hole has Wall's Side Surface"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="AC_HoleMaterialCurved">
+			<Description><![CDATA["Hole Surface's Split is Curved in Curved Walls"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="ac_cw_function">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableCasing">
+			<Description><![CDATA["Enable/Disable Casing Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableGanging">
+			<Description><![CDATA["Enable/Disable Ganging Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableSill">
+			<Description><![CDATA["Enable/Disable Sill Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableThreshold">
+			<Description><![CDATA["Enable/Disable Threshold Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableShutter">
+			<Description><![CDATA["Enable/Disable Shutter Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableBoard">
+			<Description><![CDATA["Enable/Disable Board Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableRail">
+			<Description><![CDATA["Enable/Disable Rail Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableCustomCornerLeft">
+			<Description><![CDATA["Enable/Disable Left Corner Column Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableCustomCornerRight">
+			<Description><![CDATA["Enable/Disable Right Corner Column Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bForceToShowThresholdUI">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableCasingAtGanging">
+			<Description><![CDATA["Enable/Disable Casing at Ganging Function"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="iWindowShape">
+			<Description><![CDATA["Window Shape"]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Boolean Name="isWindow">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="isEmptyOpening">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bTShapedOpening">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bArchedTShapedOpening">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bD2Sliding">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bSlidingDoor">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bExtSlidingDoor">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bPocketDoor">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bSlidingLeaf">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bMultipanelDoor">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bThresholdSillPage">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bUSACasingPage">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bUSASillPage">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableCasingNORUI">
+			<Description><![CDATA["INT=1, NOR=2"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="iUiID_CasingOut">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_CasingIn">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_Casing_USA">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_Threshold">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_Sill">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_Sill_USA">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_ThresholdSill">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_Shutter">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_Board">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iUiID_CustomCorner">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<String Name="stThresholdTypes">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="19" SecondDimension="0">
+				<AVal Row="1"><![CDATA["Off"]]></AVal>
+				<AVal Row="2"><![CDATA["Normal"]]></AVal>
+				<AVal Row="3"><![CDATA["Extended"]]></AVal>
+				<AVal Row="4"><![CDATA["Extended Both Sides"]]></AVal>
+				<AVal Row="5"><![CDATA["Beneath Panel"]]></AVal>
+				<AVal Row="6"><![CDATA["Profiled"]]></AVal>
+				<AVal Row="7"><![CDATA["Style 1"]]></AVal>
+				<AVal Row="8"><![CDATA[""]]></AVal>
+				<AVal Row="9"><![CDATA["Style 2"]]></AVal>
+				<AVal Row="10"><![CDATA[""]]></AVal>
+				<AVal Row="11"><![CDATA[""]]></AVal>
+				<AVal Row="12"><![CDATA["Style 3"]]></AVal>
+				<AVal Row="13"><![CDATA[""]]></AVal>
+				<AVal Row="14"><![CDATA[""]]></AVal>
+				<AVal Row="15"><![CDATA["Simple"]]></AVal>
+				<AVal Row="16"><![CDATA["Sloping Extended"]]></AVal>
+				<AVal Row="17"><![CDATA["Metal"]]></AVal>
+				<AVal Row="18"><![CDATA["Extended to Opening Side"]]></AVal>
+				<AVal Row="19"><![CDATA[""]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="stSillTypes">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="17" SecondDimension="0">
+				<AVal Row="1"><![CDATA["Timber Sill"]]></AVal>
+				<AVal Row="2"><![CDATA["Brick Sill"]]></AVal>
+				<AVal Row="3"><![CDATA["Stone Sill"]]></AVal>
+				<AVal Row="4"><![CDATA["Ceramic Sill"]]></AVal>
+				<AVal Row="5"><![CDATA["Eternit Sill"]]></AVal>
+				<AVal Row="6"><![CDATA["Concrete Tub"]]></AVal>
+				<AVal Row="7"><![CDATA["Aluminum Sill"]]></AVal>
+				<AVal Row="8"><![CDATA["Solid Sill 1.1"]]></AVal>
+				<AVal Row="9"><![CDATA["Solid Sill 1.2"]]></AVal>
+				<AVal Row="10"><![CDATA["Solid Sill 2.2"]]></AVal>
+				<AVal Row="11"><![CDATA["Metal Sheet"]]></AVal>
+				<AVal Row="12"><![CDATA["Solid Parallel"]]></AVal>
+				<AVal Row="13"><![CDATA["Metal Sheet 2"]]></AVal>
+				<AVal Row="14"><![CDATA["Solid Parallel 2"]]></AVal>
+				<AVal Row="15"><![CDATA["Simple Block"]]></AVal>
+				<AVal Row="16"><![CDATA["Block Sill"]]></AVal>
+				<AVal Row="17"><![CDATA["Dutch Profiled Sill"]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="stSunShadeTypes">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="9" SecondDimension="0">
+				<AVal Row="1"><![CDATA["None"]]></AVal>
+				<AVal Row="2"><![CDATA["Decorative"]]></AVal>
+				<AVal Row="3"><![CDATA["Regular"]]></AVal>
+				<AVal Row="4"><![CDATA["Folding to Reveal"]]></AVal>
+				<AVal Row="5"><![CDATA["Folding to Wall Face"]]></AVal>
+				<AVal Row="6"><![CDATA["Sliding"]]></AVal>
+				<AVal Row="7"><![CDATA["Rolling"]]></AVal>
+				<AVal Row="8"><![CDATA["External Venetian Blinds"]]></AVal>
+				<AVal Row="9"><![CDATA["Venetian Blinds in Lintel"]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="stRailTypes">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1"><![CDATA["Off"]]></AVal>
+				<AVal Row="2"><![CDATA["Rail at Bottom"]]></AVal>
+				<AVal Row="3"><![CDATA["Rail at Top"]]></AVal>
+				<AVal Row="4"><![CDATA["Rail at Top and Bottom"]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="stNORCasingTypes">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="18" SecondDimension="0">
+				<AVal Row="1"><![CDATA["None"]]></AVal>
+				<AVal Row="2"><![CDATA["Sill only"]]></AVal>
+				<AVal Row="3"><![CDATA["Left only"]]></AVal>
+				<AVal Row="4"><![CDATA["Left, Sill"]]></AVal>
+				<AVal Row="5"><![CDATA["Right only"]]></AVal>
+				<AVal Row="6"><![CDATA["Right, Sill"]]></AVal>
+				<AVal Row="7"><![CDATA["Left, Right"]]></AVal>
+				<AVal Row="8"><![CDATA["Left, Right, Sill"]]></AVal>
+				<AVal Row="9"><![CDATA["Entablature only"]]></AVal>
+				<AVal Row="10"><![CDATA["Entablature, Sill"]]></AVal>
+				<AVal Row="11"><![CDATA["Entablature, Left"]]></AVal>
+				<AVal Row="12"><![CDATA["Entablature, Left, Sill"]]></AVal>
+				<AVal Row="13"><![CDATA["Entablature, Right"]]></AVal>
+				<AVal Row="14"><![CDATA["Entablature, Right, Sill"]]></AVal>
+				<AVal Row="15"><![CDATA["Entablature, Left, Right"]]></AVal>
+				<AVal Row="16"><![CDATA["Entablature, Left, Right, Sill"]]></AVal>
+				<AVal Row="17"><![CDATA["All"]]></AVal>
+				<AVal Row="18"><![CDATA["Simple Casing"]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="st_uiFixtureFitting">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="16" SecondDimension="0">
+				<AVal Row="1"><![CDATA["Casing"]]></AVal>
+				<AVal Row="2"><![CDATA["Outside"]]></AVal>
+				<AVal Row="3"><![CDATA["Inside"]]></AVal>
+				<AVal Row="4"><![CDATA["Ganging"]]></AVal>
+				<AVal Row="5"><![CDATA["Threshold"]]></AVal>
+				<AVal Row="6"><![CDATA["Sill"]]></AVal>
+				<AVal Row="7"><![CDATA["Under Sidelight 1"]]></AVal>
+				<AVal Row="8"><![CDATA["Under Sidelight 2"]]></AVal>
+				<AVal Row="9"><![CDATA["Under Sidelight"]]></AVal>
+				<AVal Row="10"><![CDATA["Under Door"]]></AVal>
+				<AVal Row="11"><![CDATA["Sunshade"]]></AVal>
+				<AVal Row="12"><![CDATA["Board"]]></AVal>
+				<AVal Row="13"><![CDATA["Rail"]]></AVal>
+				<AVal Row="14"><![CDATA["Custom Corner"]]></AVal>
+				<AVal Row="15"><![CDATA["Right"]]></AVal>
+				<AVal Row="16"><![CDATA["Left"]]></AVal>
+			</ArrayValues>
+		</String>
+		<Boolean Name="gs_trim_outside">
+			<Description><![CDATA["Casing Outside"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="iNORCasingType">
+			<Description><![CDATA["Casing Outside"]]></Description>
+			<Value>18</Value>
+		</Integer>
+		<String Name="atrav_cf">
+			<Description><![CDATA[""]]></Description>
+			<Value><![CDATA["None"]]></Value>
+		</String>
+		<Boolean Name="gs_trim_inside">
+			<Description><![CDATA["Casing Inside"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- gs_door_stack: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_door_stack">
+			<Description><![CDATA["Ganging"]]></Description>
+		</Title>
+		<Boolean Name="gs_stack_left">
+			<Description><![CDATA["Connection on the Left"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_stack_right">
+			<Description><![CDATA["Connection on the Right"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_stack_top">
+			<Description><![CDATA["Connection on the Top"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_stack_bottom">
+			<Description><![CDATA["Connection on the Bottom"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_stack_left_contour">
+			<Description><![CDATA["Show Wall Contour on Left Side"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_stack_right_contour">
+			<Description><![CDATA["Show Wall Contour on Right Side"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_trim_stack_top">
+			<Description><![CDATA["Casing at Ganging Top"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_trim_stack_left">
+			<Description><![CDATA["Casing at Ganging Left"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_trim_stack_right">
+			<Description><![CDATA["Casing at Ganging Right"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_trim_stack_botom">
+			<Description><![CDATA["Casing at Ganging Bottom"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bThreshold">
+			<Description><![CDATA["Threshold"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="iThresholdType">
+			<Description><![CDATA["Threshold Type"]]></Description>
+			<Value>1</Value>
+		</Integer>
+
+		<!-- gs_sill: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_sill">
+			<Description><![CDATA["Sill"]]></Description>
+		</Title>
+		<Integer Name="iSillType">
+			<Description><![CDATA["Sill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="gs_sill_outside">
+			<Description><![CDATA["Sill - Door"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="gs_sill_outside_sl_right">
+			<Description><![CDATA["Sill - Sidelight Side 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_sill_outside_sl_left">
+			<Description><![CDATA["Sill - Sidelight Side 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- gs_board: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_board">
+			<Description><![CDATA["Board"]]></Description>
+		</Title>
+		<Boolean Name="gs_board_inside">
+			<Description><![CDATA["Board"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_board_inside_sl_left">
+			<Description><![CDATA["Board - Sidelight 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_board_inside_sl_right">
+			<Description><![CDATA["Board - Sidelight 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- bSunshade: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Boolean Name="bSunshade">
+			<Description><![CDATA["Sunshade"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="gs_sunShade_iType">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+
+		<!-- gs_door_rail: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Boolean Name="gs_door_rail">
+			<Description><![CDATA["Rail"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="gs_door_rail_ext_m">
+			<Description><![CDATA["Rail"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Integer Name="iRailPosition">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Boolean Name="bUSARail">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bNORRail">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- customCorner: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="customCorner">
+			<Description><![CDATA["Custom Corner Function"]]></Description>
+		</Title>
+		<Boolean Name="ac_corner_window">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bLeftCornerFunction">
+			<Description><![CDATA["Left Corner"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bRightCornerFunction">
+			<Description><![CDATA["Right Corner"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+	</Parameters>
+</ParamSection>
+</Symbol>

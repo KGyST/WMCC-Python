@@ -1,0 +1,1352 @@
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="38D7C161-614B-45E5-9FF0-A3726F441B49" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>B2970E4C-8680-4061-8670-2F4B638F3953</MainGUID>
+</Ancestry>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+! ==================================================================
+! iProfilNumber:	internal number of the profil
+! ==================================================================
+
+RunAgainWith = 0
+RunAgainWithTemp = -1
+
+!if DEBUG then
+!	ActualProfNum = ShowAllFrom
+!endif
+
+"ComeBack":
+
+!if DEBUG then
+!	if ShowAllFrom>EPS then
+!		iProfilNumber = ActualProfNum
+!	endif
+!endif
+!
+!if RunAgainWith > EPS then 
+!	iProfilNumber = RunAgainWith
+!	RunAgainWith = 0 
+!endif
+
+
+!!!!!!!!************************************************ Profiles 
+!!!!!!!!************************************************ Profiles 
+!!!!!!!!************************************************ Profiles 
+
+GenType = Gen3D
+lodAct = iDetLevel3D
+
+gosub "GenerateProfile"
+
+!!!!!!*************************************   CHECK PROFILE STATUS
+!!!!!!*************************************   CHECK PROFILE STATUS
+
+AngleLimit = 60			!!! Over this Angle the Edsges will be Visible
+
+dim ContourPoly[][3]
+dim HolePoly[][3]
+
+pointContour = 1
+NextLine = 1
+
+for u=1 to nsp/3
+	if (pointContour)>EPS then 
+		ContourPoly[NextLine][1] = get(1)
+		ContourPoly[NextLine][2] = get(1)
+		ContourPoly[NextLine][3] = get(1)
+		NextLine = NextLine+1
+	else
+		HolePoly[NextLine][1] = get(1)
+		HolePoly[NextLine][2] = get(1)
+		HolePoly[NextLine][3] = get(1)
+		NextLine = NextLine+1
+	endif	
+
+	if pointContour then 
+		if ABS(ContourPoly[u][3]+1)<EPS then 
+			pointContour = 0
+			NextLine = 1
+		endif
+	endif
+next u
+
+ContPNum = vardim1(ContourPoly)
+HolePNum = vardim1(HolePoly)
+
+!!!!!!!!********************************************** Place Contour 
+for z=1 to ContPNum 
+	ShowPoint = 1
+	Status = ContourPoly[z][3]
+	if ABS(ContourPoly[z][3]-1)<EPS then Status = 1
+	if ABS(ContourPoly[z][3]+1)<EPS then Status = -1
+	
+	if ABS(ShowArcs)<EPS & ABS(Status+1)>EPS then 
+		if 	ABS(ContourPoly[z][3]-900)<EPS | ABS(ContourPoly[z][3]-901)<EPS |\
+			ABS(ContourPoly[z][3]-4000)<EPS | ABS(ContourPoly[z][3]-4001)<EPS \
+		then	   
+			ShowPoint = 0
+		endif
+
+		if z<ContPNum-1.5 then 
+			if ABS(ContourPoly[z+2][3]-4000)<EPS | ABS(ContourPoly[z+2][3]-4001)<EPS then
+				if ABS(ContourPoly[z+2][2])>=AngleLimit then Status = 0
+			endif
+		endif
+
+		if z>1.5 & z<ContPNum-1.5 then 
+			if ABS(ContourPoly[z-1][3]-4000)<EPS | ABS(ContourPoly[z-1][3]-4001)<EPS then
+				if ABS(ContourPoly[z-1][2])>=AngleLimit then Status = 0
+			endif
+		endif
+	endif
+
+	if ShowPoint then 
+		PUT ContourPoly[z][1], ContourPoly[z][2], Status
+	endif
+next z
+
+!!!!!!!!********************************************** Place Holes 
+if ShowHoles then 
+	for z = 1 to HolePNum 
+		ShowPoint = 1
+		Status = HolePoly[z][3]
+		if ABS(HolePoly[z][3]-1)<EPS then Status = 1
+		if ABS(HolePoly[z][3]+1)<EPS then Status = -1
+		
+		if ABS(ShowArcs)<EPS & ABS(Status+1)>EPS then 
+			if 	ABS(HolePoly[z][3]-900)<EPS | ABS(HolePoly[z][3]-901)<EPS |\
+				ABS(HolePoly[z][3]-4000)<EPS | ABS(HolePoly[z][3]-4001)<EPS \
+			then	   
+				ShowPoint = 0
+				if (ABS(HolePoly[z][3]-900)<EPS | ABS(HolePoly[z][3]-901)<EPS) & ABS(HolePoly[z][2]) >= AngleLimit then Status = 0
+			endif
+		
+			if z<HolePNum-1.5 then 
+				if ABS(HolePoly[z+2][3]-4000)<EPS | ABS(HolePoly[z+2][3]-4001)<EPS then
+					if ABS(HolePoly[z+2][2]) >= AngleLimit then Status = 0 
+				endif
+			endif
+
+			if z>1.5 & z<HolePNum-1.5 then 
+				if ABS(HolePoly[z-1][3]-4000)<EPS | ABS(HolePoly[z-1][3]-4001)<EPS then
+					if ABS(HolePoly[z-1][2])>=AngleLimit then Status = 0
+				endif
+			endif
+		endif
+	
+		if ShowPoint then 
+			PUT HolePoly[z][1], HolePoly[z][2], Status
+		endif
+	next z
+endif
+
+!!!!!!*************************************   EDGE DRAWING IN SIMPLE
+IF (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+
+	dim SimplePoly[][3]
+
+	NextLine = 1
+	for u=1 to nsp/3
+		SimplePoly[u][1] = get(1)
+		SimplePoly[u][2] = get(1)
+		if	use(1) > -1 &\
+			fra(use(1) / 2) > eps then
+			SimplePoly[u][3] = get(1) - 1
+		else
+			SimplePoly[u][3] = get(1)
+		endif
+	next u
+
+	for u=1 to vardim1(SimplePoly)
+		PUT	SimplePoly[u][1], SimplePoly[u][2],  SimplePoly[u][3]
+	next u
+endif
+
+!!!!!!*************************************   EDIT PROFILE VALUES
+!!!!!!*************************************   EDIT PROFILE VALUES
+
+if MirrorProfileX then gosub "MirrorProfileX"
+if MirrorProfileY then gosub "MirrorProfileY"
+if ABS(RotProfile)>EPS then gosub "RotateProfile"
+if ABS(MoveX)>EPS | ABS(MoveY)>EPS then gosub "MoveProfile"
+
+MoveXHere = 0
+MoveYHere = 0
+
+!!!!!!*************************************   IF PROFILE is REPLACED with ANOTHER one
+!!!!!!*************************************   IF PROFILE is REPLACED with ANOTHER one
+
+!if RunAgainWith then 
+!	RunAgainWithTemp = iProfilNumber 
+!	goto "ComeBack"
+!
+!else
+!	if RunAgainWithTemp>EPS then 
+!		iProfilNumber = RunAgainWithTemp
+!		RunAgainWithTemp = -1
+!
+!		MoveXHere = 0
+!		MoveYHere = 0
+!		MirrorProfileX = 0
+!		MirrorProfileY = 0
+!		RotProfile = 0
+!	endif
+!endif
+
+ProfilNum = nsp/3
+
+gosub "PlaceFrameGroup"
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+! ==================================================================
+! iProfilNumber:	internal number of the profil
+! ==================================================================
+
+RunAgainWith = 0
+RunAgainWithTemp = -1
+
+!if DEBUG then
+!	ActualProfNum = ShowAllFrom
+!endif
+
+"ComeBack":
+
+!if DEBUG then
+!	if ShowAllFrom>EPS then
+!		iProfilNumber = ActualProfNum
+!	endif
+!endif
+
+if RunAgainWith > EPS then 
+	iProfilNumber = RunAgainWith
+	RunAgainWith = 0 
+endif
+
+!!!!!!!!************************************************ Frame Profiles 
+!!!!!!!!************************************************ Frame Profiles 
+!!!!!!!!************************************************ Frame Profiles 
+
+GenType = Gen2D
+lodAct = iDetLevel2D
+gosub "GenerateProfile"
+
+!!!!!!*************************************   EDIT PROFILE VALUES
+!!!!!!*************************************   EDIT PROFILE VALUES
+
+if MirrorProfileX then gosub "MirrorProfileX"
+if MirrorProfileY then gosub "MirrorProfileY"
+if ABS(RotProfile)>EPS then gosub "RotateProfile"
+if ABS(MoveX)>EPS | ABS(MoveY)>EPS then gosub "MoveProfile"
+
+!!!!!!*************************************   IF PROFILE is REPLACED with ANOTHER one
+!!!!!!*************************************   IF PROFILE is REPLACED with ANOTHER one
+
+if RunAgainWith then 
+	RunAgainWithTemp = iProfilNumber 
+	goto "ComeBack"
+else
+	if RunAgainWithTemp>EPS then 
+		iProfilNumber = RunAgainWithTemp
+		RunAgainWithTemp = -1
+
+		MoveX = 0
+		MoveY = 0
+		MirrorProfileX = 0
+		MirrorProfileY = 0
+		RotProfile = 0
+	endif
+endif
+
+!!!!!!!!*************************************   Always draw contour in 2D
+
+dim ContourAlwPoly[][3]
+
+for zz = 1 to nsp/3
+	ContourAlwPoly[zz][1] = get(1)
+	ContourAlwPoly[zz][2] = get(1)
+	ContourAlwPoly[zz][3] = get(1)
+
+	if ContourAlwPoly[zz][3] = 0 then
+		ContourAlwPoly[zz][3] = 1
+	endif
+next zz
+
+for zz = 1 to vardim1(ContourAlwPoly)
+	put ContourAlwPoly[zz][1]
+	put ContourAlwPoly[zz][2]
+	put ContourAlwPoly[zz][3]
+next zz
+
+if bDontDraw then end
+
+gosub "PlaceFrameGroup"
+
+
+
+
+
+
+
+
+
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+EPS = 0.0001  
+
+GenType = 1
+!GenType 
+Gen2D = 2
+Gen3D = 3
+
+! iDetLevel2D
+	DETLEVEL_2D_MVO		= -2
+	DETLEVEL_2D_SCALE	= -1
+	DETLEVEL_2D_OFF		= 0
+	DETLEVEL_2D_10		= 10
+	DETLEVEL_2D_50		= 50
+	DETLEVEL_2D_100		= 100
+	DETLEVEL_2D_200		= 200
+
+! iDetLevel3D
+	DETLEVEL_3D_MVO		= -2
+	DETLEVEL_3D_SCALE	= -1
+	DETLEVEL_3D_OFF		= 0
+	DETLEVEL_3D_10		= 10
+	DETLEVEL_3D_50		= 50
+	DETLEVEL_3D_100		= 100
+
+! Profile array indexes
+	PAI_PRNUM		= 1
+	PAI_MOVX		= 2
+	PAI_MOVY		= 3
+	PAI_ROT			= 4
+	PAI_MIRRX		= 5
+	PAI_MIRRY		= 6
+	PAI_STARTOFFS	= 7
+	PAI_ENDOFFS		= 8
+	PAI_MAT			= 9
+	PAI_STARTROT	= 10
+	PAI_ENDROT		= 11
+	PAI_FILL		= 12
+
+! Fill/contour array column positions as seen in sect_attrs
+	FP_BGPEN		= 1		! Background pen
+	FP_FGPEN		= 2		! Foreground pen
+	FP_CONTPEN		= 3		! Contour pen
+	FP_FILL			= 4		! Type
+	FP_LTYPE		= 5		! Linetype
+
+! iType3D
+	MAT_IN			= 1		! Inner side surface
+	MAT_OUT			= 2		! Outer side surface
+	MAT_SHUTBOX		= 3		! Shutter box
+	MAT_STEEL		= 4 	! Steel surface
+	MAT_SEALANT		= 5		! Sealant surface
+	MAT_THERMAL		= 6		! Thermal blocker
+	MAT_GLASSBACK 	= 7		! Glassback
+	MAT_BRUSH		= 8		! Brush
+	MAT_GLASS		= 9		! Glass surface
+	MAT_HANDLE		= 10	! Operator (handle, hinge) surfaces
+	MAT_THRESHOLD	= 11	! Threshold
+	MAT_SASH_IN		= 12	! Sash inner, if differs from frame
+	MAT_SASH_OUT	= 13	! Sash outer, if differs from frame
+	MAT_FOAM 		= 14 	! Foam fillings
+	MAT_SHUTSLAT	= 15	! Shutter slats
+	
+!iProfilNumber ----------------------------------------------------------------
+
+BO18_FRAME_OUT		= 1
+BO18_FRAME_IN		= 2
+
+BO18_LEAF_OUT		= 101
+BO18_LEAF_IN		= 102
+
+BO18_SEAL_1			= 201
+BO18_SEAL_2			= 202
+
+! -----------------------------------------------------------------------------
+
+BoundingRotHere = BoundingRot
+
+iProfilNumber 	= int(ProfArr[PAI_PRNUM]) !TODO makes problems since it's not an integer but a float
+MoveX			= ProfArr[PAI_MOVX]
+MoveY 			= ProfArr[PAI_MOVY]
+RotProfile		= ProfArr[PAI_ROT]
+MirrorProfileX 	= int(ProfArr[PAI_MIRRX])
+MirrorProfileY 	= int(ProfArr[PAI_MIRRY])
+
+goto "endMaster" 
+
+!!!!!!!*********************************************************  Mirror Profile X
+"MirrorProfileX":
+	if MirrorProfileX then 
+		dim StartPoints[][2]
+		dim StartStats[]
+
+		for u=1 to nsp/3
+			StartPoints[u][1] 	= -1*get(1)
+			StartPoints[u][2] 	= get(1)
+			if ABS(use(1)-4000)<EPS | ABS(use(1)-4001)<EPS then 
+				StartPoints[u][2] = -1*StartPoints[u][2]
+			endif
+			StartStats[u] 		= get(1)
+		next u	
+
+		for t=1 to VARDIM1(StartPoints)
+			PUT StartPoints[t][1], StartPoints[t][2], StartStats[t]
+		next t
+	endif
+return
+
+!!!!!!!*********************************************************  Mirror Profile Y
+"MirrorProfileY":
+	if MirrorProfileY then 
+		dim StartPoints[][2]
+		dim StartStats[]
+
+		for u=1 to nsp/3
+			StartPoints[u][1] 	= get(1)
+			StartPoints[u][2] 	= -1*get(1)
+			StartStats[u] 		= get(1)
+		next u	
+
+		for t=1 to VARDIM1(StartPoints)
+			PUT StartPoints[t][1], StartPoints[t][2], StartStats[t]
+		next t
+	endif
+return
+
+!!!!!!!*********************************************************  Mirror Profile Y
+"MoveProfile":
+	if ABS(MoveX)>EPS | ABS(MoveY)>EPS then 
+		dim StartPoints[][2]
+		dim StartStats[]
+
+		for u=1 to nsp/3
+			StartPoints[u][1] 	= get(1)+MoveX
+			StartPoints[u][2] 	= get(1)+MoveY
+			StartStats[u] 		= get(1)
+		next u	
+
+		for t=1 to VARDIM1(StartPoints)
+			PUT StartPoints[t][1], StartPoints[t][2], StartStats[t]
+		next t
+	endif
+return
+
+"RotateProfile":
+!!!!!!!*********************************************************  Rotate Profile around Z
+	if ABS(RotProfile)>EPS then 
+		dim StartPoints[][2]
+		dim StartStats[]
+		MinPosX = 10000
+		MaxPosX = -10000
+		MinPosY = 10000
+		MaxPosY = -10000
+
+		for u=1 to nsp/3
+			StartPoints[u][1] 	= get(1)
+			StartPoints[u][2] 	= get(1)
+			StartStats[u] 		= get(1)
+		
+			if 	ABS(StartStats[u]-900)>EPS and ABS(StartStats[u]-901)>EPS &\
+				ABS(StartStats[u]-4000)>EPS and ABS(StartStats[u]-4001)>EPS \
+			then
+				if MinPosX > StartPoints[u][1] then MinPosX  = StartPoints[u][1]
+				if MaxPosX < StartPoints[u][1] then MaxPosX  = StartPoints[u][1]
+				if MinPosY > StartPoints[u][2] then MinPosY  = StartPoints[u][2]
+				if MaxPosY < StartPoints[u][2] then MaxPosY  = StartPoints[u][2]
+			endif
+		next u	
+		
+		MoveRotX = 0 
+		MoveRotY = 0
+
+		if BoundingRotHere then 
+			MoveRotX = (MinPosX+MaxPosX)/2  
+			MoveRotY = (MinPosY+MaxPosY)/2  
+		endif
+
+		for w=1 to VARDIM1(StartPoints)
+			Dx1=0 	: 	Dy1=0 
+			Dx2=StartPoints[w][1]-MoveRotX   	:	Dy2=StartPoints[w][2]-MoveRotY 
+			
+			if ABS(StartStats[w]-4000)>EPS and ABS(StartStats[w]-4001)>EPS then   
+				gosub "CalculateVectorAngle"
+	
+				TempL = SQR((Dx2-Dx1)**2+(Dy2-Dy1)**2)		
+		
+				StartPoints[w][1] = MoveRotX+TempL*cos(Alfa+RotProfile)
+				StartPoints[w][2] = MoveRotY+TempL*sin(Alfa+RotProfile)
+			endif
+		next w
+	
+		for t=1 to VARDIM1(StartPoints)
+			PUT StartPoints[t][1], StartPoints[t][2], StartStats[t]
+		next t			
+		
+	endif
+return
+
+! ==============================================================================
+! Calculate Vector Angle
+! ------------------------------------------------------------------------------
+! Input variables:
+!	Dx1, Dy1, Dx2, Dy2  :   Vector
+!
+! Output variables:
+!	Alfa:				angle 		
+! ==============================================================================
+"CalculateVectorAngle":
+	Alfa = -1000
+
+	if ABS((Dx2-Dx1))>EPS then  
+		Alfa = ATN((Dy2-Dy1)/(Dx2-Dx1))		  
+		if (Dx2-Dx1)<EPS then Alfa = Alfa+180
+	else
+		Alfa = 0
+		if Dy2>Dy1 then Alfa = 90
+		if Dy2<Dy1 then Alfa = 270
+	endif
+	if Alfa >360 then Alfa = Alfa-360
+return
+
+! ==============================================================================
+! GenerateProfile
+! ------------------------------------------------------------------------------
+! Input variables:
+!	iProfilNumber - Profile number
+!
+! Output variables:
+!	Coordinates in Stock	
+! ==============================================================================
+"GenerateProfile":
+	IF iProfilNumber = BO18_FRAME_OUT THEN
+		IF (lodAct>=DETLEVEL_2D_100 & GenType=Gen2D) | (lodAct>=DETLEVEL_3D_100 & GenType=Gen3D) THEN	! 1:100
+			put 0, -5.482119861282E-017,0,
+				0,        0.04,0,
+				-0.115,        0.04,0,
+				-0.115, -4.747331781793E-017,0,
+				0, -5.482119861282E-017,0
+		ENDIF
+		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+			put 0, -5.482119861282E-017,0,
+				0,        0.028,0,
+				-0.04,        0.028,0,
+				-0.04, -4.747331781793E-017,0,
+				0, -5.482119861282E-017,0
+		ENDIF
+		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+			put 5.510910596163E-019,        0.003,0,
+				4.592425496803E-018,        0.025,1,
+				-0.003,        0.025,    900, 
+				0,           90,4001,
+				-0.04,        0.028,0,
+				-0.04, 7.347880794884E-018,0,
+				-0.003, 5.510910596163E-019,1,
+				-0.003,        0.003,    900, 
+				0,           90,   4001
+		ENDIF
+	ENDIF
+
+	IF iProfilNumber = BO18_FRAME_IN THEN
+		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+			put -0.04, -4.747331781793E-017,0,
+				-0.04,         0.04,0,
+				-0.115,         0.04,0,
+				-0.115, -3.369604132753E-017,0,
+				-0.04, -4.747331781793E-017,0
+		ENDIF
+		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+			put -0.04, 7.347880794884E-018,0,
+				-0.04,         0.04,0,
+				-0.112,         0.04,1,
+				-0.112,        0.037,    900, 
+				0,           90,4001,
+				-0.115,        0.003,1,
+				-0.112,        0.003,    900, 
+				0,           90,4001,
+				-0.04, 7.347880794884E-018,0
+		ENDIF
+	ENDIF
+
+	IF iProfilNumber = BO18_LEAF_OUT THEN
+		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+			put	0,            0,0,
+				0,         0.04,0,
+				-0.006,         0.04,0,
+				-0.006,         0.03,0,
+				-0.018,         0.03,0,
+				-0.018,            0,0,
+				0,            0,0
+		ENDIF
+		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+			put	1.714505518806E-018,        0.002,0,
+				1.714505518806E-018,        0.038,1,
+				-0.002,        0.038,    900, 
+				0,           90,   4001, 
+				-0.006,         0.04,0,
+				-0.006,         0.03,0,
+				-0.018,         0.03,0,
+				-0.018, 5.551115123126E-017,0,
+				-0.002, 5.551115123126E-017,1,
+				-0.002,        0.002,    900, 
+				0,           90,   4001
+		ENDIF
+	ENDIF
+
+	IF iProfilNumber = BO18_LEAF_IN THEN
+		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+			put -0.018,            0,0,
+				-0.018,         0.03,0,
+				-0.03,         0.03,0,
+				-0.03,         0.04,0,
+				-0.036,         0.04,0,
+				-0.036,            0,0,
+				-0.018,            0,0
+		ENDIF
+		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+			put -0.018, 5.551115123126E-017,0,
+				-0.018,         0.03,0,
+				-0.03,         0.03,0,
+				-0.03,         0.04,0,
+				-0.034,         0.04,1,
+				-0.034,        0.038,    900, 
+				0,           90,   4001, 
+				-0.036,        0.002,1,
+				-0.034,        0.002,    900, 
+				0,           90,   4001, 
+				-0.018, 5.551115123126E-017,0
+		ENDIF
+	ENDIF
+
+	IF iProfilNumber = BO18_SEAL_1 THEN
+!		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+!			put 
+!		ENDIF
+		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+			put -0.04,        0.028,0,
+				-0.036,        0.028,0,
+				-0.036,         0.04,0,
+				-0.04,         0.04,0,
+				-0.04,        0.028,0
+		ENDIF
+	ENDIF
+
+	IF iProfilNumber = BO18_SEAL_2 THEN
+!		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+!			put 
+!		ENDIF
+		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+			put -0.006,         0.04,0,
+				-0.009,         0.04,0,
+				-0.009,        0.034,0,
+				-0.006,        0.034,0,
+				-0.006,         0.04,0
+		ENDIF
+	ENDIF
+return
+
+! ................................................................................................................
+
+
+
+
+!	IF iProfilNumber = xxx THEN
+!!		IF (lodAct>=DETLEVEL_2D_100 & GenType=Gen2D) | (lodAct>=DETLEVEL_3D_100 & GenType=Gen3D) THEN	! 1:100
+!!			put \
+!!		ENDIF
+!		IF (lodAct=DETLEVEL_2D_50 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_50 & GenType=Gen3D) THEN	! 1:50
+!			put \
+!		ENDIF
+!		IF (lodAct=DETLEVEL_2D_10 & GenType=Gen2D) | (lodAct=DETLEVEL_3D_10 & GenType=Gen3D)  THEN	! 1:1
+!			put \
+!		ENDIF
+!	ENDIF
+
+
+!!!!!!************************************************ Profile END
+
+
+
+
+! ==============================================================================
+! Calculate VECTOR Angle Normal Angle
+! ------------------------------------------------------------------------------
+
+"VectorAngle":
+	!!!  INCOMING: dx, dy
+	!!!  RETURNING: VectAng
+		
+	VectAng = 90
+	if ABS(dx)>EPS then 
+		VectAng = ATN(dy/dx)
+		if VectAng>0 and dx<EPS then VectAng = VectAng+180
+		if VectAng<=0 and dx<EPS then VectAng = VectAng+180
+	else
+		if dy>EPS then 
+			VectAng = 90 
+		else
+			VectAng = 270 
+		endif
+	endif
+
+	if VectAng<EPS then VectAng=VectAng+360
+return
+
+
+!!!!!!!!!!!!!!!!!*********************************************************** Place FrameGroup
+"PlaceFrameGroup":
+		MatProfArr = ProfArr[PAI_MAT]
+
+		MATERIAL materialS[MatProfArr]
+
+
+		StartOffset = ProfArr[PAI_STARTOFFS] : EndOffset = ProfArr[PAI_ENDOFFS]
+
+	!!!!!********************************************************* HOTSPOT (OFFSET START)
+	if GLOB_SCRIPT_TYPE = 3 then
+	!3D---------------------------------
+		dx = TubeCoordS[2][1] - TubeCoordS[3][1] 	: dy= TubeCoordS[2][2] - TubeCoordS[3][2]
+		gosub "VectorAngle"
+		AngleXYStart = VectAng
+
+		dx = TubeCoordS[1][1] - TubeCoordS[2][1] 	: dy= TubeCoordS[1][2] - TubeCoordS[2][2]
+		gosub "VectorAngle"
+		AngleXYStart3 = VectAng
+
+		ANGLE_MAX =  120
+		ANGLE_MIN = -120
+
+		AngleXYStart2 = AngleXYStart3 - 2 * ProfArr[PAI_STARTROT]
+
+!		if AngleXYStart2 > ANGLE_MAX then AngleXYStart2  = ANGLE_MAX
+!		if AngleXYStart2 < ANGLE_MIN then AngleXYStart2  = ANGLE_MIN
+
+		DL = SQR((TubeCoordS[3][1] - TubeCoordS[2][1])**2+(TubeCoordS[3][2]-TubeCoordS[2][2])**2)
+		dx = DL  : dy= TubeCoordS[3][3]-TubeCoordS[2][3]
+		gosub "VectorAngle"
+		AngleZStart = VectAng
+
+		!!!!!********************************************************* HOTSPOT (OFFSET END)
+
+		dx = TubeCoordS[PathNum-1][1] - TubeCoordS[PathNum-2][1] 	: dy= TubeCoordS[PathNum-1][2] - TubeCoordS[PathNum-2][2]
+		gosub "VectorAngle"
+		AngleXYEnd = VectAng
+
+		dx = TubeCoordS[PathNum  ][1] - TubeCoordS[PathNum-1][1] 	: dy= TubeCoordS[PathNum  ][2] - TubeCoordS[PathNum-1][2]
+		gosub "VectorAngle"
+		AngleXYEnd3 = VectAng
+
+		AngleXYEnd2 		= AngleXYEnd3 + 2 * ProfArr[PAI_ENDROT]
+
+!		if AngleXYEnd2 	> ANGLE_MAX then AngleXYEnd2 = ANGLE_MAX
+!		if AngleXYEnd2 	< ANGLE_MIN then AngleXYEnd2 = ANGLE_MIN
+		
+		DL = SQR((TubeCoordS[PathNum][1] - TubeCoordS[PathNum-1][1])**2+(TubeCoordS[PathNum][2] - TubeCoordS[PathNum-1][2])**2)
+		dx = DL  : dy= TubeCoordS[PathNum][3]-TubeCoordS[PathNum-1][3]
+		gosub "VectorAngle"
+		AngleZEnd = VectAng
+
+		for zz=1 to PathNum
+			DxMove = 0 : DyMove = 0 : Dzmove = 0
+
+			if zz = 1 then
+				DL1 	= SQR((TubeCoordS[2][1] - TubeCoordS[1][1])**2 + (TubeCoordS[2][2] - TubeCoordS[1][2])**2)
+				dxMove 	= -StartOffset * cos(AngleXYStart) * cos(AngleZStart) 	+ DL1 * (cos(AngleXYStart2) - cos(AngleXYStart3)) * cos(AngleZStart)
+				dyMove 	= -StartOffset * sin(AngleXYStart) * cos(AngleZStart) 	+ DL1 * (sin(AngleXYStart2) - sin(AngleXYStart3)) * cos(AngleZStart) 
+				dzMove 	= -StartOffset * sin(AngleZStart)
+			endif
+
+			if zz = 2 then 
+				dxMove = -StartOffset * cos(AngleXYStart) * cos(AngleZStart)
+				dyMove = -StartOffset * sin(AngleXYStart) * cos(AngleZStart)
+				dzMove = -StartOffset * sin(AngleZStart)
+			endif
+
+			if zz = PathNum - 1 then 
+				dxMove = -EndOffset * cos(AngleXYEnd) * cos(AngleZEnd)
+				dyMove = -EndOffset * sin(AngleXYEnd) * cos(AngleZEnd)
+				dzMove = -EndOffset * sin(AngleZEnd) 
+			endif
+
+			if zz = PathNum then 
+				DL2 = SQR((TubeCoordS[PathNum-1][1] - TubeCoordS[PathNum][1])**2+(TubeCoordS[PathNum-1][2]-TubeCoordS[PathNum][2])**2)
+				dxMove = -EndOffset * cos(AngleXYEnd) * cos(AngleZEnd) 			+ DL2 * (cos(AngleXYEnd2) - cos(AngleXYEnd3)) * cos(AngleZEnd) 
+				dyMove = -EndOffset * sin(AngleXYEnd) * cos(AngleZEnd) 			+ DL2 * (sin(AngleXYEnd2) - sin(AngleXYEnd3)) * cos(AngleZEnd) 
+				dzMove = -EndOffset * sin(AngleZEnd)
+			endif
+
+			PUT TubeCoordS[zz][1]+dxMove, TubeCoordS[zz][2]+dyMove, TubeCoordS[zz][3]+dzMove, TubeCoordS[zz][4]
+		next zz
+
+!TODO
+		! start mask
+		startCont	= 0
+		! check if the first 3 points are colinear
+		if	(ABS((TubeCoordS[2][1] - TubeCoordS[1][1]) * (TubeCoordS[3][2] - TubeCoordS[1][2]) - \
+				(TubeCoordS[3][1] - TubeCoordS[1][1]) * (TubeCoordS[2][2] - TubeCoordS[1][2])) < EPS) &\
+			(ABS((TubeCoordS[2][2] - TubeCoordS[1][2]) * (TubeCoordS[3][3] - TubeCoordS[1][3]) - \
+				(TubeCoordS[3][2] - TubeCoordS[1][2]) * (TubeCoordS[2][3] - TubeCoordS[1][3])) < EPS) &\
+			(ABS((TubeCoordS[3][1] - TubeCoordS[1][1]) * (TubeCoordS[2][3] - TubeCoordS[1][3]) - \
+				(TubeCoordS[2][1] - TubeCoordS[1][1]) * (TubeCoordS[3][3] - TubeCoordS[1][3])) < EPS) then
+			startCont	= 1
+		endif
+
+		! end mask
+		endCont	= 0
+		! check if the last 3 points are colinear
+		if	(ABS((TubeCoordS[PathNum-1][1] - TubeCoordS[PathNum][1]) * (TubeCoordS[PathNum-2][2] - TubeCoordS[PathNum][2]) - \
+				(TubeCoordS[PathNum-2][1] - TubeCoordS[PathNum][1]) * (TubeCoordS[PathNum-1][2] - TubeCoordS[PathNum][2])) < EPS) &\
+			(ABS((TubeCoordS[PathNum-1][2] - TubeCoordS[PathNum][2]) * (TubeCoordS[PathNum-2][3] - TubeCoordS[PathNum][3]) - \
+				(TubeCoordS[PathNum-2][2] - TubeCoordS[PathNum][2]) * (TubeCoordS[PathNum-1][3] - TubeCoordS[PathNum][3])) < EPS) &\
+			(ABS((TubeCoordS[PathNum-2][1] - TubeCoordS[PathNum][1]) * (TubeCoordS[PathNum-1][3] - TubeCoordS[PathNum][3]) - \
+				(TubeCoordS[PathNum-1][1] - TubeCoordS[PathNum][1]) * (TubeCoordS[PathNum-2][3] - TubeCoordS[PathNum][3])) < EPS) then
+			endCont	= 1
+		endif
+
+		TubeStatus = 1+2 + startCont * 16 + endCont * 32 + 128
+		
+		! is the section vertical (for texture coordination)?
+		bIsVertical	= 0
+		if	PathNum = 4 &\
+			abs(TubeCoordS[2][1] - TubeCoordS[3][1]) < EPS then
+			bIsVertical	= 1
+		endif
+		
+		
+		gosub "PlaceTube"
+	!/3D
+	endif
+
+	if GLOB_SCRIPT_TYPE = 2 then
+		!2D
+		!manipulating status codes
+		for i = 1 to nsp/3
+			a1 = get (1)
+			a2 = get (1)
+			a3 = get (1)
+			if a3 = 0 then
+				a3 = 1
+			endif 
+			put a1
+			put a2
+			put a3
+		next i
+		for profNum = 1 to vardim1(TubeCoordS)
+			add2 TubeCoordS[profNum][1], TubeCoordS[profNum][2]
+			mul2 TubeCoordS[profNum][3], 1
+				gosub "Place2DPolys"
+			del 2
+		next profNum
+		gosub "CleanStack"
+	endif
+return
+
+
+!!!!!!!************************************************************* Place Tube 
+!!!!!!!************************************************************* Place Tube 
+
+"PlaceTube": 
+!	print "iProfilNumber, PathNum, (3,4), nsp", iProfilNumber, PathNum, 3 * iProfilNumber + 4 * PathNum, nsp, TubeStatus
+
+		sect_attrs 	fFillS[ProfArr[PAI_FILL]] ,
+					pFillS[ProfArr[PAI_FILL]] [FP_BGPEN],
+					pFillS[ProfArr[PAI_FILL]] [FP_FGPEN],
+					pFillS[ProfArr[PAI_FILL]] [FP_CONTPEN],
+					lFillS[ProfArr[PAI_FILL]] 
+		
+		if nsp > 8 + 15 & ProfilNum > 2.5 then
+
+	!!!!!
+	!README If there is an error here, usually the leaf width/height is 0, worth of checking, this script is OK
+	!!!!!
+		TUBE ProfilNum, PathNum, TubeStatus,
+			get(nsp)
+
+		if nsp>EPS then gosub "CleanStack"
+		
+		rotz 90 * bIsVertical
+		gosub "baseTexture"
+		del 1
+		
+	else
+		gosub "CleanStack"
+	endif
+return
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+"Place2DPolys":
+	if nsp > 8 then
+		_fill~ = ProfArr[PAI_FILL]
+		pen  pFillS[_fill~][FP_CONTPEN]
+		line_type lFills[_fill~]
+		fill fFillS[_fill~]
+		mul2 1, -1
+			poly2_b nsp/3, 1+2, pFillS[_fill~][FP_FGPEN], pFillS[_fill~][FP_BGPEN],
+				use(nsp)
+		del 1
+	else
+		gosub "CleanStack"
+	endif
+return
+
+! ==============================================================================
+
+"CleanStack":
+	for z=1 to nsp
+		temp = get(1)
+	next z
+return
+
+! ==================================================================
+"baseTexture":
+! ==================================================================
+	base
+	vert 0,   0,   0	!#1
+	vert 0.1, 0,   0	!#3
+	vert 0,   0,   0.1	!#2
+	vert 0,   0.1, 0	!#4
+	coor 258, -1, -2, -3, -4
+	body -1 
+return
+
+"endMaster": 
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_BWM>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Keywords>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>25</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="Profil_ADS_A">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="A">
+			<Description><![CDATA["X Dimension"]]></Description>
+			<Value>0.1</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Y Dimension"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Z Dimension"]]></Description>
+			<Value>0.2</Value>
+		</Length>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.349</Value>
+		</Length>
+		<Integer Name="iProfilNumber">
+			<Description><![CDATA["Profil Number"]]></Description>
+			<Value>7</Value>
+		</Integer>
+		<Boolean Name="ShowHoles">
+			<Description><![CDATA["Show Holes"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="ShowArcs">
+			<Description><![CDATA["Show Arcs"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- EditProfile: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="EditProfile">
+			<Description><![CDATA["Edit Profile"]]></Description>
+		</Title>
+		<Length Name="MoveX">
+			<Description><![CDATA["Move Profile in X"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="MoveY">
+			<Description><![CDATA["Move Profile in Y"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="MirrorProfileX">
+			<Description><![CDATA["Mirror Profile X"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="MirrorProfileY">
+			<Description><![CDATA["Mirror Profile Y"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Angle Name="RotProfile">
+			<Description><![CDATA["Rotate Profile "]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Angle>
+		<Boolean Name="BoundingRot">
+			<Description><![CDATA["Rotate in Bounding Box"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="ProfArr">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="12" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">1</AVal>
+				<AVal Row="3">1</AVal>
+				<AVal Row="4">1</AVal>
+				<AVal Row="5">1</AVal>
+				<AVal Row="6">1</AVal>
+				<AVal Row="7">1</AVal>
+				<AVal Row="8">1</AVal>
+				<AVal Row="9">1</AVal>
+				<AVal Row="10">1</AVal>
+				<AVal Row="11">1</AVal>
+				<AVal Row="12">1</AVal>
+			</ArrayValues>
+		</Length>
+		<Integer Name="PathNum">
+			<Description><![CDATA[""]]></Description>
+			<Value>4</Value>
+		</Integer>
+		<Length Name="TubeCoordS">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="4" SecondDimension="4">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="3" Row="1">1</AVal>
+				<AVal Column="4" Row="1">0</AVal>
+				<AVal Column="1" Row="2">1</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+				<AVal Column="3" Row="2">1</AVal>
+				<AVal Column="4" Row="2">0</AVal>
+				<AVal Column="1" Row="3">2</AVal>
+				<AVal Column="2" Row="3">0</AVal>
+				<AVal Column="3" Row="3">1</AVal>
+				<AVal Column="4" Row="3">0</AVal>
+				<AVal Column="1" Row="4">3</AVal>
+				<AVal Column="2" Row="4">0</AVal>
+				<AVal Column="3" Row="4">1</AVal>
+				<AVal Column="4" Row="4">0</AVal>
+			</ArrayValues>
+		</Length>
+
+		<!-- Profil_ADS_sp0: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="Profil_ADS_sp0">
+			<Description><![CDATA["2D & 3D representation"]]></Description>
+		</Title>
+		<Integer Name="iDetLevel2D">
+			<Description><![CDATA["Level of Detail in 2D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="iDetLevel3D">
+			<Description><![CDATA["Level of Detail in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<PenColor Name="contPen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>7</Value>
+		</PenColor>
+		<FillPattern Name="fillType">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="fillPenFg">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>10</Value>
+		</PenColor>
+		<PenColor Name="fillPenBg">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>102</Value>
+		</PenColor>
+
+		<!-- DEBUG: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Boolean Name="DEBUG">
+			<Description><![CDATA["Debug Function"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="ShowAllFrom">
+			<Description><![CDATA["Show Profiles From"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>50</Value>
+		</Integer>
+		<Integer Name="ShowAllTo">
+			<Description><![CDATA["Show Profiles To"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>70</Value>
+		</Integer>
+		<Boolean Name="bDontDraw">
+			<Description><![CDATA["If set, don'd draw but fill up stroage"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- Arrays: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="Arrays">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		<PenColor Name="pFillS">
+			<Description><![CDATA["Fill pens"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="17" SecondDimension="3">
+				<AVal Column="1" Row="1">1</AVal>
+				<AVal Column="2" Row="1">1</AVal>
+				<AVal Column="3" Row="1">1</AVal>
+				<AVal Column="1" Row="2">0</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+				<AVal Column="3" Row="2">0</AVal>
+				<AVal Column="1" Row="3">0</AVal>
+				<AVal Column="2" Row="3">0</AVal>
+				<AVal Column="3" Row="3">0</AVal>
+				<AVal Column="1" Row="4">0</AVal>
+				<AVal Column="2" Row="4">0</AVal>
+				<AVal Column="3" Row="4">0</AVal>
+				<AVal Column="1" Row="5">0</AVal>
+				<AVal Column="2" Row="5">0</AVal>
+				<AVal Column="3" Row="5">0</AVal>
+				<AVal Column="1" Row="6">0</AVal>
+				<AVal Column="2" Row="6">0</AVal>
+				<AVal Column="3" Row="6">0</AVal>
+				<AVal Column="1" Row="7">0</AVal>
+				<AVal Column="2" Row="7">0</AVal>
+				<AVal Column="3" Row="7">0</AVal>
+				<AVal Column="1" Row="8">0</AVal>
+				<AVal Column="2" Row="8">0</AVal>
+				<AVal Column="3" Row="8">0</AVal>
+				<AVal Column="1" Row="9">0</AVal>
+				<AVal Column="2" Row="9">0</AVal>
+				<AVal Column="3" Row="9">0</AVal>
+				<AVal Column="1" Row="10">0</AVal>
+				<AVal Column="2" Row="10">0</AVal>
+				<AVal Column="3" Row="10">0</AVal>
+				<AVal Column="1" Row="11">0</AVal>
+				<AVal Column="2" Row="11">0</AVal>
+				<AVal Column="3" Row="11">0</AVal>
+				<AVal Column="1" Row="12">0</AVal>
+				<AVal Column="2" Row="12">0</AVal>
+				<AVal Column="3" Row="12">0</AVal>
+				<AVal Column="1" Row="13">0</AVal>
+				<AVal Column="2" Row="13">0</AVal>
+				<AVal Column="3" Row="13">0</AVal>
+				<AVal Column="1" Row="14">0</AVal>
+				<AVal Column="2" Row="14">0</AVal>
+				<AVal Column="3" Row="14">0</AVal>
+				<AVal Column="1" Row="15">0</AVal>
+				<AVal Column="2" Row="15">0</AVal>
+				<AVal Column="3" Row="15">0</AVal>
+				<AVal Column="1" Row="16">0</AVal>
+				<AVal Column="2" Row="16">0</AVal>
+				<AVal Column="3" Row="16">0</AVal>
+				<AVal Column="1" Row="17">0</AVal>
+				<AVal Column="2" Row="17">0</AVal>
+				<AVal Column="3" Row="17">0</AVal>
+			</ArrayValues>
+		</PenColor>
+		<FillPattern Name="fFillS">
+			<Description><![CDATA["Fill fill types"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="17" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+				<AVal Row="5">0</AVal>
+				<AVal Row="6">0</AVal>
+				<AVal Row="7">0</AVal>
+				<AVal Row="8">0</AVal>
+				<AVal Row="9">0</AVal>
+				<AVal Row="10">0</AVal>
+				<AVal Row="11">0</AVal>
+				<AVal Row="12">0</AVal>
+				<AVal Row="13">0</AVal>
+				<AVal Row="14">0</AVal>
+				<AVal Row="15">0</AVal>
+				<AVal Row="16">0</AVal>
+				<AVal Row="17">0</AVal>
+			</ArrayValues>
+		</FillPattern>
+		<LineType Name="lFillS">
+			<Description><![CDATA["Fill linetypes"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="17" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+				<AVal Row="5">0</AVal>
+				<AVal Row="6">0</AVal>
+				<AVal Row="7">0</AVal>
+				<AVal Row="8">0</AVal>
+				<AVal Row="9">0</AVal>
+				<AVal Row="10">0</AVal>
+				<AVal Row="11">0</AVal>
+				<AVal Row="12">0</AVal>
+				<AVal Row="13">0</AVal>
+				<AVal Row="14">0</AVal>
+				<AVal Row="15">0</AVal>
+				<AVal Row="16">0</AVal>
+				<AVal Row="17">0</AVal>
+			</ArrayValues>
+		</LineType>
+		<Material Name="materialS">
+			<Description><![CDATA["Materials' array"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="14" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">2</AVal>
+				<AVal Row="3">3</AVal>
+				<AVal Row="4">4</AVal>
+				<AVal Row="5">5</AVal>
+				<AVal Row="6">6</AVal>
+				<AVal Row="7">7</AVal>
+				<AVal Row="8">8</AVal>
+				<AVal Row="9">9</AVal>
+				<AVal Row="10">10</AVal>
+				<AVal Row="11">11</AVal>
+				<AVal Row="12">12</AVal>
+				<AVal Row="13">13</AVal>
+				<AVal Row="14">14</AVal>
+			</ArrayValues>
+		</Material>
+	</Parameters>
+</ParamSection>
+</Symbol>
