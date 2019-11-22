@@ -23,15 +23,15 @@ from lxml import etree
 
 #------------------ Temporary constants------------------
 
-DEBUG                       = True
+DEBUG                       = False
 OUTPUT_XML                  = False     # To retain xmls
-SOURCE_XML_DIR_NAME         = ".\DoorWindowTemplate\library"
-TARGET_GDL_DIR_NAME         = ".\Target"
-SOURCE_IMAGE_DIR_NAME       = ".\DoorWindowTemplate\library_images"
-ADDITIONAL_IMAGE_DIR_NAME   = ".\_IMAGES_GENERIC_"
+SOURCE_XML_DIR_NAME         = r".\archicad\DoorWindowTemplate\library"
+TARGET_GDL_DIR_NAME         = r".\archicad\Target"
+SOURCE_IMAGE_DIR_NAME       = r".\archicad\DoorWindowTemplate\library_images"
+ADDITIONAL_IMAGE_DIR_NAME   = r".\archicad\_IMAGES_GENERIC_"
 WMCC_BRAND_NAME             = "WMCC"
 NEW_BRAND_NAME              = "Test_Brand"
-ARCHICAD_LOCATION           = ".\Archicad"
+ARCHICAD_LOCATION           = r".\archicad\Archicad"
 
 BO_AUTHOR                   = "BIMobject"
 BO_LICENSE                  = "CC BY-ND"
@@ -40,8 +40,7 @@ BO_LICENSE_VERSION          = "3.0"
 TARGET_IMAGE_DIR_NAME       = "" #REMOVE
 TARGET_XML_DIR_NAME         = "" #REMOVE
 
-DATA_JSON                   = "window.json"
-TRANSLATIONS_JSON           = "translations.json"
+TRANSLATIONS_JSON           = r".\archicad\translations.json"
 
 #------------------/Temporary constants------------------
 
@@ -1284,29 +1283,3 @@ def startConversion():
         print("tempPicDir: %s" % tempPicDir)
 
     print("*****FINISHED SUCCESFULLY******")
-
-def main():
-    scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
-    scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
-
-    #--------------------------------------------------------
-
-    with open(DATA_JSON, "r") as dataJSON:
-        data = json.loads(dataJSON.read())
-        with open(TRANSLATIONS_JSON, "r") as translatorJSON:
-            translation = json.loads(translatorJSON.read())
-            for family in data['family_types']:
-                testDestItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
-
-                for parameter in family['parameters']:
-                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                    testDestItem.parameters[translatedParameter] = unitConvert(parameter, family['parameters'][parameter], translation)
-
-    #--------------------------------------------------------
-
-    startConversion()
-
-
-if __name__ == "__main__":
-    main()
-
