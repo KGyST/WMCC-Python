@@ -1116,7 +1116,6 @@ def unitConvert(inParameterName, inParameterValue, inTranslationLib):
             return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
                    _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
     elif inParameterName in {"Inner frame material", "Outer frame material"}:
-        #FIXME fixing it
         return 1
     else:
         return inParameterValue
@@ -1251,8 +1250,8 @@ def startConversion():
                 os.makedirs(os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].dirName))
                 shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].relPath))
 
-    print("x2l Command being executed...")
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, TARGET_GDL_DIR_NAME)
+    print(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:
         print("ac command:")

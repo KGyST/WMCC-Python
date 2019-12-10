@@ -30,7 +30,7 @@
     },
     "Inner frame material": {
       "ARCHICAD": {
-        "Name": "gs_frame_mat",
+        "Name": "sMaterialS",
         "Type": "PAR_STRING"
       },
       "Revit ENU": {
@@ -42,7 +42,7 @@
     },
     "Outer frame material": {
       "ARCHICAD": {
-        "Name": "gs_frame_mat_in",
+        "Name": "sMaterialS",
         "Type": "PAR_STRING"
       },
       "Revit ENU": {
@@ -50,6 +50,24 @@
       },
       "Revit GER": {
         "Name": "Außenmaterial"
+      }
+    },
+    "iRed": {
+      "ARCHICAD": {
+        "Name": "iRed",
+        "Type": "PAR_INT"
+      }
+    },
+    "iGreen": {
+      "ARCHICAD": {
+        "Name": "iGreen",
+        "Type": "PAR_INT"
+      }
+    },
+    "iBlue": {
+      "ARCHICAD": {
+        "Name": "iBlue",
+        "Type": "PAR_INT"
       }
     }
   }

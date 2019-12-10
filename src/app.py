@@ -10,6 +10,7 @@ from archicad.WMCC import (
     unitConvert,
     startConversion,
     TRANSLATIONS_JSON,
+    NEW_BRAND_NAME,
 )
 
 app = Flask(__name__)
@@ -29,16 +30,36 @@ class ArchicadEngine(Resource):
         # --------------------------------------------------------
         with open(TRANSLATIONS_JSON, "r") as translatorJSON:
             translation = json.loads(translatorJSON.read())
+
+            # ------ materials ------
+            availableMaterials = []
+            for material in data['materials']:
+                availableMaterials += [ material["material_name"] ]
+                materialMacro = addFileRecursively("RAL9003-White", targetFileName=material["material_name"] + "_" + NEW_BRAND_NAME)
+
+                for parameter in material['parameters']:
+                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                    materialMacro.parameters[translatedParameter] = unitConvert(
+                        parameter,
+                        material['parameters'][parameter],
+                        translation
+                    )
+                materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + NEW_BRAND_NAME
+
+            # ------ placeables ------
             for family in data['family_types']:
-                testDestItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
+                destItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
 
                 for parameter in family['parameters']:
                     translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                    testDestItem.parameters[translatedParameter] = unitConvert(
+                    destItem.parameters[translatedParameter] = unitConvert(
                         parameter,
                         family['parameters'][parameter],
                         translation
                     )
+                    # For now:
+                    destItem.parameters["sMaterialValS"] = availableMaterials
+
 
         # --------------------------------------------------------
         startConversion()
