@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="CFF2725E-BD09-4ED4-9558-8C1DC9FB19C7" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="62192A50-C069-4EAB-9C8F-8737F92F917A" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -6,12 +7,13 @@
 	<MainGUID>F6AE9687-2BC7-4D47-88C9-8F793E1DE2D6</MainGUID>
 	<MainGUID>4ABD0A6E-634B-4931-B3AA-9BEE01F35CDF</MainGUID>
 	<MainGUID>7DDE9DC4-66BD-41C8-8376-46D0B352F69B</MainGUID>
-	<MainGUID>84240918-5461-492B-B3FF-5F19600A4E40</MainGUID>
+	<MainGUID>412B4110-2F9F-44C5-9ECF-2DA2B1D7CA89</MainGUID>
 </Ancestry>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -372,11 +374,13 @@ end ac_unit_width,
 	bShowAddHotspots, bShowAddHotspotsForIS, bShowUnitHotspots
 
 
-]]></Script_3D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -1056,11 +1060,13 @@ end ac_unit_width,
 	bShowAddHotspots, bShowUnitHotspots,
 	bOneLineSymbolin2D
 
-]]></Script_2D>
+]]>
+</Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! const values for parameter: iDWDet2D
 DETLEVEL_DW2D_MVO     = 1
@@ -1320,7 +1326,7 @@ LEAF_2L_POCKET				= 27
 LEAF_1L_MULTIPANEL			= 28
 LEAF_1L_MULTIPANEL_M		= 29
 LEAF_2L_MULTIPANEL			= 30
-LEAF_REVOLVING				= 31
+LEAF_Revolving				= 31
 LEAF_3L_2SLIDING_CENTER		= 32
 LEAF_GAR_1L_UP_AND_OVER		= 100
 LEAF_GAR_1L_UP_SLIDING		= 101
@@ -3025,17 +3031,21 @@ if GLOB_SCRIPT_TYPE = 2 | GLOB_SCRIPT_TYPE = 3 then
 	endif
 endif
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! =============================================================================
 ! Localization
@@ -3919,11 +3929,13 @@ return
 	endif
 return
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! =============================================================================
@@ -4386,38 +4398,6 @@ if gs_bShowDemolitionPar then
 		lock "gs_wallhole_pen_bg"
 	endif
 endif
-
-
-! =============================================================================
-! Detail Level
-! =============================================================================
-
-values{2} "iDetLevel2D" \
-	DETLEVEL_2D_MVO,	`by MVO`,
-	DETLEVEL_2D_SCALE,	`Scale Sensitive`,
-	DETLEVEL_2D_OFF,	`Off`,
-	DETLEVEL_2D_10,		"1:10",
-	DETLEVEL_2D_50,		"1:50",
-	DETLEVEL_2D_100,	"1:100"!,
-!!	DETLEVEL_2D_200,	"1:200"
-
-values{2} "iDetLevel3D" \
-!!	DETLEVEL_3D_MVO,	`by MVO`,
-!	DETLEVEL_3D_SCALE,	`Scale Sensitive`,
-	DETLEVEL_3D_OFF,	`Off`,
-	DETLEVEL_3D_10,		"1:10",
-	DETLEVEL_3D_50,		"1:50",
-	DETLEVEL_3D_100,	"1:100"
-
-values{2} "iDetLevelSE" \
-!!	DETLEVEL_3D_MVO,	`by MVO`,
-	DETLEVEL_3D_SCALE,	`Scale Sensitive`,
-	DETLEVEL_3D_OFF,	`Off`,
-	DETLEVEL_3D_10,		"1:10",
-	DETLEVEL_3D_50,		"1:50",
-	DETLEVEL_3D_100,	"1:100"
-
-
 
 ! =============================================================================
 ! Show Reveal On Symbol
@@ -5094,7 +5074,8 @@ return
 
 
 
-]]></Script_VL>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -5105,233 +5086,89 @@ return
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
+		<MainGUID>BCD09056-2BE5-45E8-8657-6832EF89C718</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
+		<MainGUID>F7E58164-DE3A-4B64-AF84-03549DCA1936</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
+		<MainGUID>F66BFB4C-9034-48A8-8B35-EDE09EAA0A10</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
+		<MainGUID>829F96E1-26F5-49CB-91C9-78D53D81452D</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
+		<MainGUID>282D0591-EB61-47C2-9DBC-D2DBD0DF5B57</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["OpeningOptions_WMCC"]]></MName>
-		<MainGUID>03578FD9-97ED-4913-8595-5F8097A2B424</MainGUID>
+		<MainGUID>6C84434C-2CD2-49F7-A41C-70E3C9693015</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["WallholeStructure_WMCC"]]></MName>
-		<MainGUID>77A5D494-76AF-42BA-B426-690A9C11D280</MainGUID>
+		<MainGUID>48A25EE9-28AE-4831-855A-0BBAA289A392</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["WallholeFraming_WMCC"]]></MName>
-		<MainGUID>DB55765E-13F6-4123-91E5-56B09BA57211</MainGUID>
+		<MainGUID>1DFB00C4-E50D-4CFA-ACE0-C62225714407</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["LibraryGlobals13"]]></MName>
 		<MainGUID>9137124A-DDF2-4A06-A532-5FC0CE873258</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["OpeningOptions_WMCC"]]></MName>
-		<MainGUID>03578FD9-97ED-4913-8595-5F8097A2B424</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["WallholeStructure_WMCC"]]></MName>
-		<MainGUID>77A5D494-76AF-42BA-B426-690A9C11D280</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["WallholeFraming_WMCC"]]></MName>
-		<MainGUID>DB55765E-13F6-4123-91E5-56B09BA57211</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
-	</Macro>
-	<Macro>
 		<MName><![CDATA["ui_tabIDlistHierarchy_m_WMCC"]]></MName>
-		<MainGUID>83D8979A-C621-4A90-9F64-41CC8948B5F0</MainGUID>
+		<MainGUID>3DA571A9-4757-4D4B-9643-801FB12E3037</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["ui_FixturesFittings_m_WMCC"]]></MName>
-		<MainGUID>7D855D80-40F5-4FEE-95B5-E1209B05C9B3</MainGUID>
+		<MainGUID>9901239F-DB12-4269-B5D4-C5A3C3CEC1C4</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["ui_WallOpening_m_WMCC"]]></MName>
-		<MainGUID>C2CCB97D-32C0-4E7D-976E-FC5C8166A95E</MainGUID>
+		<MainGUID>95304628-9350-43DB-A72E-4144F875C3B0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["ui_NominalSizesWindow_m_WMCC"]]></MName>
-		<MainGUID>36CE1F1E-757B-49CD-A1BA-70FC8938234E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["WallholeStructure_WMCC"]]></MName>
-		<MainGUID>77A5D494-76AF-42BA-B426-690A9C11D280</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["WallholeFraming_WMCC"]]></MName>
-		<MainGUID>DB55765E-13F6-4123-91E5-56B09BA57211</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["OpeningOptions_WMCC"]]></MName>
-		<MainGUID>03578FD9-97ED-4913-8595-5F8097A2B424</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["WallholeStructure_WMCC"]]></MName>
-		<MainGUID>77A5D494-76AF-42BA-B426-690A9C11D280</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["WallholeFraming_WMCC"]]></MName>
-		<MainGUID>DB55765E-13F6-4123-91E5-56B09BA57211</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["OpeningOptions_WMCC"]]></MName>
-		<MainGUID>03578FD9-97ED-4913-8595-5F8097A2B424</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["GetDWSymbSettings_WMCC"]]></MName>
-		<MainGUID>E2E8A836-710B-423F-B892-2A2D41932CFA</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["PlasterGeometry_WMCC"]]></MName>
-		<MainGUID>1839B756-F35E-41FB-BC30-E9F03F27AFD4</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["RevealGeometry_WMCC"]]></MName>
-		<MainGUID>C152C1FA-DB10-4A76-83E1-CB855939957E</MainGUID>
-	</Macro>
-	<Macro>
-		<MName><![CDATA["FramingGeometry_WMCC"]]></MName>
-		<MainGUID>BF358EBE-7F1C-4541-A68F-8F474335FB60</MainGUID>
+		<MainGUID>A9205859-C315-4F1A-9761-E308DC68C1A6</MainGUID>
 	</Macro>
 </CalledMacros>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_FWM>
+]]>
+</Script_FWM>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
 </Keywords>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<HoleBits>
 			<WDBit_3DFrame/>
@@ -5947,7 +5784,7 @@ return
 				<ParFlg_Child/>
 				<ParFlg_Unique/>
 			</Flags>
-			<Value>0.48</Value>
+			<Value>0.3</Value>
 		</Length>
 		<Boolean Name="bRightCornerFunction">
 			<Description><![CDATA["Right Corner"]]></Description>
@@ -5976,7 +5813,7 @@ return
 				<ParFlg_Child/>
 				<ParFlg_Unique/>
 			</Flags>
-			<Value>0.48</Value>
+			<Value>0.3</Value>
 		</Length>
 		<Integer Name="iCornerConnTypeRight">
 			<Description><![CDATA["Right Corner Connection Type"]]></Description>
@@ -6956,7 +6793,7 @@ return
 				<ParFlg_Child/>
 				<ParFlg_Unique/>
 			</Flags>
-			<Value>0.51</Value>
+			<Value>0.33</Value>
 		</Length>
 		<Length Name="gs_board_thk">
 			<Description><![CDATA["Board Thickness"]]></Description>
@@ -10489,4 +10326,5 @@ return
 		</Length>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

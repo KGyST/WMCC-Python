@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="77A5D494-76AF-42BA-B426-690A9C11D280" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="48A25EE9-28AE-4831-855A-0BBAA289A392" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -8,7 +9,8 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! ==============================================================================
@@ -456,11 +458,13 @@ endif
 
 
 
-]]></Script_3D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! ==============================================================================
@@ -914,11 +918,13 @@ call "CavityClosure_WMCC",
 					stCavityClosureTurnDir		= stCavityClosureTurnDir
 
 
-]]></Script_2D>
+]]>
+</Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! const values for parameter: iCustomCCEditWallSide
 EDITED_WALL_FACE_OUTSIDE = 1
@@ -1182,17 +1188,21 @@ else
 									iWindowShape = SHAPE_HALFROUND)
 endif
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! =============================================================================
 ! Tabpage Structure Definition
@@ -1740,11 +1750,13 @@ return
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! =============================================================================
@@ -2726,7 +2738,8 @@ end
 
 
 
-]]></Script_VL>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -2737,83 +2750,83 @@ end
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["WallholeCut_WMCC"]]></MName>
-		<MainGUID>A1ED6CE6-BA94-4368-A8D2-6E1C43768F6D</MainGUID>
+		<MainGUID>83EA284F-5B98-46D3-BC8A-B6CF826AE017</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["TurnPlaster_WMCC"]]></MName>
-		<MainGUID>5D96A5C1-306B-4E49-82CA-3A815A7E4133</MainGUID>
+		<MainGUID>32008F42-7720-4281-B1C8-33158723B5D0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["CavityClosure_WMCC"]]></MName>
-		<MainGUID>BB34E5ED-FB8E-48F7-BFD8-6C25FE02D5E0</MainGUID>
+		<MainGUID>D4F2097D-F2C9-4E7B-A212-DD82B2D1A5A0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["WallholeCut_WMCC"]]></MName>
-		<MainGUID>A1ED6CE6-BA94-4368-A8D2-6E1C43768F6D</MainGUID>
+		<MainGUID>83EA284F-5B98-46D3-BC8A-B6CF826AE017</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["CavityClosure_WMCC"]]></MName>
-		<MainGUID>BB34E5ED-FB8E-48F7-BFD8-6C25FE02D5E0</MainGUID>
+		<MainGUID>D4F2097D-F2C9-4E7B-A212-DD82B2D1A5A0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["MasonryArch_WMCC"]]></MName>
-		<MainGUID>EB4114A1-39E4-4C8A-8901-8D1EEAB82C70</MainGUID>
+		<MainGUID>5129AEE8-30F9-46B7-A821-1A0BA97D38A6</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Faschen_WMCC"]]></MName>
-		<MainGUID>33F0C3A5-D9F9-4D58-B983-B5EB8582D93A</MainGUID>
+		<MainGUID>B1C37462-266A-4585-955A-747AAECF9378</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["ui_tabIDlist_m_WMCC"]]></MName>
-		<MainGUID>896796D8-6473-4016-8AC2-28BBD802003C</MainGUID>
+		<MainGUID>CF00FD16-07A3-4337-B0CA-C5F002B696AF</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["ui_tabIDlistHierarchy_m_WMCC"]]></MName>
-		<MainGUID>83D8979A-C621-4A90-9F64-41CC8948B5F0</MainGUID>
+		<MainGUID>3DA571A9-4757-4D4B-9643-801FB12E3037</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["MasonryArch_WMCC"]]></MName>
-		<MainGUID>EB4114A1-39E4-4C8A-8901-8D1EEAB82C70</MainGUID>
+		<MainGUID>5129AEE8-30F9-46B7-A821-1A0BA97D38A6</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Faschen_WMCC"]]></MName>
-		<MainGUID>33F0C3A5-D9F9-4D58-B983-B5EB8582D93A</MainGUID>
+		<MainGUID>B1C37462-266A-4585-955A-747AAECF9378</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["WallholeCut_WMCC"]]></MName>
-		<MainGUID>A1ED6CE6-BA94-4368-A8D2-6E1C43768F6D</MainGUID>
+		<MainGUID>83EA284F-5B98-46D3-BC8A-B6CF826AE017</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Brick Veneer_WMCC"]]></MName>
-		<MainGUID>92C9F950-AD0A-4F75-8101-58E4F7692D54</MainGUID>
+		<MainGUID>CAEDF4F1-85B5-4E15-A29B-7DE6BC773257</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["CavityClosure_WMCC"]]></MName>
-		<MainGUID>BB34E5ED-FB8E-48F7-BFD8-6C25FE02D5E0</MainGUID>
+		<MainGUID>D4F2097D-F2C9-4E7B-A212-DD82B2D1A5A0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["TurnPlaster_WMCC"]]></MName>
-		<MainGUID>5D96A5C1-306B-4E49-82CA-3A815A7E4133</MainGUID>
+		<MainGUID>32008F42-7720-4281-B1C8-33158723B5D0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["MasonryArch_WMCC"]]></MName>
-		<MainGUID>EB4114A1-39E4-4C8A-8901-8D1EEAB82C70</MainGUID>
+		<MainGUID>5129AEE8-30F9-46B7-A821-1A0BA97D38A6</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Faschen_WMCC"]]></MName>
-		<MainGUID>33F0C3A5-D9F9-4D58-B983-B5EB8582D93A</MainGUID>
+		<MainGUID>B1C37462-266A-4585-955A-747AAECF9378</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["TurnPlaster_WMCC"]]></MName>
-		<MainGUID>5D96A5C1-306B-4E49-82CA-3A815A7E4133</MainGUID>
+		<MainGUID>32008F42-7720-4281-B1C8-33158723B5D0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["CavityClosure_WMCC"]]></MName>
-		<MainGUID>BB34E5ED-FB8E-48F7-BFD8-6C25FE02D5E0</MainGUID>
+		<MainGUID>D4F2097D-F2C9-4E7B-A212-DD82B2D1A5A0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["WallholeCut_WMCC"]]></MName>
-		<MainGUID>A1ED6CE6-BA94-4368-A8D2-6E1C43768F6D</MainGUID>
+		<MainGUID>83EA284F-5B98-46D3-BC8A-B6CF826AE017</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -3061,23 +3074,35 @@ end
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_FWM>
+]]>
+</Script_FWM>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
 </Keywords>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<HoleBits>
 			<WDBit_3DFrame/>
@@ -6842,4 +6867,5 @@ end
 		</Boolean>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

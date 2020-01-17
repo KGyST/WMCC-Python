@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="5D96A5C1-306B-4E49-82CA-3A815A7E4133" MigrationValue="Normal" Owner="0" Signature="1465080141" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="32008F42-7720-4281-B1C8-33158723B5D0" MigrationValue="Normal" Owner="0" Signature="1465080141" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -10,13 +11,16 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_3D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <SzL>
 
@@ -1486,11 +1490,13 @@ return
 
 
 
-]]></Script_2D>
+]]>
+</Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 EPS = 0.0001
 smallEPS = 0.0000001
@@ -1664,17 +1670,21 @@ endif
 
 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 bDefaultElem		= (GLOB_INTGUID = "" | GLOB_INTGUID = "{00000000-0000-0000-0000-000000000000}")
 bShowCavityClosure	= (bDefaultElem | WALL_SKINS_NUMBER > 0)
@@ -1805,11 +1815,13 @@ iFlag = 4 * (not(bShowTurnPlasterIn) & not(bShowTurnPlasterOut) & not(bShowCavit
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <JT, TZs>
 
@@ -1911,7 +1923,8 @@ endif
 
 
 
-]]></Script_VL>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -1921,23 +1934,35 @@ endif
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_FWM>
+]]>
+</Script_FWM>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
 </Keywords>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -2515,4 +2540,5 @@ endif
 		</Integer>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

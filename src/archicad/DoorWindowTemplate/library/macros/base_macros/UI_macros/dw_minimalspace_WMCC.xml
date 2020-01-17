@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="E2B3481B-A0B8-45BF-A86E-31F9E3F24735" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="53162B6F-E038-4E91-A174-5724B4FFEF4F" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -14,13 +15,16 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_3D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 if WIDO_REVEAL_SIDE then
 	add2 0,-WIDO_FRAME_THICKNESS
@@ -47,7 +51,7 @@ line_type reqMSContLineType
 pen reqMSContLinePen
 fill reqMSFillType
 
-if gs_leaf_optype_m = LEAF_REVOLVING then	!drawing for self
+if gs_leaf_optype_m = LEAF_Revolving then	!drawing for self
 	end  reqBMinSpace, reqMSFillType, reqMSFillPen, reqMSFillBackPen, reqMSContLineType, reqMSContLinePen
 endif
 
@@ -443,15 +447,17 @@ return
 	next i
 return
 
-]]></Script_2D>
+]]>
+</Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 EPS = 0.00001
 NO_MINSPACE		= 0
-D_REVOLVING		= 1
+D_Revolving		= 1
 D1_NO_SIDELIGHT = 11
 D1_1_SIDELIGHT 	= 12
 D1_PIVOT		= 21
@@ -519,7 +525,7 @@ LEAF_2L_POCKET				= 27
 LEAF_1L_MULTIPANEL			= 28
 LEAF_1L_MULTIPANEL_M		= 29
 LEAF_2L_MULTIPANEL			= 30
-LEAF_REVOLVING				= 31
+LEAF_Revolving				= 31
 LEAF_3L_2SLIDING_CENTER		= 32
 LEAF_GAR_1L_UP_AND_OVER		= 100
 LEAF_GAR_1L_UP_SLIDING		= 101
@@ -639,17 +645,21 @@ boardLeftMinReveal	= abs(leftRevealPnts[idxBoardEndPlasterLeft][1])	+ egressOffs
 
 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 pageStartY = 3 + 31
 
@@ -677,7 +687,7 @@ LeafPicXSize	= 156
 if	gs_leaf_optype_m = LEAF_EMPTY_DOOR then
 	LeafPicXSize	= 55
 endif
-if	gs_leaf_optype_m = LEAF_REVOLVING then
+if	gs_leaf_optype_m = LEAF_Revolving then
 	PicYSize	= 197
 endif
 if	gs_leaf_optype_m = LEAF_1L_SIDE_HUNG then
@@ -764,7 +774,7 @@ yPic 			= TotalPicYCenter - INT(PicYSize/2)
 if	gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING & \
 	gs_leaf_optype_m <> LEAF_1L_POCKET_M & \
 	gs_leaf_optype_m <> LEAF_2L_POCKET & \
-	gs_leaf_optype_m <> LEAF_REVOLVING & \
+	gs_leaf_optype_m <> LEAF_Revolving & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
@@ -812,7 +822,7 @@ if	gs_leaf_optype_m <> LEAF_1L_EXTERNAL_SLIDING & \
 	gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING & \
 	gs_leaf_optype_m <> LEAF_1L_POCKET & \
 	gs_leaf_optype_m <> LEAF_2L_POCKET & \
-	gs_leaf_optype_m <> LEAF_REVOLVING & \
+	gs_leaf_optype_m <> LEAF_Revolving & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
@@ -838,7 +848,7 @@ if	gs_leaf_optype_m <> LEAF_1L_DOUBLE_ACTING & \
 	gs_leaf_optype_m <> LEAF_2L_DOUBLE_ACTING & \
 	gs_leaf_optype_m <> LEAF_2L_DOUBLE_EGRESS & \
 	gs_leaf_optype_m <> LEAF_2L_DOUBLE_EGRESS_M & \
-	gs_leaf_optype_m <> LEAF_REVOLVING & \
+	gs_leaf_optype_m <> LEAF_Revolving & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
@@ -887,7 +897,7 @@ if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | \
 	gs_leaf_optype_m = LEAF_1L_POCKET | \
 	gs_leaf_optype_m = LEAF_2L_POCKET then XDepthArrows = xLeafPic + LeafPicXSize
 
-if 	gs_leaf_optype_m <> LEAF_REVOLVING & \
+if 	gs_leaf_optype_m <> LEAF_Revolving & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
 	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
@@ -904,7 +914,7 @@ endif
 !-------------------------------------------
 ! Infields
 !-------------------------------------------
-if	gs_leaf_optype_m = LEAF_REVOLVING then
+if	gs_leaf_optype_m = LEAF_Revolving then
 	ui_infield "ms_openingSDepth", 	xLeafPic - fieldWidth - 2, TotalPicYCenter - 75, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[1]
 	ui_infield "ms_oppositeSDepth", xLeafPic - fieldWidth - 2, TotalPicYCenter + 57, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[2]
 else
@@ -933,7 +943,7 @@ RightInfXMod = 0
 if	gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING | \
 	gs_leaf_optype_m = LEAF_2L_POCKET  then		LeftInfXMod = 80
 if	gs_leaf_optype_m = LEAF_1L_POCKET_M then	LeftInfXMod = 65
-if	gs_leaf_optype_m = LEAF_REVOLVING | \
+if	gs_leaf_optype_m = LEAF_Revolving | \
 	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
 	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
 	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
@@ -944,7 +954,7 @@ if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | \
 	gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING | \
 	gs_leaf_optype_m = LEAF_1L_POCKET | \
 	gs_leaf_optype_m = LEAF_2L_POCKET then		RightInfXMod = 60
-if	gs_leaf_optype_m = LEAF_REVOLVING | \
+if	gs_leaf_optype_m = LEAF_Revolving | \
 	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
 	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
 	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
@@ -998,7 +1008,7 @@ endif
 if gs_leaf_optype_m = LEAF_EMPTY_DOOR then
 	ui_pict	44, xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_EmptyDoor.png
 endif
-if gs_leaf_optype_m = LEAF_REVOLVING then
+if gs_leaf_optype_m = LEAF_Revolving then
 	ui_pict 1, xPic, yPic, LeafPicXSize, PicYSize, 1		!Revolving.png
 endif
 if gs_leaf_optype_m = LEAF_1L_SIDE_HUNG then
@@ -1096,11 +1106,13 @@ if bOpSideValues then
 	ui_infield "gs_opside_list", xPic+200, 20 + pageStartY, xEnd - (xPic+220), 20
 endif
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! =================================================
 ! For SWE
@@ -1161,7 +1173,7 @@ endif
 values "ms_openingSDepth" range [0, )
 values "ms_oppositeSDepth" range [0, )
 
-if	gs_leaf_optype_m = LEAF_REVOLVING | \
+if	gs_leaf_optype_m = LEAF_Revolving | \
 	gs_leaf_optype_m = LEAF_1L_SIDE_HUNG | \
 	gs_leaf_optype_m = LEAF_1L_SIDE_HUNG_M | \
 	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING | \
@@ -1274,7 +1286,8 @@ if	gs_leaf_optype_m = LEAF_2L_SIDE_HUNG | \
 	values "msOppositeSideWidth1" range (max(-(EgressMSWidth + msOppositeSideWidth2), -EgressMSWidth), )
 endif
 
-]]></Script_VL>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -1422,23 +1435,35 @@ endif
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_FWM>
+]]>
+</Script_FWM>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
 </Keywords>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -1797,4 +1822,5 @@ endif
 		</Boolean>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

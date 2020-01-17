@@ -93,11 +93,11 @@ else
 endif
 
 define material	sSurfaceName 20,
-	  iRed/256,   iGreen/256,   iBlue/256,
-	 0.67,  0.62,  0.19,     0,      0,     0,
-	       0.8,        0.8,        0.8,
-	         0,          0,          0,
-	         0, 0,   _i,
+	iRed/255,   			iGreen/255,   			iBlue/255,
+	rAmbient,  				rDiffuse,  rSpecular,	rTransparency,		rShining,     rTransparency_attenuation,
+	iSpecularRed/255, 		iSpecularGreen/255,		iSpecularBlue/255,
+    iEmissionRed/255,       iEmissionGreen/255,     iEmissionBlue/255,
+	rEmission_attenuation, iFill,   _i,
 	iTexture		ADDITIONAL_DATA	C4D_VER_MAIN =      1, C4D_VER_SUB =      1,
         C4D_CHSIZE_HORSIZE =       0.2032, C4D_CHSIZE_VERSIZE =       0.1355,
         C4D_CHSIZE_ANGLE =      0, C4D_CHSIZE_KEEPPROP =      0, C4D_CHSIZE_RANDORIG =      0,
@@ -283,6 +283,70 @@ define material	sSurfaceName 20,
 		<Integer Name="iBlue">
 			<Description><![CDATA[""]]></Description>
 			<Value>244</Value>
+		</Integer>
+		<RealNum Name="rTransparency">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</RealNum>
+		<RealNum Name="rTransparency_attenuation">
+			<Description><![CDATA["Transparency atten. [0.0..4.0]"]]></Description>
+			<Value>0</Value>
+		</RealNum>
+		<RealNum Name="rAmbient">
+			<Description><![CDATA["Ambient coefficient [0.0..1.0]"]]></Description>
+			<Value>0.75</Value>
+		</RealNum>
+		<RealNum Name="rDiffuse">
+			<Description><![CDATA["Diffuse coefficient [0.0..1.0]"]]></Description>
+			<Value>0.95</Value>
+		</RealNum>
+		<RealNum Name="rSpecular">
+			<Description><![CDATA["Specular coeff. [0.0..1.0]"]]></Description>
+			<Value>0.08</Value>
+		</RealNum>
+		<RealNum Name="rShining">
+			<Description><![CDATA["Shining [0.0..100.0]"]]></Description>
+			<Value>0</Value>
+		</RealNum>
+		<Integer Name="iSpecularRed">
+			<Description><![CDATA[""]]></Description>
+			<Value>253</Value>
+		</Integer>
+		<Integer Name="iSpecularGreen">
+			<Description><![CDATA[""]]></Description>
+			<Value>247</Value>
+		</Integer>
+		<Integer Name="iSpecularBlue">
+			<Description><![CDATA[""]]></Description>
+			<Value>242</Value>
+		</Integer>
+		<Integer Name="iEmissionRed">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iEmissionGreen">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iEmissionBlue">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<RealNum Name="rEmission_attenuation">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</RealNum>
+		<Integer Name="iFill">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iFillColor">
+			<Description><![CDATA[""]]></Description>
+			<Value>-1</Value>
+		</Integer>
+		<Integer Name="iTexture">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
 		</Integer>
 	</Parameters>
 </ParamSection>

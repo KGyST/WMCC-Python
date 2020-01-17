@@ -1,4 +1,5 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="4A9A644B-FB20-4DA5-B40F-B7EDAB5D718D" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="A2DB77F8-27D2-4683-B5A6-525711997E16" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -6,35 +7,40 @@
 	<MainGUID>F6AE9687-2BC7-4D47-88C9-8F793E1DE2D6</MainGUID>
 	<MainGUID>4ABD0A6E-634B-4931-B3AA-9BEE01F35CDF</MainGUID>
 	<MainGUID>7DDE9DC4-66BD-41C8-8376-46D0B352F69B</MainGUID>
-	<MainGUID>84240918-5461-492B-B3FF-5F19600A4E40</MainGUID>
+	<MainGUID>412B4110-2F9F-44C5-9ECF-2DA2B1D7CA89</MainGUID>
 </Ancestry>
 
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["Library_version_WMCC"]]></MName>
-		<MainGUID>CB767C9D-F440-4F99-AF7D-3C46B5ED1DAB</MainGUID>
+		<MainGUID>8EF319E2-EBB5-4EB4-AB17-7A2A2E0D38E3</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["DoorWindowUnit_macro_WMCC"]]></MName>
-		<MainGUID>C9D26CCC-12CE-4477-BB6E-FACBA6FDD958</MainGUID>
+		<MainGUID>B58C82DB-1A8A-45CB-916D-79D89949AAD2</MainGUID>
 	</Macro>
 </CalledMacros>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_3D>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_2D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 eps = 0.0001
 
@@ -87,51 +93,51 @@ if abs (iLibError) > eps then goto "masterEnd"
 ! ==============================================================================
 
 
-! gs_leaf_optype_m:
-	LEAF_1L_SIDE_HUNG			= 1
-	LEAF_1L_SIDE_HUNG_M			= 2
-	LEAF_1L_DOUBLE_ACTING		= 3
-	LEAF_1L_DOUBLE_ACTING_M		= 4
-	LEAF_2L_SIDE_HUNG			= 5
-	LEAF_2L_DOUBLE_ACTING		= 6
-	LEAF_2L_DOUBLE_EGRESS		= 7
-	LEAF_2L_DOUBLE_EGRESS_M		= 8
-	LEAF_1L_PIVOT				= 9
-	LEAF_1L_PIVOT_M				= 10
-	LEAF_2L_1SLIDING			= 11
-	LEAF_2L_1SLIDING_M			= 12
-	LEAF_2L_2SLIDING			= 13
-	LEAF_2L_2SLIDING_M			= 14
-	LEAF_3L_2SLIDING			= 15
-	LEAF_3L_2SLIDING_M			= 16
-	LEAF_4L_2SLIDING			= 17
-	LEAF_4L_3SLIDING			= 18
-	LEAF_4L_3SLIDING_M			= 19
-	LEAF_4L_4SLIDING			= 20
-	LEAF_4L_4SLIDING_M			= 21
-	LEAF_1L_EXTERNAL_SLIDING	= 22
-	LEAF_1L_EXTERNAL_SLIDING_M	= 23
-	LEAF_2L_EXTERNAL_SLIDING	= 24
-	LEAF_1L_POCKET				= 25
-	LEAF_1L_POCKET_M			= 26
-	LEAF_2L_POCKET				= 27
-	LEAF_1L_MULTIPANEL			= 28
-	LEAF_1L_MULTIPANEL_M		= 29
-	LEAF_2L_MULTIPANEL			= 30
-	LEAF_REVOLVING				= 31
-	LEAF_3L_2SLIDING_CENTER		= 32
-	LEAF_GAR_1L_UP_AND_OVER		= 100
-	LEAF_GAR_1L_UP_SLIDING		= 101
-	LEAF_GAR_1L_SECTIONAL		= 102
-	LEAF_GAR_2L_SIDE_HUNG		= 103
-	LEAF_GAR_2L_ROLLSIDE		= 104
-	LEAF_GAR_1L_ROLLUP			= 105
+!!! gs_leaf_optype_m:
+!!	LEAF_1L_SIDE_HUNG			= 1
+!!	LEAF_1L_SIDE_HUNG_M			= 2
+!!	LEAF_1L_DOUBLE_ACTING		= 3
+!!	LEAF_1L_DOUBLE_ACTING_M		= 4
+!!	LEAF_2L_SIDE_HUNG			= 5
+!!	LEAF_2L_DOUBLE_ACTING		= 6
+!!	LEAF_2L_DOUBLE_EGRESS		= 7
+!!	LEAF_2L_DOUBLE_EGRESS_M		= 8
+!!	LEAF_1L_PIVOT				= 9
+!!	LEAF_1L_PIVOT_M				= 10
+!!	LEAF_2L_1SLIDING			= 11
+!!	LEAF_2L_1SLIDING_M			= 12
+!!	LEAF_2L_2SLIDING			= 13
+!!	LEAF_2L_2SLIDING_M			= 14
+!!	LEAF_3L_2SLIDING			= 15
+!!	LEAF_3L_2SLIDING_M			= 16
+!!	LEAF_4L_2SLIDING			= 17
+!!	LEAF_4L_3SLIDING			= 18
+!!	LEAF_4L_3SLIDING_M			= 19
+!!	LEAF_4L_4SLIDING			= 20
+!!	LEAF_4L_4SLIDING_M			= 21
+!!	LEAF_1L_EXTERNAL_SLIDING	= 22
+!!	LEAF_1L_EXTERNAL_SLIDING_M	= 23
+!!	LEAF_2L_EXTERNAL_SLIDING	= 24
+!!	LEAF_1L_POCKET				= 25
+!!	LEAF_1L_POCKET_M			= 26
+!!	LEAF_2L_POCKET				= 27
+!!	LEAF_1L_MULTIPANEL			= 28
+!!	LEAF_1L_MULTIPANEL_M		= 29
+!!	LEAF_2L_MULTIPANEL			= 30
+!!	LEAF_Revolving				= 31
+!!	LEAF_3L_2SLIDING_CENTER		= 32
+!!	LEAF_GAR_1L_UP_AND_OVER		= 100
+!!	LEAF_GAR_1L_UP_SLIDING		= 101
+!!	LEAF_GAR_1L_SECTIONAL		= 102
+!!	LEAF_GAR_2L_SIDE_HUNG		= 103
+!!	LEAF_GAR_2L_ROLLSIDE		= 104
+!!	LEAF_GAR_1L_ROLLUP			= 105
 
 call "DoorWindowUnit_macro_WMCC" parameters all \
 	isWindow			= 1,
-	iGlassType			= 2,
-	gs_leaf_optype_m	= LEAF_1L_SIDE_HUNG,
-	gs_opening_dir_m	= 2,						!1: OPENING_DIR_DEFAULT_OUTSIDE, 2: OPENING_DIR_FLIPPED_INSIDE
+!!	iGlassType			= 2,
+!!	gs_leaf_optype_m	= LEAF_1L_SIDE_HUNG,
+!!	gs_opening_dir_m	= 2,						!1: OPENING_DIR_DEFAULT_OUTSIDE, 2: OPENING_DIR_FLIPPED_INSIDE
 	iVersionNumber		= iVersionNumber,
 	bSetBOdefault		= 0
 
@@ -151,17 +157,21 @@ call "DoorWindowUnit_macro_WMCC" parameters all \
 
 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! ==============================================================================
 ! ========== Strings for Localization
@@ -306,25 +316,32 @@ end
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_VL>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_FWM>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_BWM>
 
 <GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" path="_ui_picts_/menu_icons_ac18/menu_icon_alert_16x16.png">
 </GDLPict>
@@ -380,13 +397,20 @@ http://www.bimobject.com
 ]]>
 </Comment>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<HoleBits>
 			<WDBit_3DFrame/>
-			<WDBit_ThickIsParam/>
 		</HoleBits>
 		<StatBits>
 			<STBit_UIDefault/>
@@ -599,14 +623,14 @@ http://www.bimobject.com
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value>-2</Value>
+			<Value>-1</Value>
 		</Integer>
 		<Integer Name="iDetLevel3D">
 			<Description><![CDATA[""]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value>50</Value>
+			<Value>-1</Value>
 		</Integer>
 		<Integer Name="iDetLevelSE">
 			<Description><![CDATA[""]]></Description>
@@ -1044,9 +1068,6 @@ http://www.bimobject.com
 
 		<Title Name="gs_window_frame">
 			<Description><![CDATA["Window Frame"]]></Description>
-			<Flags>
-				<ParFlg_Hidden/>
-			</Flags>
 		</Title>
 		<Length Name="gs_frame_thk">
 			<Description><![CDATA["Frame Thickness"]]></Description>
@@ -1067,16 +1088,13 @@ http://www.bimobject.com
 
 		<Title Name="gs_window_sash">
 			<Description><![CDATA["Sash Frame"]]></Description>
-			<Flags>
-				<ParFlg_Hidden/>
-			</Flags>
 		</Title>
 		<Length Name="gs_sash_thk">
 			<Description><![CDATA["Sash Frame Thickness"]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value>0.05</Value>
+			<Value>0.115</Value>
 		</Length>
 		<Length Name="gs_sash_width">
 			<Description><![CDATA["Sash Frame Width"]]></Description>
@@ -1084,13 +1102,6 @@ http://www.bimobject.com
 				<ParFlg_Child/>
 			</Flags>
 			<Value>0.05</Value>
-		</Length>
-		<Length Name="gs_leaf_thk">
-			<Description><![CDATA[""]]></Description>
-			<Flags>
-				<ParFlg_Child/>
-			</Flags>
-			<Value>0.036</Value>
 		</Length>
 		<Length Name="gs_glass_thk">
 			<Description><![CDATA["Glass Thickness"]]></Description>
@@ -1621,7 +1632,7 @@ http://www.bimobject.com
 				<ParFlg_Child/>
 				<ParFlg_Unique/>
 			</Flags>
-			<Value>0.215</Value>
+			<Value>0.33</Value>
 		</Length>
 		<Length Name="gs_board_thk">
 			<Description><![CDATA["Board Thickness"]]></Description>
@@ -4278,22 +4289,66 @@ http://www.bimobject.com
 				<ParFlg_Child/>
 			</Flags>
 			<ArrayValues FirstDimension="14" SecondDimension="0">
-				<AVal Row="1">-2</AVal>
-				<AVal Row="2">-1</AVal>
-				<AVal Row="3">1</AVal>
-				<AVal Row="4">-7</AVal>
-				<AVal Row="5">-6</AVal>
-				<AVal Row="6">1</AVal>
-				<AVal Row="7">-7</AVal>
-				<AVal Row="8">1</AVal>
-				<AVal Row="9">-5</AVal>
-				<AVal Row="10">11</AVal>
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+				<AVal Row="5">0</AVal>
+				<AVal Row="6">0</AVal>
+				<AVal Row="7">0</AVal>
+				<AVal Row="8">0</AVal>
+				<AVal Row="9">0</AVal>
+				<AVal Row="10">0</AVal>
 				<AVal Row="11">0</AVal>
-				<AVal Row="12">-4</AVal>
-				<AVal Row="13">-3</AVal>
-				<AVal Row="14">1</AVal>
+				<AVal Row="12">0</AVal>
+				<AVal Row="13">0</AVal>
+				<AVal Row="14">0</AVal>
 			</ArrayValues>
 		</Material>
+		<String Name="sMaterialS">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="14" SecondDimension="0">
+				<AVal Row="1"><![CDATA["RAL5011-Steel_Blue"]]></AVal>
+				<AVal Row="2"><![CDATA["RAL3011-Dark_Red"]]></AVal>
+				<AVal Row="3"><![CDATA["RAL3011-Dark_Red"]]></AVal>
+				<AVal Row="4"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="5"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="6"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="7"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="8"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="9"><![CDATA["Glass"]]></AVal>
+				<AVal Row="10"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="11"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="12"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="13"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="14"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="sMaterialValS">
+			<Description><![CDATA["Material values' string array"]]></Description>
+			<ArrayValues FirstDimension="20" SecondDimension="0">
+				<AVal Row="1"><![CDATA["RAL1011-Irish_Oak"]]></AVal>
+				<AVal Row="2"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="3"><![CDATA["RAL3011-Dark_Red"]]></AVal>
+				<AVal Row="4"><![CDATA["RAL5011-Steel_Blue"]]></AVal>
+				<AVal Row="5"><![CDATA["RAL6005-Moss_Green"]]></AVal>
+				<AVal Row="6"><![CDATA["RAL6009-Dark_Green"]]></AVal>
+				<AVal Row="7"><![CDATA["RAL6021-Chartwell_Green"]]></AVal>
+				<AVal Row="8"><![CDATA["RAL7001-Silver_Grey"]]></AVal>
+				<AVal Row="9"><![CDATA["RAL7012-Basalt_Grey"]]></AVal>
+				<AVal Row="10"><![CDATA["RAL7015-Slate_Grey"]]></AVal>
+				<AVal Row="11"><![CDATA["RAL7016-Anthracite_Grey"]]></AVal>
+				<AVal Row="12"><![CDATA["RAL7038-Agate_Grey"]]></AVal>
+				<AVal Row="13"><![CDATA["RAL8001-Golden_Oak"]]></AVal>
+				<AVal Row="14"><![CDATA["RAL8015-Siena_PN"]]></AVal>
+				<AVal Row="15"><![CDATA["RAL8016-Rosewood"]]></AVal>
+				<AVal Row="16"><![CDATA["RAL8022-Beck_Brown"]]></AVal>
+				<AVal Row="17"><![CDATA["RAL9001-Cream"]]></AVal>
+				<AVal Row="18"><![CDATA["RAL9003-White"]]></AVal>
+				<AVal Row="19"><![CDATA["Glass"]]></AVal>
+				<AVal Row="20"><![CDATA["_test_textured_material"]]></AVal>
+			</ArrayValues>
+		</String>
 		<Boolean Name="bLinkSurfacesFrameSash">
 			<Description><![CDATA["Uniform Window Surfaces"]]></Description>
 			<Flags>
@@ -4611,7 +4666,7 @@ http://www.bimobject.com
 				<ParFlg_Unique/>
 				<ParFlg_Hidden/>
 			</Flags>
-			<Value>10</Value>
+			<Value>1</Value>
 		</Integer>
 		<Integer Name="gs_ui_sub_tabpage_closure">
 			<Description><![CDATA[""]]></Description>
@@ -4810,14 +4865,14 @@ http://www.bimobject.com
 				<ParFlg_Child/>
 				<ParFlg_Unique/>
 			</Flags>
-			<Value>0</Value>
+			<Value>1.44</Value>
 		</RealNum>
 		<RealNum Name="gs_list_glassperimeter">
 			<Description><![CDATA["Total Glass Perimeter"]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value>0</Value>
+			<Value>5.312</Value>
 		</RealNum>
 		<String Name="gs_list_heattransfer">
 			<Description><![CDATA["U-value"]]></Description>
@@ -5165,6 +5220,228 @@ http://www.bimobject.com
 			</Flags>
 			<Value>0.3</Value>
 		</Length>
+
+		<!-- WMCC: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="WMCC">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Integer Name="iOpeningTypeS">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1">60</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+			</ArrayValues>
+		</Integer>
+		<Integer Name="iOpeningTypeValS">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="36" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">1</AVal>
+				<AVal Row="3">3</AVal>
+				<AVal Row="4">5</AVal>
+				<AVal Row="5">7</AVal>
+				<AVal Row="6">8</AVal>
+				<AVal Row="7">9</AVal>
+				<AVal Row="8">11</AVal>
+				<AVal Row="9">12</AVal>
+				<AVal Row="10">14</AVal>
+				<AVal Row="11">15</AVal>
+				<AVal Row="12">18</AVal>
+				<AVal Row="13">19</AVal>
+				<AVal Row="14">21</AVal>
+				<AVal Row="15">23</AVal>
+				<AVal Row="16">25</AVal>
+				<AVal Row="17">39</AVal>
+				<AVal Row="18">41</AVal>
+				<AVal Row="19">44</AVal>
+				<AVal Row="20">46</AVal>
+				<AVal Row="21">48</AVal>
+				<AVal Row="22">53</AVal>
+				<AVal Row="23">54</AVal>
+				<AVal Row="24">55</AVal>
+				<AVal Row="25">56</AVal>
+				<AVal Row="26">60</AVal>
+				<AVal Row="27">61</AVal>
+				<AVal Row="28">62</AVal>
+				<AVal Row="29">64</AVal>
+				<AVal Row="30">65</AVal>
+				<AVal Row="31">66</AVal>
+				<AVal Row="32">69</AVal>
+				<AVal Row="33">70</AVal>
+				<AVal Row="34">75</AVal>
+				<AVal Row="35">100</AVal>
+				<AVal Row="36">101</AVal>
+			</ArrayValues>
+		</Integer>
+		<Integer Name="iSelectableProfiles">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="11" SecondDimension="4">
+				<AVal Column="1" Row="1">30000</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="3" Row="1">0</AVal>
+				<AVal Column="4" Row="1">0</AVal>
+				<AVal Column="1" Row="2">30001</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+				<AVal Column="3" Row="2">0</AVal>
+				<AVal Column="4" Row="2">0</AVal>
+				<AVal Column="1" Row="3">0</AVal>
+				<AVal Column="2" Row="3">0</AVal>
+				<AVal Column="3" Row="3">0</AVal>
+				<AVal Column="4" Row="3">0</AVal>
+				<AVal Column="1" Row="4">30002</AVal>
+				<AVal Column="2" Row="4">0</AVal>
+				<AVal Column="3" Row="4">0</AVal>
+				<AVal Column="4" Row="4">0</AVal>
+				<AVal Column="1" Row="5">0</AVal>
+				<AVal Column="2" Row="5">0</AVal>
+				<AVal Column="3" Row="5">0</AVal>
+				<AVal Column="4" Row="5">0</AVal>
+				<AVal Column="1" Row="6">0</AVal>
+				<AVal Column="2" Row="6">0</AVal>
+				<AVal Column="3" Row="6">0</AVal>
+				<AVal Column="4" Row="6">0</AVal>
+				<AVal Column="1" Row="7">30003</AVal>
+				<AVal Column="2" Row="7">0</AVal>
+				<AVal Column="3" Row="7">0</AVal>
+				<AVal Column="4" Row="7">0</AVal>
+				<AVal Column="1" Row="8">0</AVal>
+				<AVal Column="2" Row="8">0</AVal>
+				<AVal Column="3" Row="8">0</AVal>
+				<AVal Column="4" Row="8">0</AVal>
+				<AVal Column="1" Row="9">30009</AVal>
+				<AVal Column="2" Row="9">0</AVal>
+				<AVal Column="3" Row="9">0</AVal>
+				<AVal Column="4" Row="9">0</AVal>
+				<AVal Column="1" Row="10">0</AVal>
+				<AVal Column="2" Row="10">0</AVal>
+				<AVal Column="3" Row="10">0</AVal>
+				<AVal Column="4" Row="10">0</AVal>
+				<AVal Column="1" Row="11">0</AVal>
+				<AVal Column="2" Row="11">0</AVal>
+				<AVal Column="3" Row="11">0</AVal>
+				<AVal Column="4" Row="11">0</AVal>
+			</ArrayValues>
+		</Integer>
+		<Angle Name="aOpeningS2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+			</ArrayValues>
+		</Angle>
+		<Angle Name="aOpeningS3D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+			</ArrayValues>
+		</Angle>
+		<Boolean Name="bTilt">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Angle Name="aTiltS">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+			</ArrayValues>
+		</Angle>
+		<String Name="xxxs">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["xxxs"]]></Value>
+		</String>
+		<Length Name="xZoneWidth">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="1" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="xHandle">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="xMullionPos">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="1" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="gs_fw_lower">
+			<Description><![CDATA["Lower frame (plinth) width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<Length Name="xOpeningS3D">
+			<Description><![CDATA["3D opening"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="xOpeningS2D">
+			<Description><![CDATA["2D opening"]]></Description>
+			<ArrayValues FirstDimension="4" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0</AVal>
+				<AVal Row="3">0</AVal>
+				<AVal Row="4">0</AVal>
+			</ArrayValues>
+		</Length>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

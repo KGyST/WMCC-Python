@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="8EC2F0D4-EE22-4221-93C7-D1A68EBE55DD" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="E4FCFCF7-CE26-4CA0-B66B-12C434BA9F35" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -11,26 +12,31 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_3D>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_2D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! iDWObjectType
 
 WINDOW_OBJECT			= 1
 DOOR_OBJECT				= 2
 TERRACE_D_OBJECT 		= 3
-REVOLVING_OBJECT		= 4
+Revolving_OBJECT		= 4
 STOREFRONT_WIN_OBJECT	= 5
 STOREFRONT_DOOR_OBJECT	= 6
 EXAMPLE_DOOR_OBJECT		= 7
@@ -41,17 +47,21 @@ DOOR_OBJECT_USA			= 11
 DOOR_HINGED_GATE_USA	= 12
 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Listfield control variables
 listFieldPosX = 0
@@ -125,7 +135,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 		iDWObjectType = DOOR_OBJECT |\
 		iDWObjectType = DOOR_OBJECT_USA |\
 		iDWObjectType = DOOR_HINGED_GATE_USA |\
-		iDWObjectType = REVOLVING_OBJECT |\ 
+		iDWObjectType = Revolving_OBJECT |\ 
 		iDWObjectType = STOREFRONT_DOOR_OBJECT |\ 
 		iDWObjectType = EXAMPLE_DOOR_OBJECT then
 	
@@ -146,7 +156,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 	ui_listitem listItemID, listfieldID, "gs_list_hwsetno",		childFlag	: listItemID = listItemID + 1
 	
 	
-	if 	iDWObjectType = REVOLVING_OBJECT |\  
+	if 	iDWObjectType = Revolving_OBJECT |\  
 		iDWObjectType = DOOR_OBJECT |\
 		iDWObjectType = DOOR_OBJECT_USA |\
 		iDWObjectType = DOOR_HINGED_GATE_USA |\
@@ -222,7 +232,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 	
 	ui_listitem listItemID, listfieldID, "gs_list_acousticrating", 	childFlag	: listItemID = listItemID + 1
 	
-	if 	iDWObjectType = REVOLVING_OBJECT |\ 
+	if 	iDWObjectType = Revolving_OBJECT |\ 
 		iDWObjectType = STOREFRONT_DOOR_OBJECT |\
 		iDWObjectType = DOOR_OBJECT_USA |\
 		iDWObjectType = DOOR_HINGED_GATE_USA then
@@ -248,7 +258,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 		iDWObjectType = DOOR_OBJECT_USA |\
 		iDWObjectType = DOOR_HINGED_GATE_USA |\
 		iDWObjectType = TERRACE_D_OBJECT |\
-		iDWObjectType = REVOLVING_OBJECT |\
+		iDWObjectType = Revolving_OBJECT |\
 		iDWObjectType = STOREFRONT_WIN_OBJECT |\
 		iDWObjectType = STOREFRONT_DOOR_OBJECT |\
 		iDWObjectType = EXAMPLE_DOOR_OBJECT |\
@@ -267,7 +277,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 	if 	iDWObjectType = DOOR_OBJECT |\
 		iDWObjectType = DOOR_OBJECT_USA |\
 		iDWObjectType = DOOR_HINGED_GATE_USA |\
-		iDWObjectType = REVOLVING_OBJECT |\ 
+		iDWObjectType = Revolving_OBJECT |\ 
 		iDWObjectType = STOREFRONT_DOOR_OBJECT |\
 		iDWObjectType = DOOR_OBJECT_CHE then
 
@@ -296,7 +306,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 		iDWObjectType = DOOR_OBJECT |\
 		iDWObjectType = DOOR_OBJECT_USA |\ 
 		iDWObjectType = DOOR_HINGED_GATE_USA |\
-		iDWObjectType = REVOLVING_OBJECT |\ 
+		iDWObjectType = Revolving_OBJECT |\ 
 		iDWObjectType = STOREFRONT_DOOR_OBJECT then
 	
 		!!if gs_show_UKListParams then
@@ -513,7 +523,7 @@ ui_listfield listFieldID, listFieldPosX, listFieldPosY, listFieldWidth, listFiel
 
     if LibraryLangCode = "SWE" then
         if  iDWObjectType = DOOR_OBJECT         |\
-            iDWObjectType = REVOLVING_OBJECT    |\
+            iDWObjectType = Revolving_OBJECT    |\
             iDWObjectType = STOREFRONT_DOOR_OBJECT then
     
             ui_listitem listItemID, listfieldID, "swe_list",		0, 		   "", `DSS 81 73 40 Edition 2`		: listItemID = listItemID + 1
@@ -633,25 +643,32 @@ end listItemID
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_VL>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_FWM>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
@@ -663,9 +680,17 @@ end listItemID
 <![CDATA[]]>
 </Comment>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -2612,4 +2637,5 @@ end listItemID
 		</String>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="42DCD9D0-42F5-4519-9420-5D7C9DBF2A3D" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="C5280F96-065F-4740-A12E-F1EE8B1B36F3" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -9,25 +10,30 @@
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["CasingEnable_WMCC"]]></MName>
-		<MainGUID>1AA39DBC-134E-4087-AE06-907C1965BE8B</MainGUID>
+		<MainGUID>F7E58164-DE3A-4B64-AF84-03549DCA1936</MainGUID>
 	</Macro>
 </CalledMacros>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_3D>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_2D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 EPS = 0.0001
 
@@ -147,7 +153,7 @@ LEAF_2L_POCKET				= 27
 LEAF_1L_MULTIPANEL			= 28
 LEAF_1L_MULTIPANEL_M		= 29
 LEAF_2L_MULTIPANEL			= 30
-LEAF_REVOLVING				= 31
+LEAF_Revolving				= 31
 LEAF_3L_2SLIDING_CENTER		= 32
 LEAF_GAR_1L_UP_AND_OVER		= 100
 LEAF_GAR_1L_UP_SLIDING		= 101
@@ -220,7 +226,7 @@ if bEnableCasing then
 endif
 
 !!if bEnableVentilationProfile then
-!!	call "ventilation_paramhandling_m_WMCC" parameters	isWindow						= isWindow,
+!!	call "ventilation_paramhandling_m_bo18" parameters	isWindow						= isWindow,
 !!													iWindowType						= iWindowType,
 !!													gs_bLeftSLight					= gs_bLeftSLight,
 !!													gs_bSLight						= gs_bSLight,
@@ -263,17 +269,21 @@ endif
 
 bShowFrameParameters = (gs_leaf_optype_m <> LEAF_1L_EXTERNAL_SLIDING & gs_leaf_optype_m <> LEAF_1L_EXTERNAL_SLIDING_M & gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING) 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! =============================================================================
@@ -671,7 +681,7 @@ endif
 !!				ui_listitem itemID, listFieldID, "gs_penGlass_bg", 	1,	"ui_list_fillBgPen_flat_WMCC",		stGlassCutFillBackgroundPen		: itemID = itemID + 1
 !!			endif
 !!
-!!			call "casement_paramhandling_m_WMCC" parameters	iWindowType			= iWindowType,
+!!			call "casement_paramhandling_m_bo18" parameters	iWindowType			= iWindowType,
 !!														gs_bLeftSLight		= gs_bLeftSLight,
 !!														gs_bSLight			= gs_bSLight,
 !!														gs_UTrans			= gs_UTrans,
@@ -1120,25 +1130,32 @@ endif
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_VL>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_FWM>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
@@ -1150,9 +1167,17 @@ endif
 <![CDATA[]]>
 </Comment>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -3101,7 +3126,7 @@ endif
 			</ArrayValues>
 		</String>
 		<Integer Name="showPenSettingS">
-			<Description><![CDATA["'Show these 2D pen settings on "Floor Plan and Section" tab'"]]></Description>
+			<Description><![CDATA[`'Show these 2D pen settings on "Floor Plan and Section" tab'`]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
@@ -3116,4 +3141,5 @@ endif
 		</Integer>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="A1ED6CE6-BA94-4368-A8D2-6E1C43768F6D" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="83EA284F-5B98-46D3-BC8A-B6CF826AE017" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -7,7 +8,8 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -440,7 +442,7 @@ if iWindowShape = SHAPE_TRAPEZOID then
 		iWindowShape = SHAPE_RECTANGULAR		! Switch back to rectangular shape
 	else
 		tan_topAngle = archHeight / ac_wallhole_width
-		archHeight_reveal =  ((openingWidth + oversizeRight - leftJamb - rightJamb) * archHeight)  / (openingWidth + oversizeRight)
+		archHeighT_Reveal =  ((openingWidth + oversizeRight - leftJamb - rightJamb) * archHeight)  / (openingWidth + oversizeRight)
 		archHeight_Innreveal =  ((openingWidth + oversizeRight - CustRevealLeftJamb - CustRevealRightJamb) * archHeight)  / (openingWidth + oversizeRight)
 
 	endif
@@ -457,7 +459,7 @@ if iWindowShape = SHAPE_PARALLELOGRAM then
 	else
 		tan_topAngle = archHeight / openingWidth
 		upperJambModify =  (1 / cos(atn(archHeight / (openingWidth + oversizeRight))))
-		archHeight_reveal =  ((openingWidth + oversizeRight - leftJamb - rightJamb) * archHeight)  / (openingWidth + oversizeRight)
+		archHeighT_Reveal =  ((openingWidth + oversizeRight - leftJamb - rightJamb) * archHeight)  / (openingWidth + oversizeRight)
 		archHeight_Innreveal =  ((openingWidth + oversizeRight - CustRevealLeftJamb - CustRevealRightJamb) * archHeight)  / (openingWidth + oversizeRight)
 	endif
 endif
@@ -1799,7 +1801,7 @@ if iWindowShape = SHAPE_TRAPEZOID then
 
 	if iRevealType = REVEAL_EDGE | iRevealType = REVEAL_NO then
 		add leftRevealPnts[idxSillStartRevealLeft][1], 0, leftRevealPnts[idxSillStartRevealLeft][2]
-		hotspot 0, openingHeight - not(bMirroredOpening) * archHeight_reveal,	0, unID+1
+		hotspot 0, openingHeight - not(bMirroredOpening) * archHeighT_Reveal,	0, unID+1
 		del 1
 		unID = unID + 2
 
@@ -2086,7 +2088,7 @@ if iWindowShape = SHAPE_PARALLELOGRAM then
 
 	if iRevealType = REVEAL_EDGE | iRevealType = REVEAL_NO then
 		add leftRevealPnts[idxSillStartRevealLeft][1], 0, leftRevealPnts[idxSillStartRevealLeft][2]
-		hotspot 0, archHeight_reveal - elevationOffset,	0, unID+1
+		hotspot 0, archHeighT_Reveal - elevationOffset,	0, unID+1
 		del 1
 		unID = unID + 2
 
@@ -2101,7 +2103,7 @@ if iWindowShape = SHAPE_PARALLELOGRAM then
 		unID = unID + 2
 
 		add rightRevealPnts[idxSillStartRevealRight][1], 0, rightRevealPnts[idxSillStartRevealRight][2]
-		hotspot 0, B - archHeight_reveal - elevationOffset,	0, unID+1
+		hotspot 0, B - archHeighT_Reveal - elevationOffset,	0, unID+1
 		del 1
 		unID = unID + 2
 	else
@@ -6122,11 +6124,13 @@ return
 
 
 
-]]></Script_3D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -10549,11 +10553,13 @@ return
 return
 
 
-]]></Script_2D>
+]]>
+</Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 EPS = 0.0001
 
@@ -11075,17 +11081,21 @@ if bShapeSameRevealAngles then
 endif
 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 bCustomReveal = (iRevealType = REVEAL_NEGATIVE | iRevealType = REVEAL_SLANTED)
 
@@ -12651,7 +12661,7 @@ end
 		if (bRevealSetSide & gs_reveal_set_side = REVEAL_SET_INSIDE & gs_reveal_type_bottom_int <> REVEAL_BOTTOM_UNIFORM) |\
 			iSillRevealType = REVEAL_NO then
 			if not(bNegativeView) then
-				ui_pict 199, x, y, picx, picy, 1	! P_right_Rev_BottNoRev.png
+				ui_pict 199, x, y, picx, picy, 1	! P_righT_Rev_BottNoRev.png
 			endif
 
 			if bNegativeView then
@@ -12660,12 +12670,12 @@ end
 		else
 			if not(bNegativeView) then
 				if gs_reveal_type_bottom_int = REVEAL_BOTTOM_NO then
-					ui_pict 199, x, y, picx, picy, 1	! P_right_Rev_BottNoRev.png
+					ui_pict 199, x, y, picx, picy, 1	! P_righT_Rev_BottNoRev.png
 				else
 					if gs_reveal_type_bottom_int = REVEAL_BOTTOM_NEGATIVE then
 						ui_pict 200, x, y, picx, picy, 1	! P_right_Rev_BottNegRev.png
 					else
-						ui_pict 201, x, y, picx, picy, 1	! P_right_Rev.png
+						ui_pict 201, x, y, picx, picy, 1	! P_righT_Rev.png
 					endif
 				endif
 			endif
@@ -12677,7 +12687,7 @@ end
 					if gs_reveal_type_bottom_int = REVEAL_BOTTOM_POSITIVE then
 						ui_pict 203, x, y, picx, picy, 1	! P_right_NegRev_BottRev.png
 					else
-						ui_pict 204, x, y, picx, picy, 1	! P_right_NegRev_BottNegRev.png
+						ui_pict 204, x, y, picx, picy, 1	! P_righT_NegRev_BottNegRev.png
 					endif
 				endif
 			endif
@@ -12894,7 +12904,7 @@ end
 					ui_pict 208, x, y, picx, picy, 1	! P_right_Seg_NegRev_BottNoRev.png
 				else
 					if gs_reveal_type_bottom_int = REVEAL_BOTTOM_POSITIVE then
-						ui_pict 209, x, y, picx, picy, 1	! P_right_Seg_NegRev_BottRev.png
+						ui_pict 209, x, y, picx, picy, 1	! P_righT_Seg_NegRev_BottRev.png
 					else
 						ui_pict 210, x, y, picx, picy, 1	! P_right_Seg_NegRev_BottNegRev.png
 					endif
@@ -13120,11 +13130,13 @@ return
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! =============================================================================
@@ -13760,7 +13772,8 @@ if bTShapedOpening then
 	values "gs_reveal_set_side" REVEAL_SET_INSIDE, REVEAL_SET_OUTSIDE
 endif
 
-]]></Script_VL>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -13771,7 +13784,7 @@ endif
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["WallContourDivider_WMCC"]]></MName>
-		<MainGUID>82146086-ABAB-4A9C-851A-03182BCCF26D</MainGUID>
+		<MainGUID>F98B04A3-BB7E-4FB6-BF54-7C41A4591B35</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -14443,23 +14456,35 @@ endif
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_FWM>
+]]>
+</Script_FWM>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
 </Keywords>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -16395,4 +16420,5 @@ endif
 		</Boolean>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

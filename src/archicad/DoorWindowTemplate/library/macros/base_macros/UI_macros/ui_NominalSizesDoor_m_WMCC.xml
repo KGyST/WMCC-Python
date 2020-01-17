@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="7F652CD5-C4CC-4295-AE72-9D1F6B364DED" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="1E8217E4-1C5E-4827-88B7-84B6A7142932" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -11,19 +12,24 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_3D>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_2D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 
 ! gs_leaf_optype_m:
@@ -57,7 +63,7 @@ LEAF_2L_POCKET				= 27
 LEAF_1L_MULTIPANEL			= 28
 LEAF_1L_MULTIPANEL_M		= 29
 LEAF_2L_MULTIPANEL			= 30
-LEAF_REVOLVING				= 31
+LEAF_Revolving				= 31
 LEAF_3L_2SLIDING_CENTER		= 32
 LEAF_GAR_1L_UP_AND_OVER		= 100
 LEAF_GAR_1L_UP_SLIDING		= 101
@@ -88,17 +94,21 @@ REVEAL_DOUBLE_SPLAYED	= 8
 REVEAL_OUTSIDE_SPLAYED	= 9
 
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! =============================================================================
 ! Localization
@@ -838,7 +848,7 @@ stVentFrameProfileHeight	= `Ventilation Frame Profile Height`
 			gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING		then
 
 			if bShowRevealSizes then
-				ui_pict 96, x,y, 100,200, 1		! ui_door_height_sliding_ext_reveal.png
+				ui_pict 96, x,y, 100,200, 1		! ui_door_height_sliding_exT_Reveal.png
 			else
 				ui_pict 13, x,y, 100,200, 1		! ui_door_height_sliding_ext.png
 			endif
@@ -896,7 +906,7 @@ stVentFrameProfileHeight	= `Ventilation Frame Profile Height`
 					if bDoorWithSidelightSupport & numSidelights > 0 & not(gs_tolerance_uniform) then
 						ui_pict 108, x,y, 100,200, 1		! ui_surround_door_height_wout_uni_toler_rev.png
 					else
-						ui_pict 101, x,y, 100,200, 1		! ui_surround_door_height_rev.png
+						ui_pict 101, x,y, 100,200, 1		! ui_surround_door_height_Rev.png
 					endif
 				else
 					if bDoorWithSidelightSupport & numSidelights > 0 & not(gs_tolerance_uniform) then
@@ -1028,25 +1038,32 @@ return
 
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_VL>
-
-<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
-
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
-
-]]></Script_FWM>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_BWM>
 
 <GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" path="uipicts/DW UI Macros/ui_NominalSizesDoor_m/ui_door_garage_height.png">
 </GDLPict>
@@ -1457,9 +1474,17 @@ return
 <![CDATA[]]>
 </Comment>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -1800,4 +1825,5 @@ return
 		</String>
 	</Parameters>
 </ParamSection>
+
 </Symbol>

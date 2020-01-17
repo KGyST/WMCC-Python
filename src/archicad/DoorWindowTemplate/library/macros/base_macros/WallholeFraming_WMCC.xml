@@ -1,4 +1,5 @@
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="DB55765E-13F6-4123-91E5-56B09BA57211" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="1DFB00C4-E50D-4CFA-ACE0-C62225714407" MigrationValue="Normal" Owner="1196638531" Signature="1465080141" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -8,7 +9,8 @@
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -1565,11 +1567,13 @@ end sillRight,
 
 
 
-]]></Script_3D>
+]]>
+</Script_3D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -2313,11 +2317,13 @@ if gs_corner_column & not(bFeedBack) & (bEnableCustomCornerLeft | bEnableCustomC
 		gs_penFr_bg				= gs_penFr_bg
 endif
 
-]]></Script_2D>
+]]>
+</Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! const values for parameter: iBoardInPolyWall
 BOARD_PARALLEL_WINDOW      = 1
@@ -2768,17 +2774,21 @@ if bEnableShutter & bDrawShutter then
 	endif
 endif
 
-]]></Script_1D>
+]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_PR>
+]]>
+</Script_PR>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 bSlidingDoor = (iDoorType = 6 | iDoorType = 7 | iDoorType = 8 | iDoorType = 9)
 
@@ -3840,11 +3850,13 @@ return
 return
 
 
-]]></Script_UI>
+]]>
+</Script_UI>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
 ! Contact person: <NJ>
 
@@ -4664,7 +4676,8 @@ if bEnableCustomCornerLeft | bEnableCustomCornerRight then
 endif
 
 
-]]></Script_VL>
+]]>
+</Script_VL>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -4675,99 +4688,99 @@ endif
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["Sill_WMCC"]]></MName>
-		<MainGUID>A3E7E7B4-15C5-4F20-8CD0-8B24703F2356</MainGUID>
+		<MainGUID>5F3D20EA-7EC5-4044-8E48-AC3E0EA3F060</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Board_WMCC"]]></MName>
-		<MainGUID>54645068-4414-4170-8128-8968482F76C0</MainGUID>
+		<MainGUID>BB65B643-EA3D-4098-A3C5-18AD697814C1</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Threshold_WMCC"]]></MName>
-		<MainGUID>EC2290D7-BEE0-403E-BED2-96868AE876AA</MainGUID>
+		<MainGUID>740F9E86-547B-4B50-95C0-985B201C7A16</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Casing_WMCC"]]></MName>
-		<MainGUID>18B05FDA-175A-4F3D-8FDC-89F38791B3F4</MainGUID>
+		<MainGUID>482EE831-F79A-40CA-94EC-E4435E7C2D81</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["SunShade_WMCC"]]></MName>
-		<MainGUID>E2A94AD4-C3AD-4DDB-B931-3FB3F1396C61</MainGUID>
+		<MainGUID>46D1E0D5-55D5-4F6C-8605-5F3690F5EFA3</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Corner Column_WMCC"]]></MName>
-		<MainGUID>A73E2CF7-E1EF-47A8-86C3-582377A123DB</MainGUID>
+		<MainGUID>EAF7590B-B4F3-4647-9DE0-FA9AB9E315E0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Sill_WMCC"]]></MName>
-		<MainGUID>A3E7E7B4-15C5-4F20-8CD0-8B24703F2356</MainGUID>
+		<MainGUID>5F3D20EA-7EC5-4044-8E48-AC3E0EA3F060</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Board_WMCC"]]></MName>
-		<MainGUID>54645068-4414-4170-8128-8968482F76C0</MainGUID>
+		<MainGUID>BB65B643-EA3D-4098-A3C5-18AD697814C1</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Threshold_WMCC"]]></MName>
-		<MainGUID>EC2290D7-BEE0-403E-BED2-96868AE876AA</MainGUID>
+		<MainGUID>740F9E86-547B-4B50-95C0-985B201C7A16</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["SunShade_WMCC"]]></MName>
-		<MainGUID>E2A94AD4-C3AD-4DDB-B931-3FB3F1396C61</MainGUID>
+		<MainGUID>46D1E0D5-55D5-4F6C-8605-5F3690F5EFA3</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["CasingTrapezoid_WMCC"]]></MName>
-		<MainGUID>EF57CEBB-DF44-4D23-AFE5-01C2C61D0F7C</MainGUID>
+		<MainGUID>08751B5A-D3A0-4ED7-82F7-2F2F8A5EB9F0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Casing_WMCC"]]></MName>
-		<MainGUID>18B05FDA-175A-4F3D-8FDC-89F38791B3F4</MainGUID>
+		<MainGUID>482EE831-F79A-40CA-94EC-E4435E7C2D81</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Corner Column_WMCC"]]></MName>
-		<MainGUID>A73E2CF7-E1EF-47A8-86C3-582377A123DB</MainGUID>
+		<MainGUID>EAF7590B-B4F3-4647-9DE0-FA9AB9E315E0</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["ui_tabIDlistHierarchy_m_WMCC"]]></MName>
-		<MainGUID>83D8979A-C621-4A90-9F64-41CC8948B5F0</MainGUID>
+		<MainGUID>3DA571A9-4757-4D4B-9643-801FB12E3037</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Casing_WMCC"]]></MName>
-		<MainGUID>18B05FDA-175A-4F3D-8FDC-89F38791B3F4</MainGUID>
+		<MainGUID>482EE831-F79A-40CA-94EC-E4435E7C2D81</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Sill_WMCC"]]></MName>
-		<MainGUID>A3E7E7B4-15C5-4F20-8CD0-8B24703F2356</MainGUID>
+		<MainGUID>5F3D20EA-7EC5-4044-8E48-AC3E0EA3F060</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Board_WMCC"]]></MName>
-		<MainGUID>54645068-4414-4170-8128-8968482F76C0</MainGUID>
+		<MainGUID>BB65B643-EA3D-4098-A3C5-18AD697814C1</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["SunShade_WMCC"]]></MName>
-		<MainGUID>E2A94AD4-C3AD-4DDB-B931-3FB3F1396C61</MainGUID>
+		<MainGUID>46D1E0D5-55D5-4F6C-8605-5F3690F5EFA3</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Sill_WMCC"]]></MName>
-		<MainGUID>A3E7E7B4-15C5-4F20-8CD0-8B24703F2356</MainGUID>
+		<MainGUID>5F3D20EA-7EC5-4044-8E48-AC3E0EA3F060</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Board_WMCC"]]></MName>
-		<MainGUID>54645068-4414-4170-8128-8968482F76C0</MainGUID>
+		<MainGUID>BB65B643-EA3D-4098-A3C5-18AD697814C1</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Threshold_WMCC"]]></MName>
-		<MainGUID>EC2290D7-BEE0-403E-BED2-96868AE876AA</MainGUID>
+		<MainGUID>740F9E86-547B-4B50-95C0-985B201C7A16</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Casing_WMCC"]]></MName>
-		<MainGUID>18B05FDA-175A-4F3D-8FDC-89F38791B3F4</MainGUID>
+		<MainGUID>482EE831-F79A-40CA-94EC-E4435E7C2D81</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["SunShade_WMCC"]]></MName>
-		<MainGUID>E2A94AD4-C3AD-4DDB-B931-3FB3F1396C61</MainGUID>
+		<MainGUID>46D1E0D5-55D5-4F6C-8605-5F3690F5EFA3</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["Corner Column_WMCC"]]></MName>
-		<MainGUID>A73E2CF7-E1EF-47A8-86C3-582377A123DB</MainGUID>
+		<MainGUID>EAF7590B-B4F3-4647-9DE0-FA9AB9E315E0</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -5218,23 +5231,35 @@ endif
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_FWM>
+]]>
+</Script_FWM>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
-<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
 
-]]></Script_BWM>
+]]>
+</Script_BWM>
 
 <Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
 <![CDATA[]]>
 </Keywords>
 
-<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>25</Version>
+		<Version>22</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<HoleBits>
 			<WDBit_3DFrame/>
@@ -10025,4 +10050,5 @@ endif
 		</Boolean>
 	</Parameters>
 </ParamSection>
+
 </Symbol>
