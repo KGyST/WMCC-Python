@@ -24,7 +24,7 @@ from lxml import etree
 #------------------ Temporary constants------------------
 
 DEBUG                       = False
-OUTPUT_XML                  = False     # To retain xmls
+OUTPUT_XML                  = True     # To retain xmls
 SOURCE_XML_DIR_NAME         = r".\archicad\DoorWindowTemplate\library"
 TARGET_GDL_DIR_NAME         = r".\archicad\Target"
 SOURCE_IMAGE_DIR_NAME       = r".\archicad\DoorWindowTemplate\library_images"
@@ -139,14 +139,27 @@ class ParamSection:
         return item in self.__paramDict
 
     def __setitem__(self, key, value):
-        #FIXME currently only existing ones
         if key in self.__paramDict:
             self.__paramDict[key].setValue(value)
+        else:
+            # FIXME test
+            self.append(value, key)
 
-    def append(self, inEtree, inName):
+    def __delitem__(self, key):
+        del self.__paramDict[key]
+        self.__paramList = [i for i in self.__paramList if i.name != key]
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.__paramList[item]
+        if isinstance(item, str):
+            return self.__paramDict[item]
+
+    def append(self, inEtree, inParName):
+        #Adding param to the end
         self.__paramList.append(inEtree)
         if not isinstance(inEtree, etree._Comment):
-            self.__paramDict[inName] = inEtree
+            self.__paramDict[inParName] = inEtree
 
     def insertAfter(self, inParName, inEtree):
         self.__paramList.insert(self.__getIndex(inParName) + 1, inEtree)
@@ -332,7 +345,7 @@ class ParamSection:
         for p in BO_PARAM_TUPLE:
             self.remove_param(p[0])
 
-    def createParamfromCSV(self, inParName, inCol):
+    def createParamfromCSV(self, inParName, inCol, inArrayValues = None):
         splitPars = inParName.split(" ")
         parName = splitPars[0]
         ap = ArgParse(add_help=False)
@@ -346,6 +359,8 @@ class ParamSection:
         ap.add_argument("-u", "--unique", action='store_true')
         ap.add_argument("-o", "--overwrite", action='store_true')
         ap.add_argument("-i", "--inherit", action='store_true', help='Inherit properties form the other parameter')
+        ap.add_argument("-y", "--array", action='store_true', help='Insert an array of [0-9]+ or  [0-9]+x[0-9]+ size')
+        ap.add_argument("-r", "--remove", action='store_true')
 
         parsedArgs = ap.parse_known_args(splitPars)[0]
 
@@ -355,50 +370,32 @@ class ParamSection:
             desc = ''
 
         if parName not in self:
-            # if inCol:
-            #     if inCol[0] != '"':
-            #         inCol = '"' + inCol
-            #     if inCol[-1] != '"':
-            #         inCol = inCol + '"'
-            # else:
-            #     inCol = '""'
-
             parType = PAR_UNKNOWN
             if parsedArgs.type:
                 if parsedArgs.type in ("Length", ):
                     parType = PAR_LENGTH
-                    inCol = float(inCol)
                 elif parsedArgs.type in ("Angle", ):
                     parType = PAR_ANGLE
-                    inCol = float(inCol)
                 elif parsedArgs.type in ("RealNum", ):
                     parType = PAR_REAL
-                    inCol = float(inCol)
                 elif parsedArgs.type in ("Integer", ):
                     parType = PAR_INT
-                    inCol = int(inCol)
                 elif parsedArgs.type in ("Boolean", ):
                     parType = PAR_BOOL
-                    inCol = bool(int(inCol))
                 elif parsedArgs.type in ("String", ):
                     parType = PAR_STRING
                 elif parsedArgs.type in ("Material", ):
                     parType = PAR_MATERIAL
-                    inCol = int(inCol)
                 elif parsedArgs.type in ("LineType", ):
                     parType = PAR_LINETYPE
-                    inCol = int(inCol)
                 elif parsedArgs.type in ("FillPattern", ):
                     parType = PAR_FILL
-                    inCol = int(inCol)
                 elif parsedArgs.type in ("PenColor", ):
                     parType = PAR_PEN
-                    inCol = int(inCol)
                 elif parsedArgs.type in ("Separator", ):
                     parType = PAR_SEPARATOR
                 elif parsedArgs.type in ("Title", ):
                     parType = PAR_TITLE
-                    inCol = None
                 elif parsedArgs.type in ("Comment", ):
                     parType = PAR_COMMENT
                     parName = " " + parName + ": PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK "
@@ -415,6 +412,31 @@ class ParamSection:
                     parType = PAR_ANGLE
                 else:
                     parType = PAR_STRING
+
+            if not inArrayValues:
+                arrayValues = None
+                if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL, ):
+                    inCol = float(inCol)
+                elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN, ):
+                    inCol = int(inCol)
+                elif parType in (PAR_BOOL, ):
+                    inCol = bool(int(inCol))
+                elif parType in (PAR_STRING, ):
+                    inCol = inCol
+                elif parType in (PAR_TITLE, ):
+                    inCol = None
+            else:
+                inCol = None
+                if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL, ):
+                    arrayValues = [float(x) if type(x) != list else [float(y) for y in x] for x in inArrayValues]
+                elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN, ):
+                    arrayValues = [int(x) if type(x) != list else [int(y) for y in x] for x in inArrayValues]
+                elif parType in (PAR_BOOL, ):
+                    arrayValues = [bool(int(x)) if type(x) != list else [bool(int(y)) for y in x] for x in inArrayValues]
+                elif parType in (PAR_STRING, ):
+                    arrayValues = [x if type(x) != list else [y for y in x] for x in inArrayValues]
+                elif parType in (PAR_TITLE, ):
+                    inCol = None
 
             if parsedArgs.inherit:
                 if parsedArgs.child:
@@ -441,7 +463,8 @@ class ParamSection:
                           inChild=isChild,
                           inBold=isBold,
                           inHidden=isHidden,
-                          inUnique=isUnique,)
+                          inUnique=isUnique,
+                          inAVals=arrayValues)
 
             if parsedArgs.child:
                 self.insertAsChild(parsedArgs.child, param)
@@ -449,16 +472,23 @@ class ParamSection:
                 self.insertAfter(parsedArgs.after, param)
             elif parsedArgs.frontof:
                 self.insertBefore(parsedArgs.frontof, param)
+            else:
+                #FIXME writing tests for this
+                self.append(param, parName)
 
             if parType == PAR_TITLE:
                 paramComment = Param(inType=PAR_COMMENT,
                                      inName=" " + parName + ": PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ", )
                 self.insertBefore(param.name, paramComment)
         else:
-            #FIXME Pickin around an existing param, to be thought through
-            self[parName] = inCol
-            if desc:
-                self.__paramDict[parName].desc = " ".join(parsedArgs.desc)
+            # FIXME writing tests for this
+            if parsedArgs.remove:
+                if inCol:
+                    del self[parName]
+            else:
+                self[parName] = inCol
+                if desc:
+                    self.__paramDict[parName].desc = " ".join(parsedArgs.desc)
 
 
 class Param(object):
@@ -513,9 +543,24 @@ class Param(object):
         self.isInherited    = False
         self.isUsed         = True
 
+    def __setitem__(self, key, value):
+        if self.__sd > 0:
+            pass
+        else:
+            if self.__fd > key:
+                self._aVals[key - 1] = [self.__toFormat(value)]
+
     def setValue(self, inVal):
-        #FIXME to be removed?
-        self.value = self.__toFormat(inVal)
+        if type(inVal) == list:
+            self.aVals = self.__toFormat(inVal)
+            if self.value:
+                print("WARNING: value -> array change: %s" % self.name)
+            self.value = None
+        else:
+            self.value = self.__toFormat(inVal)
+            if self.aVals:
+                print("WARNING: array -> value change: %s" % self.name)
+            self.aVals = None
 
     def __toFormat(self, inData):
 
@@ -524,6 +569,8 @@ class Param(object):
         :param inData:
         :return:
         """
+        if type(inData) == list:
+            return list(map (self.__toFormat, inData))
         if self.iType in (PAR_LENGTH, PAR_REAL, PAR_ANGLE):
             # self.digits = 2
             return float(inData)
@@ -678,22 +725,27 @@ class Param(object):
         return aValue
 
     @aVals.setter
-    def aVals(self, inETree):
-        if inETree is not None:
-            self.__fd = int(inETree.attrib["FirstDimension"])
-            self.__sd = int(inETree.attrib["SecondDimension"])
+    def aVals(self, inValues):
+        if type(inValues) == etree._Element:
+            self.__fd = int(inValues.attrib["FirstDimension"])
+            self.__sd = int(inValues.attrib["SecondDimension"])
             if self.__sd > 0:
                 self._aVals = [["" for _ in range(self.__sd)] for _ in range(self.__fd)]
-                for v in inETree.iter("AVal"):
+                for v in inValues.iter("AVal"):
                     x = int(v.attrib["Column"]) - 1
                     y = int(v.attrib["Row"]) - 1
                     self._aVals[y][x] = self.__toFormat(v.text)
             else:
                 self._aVals = [[""] for _ in range(self.__fd)]
-                for v in inETree.iter("AVal"):
+                for v in inValues.iter("AVal"):
                     y = int(v.attrib["Row"]) - 1
                     self._aVals[y][0] = self.__toFormat(v.text)
-            self.aValsTail = inETree.tail
+            self.aValsTail = inValues.tail
+        elif type(inValues) == list:
+            self.__fd = len(inValues)
+            self.__sd = len(inValues[0]) if isinstance(inValues[0], list) > 1 else 0
+
+            self._aVals = list( map (self.__toFormat, inValues))
         else:
             self._aVals = None
 
@@ -1102,21 +1154,30 @@ def addFileRecursively(sourceFileName='', **kwargs):
 
         return destItem
 
-def unitConvert(inParameterName, inParameterValue, inTranslationLib):
+def unitConvert(inParameterName,
+                inParameterValue,
+                inTranslationLib, ):
     """
     Converts source units into destination units
     #FIXME
     :param inParameter:
     :param inTranslation:
+    :inFirstPosition:   position if in array
+    :inSecondPosition:  position if in array
     :return:            float; NOT string
     """
     _UnitLib = {"m": 1, "mm" : 0.001}
+
+    if type(inParameterValue) == list:
+        return [unitConvert(par) for par in inParameterValue]
+    # elif type(inParameterValue) == dict:
+    #     return {unitConvert(inParameterValue[par]) for par in inParameterValue.keys()}
     if "Measurement" in inTranslationLib['parameters'][inParameterName]:
         if "Measurement" in inTranslationLib['parameters'][inParameterName]["ARCHICAD"]:
             return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
                    _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
     elif inParameterName in {"Inner frame material", "Outer frame material"}:
-        return 1
+        return inParameterValue + "_" + NEW_BRAND_NAME
     else:
         return inParameterValue
 

@@ -34,7 +34,7 @@ class ArchicadEngine(Resource):
             # ------ materials ------
             availableMaterials = []
             for material in data['materials']:
-                availableMaterials += [ material["material_name"] ]
+                availableMaterials += [ material["material_name"]  + "_" + NEW_BRAND_NAME]
                 materialMacro = addFileRecursively("RAL9003-White", targetFileName=material["material_name"] + "_" + NEW_BRAND_NAME)
 
                 for parameter in material['parameters']:
@@ -52,16 +52,32 @@ class ArchicadEngine(Resource):
 
                 for parameter in family['parameters']:
                     translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                    destItem.parameters[translatedParameter] = unitConvert(
-                        parameter,
-                        family['parameters'][parameter],
-                        translation
-                    )
-                    # For now:
-                    destItem.parameters["sMaterialValS"] = availableMaterials
+                    if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                        firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
 
+                        if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                            secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
+
+                            destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
+                                parameter,
+                                family['parameters'][parameter],
+                                translation)
+                        else:
+                            destItem.parameters[translatedParameter][firstPosition] = unitConvert(
+                                parameter,
+                                family['parameters'][parameter],
+                                translation)
+                    else:
+                        destItem.parameters[translatedParameter] = unitConvert(
+                            parameter,
+                            family['parameters'][parameter],
+                            translation)
+
+                    # For now:
+                    destItem.parameters["sMaterialValS"] = [[a] for a in availableMaterials]
 
         # --------------------------------------------------------
+
         startConversion()
 
         return {"result": data}

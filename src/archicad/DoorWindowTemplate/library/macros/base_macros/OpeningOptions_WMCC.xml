@@ -9,11 +9,11 @@
 
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
-		<MName><![CDATA["GetDWOplines_bo18"]]></MName>
+		<MName><![CDATA["GetDWOplines_WMCC"]]></MName>
 		<MainGUID>410E3C3B-D45E-4262-B0A7-185891D9E9D2</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["GetDWOplines_bo18"]]></MName>
+		<MName><![CDATA["GetDWOplines_WMCC"]]></MName>
 		<MainGUID>410E3C3B-D45E-4262-B0A7-185891D9E9D2</MainGUID>
 	</Macro>
 </CalledMacros>

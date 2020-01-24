@@ -31,7 +31,8 @@
     "Inner frame material": {
       "ARCHICAD": {
         "Name": "sMaterialS",
-        "Type": "PAR_STRING"
+        "Type": "PAR_STRING",
+        "FirstPosition" : 1
       },
       "Revit ENU": {
         "Name": "Inner frame material"
@@ -43,7 +44,8 @@
     "Outer frame material": {
       "ARCHICAD": {
         "Name": "sMaterialS",
-        "Type": "PAR_STRING"
+        "Type": "PAR_STRING",
+        "FirstPosition" : 2
       },
       "Revit ENU": {
         "Name": "Outer frame material"

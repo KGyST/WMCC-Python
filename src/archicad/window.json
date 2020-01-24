@@ -6,8 +6,8 @@
       "parameters": {       
           "Rough Height": "1500",
           "Rough Width": "2500",
-          "Inner frame material": "RAL3005-Wine_Red",
-          "Outer frame material": "RAL7001-Silver_Grey"
+          "Inner frame material": "_test_textured_material",
+          "Outer frame material": "_test_textured_material"
       }
     },
     {
@@ -15,8 +15,8 @@
       "parameters": {
           "Rough Height": "3000",
           "Rough Width": "3000",
-          "Inner frame material": "RAL9003-White",
-          "Outer frame material": "RAL8001-Golden_Oak"
+          "Inner frame material": "_test_textured_material",
+          "Outer frame material": "_test_textured_material"
         }
       }
   ],
@@ -167,6 +167,14 @@
 	},
 		{
 	"material_name": "RAL1011-Irish_Oak",
+	"parameters": {
+		"iRed":   "138",
+		"iGreen": "102",
+		"iBlue":  "66"
+		}
+	},
+	  {
+	"material_name": "_test_textured_material",
 	"parameters": {
 		"iRed":   "138",
 		"iGreen": "102",
