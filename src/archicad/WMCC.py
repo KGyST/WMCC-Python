@@ -1,11 +1,13 @@
 import os.path
-from os import listdir
+from os import listdir, walk
 import uuid
 import re
 import tempfile
 from subprocess import check_output
 import shutil
 import sys
+import datetime
+import jsonpickle
 
 # import string
 
@@ -851,7 +853,7 @@ class SourceImage(SourceFile):
 
 class DestImage(DestFile):
     def __init__(self, sourceFile, stringFrom, stringTo):
-        if not sourceFile.isEncodedImage:
+        if not sourceFile.isEncodedImage or not (stringFrom == stringTo == ""):
             self._name               = re.sub(stringFrom, stringTo, sourceFile.name, flags=re.IGNORECASE)
         else:
             self._name               = sourceFile.name
@@ -1154,6 +1156,66 @@ def addFileRecursively(sourceFileName='', **kwargs):
 
         return destItem
 
+def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
+    global dest_dict
+
+    dest_dict = in_dest_dict
+
+    destItem = addFileRecursively(inFile, **kwargs)
+
+    # startConversion()
+
+    return destItem
+
+def buildMacroSet(inFolderS):
+    '''
+    :inFolderS: a list of foleder names to go through to build up macros
+    :return:
+    '''
+
+    scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
+    scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
+
+    # --------------------------------------------------------
+
+    for rootFolder in inFolderS:
+        for folder, subFolderS, fileS in os.walk(os.path.join(SOURCE_XML_DIR_NAME, rootFolder)):
+            for file in fileS:
+                if os.path.splitext(file)[1].upper() == ".XML":
+                    if os.path.splitext(file)[0].upper() not in dest_dict:
+                        addFile(os.path.splitext(file)[0])
+                else:
+                    addImageFile(file)
+        for folder, subFolderS, fileS in os.walk(SOURCE_IMAGE_DIR_NAME):
+            for file in fileS:
+                addImageFile(file)
+
+    tempGDLDirName = tempfile.mkdtemp()
+
+    print("tempGDLDirName: %s" % tempGDLDirName)
+
+    startConversion(targetGDLDirName = tempGDLDirName)
+
+    output = r'%s createcontainer %s %s' % ('"' + ARCHICAD_LOCATION + '\LP_XMLConverter.exe"', '"' + os.path.join(TARGET_GDL_DIR_NAME, 'BO_DW_macros_' + datetime.date.today().strftime("%y%m%d")) + '.lcf"', '"' + tempGDLDirName + '"')
+    print("output: %s" % output)
+
+    check_output(output, shell=True)
+
+    for k in dest_dict.keys():
+        dest_dict[k].sourceFile.scripts = None
+
+    jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, "macroset_" + datetime.date.today().strftime("%y%m%d" + ".json"))
+    jsonData = jsonpickle.encode(dest_dict)
+
+    with open(jsonPathName, "w") as file:
+        file.write(jsonData)
+
+def createLCF():
+    '''
+    Builds up an LCF from a set of Folders
+    :return:
+    '''
+
 def unitConvert(inParameterName,
                 inParameterValue,
                 inTranslationLib, ):
@@ -1181,7 +1243,7 @@ def unitConvert(inParameterName,
     else:
         return inParameterValue
 
-def startConversion():
+def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
     """
     :return:
     """
@@ -1306,12 +1368,12 @@ def startConversion():
                 shutil.copyfile(os.path.join(SOURCE_IMAGE_DIR_NAME, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
         else:
             try:
-                shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].relPath))
+                shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
             except IOError:
-                os.makedirs(os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].dirName))
-                shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(TARGET_GDL_DIR_NAME, pict_dict[f].relPath))
+                os.makedirs(os.path.join(targetGDLDirName, pict_dict[f].dirName))
+                shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
 
-    x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, TARGET_GDL_DIR_NAME)
+    x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
     print(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:

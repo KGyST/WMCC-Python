@@ -1,22 +1,25 @@
 {
+  "dest_dict" : "macroset_200127.json",
   "family_name": "FamilyName",
   "family_types": [
     {
       "type_name": "Family1",
       "parameters": {       
-          "Rough Height": "1500",
-          "Rough Width": "2500",
+          "Rough Height"		: "1500",
+          "Rough Width"			: "2500",
           "Inner frame material": "_test_textured_material",
-          "Outer frame material": "_test_textured_material"
+          "Outer frame material": "_test_textured_material",
+          "Glazing"				: "Glass"
       }
     },
     {
       "type_name": "Family2",
       "parameters": {
-          "Rough Height": "3000",
-          "Rough Width": "3000",
+          "Rough Height"		: "3000",
+          "Rough Width"			: "3000",
           "Inner frame material": "_test_textured_material",
-          "Outer frame material": "_test_textured_material"
+          "Outer frame material": "_test_textured_material",
+          "Glazing"				: "Glass"
         }
       }
   ],

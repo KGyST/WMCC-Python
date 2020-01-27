@@ -54,6 +54,19 @@
         "Name": "Außenmaterial"
       }
     },
+    "Glazing": {
+      "ARCHICAD": {
+        "Name": "sMaterialS",
+        "Type": "PAR_STRING",
+        "FirstPosition" : 9
+      },
+      "Revit ENU": {
+        "Name": "Glazing material"
+      },
+      "Revit GER": {
+        "Name": "Glasmaterial"
+      }
+    },
     "iRed": {
       "ARCHICAD": {
         "Name": "iRed",

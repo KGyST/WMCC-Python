@@ -16,6 +16,8 @@ develop-eggs/
 downloads/
 eggs/
 .eggs/
+src/archicad/Target/*
+
 lib/
 lib64/
 parts/

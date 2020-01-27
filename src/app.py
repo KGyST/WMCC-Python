@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
-import json
+import json, jsonpickle
+import os
 
 from archicad.WMCC import (
     scanFolders,
@@ -11,6 +12,9 @@ from archicad.WMCC import (
     startConversion,
     TRANSLATIONS_JSON,
     NEW_BRAND_NAME,
+    buildMacroSet,
+    addFileUsingMacroset,
+    TARGET_GDL_DIR_NAME,
 )
 
 app = Flask(__name__)
@@ -47,8 +51,13 @@ class ArchicadEngine(Resource):
                 materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + NEW_BRAND_NAME
 
             # ------ placeables ------
+
+            _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, data["dest_dict"])).read())
+
             for family in data['family_types']:
-                destItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
+                # destItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
+                destItem = addFileUsingMacroset("Fixed Test Window_WMCC", _dest_dict, targetFileName=family["type_name"])
+
 
                 for parameter in family['parameters']:
                     translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
@@ -74,16 +83,26 @@ class ArchicadEngine(Resource):
                             translation)
 
                     # For now:
-                    destItem.parameters["sMaterialValS"] = [[a] for a in availableMaterials]
+                    destItem.parameters["sMaterialValS"] = [[a] for a in availableMaterials] + [["Glass"]]
 
         # --------------------------------------------------------
+
+        addFileRecursively("Glass", targetFileName="Glass")
 
         startConversion()
 
         return {"result": data}
 
 
+class CreateLCFEngine(Resource):
+    def post(selfs):
+        data = request.get_json()
+        buildMacroSet(data['folder_names'])
+        return 0
+
+
 api.add_resource(ArchicadEngine, '/')
+api.add_resource(CreateLCFEngine, '/createlcf')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
