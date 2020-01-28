@@ -23,10 +23,6 @@
 		<MName><![CDATA["Profiles_WMCC"]]></MName>
 		<MainGUID>E3B150F5-3A06-4C5A-85FA-D8C58B347069</MainGUID>
 	</Macro>
-	<Macro>
-		<MName><![CDATA["LeafMacro_Reynaers_SL_38"]]></MName>
-		<MainGUID>00000000-0000-0000-0000-000000000000</MainGUID>
-	</Macro>
 </CalledMacros>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
@@ -5955,7 +5951,7 @@ yWarnMax = 0
 			Zone~ = Zone~ + 1
 			Zone~Prev = Zone~ 
 
-				CALL "LeafMacro_Reynaers_SL_38" Parameters all \
+				CALL "Leaf_WMCC" Parameters all \
 					LeafBoxA				= xMullionPos[i] - xMullionPos[i-1], 
 					LeafBoxB				= LeafBoxB,
 					Zone~			= Zone~,
@@ -6059,7 +6055,7 @@ yWarnMax = 0
 		endif
 
 		Zone~ = Zone~ + 1
-			CALL "LeafMacro_Reynaers_SL_38" Parameters all \
+			CALL "Leaf_WMCC" Parameters all \
 				LeafBoxA				= LeafBoxA,																	!TODO check diff2
 				LeafBoxB				= xMullionPos[i] - xMullionPos[i-1],
 				Zone~			= Zone~,

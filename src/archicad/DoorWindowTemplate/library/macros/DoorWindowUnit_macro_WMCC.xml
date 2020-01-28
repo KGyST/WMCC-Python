@@ -1713,7 +1713,26 @@ define material "mRAL9007_WMCC" 20,
 ! MATERIAL DEFinitions MATERIAL DEfinitions
 !----------------------------------------------
 
-values "sMaterialS" sMaterialValS
+!values "sMaterialS" sMaterialValS
+
+
+dim _mIn[], _mOut[], _mGlass[]
+
+for _i = 1 to vardim2(sMaterialValS)
+	if sMaterialValS[MAT_IN]	[_i] <> "" then _mIn[_i]	= sMaterialValS[MAT_IN][_i]
+	if sMaterialValS[MAT_OUT]	[_i] <> "" then _mOut[_i]	= sMaterialValS[MAT_OUT][_i]
+	if sMaterialValS[MAT_GLASS]	[_i] <> "" then _mGlass[_i]	= sMaterialValS[MAT_GLASS][_i]
+next _i
+
+values "sui_MatIn" _mIn
+values "sui_MatOut" _mOut
+values "sui_MatGlass" _mGlass
+
+sMaterialS[MAT_IN]		= sui_MatIn
+sMaterialS[MAT_OUT]		= sui_MatOut
+sMaterialS[MAT_GLASS]	= sui_MatGlass
+
+parameters sMaterialS	= sMaterialS
 
 dim _matS[]
 _matS[1] = sMaterialS[1]
@@ -1724,7 +1743,7 @@ for _i = 2 to vardim1(sMaterialS)
 	isFound = 0
 
 	for _j = 1 to vardim1(_matS)
-		if _matS[_j] = sMaterialS[_i] then
+		if _matS[_j] = sMaterialS[_i] and sMaterialS[_i] <> "" then
 			isFound = 1
 			_j = vardim1(_matS)
 		endif
@@ -1905,16 +1924,16 @@ idxPage = idxPage + 1
 !--------------------------------------------------------------------------------
 ! Product Settings
 !--------------------------------------------------------------------------------
-!!if iUiID_Product  then
-!!	uiUsedPageIDs[idxPage][1]	= iUiID_Product		: uiUsedPageIDs[idxPage][2]		= iParID_Product
-!!	uiUsedPageNames[idxPage][1]	= `Product Settings`	
-!!	if isWindow then
-!!		uiUsedPageNames[idxPage][2]	= "uiTab_WindowSettings_flat_WMCC"
-!!	else
-!!		uiUsedPageNames[idxPage][2]	= "uiTab_DoorSettings_flat_WMCC"
-!!	endif
-!!	idxPage = idxPage + 1
-!!endif
+if iUiID_Product  then
+	uiUsedPageIDs[idxPage][1]	= iUiID_Product		: uiUsedPageIDs[idxPage][2]		= iParID_Product
+	uiUsedPageNames[idxPage][1]	= `Product Settings`	
+	if isWindow then
+		uiUsedPageNames[idxPage][2]	= "uiTab_WindowSettings_flat_WMCC"
+	else
+		uiUsedPageNames[idxPage][2]	= "uiTab_DoorSettings_flat_WMCC"
+	endif
+	idxPage = idxPage + 1
+endif
 
 ! --------------------------------------------------------------------------------
 ! Door/Window Settings and Opening group
@@ -2173,7 +2192,7 @@ if isWindow then
 						bLockOplineStyle			= bLockOplineStyle,
 						bEnableShutter				= bEnableShutter,
 						bEnableCasing				= bEnableCasing,
-						bEnableGanging				= bEnableGanging,
+!						bEnableGanging				= bEnableGanging,
 						bEnableVentilationProfile	= bEnableVentilationProfile,
 						bEnableParapetInset			= bEnableParapetInset,
 						bEnableMasonryArch			= bEnableMasonryArch,
@@ -2185,7 +2204,7 @@ if isWindow then
 						bEnableCustomCornerRight	= bEnableCustomCornerRight,
 						bEnableCavityClosure		= bEnableCavityClosure,
 						bDisableSwingType			= bDisableSwingType,
-						bDisableSwingLineType		= bDisableSwingLineType,
+!						bDisableSwingLineType		= bDisableSwingLineType,
 						bForbiddenScaleChangeMoving	= bForbiddenScaleChangeMoving
 else
 	! --------------------------------------------------------------------------------
@@ -2201,7 +2220,7 @@ else
 						bThresholdNotAvailableByOpTpye	= bThresholdNotAvailableByOpTpye,
 						bEnableShutter				= bEnableShutter,
 						bEnableCasing				= bEnableCasing,
-						bEnableGanging				= bEnableGanging,
+!						bEnableGanging				= bEnableGanging,
 						bEnableVentilationProfile	= bEnableVentilationProfile,
 						bEnableCavityClosure		= bEnableCavityClosure,
 	!!					bDoorWithSidelightSupport	= 1,
@@ -2216,7 +2235,7 @@ else
 						bLockOplineStyle			= bLockOplineStyle,
 						bDisable2DOverride			= bDisable2DOverride,
 						bDisableSwingType			= bDisableSwingType,
-						bDisableSwingLineType 		= bDisableSwingLineType,
+!						bDisableSwingLineType 		= bDisableSwingLineType,
 						iOpeningParamType			= iOpeningParamType,
 						bArchedTop					= bArchedTop,
 	!!					bDoorEmptyPanel				= bDoorEmptyPanel,
@@ -2514,9 +2533,27 @@ return
 ! --------------------------------------------------------------------------------
 "ProductParameters":
 ! --------------------------------------------------------------------------------
+	x1		= 150
+	yPos	= 75
 
-!TODO
+	ui_style 0, 1
+	ui_outfield `Outer surface`, 	x1, yPos, 135, 15
+	ui_style 0, 0
+	ui_infield{2} sui_MatOut, 		x1, yPos + 15, 135, 25
 
+	yPos = yPos + 45
+
+	ui_style 0, 1	
+	ui_outfield `Inner surface`, 	x1, yPos, 135, 15
+	ui_style 0, 0
+	ui_infield{2} sui_MatIn, 		x1, yPos + 15, 135, 25
+
+	yPos = yPos + 45
+
+	ui_style 0, 1	
+	ui_outfield `Glass material`, 	x1, yPos, 135, 15
+	ui_style 0, 0
+	ui_infield{2} sui_MatGlass, 	x1, yPos + 15, 135, 25
 return
 
 
@@ -8473,8 +8510,9 @@ endif
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<ArrayValues FirstDimension="1" SecondDimension="0">
-				<AVal Row="1"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+			<ArrayValues FirstDimension="1" SecondDimension="2">
+				<AVal Column="1" Row="1"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA["RAL3005-Wine_Red"]]></AVal>
 			</ArrayValues>
 		</String>
 		<Integer Name="gs_resol">
@@ -9782,6 +9820,27 @@ endif
 				<AVal Row="1">0</AVal>
 			</ArrayValues>
 		</Length>
+		<String Name="sui_MatIn">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["RAL3005-Wine_Red"]]></Value>
+		</String>
+		<String Name="sui_MatOut">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="sui_MatGlass">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
 	</Parameters>
 </ParamSection>
 

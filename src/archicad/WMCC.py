@@ -8,6 +8,7 @@ import shutil
 import sys
 import datetime
 import jsonpickle
+import os
 
 # import string
 
@@ -83,7 +84,7 @@ PARFLG_HIDDEN   = 4
 
 app = None
 
-dest_sourcenames    = {}   #source name             -> DestXMLs, idx by original filename #FIXME could be a set
+dest_sourcenames    = {}   #source name             -> DestXMLs, idx by original filename
 dest_guids          = {}   #dest guid               -> DestXMLs, idx by
 source_guids        = {}   #Source GUID             -> Source XMLs, idx by
 id_dict             = {}   #Source GUID             -> dest GUID
@@ -852,9 +853,11 @@ class SourceImage(SourceFile):
 
 
 class DestImage(DestFile):
-    def __init__(self, sourceFile, stringFrom, stringTo):
-        if not sourceFile.isEncodedImage or not (stringFrom == stringTo == ""):
+    def __init__(self, sourceFile, stringFrom, stringTo, **kwargs):
+        if not sourceFile.isEncodedImage or not (stringFrom == stringTo == "") and not "targetFileName" in kwargs:
             self._name               = re.sub(stringFrom, stringTo, sourceFile.name, flags=re.IGNORECASE)
+        elif "targetFileName" in kwargs:
+            self._name = kwargs["targetFileName"]
         else:
             self._name               = sourceFile.name
         self.sourceFile         = sourceFile
@@ -1061,6 +1064,25 @@ class DestXML (XMLFile, DestFile):
             id_dict[self.sourceFile.guid.upper()] = self.guid.upper()
 
 
+class StrippedSourceXML:
+    """
+    Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
+    """
+    def __init__(self, inName, inFullPath):
+        self.name = inName
+        self.fullPath = inFullPath
+
+
+class StrippedDestXML:
+    """
+    Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
+    """
+    def __init__(self, inName, inGUID, inRelPath, inSourceFile):
+        self.name = inName
+        self.guid = inGUID
+        self.relPath = inRelPath
+        self.sourceFile = inSourceFile
+
 # -------------------/data classes -------------------------------------------------------------------------------------
 
 def scanFolders (inFile, inRootFolder):
@@ -1098,9 +1120,9 @@ def scanFolders (inFile, inRootFolder):
     except WindowsError:
         pass
 
-def addImageFile(fileName):
+def addImageFile(fileName, **kwargs):
     if not fileName.upper() in pict_dict:
-        destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME)
+        destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME, **kwargs)
         pict_dict[destItem.fileNameWithExt.upper()] = destItem
 
 def addFile(sourceFileName, **kwargs):
@@ -1108,7 +1130,7 @@ def addFile(sourceFileName, **kwargs):
         destItem = DestXML(replacement_dict[sourceFileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME, **kwargs)
         dest_dict[destItem.name.upper()] = destItem
         dest_guids[destItem.guid] = destItem
-        dest_sourcenames[destItem.sourceFile.name] = destItem
+        dest_sourcenames[destItem.sourceFile.name.upper()] = destItem
     else:
         #FIXME File should be in library_additional, possibly worth of checking it or add a warning
         print("Warning: %s not in replacement_dict" % sourceFileName)
@@ -1132,7 +1154,7 @@ def addFileRecursively(sourceFileName='', **kwargs):
         x = replacement_dict[sourceFileName.upper()]
 
         for k, v in x.calledMacros.items():
-            if v not in dest_sourcenames:
+            if v.upper() not in dest_sourcenames:
                 addFileRecursively(v)
 
         for parentGUID in x.parentSubTypes:
@@ -1159,11 +1181,9 @@ def addFileRecursively(sourceFileName='', **kwargs):
 def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
     global dest_dict
 
-    dest_dict = in_dest_dict
+    dest_dict.update(in_dest_dict)
 
-    destItem = addFileRecursively(inFile, **kwargs)
-
-    # startConversion()
+    destItem = addFile(inFile, **kwargs)
 
     return destItem
 
@@ -1173,22 +1193,23 @@ def buildMacroSet(inFolderS):
     :return:
     '''
 
-    scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
     scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
 
     # --------------------------------------------------------
 
     for rootFolder in inFolderS:
+        scanFolders(os.path.join(SOURCE_XML_DIR_NAME, rootFolder), SOURCE_XML_DIR_NAME)
+
         for folder, subFolderS, fileS in os.walk(os.path.join(SOURCE_XML_DIR_NAME, rootFolder)):
             for file in fileS:
                 if os.path.splitext(file)[1].upper() == ".XML":
                     if os.path.splitext(file)[0].upper() not in dest_dict:
-                        addFile(os.path.splitext(file)[0])
+                        addFile(os.path.splitext(file)[0], targetFileName=os.path.splitext(file)[0])
                 else:
                     addImageFile(file)
         for folder, subFolderS, fileS in os.walk(SOURCE_IMAGE_DIR_NAME):
             for file in fileS:
-                addImageFile(file)
+                addImageFile(file, targetFileName=file)
 
     tempGDLDirName = tempfile.mkdtemp()
 
@@ -1201,11 +1222,15 @@ def buildMacroSet(inFolderS):
 
     check_output(output, shell=True)
 
-    for k in dest_dict.keys():
-        dest_dict[k].sourceFile.scripts = None
+    _stripped_dest_dict = {}
+
+    for k, v in dest_dict.items():
+        # dest_dict[k].sourceFile.scripts = None
+        _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, )
+        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, "macroset_" + datetime.date.today().strftime("%y%m%d" + ".json"))
-    jsonData = jsonpickle.encode(dest_dict)
+    jsonData = jsonpickle.encode(_stripped_dest_dict)
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
@@ -1243,6 +1268,75 @@ def unitConvert(inParameterName,
     else:
         return inParameterValue
 
+def createBrandedProduct(data):
+    scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
+    scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
+    # --------------------------------------------------------
+    with open(TRANSLATIONS_JSON, "r") as translatorJSON:
+        translation = json.loads(translatorJSON.read())
+
+        # ------ materials ------
+        availableMaterials = []
+        for material in data['materials']:
+            availableMaterials += [material["material_name"] + "_" + NEW_BRAND_NAME]
+            materialMacro = addFileRecursively("RAL9003-White",
+                                               targetFileName=material["material_name"] + "_" + NEW_BRAND_NAME)
+
+            for parameter in material['parameters']:
+                translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                materialMacro.parameters[translatedParameter] = unitConvert(
+                    parameter,
+                    material['parameters'][parameter],
+                    translation
+                )
+            materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + NEW_BRAND_NAME
+
+        # ------ placeables ------
+
+        _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, data["dest_dict"])).read())
+
+        for family in data['family_types']:
+            # destItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
+            destItem = addFileUsingMacroset("Fixed Test Window_WMCC", _dest_dict,
+                                            targetFileName=family["type_name"])
+
+            for parameter in family['parameters']:
+                translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                    firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
+
+                    if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                        secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
+
+                        destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
+                            parameter,
+                            family['parameters'][parameter],
+                            translation)
+                    else:
+                        destItem.parameters[translatedParameter][firstPosition] = unitConvert(
+                            parameter,
+                            family['parameters'][parameter],
+                            translation)
+                else:
+                    destItem.parameters[translatedParameter] = unitConvert(
+                        parameter,
+                        family['parameters'][parameter],
+                        translation)
+
+                # For now:
+                destItem.parameters["sMaterialValS"] = [[a] for a in availableMaterials] + [["Glass"]]
+    # --------------------------------------------------------
+    addFileRecursively("Glass", targetFileName="Glass")
+    tempGDLDirName = os.path.join(tempfile.mkdtemp(), NEW_BRAND_NAME)
+    print("tempGDLDirName: %s" % tempGDLDirName)
+    startConversion(targetGDLDirName=tempGDLDirName)
+    output = r'%s createcontainer %s %s' % ('"' + ARCHICAD_LOCATION + '\LP_XMLConverter.exe"',
+                                            '"' + os.path.join(TARGET_GDL_DIR_NAME,
+                                                               'Door_Window' + "_" + NEW_BRAND_NAME + '.lcf"'),
+                                            '"' + tempGDLDirName + '"')
+    print("output: %s" % output)
+    check_output(output, shell=True)
+
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
     """
     :return:
@@ -1254,102 +1348,107 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
     print("tempPicDir: %s" % tempPicDir)
 
     for k in list(dest_dict.keys()):
-        dest        = dest_dict[k]
-        src         = dest.sourceFile
-        srcPath     = src.fullPath
-        destPath    = os.path.join(tempdir, dest.relPath)
-        destDir     = os.path.dirname(destPath)
+        if isinstance(dest_dict[k], DestXML):
+            dest        = dest_dict[k]
+            src         = dest.sourceFile
+            srcPath     = src.fullPath
+            destPath    = os.path.join(tempdir, dest.relPath)
+            destDir     = os.path.dirname(destPath)
 
-        print("%s -> %s" % (srcPath, destPath,))
+            print("%s -> %s" % (srcPath, destPath,))
 
-        #FIXME multithreading, map-reduce
-        mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
-        mdp.getroot().attrib[ID] = dest.guid
+            #FIXME multithreading, map-reduce
+            mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
+            mdp.getroot().attrib[ID] = dest.guid
 
-        for m in mdp.findall("./CalledMacros/Macro"):
-            for dI in list(dest_dict.keys()):
-                d = dest_dict[dI]
-                if  str.strip(m.find("MName").text, "'" + '"')  == d.sourceFile.name:
-                    m.find("MName").text = etree.CDATA('"' + d.name + '"')
-                    m.find(ID).text = d.guid
+            for m in mdp.findall("./CalledMacros/Macro"):
+                key = str.strip(m.find("MName").text, "'" + '"')
+                try:
+                    d = dest_sourcenames[key.upper()]
+                # for dI in list(dest_dict.keys()):
+                #     d = dest_dict[dI]
+                #     if  str.strip(m.find("MName").text, "'" + '"')  == d.sourceFile.name:
+                except KeyError:
+                    print("Missing called macro: %s %s (Might be in library_additional)" % (src.name, k, ))
+                m.find("MName").text = etree.CDATA('"' + d.name + '"')
+                m.find(ID).text = d.guid
+            for sect in ["./Script_2D", "./Script_3D", "./Script_1D", "./Script_PR", "./Script_UI", "./Script_VL", "./Script_FWM", "./Script_BWM", ]:
+                section = mdp.find(sect)
+                if section is not None:
+                    t = section.text
 
-        for sect in ["./Script_2D", "./Script_3D", "./Script_1D", "./Script_PR", "./Script_UI", "./Script_VL", "./Script_FWM", "./Script_BWM", ]:
-            section = mdp.find(sect)
-            if section is not None:
-                t = section.text
+                    for dI in list(dest_dict.keys()):
+                        t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
 
-                for dI in list(dest_dict.keys()):
-                    t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
+                    for pr in list(pict_dict.keys()):
+                        #Replacing images
+                        t = re.sub(pict_dict[pr].sourceFile.fileNameWithOutExt + '(?!' + NEW_BRAND_NAME + ')', pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
 
-                for pr in list(pict_dict.keys()):
-                    #Replacing images
-                    t = re.sub(pict_dict[pr].sourceFile.fileNameWithOutExt + '(?!' + NEW_BRAND_NAME + ')', pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+                    section.text = etree.CDATA(t)
 
-                section.text = etree.CDATA(t)
+            if dest.bPlaceable:
+                section = mdp.find('Picture')
+                if isinstance(section, etree._Element) and 'path' in section.attrib:
+                    path = os.path.basename(section.attrib['path']).upper()
+                    if path:
+                        n = next((pict_dict[p].relPath for p in list(pict_dict.keys()) if
+                                  os.path.basename(pict_dict[p].sourceFile.relPath).upper() == path), None)
+                        if n:
+                            section.attrib['path'] = os.path.join(os.path.dirname(n), os.path.basename(n))
 
-        if dest.bPlaceable:
-            section = mdp.find('Picture')
-            if isinstance(section, etree._Element) and 'path' in section.attrib:
-                path = os.path.basename(section.attrib['path']).upper()
-                if path:
-                    n = next((pict_dict[p].relPath for p in list(pict_dict.keys()) if
-                              os.path.basename(pict_dict[p].sourceFile.relPath).upper() == path), None)
-                    if n:
-                        section.attrib['path'] = os.path.join(os.path.dirname(n), os.path.basename(n))
+            if dest.iVersion >= AC_18:
+                for cr in mdp.getroot().findall("Copyright"):
+                    mdp.getroot().remove(cr)
 
-        if dest.iVersion >= AC_18:
-            for cr in mdp.getroot().findall("Copyright"):
-                mdp.getroot().remove(cr)
+                eCopyright = etree.Element("Copyright", SectVersion="1", SectionFlags="0", SubIdent="0")
+                eAuthor = etree.Element("Author")
+                eCopyright.append(eAuthor)
+                eAuthor.text = dest.author
 
-            eCopyright = etree.Element("Copyright", SectVersion="1", SectionFlags="0", SubIdent="0")
-            eAuthor = etree.Element("Author")
-            eCopyright.append(eAuthor)
-            eAuthor.text = dest.author
+                eLicense = etree.Element("License")
+                eCopyright.append(eLicense)
 
-            eLicense = etree.Element("License")
-            eCopyright.append(eLicense)
+                eLType = etree.Element("Type")
+                eLicense.append(eLType)
+                eLType.text = dest.license
 
-            eLType = etree.Element("Type")
-            eLicense.append(eLType)
-            eLType.text = dest.license
+                eLVersion = etree.Element("Version")
+                eLicense.append(eLVersion)
 
-            eLVersion = etree.Element("Version")
-            eLicense.append(eLVersion)
+                eLVersion.text = dest.licneseVersion
 
-            eLVersion.text = dest.licneseVersion
+                mdp.getroot().append(eCopyright)
 
-            mdp.getroot().append(eCopyright)
+            # ---------------------BO_update---------------------
+            parRoot = mdp.find("./ParamSection")
+            parPar = parRoot.getparent()
+            parPar.remove(parRoot)
 
-        # ---------------------BO_update---------------------
-        parRoot = mdp.find("./ParamSection")
-        parPar = parRoot.getparent()
-        parPar.remove(parRoot)
+            destPar = dest.parameters.toEtree()
+            parPar.append(destPar)
 
-        destPar = dest.parameters.toEtree()
-        parPar.append(destPar)
+            # ---------------------Ancestries--------------------
 
-        # ---------------------Ancestries--------------------
+            #FIXME not clear, check, writes an extra empty mainunid field
+            #FIXME ancestries to be used in param checking
+            #FIXME this is unclear what id does
+            for m in mdp.findall("./Ancestry/" + ID):
+                guid = m.text
+                if guid.upper() in id_dict:
+                    print("ANCESTRY: %s" % guid)
+                    par = m.getparent()
+                    par.remove(m)
 
-        #FIXME not clear, check, writes an extra empty mainunid field
-        #FIXME ancestries to be used in param checking
-        #FIXME this is unclear what id does
-        for m in mdp.findall("./Ancestry/" + ID):
-            guid = m.text
-            if guid.upper() in id_dict:
-                print("ANCESTRY: %s" % guid)
-                par = m.getparent()
-                par.remove(m)
-
-                element = etree.Element(ID)
-                element.text = id_dict[guid]
-                element.tail = '\n'
-                par.append(element)
-        try:
-            os.makedirs(destDir)
-        except WindowsError:
-            pass
-        with open(destPath, "wb") as file_handle:
-            file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
+                    element = etree.Element(ID)
+                    element.text = id_dict[guid]
+                    element.tail = '\n'
+                    par.append(element)
+            try:
+                os.makedirs(destDir)
+            except WindowsError:
+                pass
+            with open(destPath, "wb") as file_handle:
+                file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
