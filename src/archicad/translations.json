@@ -30,9 +30,21 @@
     },
     "Inner frame material": {
       "ARCHICAD": {
-        "Name": "sMaterialS",
+        "Name": "sui_MatIn",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Inner frame material"
+      },
+      "Revit GER": {
+        "Name": "Innenmaterial"
+      }
+    },
+    "Available inner frame materials": {
+      "ARCHICAD": {
+        "Name": "sMaterialValS",
         "Type": "PAR_STRING",
-        "FirstPosition" : 1
+        "FirstPosition": 1
       },
       "Revit ENU": {
         "Name": "Inner frame material"
@@ -43,9 +55,21 @@
     },
     "Outer frame material": {
       "ARCHICAD": {
-        "Name": "sMaterialS",
+        "Name": "sui_MatOut",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Outer frame material"
+      },
+      "Revit GER": {
+        "Name": "Außenmaterial"
+      }
+    },
+    "Available outer frame materials": {
+      "ARCHICAD": {
+        "Name": "sMaterialValS",
         "Type": "PAR_STRING",
-        "FirstPosition" : 2
+        "FirstPosition": 2
       },
       "Revit ENU": {
         "Name": "Outer frame material"
@@ -56,9 +80,8 @@
     },
     "Glazing": {
       "ARCHICAD": {
-        "Name": "sMaterialS",
-        "Type": "PAR_STRING",
-        "FirstPosition" : 9
+        "Name": "sui_MatGlass",
+        "Type": "PAR_STRING"
       },
       "Revit ENU": {
         "Name": "Glazing material"
@@ -67,6 +90,7 @@
         "Name": "Glasmaterial"
       }
     },
+
     "iRed": {
       "ARCHICAD": {
         "Name": "iRed",

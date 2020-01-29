@@ -509,6 +509,7 @@ class Param(object):
                  inUnique=False,
                  inHidden=False,
                  inBold=False):
+        self.__index = 0
         self.value      = None
 
         if inETree is not None:
@@ -546,12 +547,25 @@ class Param(object):
         self.isInherited    = False
         self.isUsed         = True
 
-    def __setitem__(self, key, value):
-        if self.__sd > 0:
-            pass
+    def __iter__(self):
+        if self._aVals:
+            return self
+
+    def __next__(self):
+        if self.__index >= len(self._aVals) - 1:
+            raise StopIteration
         else:
-            if self.__fd > key:
-                self._aVals[key - 1] = [self.__toFormat(value)]
+            self.__index += 1
+            return self._aVals[self.__index]
+
+    def __setitem__(self, key, value):
+        if isinstance(value, list):
+            self._aVals[key - 1] = self.__toFormat(value)
+            self.__fd = max(self.__fd, key - 1)
+            self.__sd = max(self.__sd, len(value))
+        else:
+            self._aVals[key - 1] = [self.__toFormat(value)]
+            self.__fd = max(self.__fd, key - 1)
 
     def setValue(self, inVal):
         if type(inVal) == list:
@@ -1085,6 +1099,18 @@ class StrippedDestXML:
 
 # -------------------/data classes -------------------------------------------------------------------------------------
 
+def resetAll():
+    dest_sourcenames.clear()
+    dest_guids.clear()
+    source_guids.clear()
+    id_dict.clear()
+    dest_dict.clear()
+    replacement_dict.clear()
+    pict_dict.clear()
+    source_pict_dict.clear()
+
+    all_keywords.clear()
+
 def scanFolders (inFile, inRootFolder):
     """
     scanning input dir recursively to set up xml and image files' list
@@ -1122,12 +1148,18 @@ def scanFolders (inFile, inRootFolder):
 
 def addImageFile(fileName, **kwargs):
     if not fileName.upper() in pict_dict:
-        destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME, **kwargs)
+        target_name = NEW_BRAND_NAME
+        if "main_version" in kwargs:
+            target_name = kwargs["main_version"]
+        destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, target_name, **kwargs)
         pict_dict[destItem.fileNameWithExt.upper()] = destItem
 
 def addFile(sourceFileName, **kwargs):
     if sourceFileName.upper() in replacement_dict:
-        destItem = DestXML(replacement_dict[sourceFileName.upper()], WMCC_BRAND_NAME, NEW_BRAND_NAME, **kwargs)
+        target_name = NEW_BRAND_NAME
+        if "main_version" in kwargs:
+            target_name = kwargs["main_version"]
+        destItem = DestXML(replacement_dict[sourceFileName.upper()], WMCC_BRAND_NAME, target_name, **kwargs)
         dest_dict[destItem.name.upper()] = destItem
         dest_guids[destItem.guid] = destItem
         dest_sourcenames[destItem.sourceFile.name.upper()] = destItem
@@ -1187,11 +1219,13 @@ def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
 
     return destItem
 
-def buildMacroSet(inFolderS):
+def buildMacroSet(inFolderS, main_version="19"):
     '''
     :inFolderS: a list of foleder names to go through to build up macros
     :return:
     '''
+
+    resetAll()
 
     scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
 
@@ -1204,12 +1238,12 @@ def buildMacroSet(inFolderS):
             for file in fileS:
                 if os.path.splitext(file)[1].upper() == ".XML":
                     if os.path.splitext(file)[0].upper() not in dest_dict:
-                        addFile(os.path.splitext(file)[0], targetFileName=os.path.splitext(file)[0])
+                        addFile(os.path.splitext(file)[0], main_version=main_version)
                 else:
                     addImageFile(file)
         for folder, subFolderS, fileS in os.walk(SOURCE_IMAGE_DIR_NAME):
             for file in fileS:
-                addImageFile(file, targetFileName=file)
+                addImageFile(file, main_version=main_version)
 
     tempGDLDirName = tempfile.mkdtemp()
 
@@ -1240,6 +1274,8 @@ def createLCF():
     Builds up an LCF from a set of Folders
     :return:
     '''
+    print("*****FINISHED SUCCESFULLY******")
+
 
 def unitConvert(inParameterName,
                 inParameterValue,
@@ -1256,26 +1292,30 @@ def unitConvert(inParameterName,
     _UnitLib = {"m": 1, "mm" : 0.001}
 
     if type(inParameterValue) == list:
-        return [unitConvert(par) for par in inParameterValue]
+        return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
     # elif type(inParameterValue) == dict:
     #     return {unitConvert(inParameterValue[par]) for par in inParameterValue.keys()}
     if "Measurement" in inTranslationLib['parameters'][inParameterName]:
         if "Measurement" in inTranslationLib['parameters'][inParameterName]["ARCHICAD"]:
             return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
                    _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
-    elif inParameterName in {"Inner frame material", "Outer frame material"}:
+    elif inParameterName in {"Inner frame material", "Outer frame material", "Glazing", "Available inner frame materials", "Available outer frame materials"}:
         return inParameterValue + "_" + NEW_BRAND_NAME
     else:
         return inParameterValue
 
 def createBrandedProduct(data):
+    global dest_sourcenames
+
+    resetAll()
+
     scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
     scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
     # --------------------------------------------------------
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
         translation = json.loads(translatorJSON.read())
 
-        # ------ materials ------
+        # ------ surfaces ------
         availableMaterials = []
         for material in data['materials']:
             availableMaterials += [material["material_name"] + "_" + NEW_BRAND_NAME]
@@ -1294,11 +1334,17 @@ def createBrandedProduct(data):
         # ------ placeables ------
 
         _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, data["dest_dict"])).read())
+        dest_sourcenames = {d.sourceFile.name.upper(): d for d in _dest_dict.values()}
 
         for family in data['family_types']:
             # destItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
             destItem = addFileUsingMacroset("Fixed Test Window_WMCC", _dest_dict,
                                             targetFileName=family["type_name"])
+
+            for _i in range(14):
+                destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + NEW_BRAND_NAME]
+
+            destItem.parameters["sMaterialS"] = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
 
             for parameter in family['parameters']:
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
@@ -1324,9 +1370,8 @@ def createBrandedProduct(data):
                         translation)
 
                 # For now:
-                destItem.parameters["sMaterialValS"] = [[a] for a in availableMaterials] + [["Glass"]]
     # --------------------------------------------------------
-    addFileRecursively("Glass", targetFileName="Glass")
+    addFileRecursively("Glass", targetFileName="Glass" + "_" + NEW_BRAND_NAME)
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), NEW_BRAND_NAME)
     print("tempGDLDirName: %s" % tempGDLDirName)
     startConversion(targetGDLDirName=tempGDLDirName)
@@ -1368,10 +1413,11 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
                 # for dI in list(dest_dict.keys()):
                 #     d = dest_dict[dI]
                 #     if  str.strip(m.find("MName").text, "'" + '"')  == d.sourceFile.name:
+                    m.find("MName").text = etree.CDATA('"' + d.name + '"')
+                    m.find(ID).text = d.guid
                 except KeyError:
-                    print("Missing called macro: %s %s (Might be in library_additional)" % (src.name, k, ))
-                m.find("MName").text = etree.CDATA('"' + d.name + '"')
-                m.find(ID).text = d.guid
+                    #FIXME checking this in library_additional
+                    print("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name, ))
             for sect in ["./Script_2D", "./Script_3D", "./Script_1D", "./Script_PR", "./Script_UI", "./Script_VL", "./Script_FWM", "./Script_BWM", ]:
                 section = mdp.find(sect)
                 if section is not None:
