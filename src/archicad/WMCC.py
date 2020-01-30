@@ -33,7 +33,7 @@ TARGET_GDL_DIR_NAME         = r".\archicad\Target"
 SOURCE_IMAGE_DIR_NAME       = r".\archicad\DoorWindowTemplate\library_images"
 ADDITIONAL_IMAGE_DIR_NAME   = r".\archicad\_IMAGES_GENERIC_"
 WMCC_BRAND_NAME             = "WMCC"
-NEW_BRAND_NAME              = "Test_Brand"
+# NEW_BRAND_NAME              = "Test_Brand"
 ARCHICAD_LOCATION           = r".\archicad\Archicad"
 
 BO_AUTHOR                   = "BIMobject"
@@ -83,6 +83,7 @@ PARFLG_UNIQUE   = 3
 PARFLG_HIDDEN   = 4
 
 app = None
+family_name = ""
 
 dest_sourcenames    = {}   #source name             -> DestXMLs, idx by original filename
 dest_guids          = {}   #dest guid               -> DestXMLs, idx by
@@ -1147,16 +1148,18 @@ def scanFolders (inFile, inRootFolder):
         pass
 
 def addImageFile(fileName, **kwargs):
+    global family_name
     if not fileName.upper() in pict_dict:
-        target_name = NEW_BRAND_NAME
+        target_name = family_name
         if "main_version" in kwargs:
             target_name = kwargs["main_version"]
         destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, target_name, **kwargs)
         pict_dict[destItem.fileNameWithExt.upper()] = destItem
 
 def addFile(sourceFileName, **kwargs):
+    global family_name
     if sourceFileName.upper() in replacement_dict:
-        target_name = NEW_BRAND_NAME
+        target_name = family_name
         if "main_version" in kwargs:
             target_name = kwargs["main_version"]
         destItem = DestXML(replacement_dict[sourceFileName.upper()], WMCC_BRAND_NAME, target_name, **kwargs)
@@ -1274,8 +1277,17 @@ def createLCF():
     Builds up an LCF from a set of Folders
     :return:
     '''
+    #FIXME
     print("*****FINISHED SUCCESFULLY******")
 
+def createMasterGDL():
+    """
+    Creates master.gdl script with the only content currently:
+    -file_dependence for material macros
+    -call for materials for being able to be seen in attributes
+    :return:
+    """
+    pass
 
 def unitConvert(inParameterName,
                 inParameterValue,
@@ -1300,14 +1312,15 @@ def unitConvert(inParameterName,
             return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
                    _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
     elif inParameterName in {"Inner frame material", "Outer frame material", "Glazing", "Available inner frame materials", "Available outer frame materials"}:
-        return inParameterValue + "_" + NEW_BRAND_NAME
+        return inParameterValue + "_" + family_name
     else:
         return inParameterValue
 
 def createBrandedProduct(data):
-    global dest_sourcenames
+    global dest_sourcenames, family_name
 
     resetAll()
+    family_name = data["family_name"]
 
     scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
     scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
@@ -1318,9 +1331,9 @@ def createBrandedProduct(data):
         # ------ surfaces ------
         availableMaterials = []
         for material in data['materials']:
-            availableMaterials += [material["material_name"] + "_" + NEW_BRAND_NAME]
-            materialMacro = addFileRecursively("RAL9003-White",
-                                               targetFileName=material["material_name"] + "_" + NEW_BRAND_NAME)
+            availableMaterials += [material["material_name"] + "_" + family_name]
+            materialMacro = addFile("RAL9003-White",
+                            targetFileName=material["material_name"] + "_" + family_name)
 
             for parameter in material['parameters']:
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
@@ -1329,7 +1342,7 @@ def createBrandedProduct(data):
                     material['parameters'][parameter],
                     translation
                 )
-            materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + NEW_BRAND_NAME
+            materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + family_name
 
         # ------ placeables ------
 
@@ -1342,7 +1355,7 @@ def createBrandedProduct(data):
                                             targetFileName=family["type_name"])
 
             for _i in range(14):
-                destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + NEW_BRAND_NAME]
+                destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + family_name]
 
             destItem.parameters["sMaterialS"] = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
 
@@ -1371,13 +1384,13 @@ def createBrandedProduct(data):
 
                 # For now:
     # --------------------------------------------------------
-    addFileRecursively("Glass", targetFileName="Glass" + "_" + NEW_BRAND_NAME)
-    tempGDLDirName = os.path.join(tempfile.mkdtemp(), NEW_BRAND_NAME)
+    addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
+    tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
     print("tempGDLDirName: %s" % tempGDLDirName)
     startConversion(targetGDLDirName=tempGDLDirName)
     output = r'%s createcontainer %s %s' % ('"' + ARCHICAD_LOCATION + '\LP_XMLConverter.exe"',
                                             '"' + os.path.join(TARGET_GDL_DIR_NAME,
-                                                               'Door_Window' + "_" + NEW_BRAND_NAME + '.lcf"'),
+                                                               'Door_Window' + "_" + family_name + '.lcf"'),
                                             '"' + tempGDLDirName + '"')
     print("output: %s" % output)
     check_output(output, shell=True)
@@ -1428,7 +1441,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
 
                     for pr in list(pict_dict.keys()):
                         #Replacing images
-                        t = re.sub(pict_dict[pr].sourceFile.fileNameWithOutExt + '(?!' + NEW_BRAND_NAME + ')', pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+                        t = re.sub(pict_dict[pr].sourceFile.fileNameWithOutExt + '(?!' + family_name + ')', pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
 
                     section.text = etree.CDATA(t)
 

@@ -215,30 +215,6 @@ endif
 ! Leaf(s)
 ! -------------------------------------------------------------------------
 
-!bShowHandle	= 1
-!bShowHinge	= 1
-!
-! Simple Leaf in 1:100
-!if iDetLevel3D	>= DETLEVEL_3D_100 then
-!	
-!	bShowHandle	= 0
-!	bShowHinge	= 0
-!	hingeOffsX	= 0
-!	hingeOffsZ	= 0
-!
-!	for i = 1 to iLeafNum
-!		LeafBox[i][1]	= LeafBox[i][1]	- leafDLeft - leafDRight
-!		LeafBox[i][2]	= LeafBox[i][2]	- leafDUpper - leafDLower
-!		if 	iOpType[i] = OPTYPE_SIDE_HUNG |\
-!			iOpType[i] = OPTYPE_SIDE_HUNG_M |\
-!			iOpType[i] = OPTYPE_TILT_TURN |\
-!			iOpType[i] = OPTYPE_TILT_TURN_M then
-!			LeafPos[i][3]	= 0
-!		endif
-!	next i
-!
-!	gs_leaf_thk	= 0.001
-!endif
 
 	call "Leaf_WMCC" parameters all \
 		mats					= materialS,
@@ -1729,7 +1705,9 @@ values "sui_MatOut" _mOut
 values "sui_MatGlass" _mGlass
 
 sMaterialS[MAT_IN]		= sui_MatIn
+sMaterialS[MAT_SASH_IN]	= sui_MatIn
 sMaterialS[MAT_OUT]		= sui_MatOut
+sMaterialS[MAT_SASH_OUT]= sui_MatOut
 sMaterialS[MAT_GLASS]	= sui_MatGlass
 
 parameters sMaterialS	= sMaterialS
@@ -8510,9 +8488,35 @@ endif
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<ArrayValues FirstDimension="1" SecondDimension="2">
-				<AVal Column="1" Row="1"><![CDATA[""]]></AVal>
-				<AVal Column="2" Row="1"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+			<ArrayValues FirstDimension="14" SecondDimension="2">
+				<AVal Column="1" Row="1"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="2"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Column="2" Row="2"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="3"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="3"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="9"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Column="2" Row="9"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="10"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="10"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="11"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="11"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="13"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="13"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="14"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Column="2" Row="14"><![CDATA[""]]></AVal>
 			</ArrayValues>
 		</String>
 		<Integer Name="gs_resol">
@@ -9832,14 +9836,14 @@ endif
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value><![CDATA[""]]></Value>
+			<Value><![CDATA["RAL3005-Wine_Red"]]></Value>
 		</String>
 		<String Name="sui_MatGlass">
 			<Description><![CDATA[""]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value><![CDATA[""]]></Value>
+			<Value><![CDATA["RAL3005-Wine_Red"]]></Value>
 		</String>
 	</Parameters>
 </ParamSection>
