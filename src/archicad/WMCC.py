@@ -27,7 +27,8 @@ from lxml import etree
 #------------------ Temporary constants------------------
 
 DEBUG                       = False
-OUTPUT_XML                  = True     # To retain xmls
+CLEANUP                     = False     # Do cleanup after finish
+OUTPUT_XML                  = True      # To retain xmls
 SOURCE_XML_DIR_NAME         = r".\archicad\DoorWindowTemplate\library"
 TARGET_GDL_DIR_NAME         = r".\archicad\Target"
 SOURCE_IMAGE_DIR_NAME       = r".\archicad\DoorWindowTemplate\library_images"
@@ -869,7 +870,7 @@ class SourceImage(SourceFile):
 
 class DestImage(DestFile):
     def __init__(self, sourceFile, stringFrom, stringTo, **kwargs):
-        if not sourceFile.isEncodedImage or not (stringFrom == stringTo == "") and not "targetFileName" in kwargs:
+        if (not sourceFile.isEncodedImage or not (stringFrom == stringTo == "")) and not "targetFileName" in kwargs:
             self._name               = re.sub(stringFrom, stringTo, sourceFile.name, flags=re.IGNORECASE)
         elif "targetFileName" in kwargs:
             self._name = kwargs["targetFileName"]
@@ -886,7 +887,7 @@ class DestImage(DestFile):
         self.fileNameWithExt = self._name
 
         self.relPath            = os.path.join(sourceFile.dirName, self._name)
-        super(DestImage, self).__init__(self.relPath, sourceFile=self.sourceFile)
+        # super(DestImage, self).__init__(self.relPath, sourceFile=self.sourceFile)
 
     @property
     def name(self):
@@ -1243,7 +1244,7 @@ def buildMacroSet(inFolderS, main_version="19"):
                     if os.path.splitext(file)[0].upper() not in dest_dict:
                         addFile(os.path.splitext(file)[0], main_version=main_version)
                 else:
-                    addImageFile(file)
+                    addImageFile(file, main_version=main_version)
         for folder, subFolderS, fileS in os.walk(SOURCE_IMAGE_DIR_NAME):
             for file in fileS:
                 addImageFile(file, main_version=main_version)
@@ -1254,7 +1255,7 @@ def buildMacroSet(inFolderS, main_version="19"):
 
     startConversion(targetGDLDirName = tempGDLDirName)
 
-    output = r'%s createcontainer %s %s' % ('"' + ARCHICAD_LOCATION + '\LP_XMLConverter.exe"', '"' + os.path.join(TARGET_GDL_DIR_NAME, 'BO_DW_macros_' + datetime.date.today().strftime("%y%m%d")) + '.lcf"', '"' + tempGDLDirName + '"')
+    output = r'"%s" createcontainer "%s" "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, 'BO_DW_macros_' + datetime.date.today().strftime("%y%m%d")) + '.lcf', tempGDLDirName, SOURCE_IMAGE_DIR_NAME, ADDITIONAL_IMAGE_DIR_NAME)
     print("output: %s" % output)
 
     check_output(output, shell=True)
@@ -1271,6 +1272,9 @@ def buildMacroSet(inFolderS, main_version="19"):
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
+
+    if CLEANUP:
+        os.rmdir(tempGDLDirName)
 
 def createLCF():
     '''
@@ -1388,12 +1392,15 @@ def createBrandedProduct(data):
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
     print("tempGDLDirName: %s" % tempGDLDirName)
     startConversion(targetGDLDirName=tempGDLDirName)
-    output = r'%s createcontainer %s %s' % ('"' + ARCHICAD_LOCATION + '\LP_XMLConverter.exe"',
-                                            '"' + os.path.join(TARGET_GDL_DIR_NAME,
-                                                               'Door_Window' + "_" + family_name + '.lcf"'),
-                                            '"' + tempGDLDirName + '"')
+    output = r'"%s" createcontainer "%s" "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'),
+                                            os.path.join(TARGET_GDL_DIR_NAME,
+                                                               'Door_Window' + "_" + family_name + '.lcf'),
+                                            tempGDLDirName, SOURCE_IMAGE_DIR_NAME, ADDITIONAL_IMAGE_DIR_NAME)
     print("output: %s" % output)
     check_output(output, shell=True)
+
+    if CLEANUP:
+        os.rmdir(tempGDLDirName)
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
     """
@@ -1418,6 +1425,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
             #FIXME multithreading, map-reduce
             mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
             mdp.getroot().attrib[ID] = dest.guid
+            _calledMacroSet = set()
 
             for m in mdp.findall("./CalledMacros/Macro"):
                 key = str.strip(m.find("MName").text, "'" + '"')
@@ -1428,6 +1436,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
                 #     if  str.strip(m.find("MName").text, "'" + '"')  == d.sourceFile.name:
                     m.find("MName").text = etree.CDATA('"' + d.name + '"')
                     m.find(ID).text = d.guid
+                    _calledMacroSet.add(d.name.upper())
                 except KeyError:
                     #FIXME checking this in library_additional
                     print("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name, ))
@@ -1435,13 +1444,16 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
                 section = mdp.find(sect)
                 if section is not None:
                     t = section.text
-
-                    for dI in list(dest_dict.keys()):
+                    # for dI in list(dest_dict.keys()):
+                    for dI in _calledMacroSet:
                         t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
 
                     for pr in list(pict_dict.keys()):
                         #Replacing images
-                        t = re.sub(pict_dict[pr].sourceFile.fileNameWithOutExt + '(?!' + family_name + ')', pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+                        fromRE = pict_dict[pr].sourceFile.fileNameWithOutExt
+                        if family_name:
+                            fromRE  += '(?!' + family_name + ')'
+                        t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
 
                     section.text = etree.CDATA(t)
 
@@ -1552,7 +1564,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME):
     check_output(x2lCommand, shell=True)
 
     # cleanup ops
-    if not DEBUG:
+    if CLEANUP:
         if _picdir:
             for d in dirs_to_delete:
                 shutil.rmtree(os.path.join(tempPicDir, d))
