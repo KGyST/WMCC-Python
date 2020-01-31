@@ -49,9 +49,7 @@ eps = 0.0001
 ! Versioning
 ! =============================================================================
 
-dim iVersionNumber[][2]
-iVersionNumber[1][1]	= 20170918
-iVersionNumber[1][2]	= 0
+lock "iVersionNumber"
 
 iLastVersion	= vardim1(iVersionNumber)
 
@@ -4275,7 +4273,7 @@ http://www.bimobject.com
 				<AVal Row="9"><![CDATA["Glass"]]></AVal>
 				<AVal Row="10"><![CDATA["RAL1011-Irish_Oak"]]></AVal>
 				<AVal Row="11"><![CDATA["RAL1011-Irish_Oak"]]></AVal>
-				<AVal Row="12"><![CDATA["RAL1011-Irish_Oak"]]></AVal>
+				<AVal Row="12"><![CDATA["RAL7016-Anthracite_Grey"]]></AVal>
 				<AVal Row="13"><![CDATA["RAL1011-Irish_Oak"]]></AVal>
 				<AVal Row="14"><![CDATA["RAL1011-Irish_Oak"]]></AVal>
 			</ArrayValues>

@@ -1,5 +1,7 @@
 {
   "dest_dict" : "macroset_200127.json",
+  "main_macroset_version" : "19",
+  "minimum_required_macroset_version" : "20200131",
   "family_name": "FamilyName",
   "family_types": [
     {

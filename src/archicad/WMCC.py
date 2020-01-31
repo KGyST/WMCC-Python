@@ -1223,59 +1223,6 @@ def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
 
     return destItem
 
-def buildMacroSet(inFolderS, main_version="19"):
-    '''
-    :inFolderS: a list of foleder names to go through to build up macros
-    :return:
-    '''
-
-    resetAll()
-
-    scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
-
-    # --------------------------------------------------------
-
-    for rootFolder in inFolderS:
-        scanFolders(os.path.join(SOURCE_XML_DIR_NAME, rootFolder), SOURCE_XML_DIR_NAME)
-
-        for folder, subFolderS, fileS in os.walk(os.path.join(SOURCE_XML_DIR_NAME, rootFolder)):
-            for file in fileS:
-                if os.path.splitext(file)[1].upper() == ".XML":
-                    if os.path.splitext(file)[0].upper() not in dest_dict:
-                        addFile(os.path.splitext(file)[0], main_version=main_version)
-                else:
-                    addImageFile(file, main_version=main_version)
-        for folder, subFolderS, fileS in os.walk(SOURCE_IMAGE_DIR_NAME):
-            for file in fileS:
-                addImageFile(file, main_version=main_version)
-
-    tempGDLDirName = tempfile.mkdtemp()
-
-    print("tempGDLDirName: %s" % tempGDLDirName)
-
-    startConversion(targetGDLDirName = tempGDLDirName)
-
-    output = r'"%s" createcontainer "%s" "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, 'BO_DW_macros_' + datetime.date.today().strftime("%y%m%d")) + '.lcf', tempGDLDirName, SOURCE_IMAGE_DIR_NAME, ADDITIONAL_IMAGE_DIR_NAME)
-    print("output: %s" % output)
-
-    check_output(output, shell=True)
-
-    _stripped_dest_dict = {}
-
-    for k, v in dest_dict.items():
-        # dest_dict[k].sourceFile.scripts = None
-        _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, )
-        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
-
-    jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, "macroset_" + datetime.date.today().strftime("%y%m%d" + ".json"))
-    jsonData = jsonpickle.encode(_stripped_dest_dict)
-
-    with open(jsonPathName, "w") as file:
-        file.write(jsonData)
-
-    if CLEANUP:
-        os.rmdir(tempGDLDirName)
-
 def createLCF():
     '''
     Builds up an LCF from a set of Folders
@@ -1283,15 +1230,6 @@ def createLCF():
     '''
     #FIXME
     print("*****FINISHED SUCCESFULLY******")
-
-def createMasterGDL():
-    """
-    Creates master.gdl script with the only content currently:
-    -file_dependence for material macros
-    -call for materials for being able to be seen in attributes
-    :return:
-    """
-    pass
 
 def unitConvert(inParameterName,
                 inParameterValue,
@@ -1309,22 +1247,117 @@ def unitConvert(inParameterName,
 
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
-    # elif type(inParameterValue) == dict:
-    #     return {unitConvert(inParameterValue[par]) for par in inParameterValue.keys()}
+
     if "Measurement" in inTranslationLib['parameters'][inParameterName]:
         if "Measurement" in inTranslationLib['parameters'][inParameterName]["ARCHICAD"]:
             return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
                    _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
-    elif inParameterName in {"Inner frame material", "Outer frame material", "Glazing", "Available inner frame materials", "Available outer frame materials"}:
+    elif inParameterName in {"Inner frame material",
+                             "Outer frame material",
+                             "Glazing",
+                             "Available inner frame materials",
+                             "Available outer frame materials",
+                             }:
         return inParameterValue + "_" + family_name
     else:
         return inParameterValue
 
+def createMasterGDL(**kwargs):
+    """
+    Creates master.gdl script with the only content currently:
+    -file_dependence for material macros
+    -call for materials for being able to be seen in attributes
+    :return:
+    """
+    content = ""
+    colorList = [c for c in kwargs["surfaces"]] if "surfaces" in kwargs else []
+
+    if colorList:
+        content += '\n\tcall "' + '"\n\tcall "'.join([c + '" parameters  sSurfaceName = "' + c for c in colorList]) + '"'
+
+    if colorList or False:
+        #FIXME later to add other dependencies, like profile and composite definitions
+        content += '\n\nfile_dependence \\\n\t"'
+        content += '",\n\t"'.join(colorList) + '"'
+
+    return content
+
+def buildMacroSet(inData, main_version="19"):
+    '''
+    :inFolderS: a list of foleder names to go through to build up macros
+    :return:
+    '''
+
+    if "main_version" in inData:
+        main_version = inData["main_version"]
+
+    minor_version = datetime.date.today().strftime("%Y%m%d")
+    if "minor_version" in inData:
+        minor_version = inData["minor_version"]
+
+    resetAll()
+
+    scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
+
+    # --------------------------------------------------------
+
+    for rootFolder in inData['folder_names']:
+        scanFolders(os.path.join(SOURCE_XML_DIR_NAME, rootFolder), SOURCE_XML_DIR_NAME)
+
+        for folder, subFolderS, fileS in os.walk(os.path.join(SOURCE_XML_DIR_NAME, rootFolder)):
+            for file in fileS:
+                if os.path.splitext(file)[1].upper() == ".XML":
+                    if os.path.splitext(file)[0].upper() not in dest_dict:
+                        addFile(os.path.splitext(file)[0], main_version=main_version)
+                else:
+                    addImageFile(file, main_version=main_version)
+        for folder, subFolderS, fileS in os.walk(SOURCE_IMAGE_DIR_NAME):
+            for file in fileS:
+                addImageFile(file, main_version=main_version)
+
+    dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = int(minor_version)
+
+    tempGDLDirName = tempfile.mkdtemp()
+
+    print("tempGDLDirName: %s" % tempGDLDirName)
+
+    startConversion(targetGDLDirName = tempGDLDirName)
+
+    _fileNameWithoutExtension = "macroset_" + main_version + "_" + minor_version
+
+    output = r'"%s" createcontainer "%s" "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + '.lcf'), tempGDLDirName, SOURCE_IMAGE_DIR_NAME, ADDITIONAL_IMAGE_DIR_NAME)
+    print("output: %s" % output)
+
+    check_output(output, shell=True)
+
+    _stripped_dest_dict = {}
+
+    for k, v in dest_dict.items():
+        # dest_dict[k].sourceFile.scripts = None
+        _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, )
+        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
+
+    jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
+    jsonData = jsonpickle.encode(_stripped_dest_dict)
+
+    with open(jsonPathName, "w") as file:
+        file.write(jsonData)
+
+    if CLEANUP:
+        os.rmdir(tempGDLDirName)
+
 def createBrandedProduct(data):
+    """
+    creates branded product's lcf based on macroset's into a json file(like macroset_200130.json) extracted names/guids
+    :param data:    JSON
+    :return:
+    """
     global dest_sourcenames, family_name
 
     resetAll()
     family_name = data["family_name"]
+    tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
+    print("tempGDLDirName: %s" % tempGDLDirName)
 
     scanFolders(SOURCE_XML_DIR_NAME, SOURCE_XML_DIR_NAME)
     scanFolders(SOURCE_IMAGE_DIR_NAME, SOURCE_IMAGE_DIR_NAME)
@@ -1336,7 +1369,7 @@ def createBrandedProduct(data):
         availableMaterials = []
         for material in data['materials']:
             availableMaterials += [material["material_name"] + "_" + family_name]
-            materialMacro = addFile("RAL9003-White",
+            materialMacro = addFile("_dev_RAL9003-White",
                             targetFileName=material["material_name"] + "_" + family_name)
 
             for parameter in material['parameters']:
@@ -1348,13 +1381,14 @@ def createBrandedProduct(data):
                 )
             materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + family_name
 
+        masterGDL = createMasterGDL(surfaces=availableMaterials)
+
         # ------ placeables ------
 
         _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, data["dest_dict"])).read())
         dest_sourcenames = {d.sourceFile.name.upper(): d for d in _dest_dict.values()}
 
         for family in data['family_types']:
-            # destItem = addFileRecursively("Fixed Test Window_WMCC", targetFileName=family["type_name"])
             destItem = addFileUsingMacroset("Fixed Test Window_WMCC", _dest_dict,
                                             targetFileName=family["type_name"])
 
@@ -1362,6 +1396,7 @@ def createBrandedProduct(data):
                 destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + family_name]
 
             destItem.parameters["sMaterialS"] = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+            destItem.parameters["iVersionNumber"][1] = [int(data["minimum_required_macroset_version"]), 0]
 
             for parameter in family['parameters']:
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
@@ -1389,9 +1424,12 @@ def createBrandedProduct(data):
                 # For now:
     # --------------------------------------------------------
     addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
-    tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
-    print("tempGDLDirName: %s" % tempGDLDirName)
+
     startConversion(targetGDLDirName=tempGDLDirName)
+
+    with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
+        f.write(masterGDL)
+
     output = r'"%s" createcontainer "%s" "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'),
                                             os.path.join(TARGET_GDL_DIR_NAME,
                                                                'Door_Window' + "_" + family_name + '.lcf'),

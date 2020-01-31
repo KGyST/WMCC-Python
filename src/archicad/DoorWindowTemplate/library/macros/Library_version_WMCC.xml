@@ -49,9 +49,9 @@ if bUsAsMacro then
 	if iVersionLibrary < iObjectVersion then
 		iError = LIBERR_OLDMACRO
 	else
-		if iMinVersion > iObjectVersion then
-			iError = LIBERR_OLDOBJECT
-		endif
+!!		if iMinVersion > iObjectVersion then
+!!			iError = LIBERR_OLDOBJECT
+!!		endif
 	endif
 	
 	! --------------------------------------------
@@ -84,10 +84,7 @@ endif
 <Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
 <![CDATA[
 
-parameters	iVersionLibrary	= 20170918,
-			iMinVersion		= 20170000
-
-
+lock "iVersionLibrary"
 ]]>
 </Script_VL>
 
@@ -189,31 +186,33 @@ parameters	iVersionLibrary	= 20170918,
 			<Flags>
 				<ParFlg_BoldName/>
 			</Flags>
-			<Value>20170918</Value>
-		</Integer>
-		<Integer Name="iMinVersion">
-			<Description><![CDATA["min. version (compatibility)"]]></Description>
-			<Value>20170000</Value>
+			<Value>20200131</Value>
 		</Integer>
 		<Separator Name="incoming">
 			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
 		</Separator>
 		<Integer Name="iObjectVersion">
 			<Description><![CDATA[""]]></Description>
 			<Flags>
-				<ParFlg_Hidden/>
+				<ParFlg_Child/>
 			</Flags>
 			<Value>0</Value>
 		</Integer>
 		<Boolean Name="bUsAsMacro">
 			<Description><![CDATA[""]]></Description>
 			<Flags>
-				<ParFlg_Hidden/>
+				<ParFlg_Child/>
 			</Flags>
 			<Value>0</Value>
 		</Boolean>
 		<String Name="stLangString">
 			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
 			<Value><![CDATA["_lang:_INT"]]></Value>
 		</String>
 	</Parameters>

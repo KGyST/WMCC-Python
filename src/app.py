@@ -33,7 +33,7 @@ class CreateLCFEngine(Resource):
     """
     def post(selfs):
         data = request.get_json()
-        buildMacroSet(data['folder_names'])
+        buildMacroSet(data)
         #FIXME returning something meaningful, like macroset name
         return 0
 
