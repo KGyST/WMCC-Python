@@ -9,6 +9,7 @@ from flask_restful import Resource, Api
 from archicad.WMCC import (
     createBrandedProduct,
     buildMacroSet,
+    extractParams,
 )
 
 app = Flask(__name__)
@@ -22,20 +23,20 @@ class ArchicadEngine(Resource):
     def post(self):
         data = request.get_json()
 
-        createBrandedProduct(data)
+        result = createBrandedProduct(data)
 
-        return {"result": data}
+        return result
 
 
 class CreateLCFEngine(Resource):
     """
     Creating macroset, to be used by internal GDL developers
     """
-    def post(selfs):
+    def post(self):
         data = request.get_json()
-        buildMacroSet(data)
-        #FIXME returning something meaningful, like macroset name
-        return 0
+        reData = buildMacroSet(data)
+        #FIXME what to do with older versions of this file?
+        return reData
 
 
 class ParameterExtractorEngine(Resource):
@@ -43,7 +44,9 @@ class ParameterExtractorEngine(Resource):
     Extracting all parameters from a given GDL object, returning it in json
     """
     def post(self):
-        pass
+        data = request.get_json()
+        params = extractParams(data)
+        return params
 
 
 api.add_resource(ArchicadEngine, '/')
