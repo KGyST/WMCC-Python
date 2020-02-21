@@ -1346,12 +1346,14 @@ def buildMacroSet(inData, main_version="19"):
         minor_version = inData["minor_version"]
 
     projectPath = inData["path"] if "path" in inData else ""
+    imagePath = inData["imagePath"] if "imagePath" in inData else ""
 
     resetAll()
 
-    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library")
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
-    scanFolders(source_image_dir_name, source_image_dir_name)
+    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
+    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath) if imagePath else ""
+    if source_image_dir_name:
+        scanFolders(source_image_dir_name, source_image_dir_name)
 
     # --------------------------------------------------------
 
@@ -1365,11 +1367,14 @@ def buildMacroSet(inData, main_version="19"):
                         addFile(os.path.splitext(file)[0], main_version=main_version)
                 else:
                     addImageFile(file, main_version=main_version)
-        for folder, subFolderS, fileS in os.walk(source_image_dir_name):
-            for file in fileS:
-                addImageFile(file, main_version=main_version)
 
-    dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = int(minor_version)
+        if source_image_dir_name:
+            for folder, subFolderS, fileS in os.walk(source_image_dir_name):
+                for file in fileS:
+                    addImageFile(file, main_version=main_version)
+
+    if "LIBRARY_VERSION_WMCC" in dest_sourcenames:
+        dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = int(minor_version)
 
     tempGDLDirName = tempfile.mkdtemp()
 
@@ -1518,14 +1523,11 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  "projectPath": projectPath,
                  "dest_sourcenames": dest_sourcenames,
                  "pict_dict": pict_dict,
-                 "dest_dict": dest_dict, } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
-    # pool_map = [(dest_dict[k], tempdir, projectPath) for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
+                 "dest_dict": dest_dict,
+                 "family_name": family_name,
+                 } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
     _pool = mp.Pool()
     _pool.map(processOneXML, pool_map)
-    #FIXME using multiprocessing
-
-    # for k in list(dest_dict.keys()):
-    #     processOneXML(k, tempdir, dest_dict)
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -1583,6 +1585,25 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     print("*****GSM CREATION FINISHED SUCCESFULLY******")
 
 
+# def ireplace(old, new, text):
+#     '''
+#     Case insensitive string replacement instead of using regex
+#     Source: https://stackoverflow.com/questions/919056/case-insensitive-replace
+#     :param old:
+#     :param new:
+#     :param text:
+#     :return:
+#     '''
+#     idx = 0
+#     while idx < len(text):
+#         index_l = text.lower().find(old.lower(), idx)
+#         if index_l == -1:
+#             return text
+#         text = text[:index_l] + new + text[index_l + len(old):]
+#         idx = index_l + len(new)
+#     return text
+
+
 def processOneXML(inData):
     dest = inData['dest']
     tempdir = inData["tempdir"]
@@ -1590,6 +1611,7 @@ def processOneXML(inData):
     dest_sourcenames = inData["dest_sourcenames"]
     dest_dict = inData["dest_dict"]
     pict_dict = inData["pict_dict"]
+    family_name = inData["family_name"]
 
     src = dest.sourceFile
     srcPath = src.fullPath
@@ -1598,7 +1620,6 @@ def processOneXML(inData):
 
     print("%s -> %s" % (srcPath, destPath,))
 
-    # FIXME multithreading, map-reduce
     mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
     mdp.getroot().attrib[dest.sourceFile.ID] = dest.guid
     _calledMacroSet = set()
@@ -1624,13 +1645,16 @@ def processOneXML(inData):
             t = section.text
             for dI in _calledMacroSet:
                 t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
+                # t = ireplace(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t)
 
-            for pr in list(pict_dict.keys()):
+            for pr in sorted(pict_dict.keys(), key=lambda x: -len(x)):
                 # Replacing images
                 fromRE = pict_dict[pr].sourceFile.fileNameWithOutExt
                 if family_name:
                     fromRE += '(?!' + family_name + ')'
                 t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+
+                # t = ireplace(pict_dict[pr].sourceFile.fileNameWithOutExt, pict_dict[pr].fileNameWithOutExt, t)
 
             section.text = etree.CDATA(t)
 
