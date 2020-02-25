@@ -876,7 +876,7 @@ class SourceFile(GeneralFile):
     def __init__(self, relPath, **kwargs):
         global projectPath
         super(SourceFile, self).__init__(relPath, **kwargs)
-        self.fullPath = os.path.join(SOURCE_DIR_NAME, projectPath, "library", relPath)
+        self.fullPath = os.path.join(SOURCE_DIR_NAME, projectPath, relPath)
 
 
 class DestFile(GeneralFile):
@@ -1262,8 +1262,12 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     global projectPath
 
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
+    if not os.path.exists(source_image_dir_name):
+        source_image_dir_name = ""
+    else:
+        source_image_dir_name = '"' + source_image_dir_name + '"'
 
-    output = r'"%s" createcontainer "%s" "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName, source_image_dir_name, ADDITIONAL_IMAGE_DIR_NAME)
+    output = r'"%s" createcontainer "%s" "%s" %s "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName, source_image_dir_name, ADDITIONAL_IMAGE_DIR_NAME)
     print("output: %s" % output)
 
     check_output(output, shell=True)
@@ -1420,11 +1424,14 @@ def createBrandedProduct(inData):
 
     projectPath = inData["path"]
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
-    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library")
+    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
 
     scanFolders(source_xml_dir_name, source_xml_dir_name)
     scanFolders(source_image_dir_name, source_image_dir_name)
     # --------------------------------------------------------
+    if 'materials' in inData:
+        addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
+
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
         translation = json.loads(translatorJSON.read())
 
@@ -1444,8 +1451,6 @@ def createBrandedProduct(inData):
                 )
             materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + family_name
 
-        masterGDL = createMasterGDL(surfaces=availableMaterials)
-
         # ------ placeables ------
 
         placeableS = []
@@ -1455,48 +1460,51 @@ def createBrandedProduct(inData):
         dest_sourcenames = {d.sourceFile.name.upper(): d for d in _dest_dict.values()}
 
         for family in inData['family_types']:
-            destItem = addFileUsingMacroset("Fixed Test Window_WMCC", _dest_dict,
+            sourceFile = family["source_file"]
+            destItem = addFileUsingMacroset(sourceFile, _dest_dict,
                                             targetFileName=family["type_name"])
 
             placeableS.append(destItem.name)
 
-            for _i in range(14):
-                destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + family_name]
+            if 'parameters' in family:
+                for _i in range(14):
+                    destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + family_name]
 
-            destItem.parameters["sMaterialS"] = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
-            destItem.parameters["iVersionNumber"][1] = [int(inData["minimum_required_macroset_version"]), 0]
+                destItem.parameters["sMaterialS"] = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+                destItem.parameters["iVersionNumber"][1] = [int(inData["minimum_required_macroset_version"]), 0]
 
-            for parameter in family['parameters']:
-                translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
-                    firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
+                for parameter in family['parameters']:
+                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                    if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                        firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
 
-                    if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
-                        secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
+                        if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                            secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
 
-                        destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
-                            parameter,
-                            family['parameters'][parameter],
-                            translation)
+                            destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
+                                parameter,
+                                family['parameters'][parameter],
+                                translation)
+                        else:
+                            destItem.parameters[translatedParameter][firstPosition] = unitConvert(
+                                parameter,
+                                family['parameters'][parameter],
+                                translation)
                     else:
-                        destItem.parameters[translatedParameter][firstPosition] = unitConvert(
+                        destItem.parameters[translatedParameter] = unitConvert(
                             parameter,
                             family['parameters'][parameter],
                             translation)
-                else:
-                    destItem.parameters[translatedParameter] = unitConvert(
-                        parameter,
-                        family['parameters'][parameter],
-                        translation)
 
     # For now:
     # --------------------------------------------------------
-    addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
     startConversion(targetGDLDirName=tempGDLDirName)
 
-    with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
-        f.write(masterGDL)
+    if availableMaterials:
+        masterGDL = createMasterGDL(surfaces=availableMaterials)
+        with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
+            f.write(masterGDL)
 
     createLCF(tempGDLDirName, inData["category"] + "_" + family_name)
 
@@ -1512,7 +1520,8 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     """
     :return:
     """
-    tempdir = os.path.join(tempfile.mkdtemp(), "library")
+    # tempdir = os.path.join(tempfile.mkdtemp(), "library")
+    tempdir = tempfile.mkdtemp()
     tempPicDir = tempfile.mkdtemp()
 
     print("tempdir: %s" % tempdir)
