@@ -36,11 +36,7 @@ SOURCE_DIR_NAME             = r".\archicad"
 ADDITIONAL_IMAGE_DIR_NAME   = r".\archicad\_IMAGES_GENERIC_"
 WMCC_BRAND_NAME             = "WMCC"
 ARCHICAD_LOCATION           = r".\archicad\Archicad\LP_XMLConverter_18"
-
-#getting obsolete:
-# SOURCE_XML_DIR_NAME         = r".\archicad\DoorWindowTemplate\library"
-# SOURCE_IMAGE_DIR_NAME       = r".\archicad\DoorWindowTemplate\library_images"
-# NEW_BRAND_NAME              = "Test_Brand"
+MATERIAL_BASE_OBJECT        = "_dev_material"
 
 
 BO_AUTHOR                   = "BIMobject"
@@ -154,7 +150,7 @@ class ParamSection:
         if key in self.__paramDict:
             self.__paramDict[key].setValue(value)
         else:
-            # FIXME test
+            # FIXME cannot set a Param without knowing its type etc
             self.append(value, key)
 
     def __delitem__(self, key):
@@ -1272,7 +1268,7 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
 
     check_output(output, shell=True)
 
-    print("*****FINISHED SUCCESFULLY******")
+    print("*****LCF CREATION FINISHED SUCCESFULLY******")
 
 
 def unitConvert(inParameterName,
@@ -1287,7 +1283,9 @@ def unitConvert(inParameterName,
     :inSecondPosition:  position if in array
     :return:            float; NOT string
     """
-    _UnitLib = {"m": 1, "mm" : 0.001}
+    _UnitLib = {"m": 1,
+                "cm": 0.01,
+                "mm" : 0.001}
 
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
@@ -1436,11 +1434,12 @@ def createBrandedProduct(inData):
         translation = json.loads(translatorJSON.read())
 
         # ------ surfaces ------
+        #FIXME organize it into a factory class
         availableMaterials = []
         for material in inData['materials']:
             availableMaterials += [material["material_name"] + "_" + family_name]
-            materialMacro = addFile("_dev_RAL9003-White",
-                            targetFileName=material["material_name"] + "_" + family_name)
+            materialMacro = addFile(MATERIAL_BASE_OBJECT,
+                                    targetFileName=material["material_name"] + "_" + family_name)
 
             for parameter in material['parameters']:
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
@@ -1450,6 +1449,14 @@ def createBrandedProduct(inData):
                     translation
                 )
             materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + family_name
+
+            # --------- textures -----------
+            if ('texture_name' in material) and ('base64_encoded_texture' in material):
+                if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
+                    os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
+                with open(os.path.join(tempGDLDirName, 'surfaces', material['texture_name']), 'wb') as textureFile:
+                    textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
+                materialMacro.parameters['sTextureName'] = os.path.splitext(material['texture_name'])[0]
 
         # ------ placeables ------
 
