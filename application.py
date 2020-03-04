@@ -1,6 +1,6 @@
 from flask import Flask
 # from flask import Flask, request
-from flask_restful import Resource, Api
+# from flask_restful import Resource, Api
 # from archicad.WMCC import (
 #     createBrandedProduct,
 #     buildMacroSet,
@@ -8,7 +8,11 @@ from flask_restful import Resource, Api
 # )
 
 app = Flask(__name__)
-api = Api(app)
+# api = Api(app)
+
+@app.route("/")
+def hello():
+    return "Hello World!"
 
 
 # class ArchicadEngine(Resource):
@@ -44,12 +48,12 @@ api = Api(app)
 #         return params
 
 
-class TestEngine(Resource):
-    def get(self):
-        return {"test": "it's working!"}
+# class TestEngine(Resource):
+#     def get(self):
+#         return {"test": "it's working!"}
 
 
-api.add_resource(TestEngine, '/')
+# api.add_resource(TestEngine, '/')
 # api.add_resource(ArchicadEngine, '/')
 # api.add_resource(CreateLCFEngine, '/createlcf')
 # api.add_resource(ParameterExtractorEngine, '/extractparams')
