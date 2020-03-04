@@ -20,6 +20,9 @@ import argparse
 import http.client, urllib.request, urllib.parse, urllib.error, json, webbrowser, urllib.parse, os, hashlib, base64
 # import pip
 
+from PIL import Image
+import io
+
 #------------------ External modules------------------
 
 from lxml import etree
@@ -38,7 +41,6 @@ WMCC_BRAND_NAME             = "WMCC"
 ARCHICAD_LOCATION           = r".\archicad\Archicad\LP_XMLConverter_18"
 MATERIAL_BASE_OBJECT        = "_dev_material"
 
-
 BO_AUTHOR                   = "BIMobject"
 BO_LICENSE                  = "CC BY-ND"
 BO_LICENSE_VERSION          = "3.0"
@@ -47,6 +49,10 @@ TARGET_IMAGE_DIR_NAME       = "" #REMOVE
 TARGET_XML_DIR_NAME         = "" #REMOVE
 
 TRANSLATIONS_JSON           = r".\archicad\translations.json"
+
+LOGO_WIDTH_MAX              = 100
+LOGO_HEIGHT_MAX             = 30
+
 
 #------------------/Temporary constants------------------
 
@@ -88,6 +94,7 @@ PARFLG_HIDDEN   = 4
 app = None
 family_name = ""
 projectPath = ""
+imagePath   = ""
 
 dest_sourcenames    = {}   #source name             -> DestXMLs, idx by original filename
 dest_guids          = {}   #dest guid               -> DestXMLs, idx by
@@ -1142,7 +1149,7 @@ def scanFolders (inFile, inRootFolder):
     :param outFile: folder at top of hierarchy
     :return:
     """
-    global projectPath
+    global projectPath, imagePath
 
     #FIXME to be rewritten using os.path.walk()
     try:
@@ -1159,9 +1166,11 @@ def scanFolders (inFile, inRootFolder):
                         # set up replacement dict for other files (not only images, indeed)
                         if os.path.splitext(os.path.basename(f))[0].upper() not in source_pict_dict:
                             sI = SourceImage(os.path.relpath(src, inRootFolder), root=inRootFolder)
-                            SIDN = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
-                            if SIDN in sI.fullDirName:
-                                sI.isEncodedImage = True
+                            # No imagePath for AC_18 objects:
+                            if imagePath:
+                                SIDN = os.path.join(SOURCE_DIR_NAME, imagePath)
+                                if SIDN in sI.fullDirName:
+                                    sI.isEncodedImage = True
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
                 else:
                     scanFolders(src, inRootFolder)
@@ -1338,7 +1347,7 @@ def buildMacroSet(inData, main_version="19"):
     :inFolderS: a list of foleder names to go through to build up macros
     :return:
     '''
-    global projectPath
+    global projectPath, imagePath
 
     if "main_version" in inData:
         main_version = inData["main_version"]
@@ -1360,9 +1369,10 @@ def buildMacroSet(inData, main_version="19"):
     # --------------------------------------------------------
 
     for rootFolder in inData['folder_names']:
-        scanFolders(os.path.join(source_xml_dir_name, rootFolder), source_xml_dir_name)
+        _f = os.path.join(source_xml_dir_name, rootFolder)
+        scanFolders(_f, source_xml_dir_name)
 
-        for folder, subFolderS, fileS in os.walk(os.path.join(source_xml_dir_name, rootFolder)):
+        for folder, subFolderS, fileS in os.walk(_f):
             for file in fileS:
                 if os.path.splitext(file)[1].upper() == ".XML":
                     if os.path.splitext(file)[0].upper() not in dest_dict:
@@ -1458,8 +1468,22 @@ def createBrandedProduct(inData):
                     textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
                 materialMacro.parameters['sTextureName'] = os.path.splitext(material['texture_name'])[0]
 
-        # ------ placeables ------
+        # --------- logo -----------
+        _logo = None
+        logo_width = 0
+        if 'logo' in inData:
+            _logo = base64.urlsafe_b64decode(inData['logo'])
+            i = Image.open(io.BytesIO(_logo))
+            w, h = i.size
+            ratio = min(LOGO_WIDTH_MAX / w, LOGO_HEIGHT_MAX / h)
+            logo_width = int(ratio * w)
+            i = i.resize((logo_width * 2, int(ratio * h) * 2))
 
+            logo_name = family_name + "_logo"
+            with open(os.path.join(tempGDLDirName, logo_name + ".png"), 'wb') as logoFile:
+                i.save(logoFile, 'PNG')
+
+        # ------ placeables ------
         placeableS = []
 
         _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, inData["dest_dict"])).read())
@@ -1502,8 +1526,11 @@ def createBrandedProduct(inData):
                             parameter,
                             family['parameters'][parameter],
                             translation)
+            if _logo:
+                destItem.parameters["sLogoName"] = logo_name
+                destItem.parameters["wCompLogo"] = logo_width
 
-    # For now:
+                # For now:
     # --------------------------------------------------------
 
     startConversion(targetGDLDirName=tempGDLDirName)

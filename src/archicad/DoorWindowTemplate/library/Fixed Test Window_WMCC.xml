@@ -5595,6 +5595,20 @@ http://www.bimobject.com
 			</Flags>
 			<Value><![CDATA["Glass"]]></Value>
 		</String>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["FamilyName_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>69</Value>
+		</Integer>
 
 		<!-- Warnings: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
 
