@@ -54,5 +54,5 @@ api.add_resource(TestEngine, '/')
 # api.add_resource(CreateLCFEngine, '/createlcf')
 # api.add_resource(ParameterExtractorEngine, '/extractparams')
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+# if __name__ == '__main__':
+#     app.run(debug=True, host='0.0.0.0')
