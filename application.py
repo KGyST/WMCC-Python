@@ -1,32 +1,31 @@
-from flask import Flask
-# from flask import Flask, request
-# from flask_restful import Resource, Api
-# from archicad.WMCC import (
-#     createBrandedProduct,
-#     buildMacroSet,
-#     extractParams,
-# )
+from flask import Flask, request
+from flask_restful import Resource, Api
+from archicad.WMCC import (
+    createBrandedProduct,
+    buildMacroSet,
+    extractParams,
+)
 
 app = Flask(__name__)
-# api = Api(app)
+api = Api(app)
 
-@app.route("/")
-def hello():
-    return "Hello World!"
+# @app.route("/")
+# def hello():
+#     return "Hello World!"
 
 
-# class ArchicadEngine(Resource):
-#     def get(self):
-#         return {"test": "it's working!"}
-#
-#     def post(self):
-#         data = request.get_json()
-#
-#         result = createBrandedProduct(data)
-#
-#         return result
-#
-#
+class ArchicadEngine(Resource):
+    def get(self):
+        return {"ArchicadEngine test": "it's working!"}
+
+    def post(self):
+        data = request.get_json()
+
+        result = createBrandedProduct(data)
+
+        return result
+
+
 # class CreateLCFEngine(Resource):
 #     """
 #     Creating macroset, to be used by internal GDL developers
@@ -47,14 +46,14 @@ def hello():
 #         params = extractParams(data)
 #         return params
 
-
+#
 # class TestEngine(Resource):
 #     def get(self):
 #         return {"test": "it's working!"}
 
 
 # api.add_resource(TestEngine, '/')
-# api.add_resource(ArchicadEngine, '/')
+api.add_resource(ArchicadEngine, '/')
 # api.add_resource(CreateLCFEngine, '/createlcf')
 # api.add_resource(ParameterExtractorEngine, '/extractparams')
 
