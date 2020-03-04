@@ -46,14 +46,14 @@ class ArchicadEngine(Resource):
 #         params = extractParams(data)
 #         return params
 
-#
-# class TestEngine(Resource):
-#     def get(self):
-#         return {"test": "it's working!"}
+
+class TestEngine(Resource):
+    def get(self):
+        return {"test": "it's working!"}
 
 
-# api.add_resource(TestEngine, '/')
-api.add_resource(ArchicadEngine, '/')
+api.add_resource(TestEngine, '/')
+# api.add_resource(ArchicadEngine, '/')
 # api.add_resource(CreateLCFEngine, '/createlcf')
 # api.add_resource(ParameterExtractorEngine, '/extractparams')
 
