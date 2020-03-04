@@ -1,20 +1,14 @@
-from flask import Flask
-app = Flask(__name__)
-
-
-@app.route("/teszt")
-def hello():
-    return "teszt"
-
-
 from flask import Flask, request
 from flask_restful import Resource, Api
-
 from archicad.WMCC import (
     createBrandedProduct,
     buildMacroSet,
     extractParams,
 )
+
+# @app.route("/teszt")
+# def hello():
+#     return "teszt"
 
 app = Flask(__name__)
 api = Api(app)
