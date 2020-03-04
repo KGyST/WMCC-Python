@@ -9,11 +9,6 @@ def hello():
 
 from flask import Flask, request
 from flask_restful import Resource, Api
-# import json, jsonpickle
-# import os
-# import tempfile
-# from subprocess import check_output
-
 
 from archicad.WMCC import (
     createBrandedProduct,
