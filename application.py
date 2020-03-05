@@ -11,9 +11,10 @@ try:
     )
 except ImportError as e:
     _i = e
+finally:
 
-app = Flask(__name__)
-api = Api(app)
+    app = Flask(__name__)
+    api = Api(app)
 
 # @app.route("/")
 # def hello():
@@ -53,17 +54,17 @@ api = Api(app)
 #         return params
 
 
-class TestEngine(Resource):
-    def get(self):
-        global _i
-        if _i:
-            return {"test: %s" % _i}
+    class TestEngine(Resource):
+        def get(self):
+            global _i
+            if _i:
+                return {"test: %s" % _i}
 
 
-api.add_resource(TestEngine, '/')
-# api.add_resource(ArchicadEngine, '/')
-# api.add_resource(CreateLCFEngine, '/createlcf')
-# api.add_resource(ParameterExtractorEngine, '/extractparams')
+    api.add_resource(TestEngine, '/')
+    # api.add_resource(ArchicadEngine, '/')
+    # api.add_resource(CreateLCFEngine, '/createlcf')
+    # api.add_resource(ParameterExtractorEngine, '/extractparams')
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    if __name__ == '__main__':
+        app.run(debug=True, host='0.0.0.0')
