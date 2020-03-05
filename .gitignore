@@ -17,6 +17,8 @@ downloads/
 eggs/
 .eggs/
 src/archicad/Target/*
+venv
+.idea
 
 lib/
 lib64/
