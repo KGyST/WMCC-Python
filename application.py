@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 
-from WMCC import (
+from src.WMCC import (
     createBrandedProduct,
     buildMacroSet,
     extractParams,
