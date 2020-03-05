@@ -1,8 +1,8 @@
-# import os.path
-# from os import listdir
-# import uuid
-# import re
-# import tempfile
+import os.path
+from os import listdir
+import uuid
+import re
+import tempfile
 # from subprocess import check_output
 # import shutil
 # import datetime
