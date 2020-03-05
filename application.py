@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 
-e = None
+_i = None
 
 try:
     from archicad.WMCC import (
@@ -10,7 +10,7 @@ try:
         extractParams,
     )
 except ImportError as e:
-    pass
+    _i = e
 
 app = Flask(__name__)
 api = Api(app)
@@ -55,9 +55,9 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        global e
-        if e:
-            return {"test: %s" % e}
+        global _i
+        if _i:
+            return {"test: %s" % _i}
 
 
 api.add_resource(TestEngine, '/')
