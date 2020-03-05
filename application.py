@@ -1,4 +1,4 @@
-from flask import Flask             #, request
+from flask import Flask, request
 from flask_restful import Resource, Api
 # from archicad.WMCC import (
 #     createBrandedProduct,
@@ -49,7 +49,7 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        return {"test": "TestEngine 2 is working!"}
+        return {"test": "request is working!"}
 
 
 api.add_resource(TestEngine, '/')
