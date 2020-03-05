@@ -1769,7 +1769,7 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        return {"test": "ksss"}
+        return {"test": "samu"}
 
 api.add_resource(TestEngine, '/')
 
