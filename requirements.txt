@@ -3,7 +3,7 @@ flask-restful==0.3.7
 lxml==4.4.1
 requests==2.22.0
 jsonpickle==1.2
-pillow
+Pillow==7.0.0
 
 click==6.7
 itsdangerous==0.24
