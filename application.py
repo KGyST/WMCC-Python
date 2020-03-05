@@ -16,7 +16,7 @@ import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base6
 # import import http.client
 
 # from PIL import Image
-# import io
+import io
 
 from flask import Flask, request
 from flask_restful import Resource, Api
