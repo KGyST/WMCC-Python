@@ -1,0 +1,211 @@
+{
+  "parameters": {
+    "Rough Width": {
+      "Measurement": "mm",
+      "ARCHICAD": {
+        "Name": "A",
+        "Type": "PAR_LENGTH",
+        "Measurement": "m"
+      },
+      "Revit ENU": {
+        "Name": "Rough Width"
+      },
+      "Revit GER": {
+        "Name": "Öffnungslichte Breite"
+      }
+    },
+    "Rough Height": {
+      "Measurement": "mm",
+      "ARCHICAD": {
+        "Name": "B",
+        "Type": "PAR_LENGTH",
+        "Measurement": "m"
+      },
+      "Revit ENU": {
+        "Name": "Rough Height"
+      },
+      "Revit GER": {
+        "Name": "Öffnungslichte Höhe"
+      }
+    },
+    "Inner frame material": {
+      "ARCHICAD": {
+        "Name": "sui_MatIn",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Inner frame material"
+      },
+      "Revit GER": {
+        "Name": "Innenmaterial"
+      }
+    },
+    "Available inner frame materials": {
+      "ARCHICAD": {
+        "Name": "sMaterialValS",
+        "Type": "PAR_STRING",
+        "FirstPosition": 1
+      },
+      "Revit ENU": {
+        "Name": "Inner frame material"
+      },
+      "Revit GER": {
+        "Name": "Innenmaterial"
+      }
+    },
+    "Outer frame material": {
+      "ARCHICAD": {
+        "Name": "sui_MatOut",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Outer frame material"
+      },
+      "Revit GER": {
+        "Name": "Außenmaterial"
+      }
+    },
+    "Available outer frame materials": {
+      "ARCHICAD": {
+        "Name": "sMaterialValS",
+        "Type": "PAR_STRING",
+        "FirstPosition": 2
+      },
+      "Revit ENU": {
+        "Name": "Outer frame material"
+      },
+      "Revit GER": {
+        "Name": "Außenmaterial"
+      }
+    },
+    "Glazing": {
+      "ARCHICAD": {
+        "Name": "sui_MatGlass",
+        "Type": "PAR_STRING"
+      },
+      "Revit ENU": {
+        "Name": "Glazing material"
+      },
+      "Revit GER": {
+        "Name": "Glasmaterial"
+      }
+    },
+    "iRed": {
+      "ARCHICAD": {
+        "Name": "iRed",
+        "Type": "PAR_INT"
+      }
+    },
+    "iGreen": {
+      "ARCHICAD": {
+        "Name": "iGreen",
+        "Type": "PAR_INT"
+      }
+    },
+    "iBlue": {
+      "ARCHICAD": {
+        "Name": "iBlue",
+        "Type": "PAR_INT"
+      }
+    },
+    "rAmbient": {
+      "ARCHICAD": {
+        "Name": "rAmbient",
+        "Type": "PAR_REAL"}
+      },
+    "rDiffuse": {
+      "ARCHICAD": {
+        "Name": "rDiffuse",
+        "Type": "PAR_REAL"}
+      },
+    "rShining": {
+      "ARCHICAD": {
+        "Name": "rShining",
+        "Type": "PAR_REAL"}
+      },
+    "sTextureName": {
+      "ARCHICAD": {
+        "Name": "sTextureName",
+        "Type": "PAR_STRING"}
+      },
+    "wTexture": {
+      "Measurement": "m",
+      "ARCHICAD": {
+        "Name": "wTexture",
+        "Type": "PAR_LENGTH",
+        "Measurement": "m"}
+      },
+    "hTexture": {
+      "Measurement": "m",
+      "ARCHICAD": {
+        "Name": "hTexture",
+        "Type": "PAR_LENGTH",
+        "Measurement": "m"}
+      },
+    "iTexture": {
+      "ARCHICAD": {
+        "Name": "iTexture",
+        "Type": "PAR_INT"}
+      },
+    "rTransparency": {
+      "ARCHICAD": {
+        "Name": "rTransparency",
+        "Type": "PAR_REAL"}
+      },
+    "rTransparency_attenuation": {
+      "ARCHICAD": {
+        "Name": "rTransparency_attenuation",
+        "Type": "PAR_REAL"}
+      },
+    "rSpecular": {
+      "ARCHICAD": {
+        "Name": "rSpecular",
+        "Type": "PAR_REAL"}
+      },
+    "iSpecularRed": {
+      "ARCHICAD": {
+        "Name": "iSpecularRed",
+        "Type": "PAR_INT"}
+      },
+    "iSpecularGreen": {
+      "ARCHICAD": {
+        "Name": "iSpecularGreen",
+        "Type": "PAR_INT"}
+      },
+    "iSpecularBlue": {
+      "ARCHICAD": {
+        "Name": "iSpecularBlue",
+        "Type": "PAR_INT"}
+      },
+    "iEmissionRed": {
+      "ARCHICAD": {
+        "Name": "iEmissionRed",
+        "Type": "PAR_INT"}
+      },
+    "iEmissionGreen": {
+      "ARCHICAD": {
+        "Name": "iEmissionGreen",
+        "Type": "PAR_INT"}
+      },
+    "iEmissionBlue": {
+      "ARCHICAD": {
+        "Name": "iEmissionBlue",
+        "Type": "PAR_INT"}
+      },
+    "rEmission_attenuation": {
+      "ARCHICAD": {
+        "Name": "rEmission_attenuation",
+        "Type": "PAR_REAL"}
+      },
+    "iFill": {
+      "ARCHICAD": {
+        "Name": "iFill",
+        "Type": "PAR_INT"}
+      },
+    "iFillColor": {
+      "ARCHICAD": {
+        "Name": "iFillColor",
+        "Type": "PAR_INT"}
+      }
+  }
+}

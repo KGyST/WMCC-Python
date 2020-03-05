@@ -1,0 +1,13 @@
+﻿macros
+base_macros
+base_subtypes
+ifc
+Library Globals
+TabControl
+UI_macros
+UI_tab_picts
+uiJumpButtonIcons_flat 20
+uiListIcons_flat 20
+uiTabIcons_18x18_dw_flat 20
+uiTabIcons_18x18_flat 20
+iconsDoorWindow 20

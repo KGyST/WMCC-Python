@@ -1,0 +1,1826 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="53162B6F-E038-4E91-A174-5724B4FFEF4F" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>B2970E4C-8680-4061-8670-2F4B638F3953</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["LibraryGlobals13"]]></MName>
+		<MainGUID>9137124A-DDF2-4A06-A532-5FC0CE873258</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+if WIDO_REVEAL_SIDE then
+	add2 0,-WIDO_FRAME_THICKNESS
+else
+	mul2 1,-1
+endif
+
+reqBMinSpace = 0
+reqMSFillType = 28
+reqMSFillPen = 4
+reqMSFillBackPen = 19
+reqMSContLineType = 25
+reqMSContLinePen = 1
+
+!success = LIBRARYGLOBAL ("LibraryGlobals13", "showBMinSpace", reqBMinSpace)
+!if success > 0 and reqBMinSpace then
+
+success = LIBRARYGLOBAL ("LibraryGlobals13", "MSFillType", reqMSFillType)
+success = LIBRARYGLOBAL ("LibraryGlobals13", "MSFillPen", reqMSFillPen)
+success = LIBRARYGLOBAL ("LibraryGlobals13", "MSFillBackPen", reqMSFillBackPen)
+success = LIBRARYGLOBAL ("LibraryGlobals13", "MSContLineType", reqMSContLineType)
+success = LIBRARYGLOBAL ("LibraryGlobals13", "MSContLinePen", reqMSContLinePen)
+line_type reqMSContLineType
+pen reqMSContLinePen
+fill reqMSFillType
+
+if gs_leaf_optype_m = LEAF_Revolving then	!drawing for self
+	end  reqBMinSpace, reqMSFillType, reqMSFillPen, reqMSFillBackPen, reqMSContLineType, reqMSContLinePen
+endif
+
+!-------------------------------------------
+!Conversion
+!-------------------------------------------
+
+if not(WIDO_REVEAL_SIDE) exor bOpeningDirection then
+	boardMSWidthLeft	= msOppositeSideWidth2
+	sillMSWidthLeft		= msOpeningSideWidth2
+
+	boardMSWidthRight	= msOppositeSideWidth1
+	sillMSWidthRight	= msOpeningSideWidth1
+
+	boardMSDepth		= ms_oppositeSDepth
+	sillMSDepth			= ms_openingSDepth
+else
+	boardMSWidthLeft	= msOpeningSideWidth2
+	sillMSWidthLeft		= msOppositeSideWidth2
+
+	boardMSWidthRight	= msOpeningSideWidth1
+	sillMSWidthRight	= msOppositeSideWidth1
+
+	boardMSDepth		= ms_openingSDepth
+	sillMSDepth			= ms_oppositeSDepth
+endif
+
+bUseAllRevealPointsBoardLeft	= (boardLeftMinReveal < boardMSWidthLeft)
+bUseAllRevealPointsBoardRight	= (boardRightMinReveal < boardMSWidthRight)
+bUseAllRevealPointsSillLeft		= (sillLeftMinReveal < sillMSWidthLeft)
+bUseAllRevealPointsSillRight	= (sillRightMinReveal < sillMSWidthRight)
+
+
+bLeftSideTShapedOpeningBoard	= (bTShapedOpening & gs_sidelight_left  & gs_sidelight_parapet_hgt_left  > EPS) & (EPS < boardMSWidthLeft)
+bRightSideTShapedOpeningBoard	= (bTShapedOpening & gs_sidelight_right & gs_sidelight_parapet_hgt_right > EPS) & (EPS < boardMSWidthRight)
+bLeftSideTShapedOpeningSill		= (bTShapedOpening & gs_sidelight_left  & gs_sidelight_parapet_hgt_left  > EPS)	& (EPS < sillMSWidthLeft)
+bRightSideTShapedOpeningSill	= (bTShapedOpening & gs_sidelight_right & gs_sidelight_parapet_hgt_right > EPS) & (EPS < sillMSWidthRight)
+
+!-------------------------------------------
+!Coordinates
+!-------------------------------------------
+
+boardMSWallLeft_x 	= egressOffset - EgressMSWidth - boardMSWidthLeft
+boardMSWallRight_x 	= egressOffset + boardMSWidthRight
+sillMSWallLeft_x 	= egressOffset - EgressMSWidth - sillMSWidthLeft
+sillMSWallRight_x 	= egressOffset  + sillMSWidthRight
+
+egressLeft_x 	= max(egressOffset-EgressMSWidth - ms_leftOffset - gs_sliding_fixpanel_width_left, sillMSWallLeft_x, boardMSWallLeft_x)
+egressRight_x 	= min(egressOffset + ms_rightOffset + gs_sliding_fixpanel_width_right, sillMSWallRight_x, boardMSWallRight_x)
+
+if not(bSimplifyMSPoly) then
+	sidelightLeft_x 	= max((egressOffset-EgressMSWidth - gs_sidelight_width_left * gs_sidelight_left), boardMSWallLeft_x)
+	sidelightRight_x 	= min((egressOffset + gs_sidelight_width_right * gs_sidelight_right), boardMSWallRight_x)
+	sidelightLeft_x2 	= max((egressOffset-EgressMSWidth - gs_sidelight_width_left * gs_sidelight_left), sillMSWallLeft_x)
+	sidelightRight_x2 	= min((egressOffset + gs_sidelight_width_right * gs_sidelight_right), sillMSWallRight_x)
+endif
+
+
+sillOuter_y = -(ms_sill_depth + sillMSDepth)
+boardOuter_y = WALL_THICKNESS - ms_sill_depth + boardMSDepth - (EgressMSWidth/2-egressOffset)* incHor
+
+if not(bSimplifyMSPoly) then
+	sillEgressLeft_y 	= - ms_frameOffset
+	sillEgressRight_y 	= - ms_frameOffset
+	boardEgressLeft_y 	= ms_frame_thkin_left - ms_frameOffset
+	boardEgressRight_y 	= ms_frame_thkin_right - ms_frameOffset
+else
+	sillEgressLeft_y 	= - ms_sill_depth
+	sillEgressRight_y 	= - ms_sill_depth
+	boardEgressLeft_y	= WALL_THICKNESS - ms_sill_depth +  iInclDir * incHor * (EgressMSWidth-egressOffset)
+	boardEgressRight_y	= WALL_THICKNESS - ms_sill_depth -  iInclDir * incHor * (egressOffset)
+endif
+
+if bUseAllRevealPointsBoardLeft | bSimplifyMSPoly | bLeftSideTShapedOpeningBoard then
+	if curvedWall then
+		boardMSWallLeft_y = signWallIsLeft * (abs(WOD) - sqr(radBoard^2 - boardMSWallLeft_x^2))
+	else
+		boardMSWallLeft_y = WALL_THICKNESS - ms_sill_depth - iInclDir * incHor * (boardMSWidthLeft + EgressMSWidth - egressOffset)
+	endif
+else
+	boardMSWallLeft_y = ms_frame_thk - ms_frameOffset
+endif
+
+if bUseAllRevealPointsBoardRight | bSimplifyMSPoly | bRightSideTShapedOpeningBoard then
+	if curvedWall then
+		boardMSWallRight_y = signWallIsLeft * (abs(WOD) - sqr(radBoard^2 - boardMSWallRight_x^2))
+	else
+		boardMSWallRight_y = WALL_THICKNESS - ms_sill_depth + iInclDir * incHor * (boardMSWidthRight + egressOffset)
+	endif
+else
+	boardMSWallRight_y = ms_frame_thk - ms_frameOffset
+endif
+
+if bUseAllRevealPointsSillLeft | bSimplifyMSPoly | bLeftSideTShapedOpeningSill then
+	if curvedWall then
+		sillMSWallLeft_y = signWallIsLeft * (abs(WOD) - sqr(radSill^2 - sillMSWallLeft_x^2))
+	else
+		sillMSWallLeft_y = -ms_sill_depth
+	endif
+else
+	sillMSWallLeft_y = -ms_frameOffset
+endif
+
+if bUseAllRevealPointsSillRight | bSimplifyMSPoly | bRightSideTShapedOpeningSill then
+	if curvedWall then
+		sillMSWallRight_y = signWallIsLeft * (abs(WOD) - sqr(radSill^2 - sillMSWallRight_x^2))
+	else
+		sillMSWallRight_y = -ms_sill_depth
+	endif
+else
+	sillMSWallRight_y = -ms_frameOffset
+endif
+
+
+!-------------------------------------------
+!Putting the polygon together
+!-------------------------------------------
+
+if curvedWall then put 0,WOD,900
+
+if not(bTelescopic) then
+	if sillMSDepth > EPS then
+		if not(gs_sectgar) and not(gs_highspeedgar) then put egressLeft_x, sillEgressLeft_y, 0
+		if bLeftSideTShapedOpeningSill then
+			px = -ac_wallhole_width/2 + gs_sidelight_WHole_width_left + gs_reveal_left_sL + thkPlasterAtSillSlLeft
+			if curvedWall then
+				py = signWallIsLeft * (abs(WOD) - sqr(radSill^2 - px^2))
+			else
+				py = -ms_sill_depth
+			endif
+			put px, sillEgressLeft_y, 0,
+				px, py, 0
+		endif
+
+		if not(bSimplifyMSPoly) then
+			if gs_sidelight_left & not(bLeftSideTShapedOpeningSill) then
+				put sidelightLeft_x2, sillEgressLeft_y, 0
+			endif
+			if bCornerFrameCHE then
+				if gs_sidelight_left then
+					put sidelightLeft_x2, sillMSWallLeft_y, 0
+				else
+					put egressLeft_x, sillMSWallLeft_y, 0
+				endif
+			endif
+		endif
+
+		if bUseAllRevealPointsSillLeft then
+			if not(bLeftSideTShapedOpeningSill) then gosub "revealSillSideLeft"
+		endif
+
+		put sillMSWallLeft_x, sillMSWallLeft_y,		1+3000 * curvedWall * bUseAllRevealPointsSillLeft,
+			sillMSWallLeft_x, sillOuter_y, 		1,
+			sillMSWallRight_x, sillOuter_y, 		1,
+			sillMSWallRight_x, sillMSWallRight_y,		0
+
+		if bUseAllRevealPointsSillRight then
+			if not(bRightSideTShapedOpeningSill) then gosub "revealSillSideRight"
+		endif
+
+		if not(bSimplifyMSPoly) then
+			if bCornerFrameCHE then
+				if gs_sidelight_right then
+					put sidelightRight_x2, sillMSWallRight_y, 0
+				else
+					put egressRight_x, sillMSWallRight_y, 0
+				endif
+			endif
+			if gs_sidelight_right & not(bRightSideTShapedOpeningSill) then
+				put	sidelightRight_x2, sillEgressRight_y, 0
+			endif
+		endif
+
+		if bRightSideTShapedOpeningSill then
+			px = ac_wallhole_width/2 - gs_sidelight_WHole_width_right - gs_reveal_right_sR - thkPlasterAtSillSlRight
+			if curvedWall then
+				py = signWallIsLeft * (abs(WOD) - sqr(radSill^2 - px^2))
+			else
+				py = -ms_sill_depth
+			endif
+			put px, py, 3000 * curvedWall,
+				px, sillEgressRight_y, 0
+		endif
+		if not(gs_sectgar) and not(gs_highspeedgar) then put egressRight_x, sillEgressRight_y, 0
+
+		hotspot2 sillMSWallLeft_x, 	sillOuter_y, unID : unID = unID +1
+		hotspot2 sillMSWallRight_x, sillOuter_y, unID : unID = unID +1
+	endif
+
+	if boardMSDepth > EPS then
+		if not(gs_sectgar) and not(gs_highspeedgar) then put egressRight_x, boardEgressRight_y, gs_sidelight_right*bSidelightWithoutContour
+		if bRightSideTShapedOpeningBoard then
+			px = ac_wallhole_width/2 - gs_sidelight_WHole_width_right - gs_reveal_double_innerRight_sR - thkPlasterAtBoardSlRight
+			if curvedWall then
+				py = signWallIsLeft * (abs(WOD) - sqr(radBoard^2 - px^2))
+			else
+				py = boardMSWallRight_y  - iInclDir * incHor * (boardMSWallRight_x-px)
+			endif
+			put px, sillEgressRight_y+gs_frame_thk, 0,
+				px, py, 0
+		endif
+
+		if not(bSimplifyMSPoly) then
+			if gs_sidelight_right & not(bRightSideTShapedOpeningBoard) then
+				contourFlagRight = 0
+				if boardRightMinReveal > boardMSWidthRight then
+					contourFlagRight = 1
+				endif
+				put sidelightRight_x, boardEgressRight_y, contourFlagRight
+			endif
+
+			if gs_frame_wthk or bDiffFrameThk then
+				if gs_sidelight_right then
+					put sidelightRight_x, boardMSWallRight_y, 0
+				else
+					put egressRight_x, boardMSWallRight_y, 0
+				endif
+			endif
+		endif
+
+		if bUseAllRevealPointsBoardRight then
+			if not(bRightSideTShapedOpeningBoard) then gosub "revealBoardSideRight"
+		endif
+
+		put boardMSWallRight_x, boardMSWallRight_y, 1+3000 * curvedWall * bUseAllRevealPointsBoardRight,
+			boardMSWallRight_x, boardOuter_y, 1,
+			boardMSWallLeft_x, boardOuter_y, 1,
+			boardMSWallLeft_x, boardMSWallLeft_y, 0
+
+		if bUseAllRevealPointsBoardLeft then
+			if not(bLeftSideTShapedOpeningBoard) then gosub "revealBoardSideLeft"
+		endif
+
+		if not(bSimplifyMSPoly) then
+			if gs_frame_wthk or bDiffFrameThk then
+				if gs_sidelight_left then
+					contourFlagLeft = 0
+					if boardLeftMinReveal > boardMSWidthLeft then
+						contourFlagLeft = 1
+					endif
+					put sidelightLeft_x, boardMSWallLeft_y, contourFlagLeft
+				else
+					put egressLeft_x, boardMSWallLeft_y, 0
+				endif
+			endif
+			if gs_sidelight_left & not(bLeftSideTShapedOpeningBoard) then
+				put sidelightLeft_x, boardEgressLeft_y, gs_sidelight_left*bSidelightWithoutContour
+			endif
+		endif
+
+		if bLeftSideTShapedOpeningBoard then
+			px = -ac_wallhole_width/2 + gs_sidelight_WHole_width_left + gs_reveal_double_innerLeft_sL + thkPlasterAtBoardSlLeft
+			if curvedWall then
+				py = signWallIsLeft * (abs(WOD) - sqr(radBoard^2 - px^2))
+			else
+				py = boardMSWallLeft_y  - iInclDir * incHor * (boardMSWallLeft_x-px)
+			endif
+			put px, py, 3000 * curvedWall,
+				px, sillEgressRight_y+gs_frame_thk, 0
+		endif
+		if not(gs_sectgar) and not(gs_highspeedgar) then put egressLeft_x, boardEgressLeft_y, 0
+
+		hotspot2 boardMSWallLeft_x, 	boardOuter_y, unID : unID = unID +1
+		hotspot2 boardMSWallRight_x, 	boardOuter_y, unID : unID = unID +1
+	endif
+else		! Telescopic Doors
+	put EgressMSWidth / 2, 0, 0,
+		EgressMSWidth / 2, boardEgressLeft_y, 0,
+		boardMSWallRight_x, boardMSWallRight_y, 1,
+		boardMSWallRight_x, boardOuter_y, 1,
+		boardMSWallLeft_x, boardOuter_y, 1,
+		boardMSWallLeft_x, boardMSWallLeft_y, 0,
+		-EgressMSWidth / 2, boardEgressRight_y, 0,
+		-EgressMSWidth / 2, 0, 0,
+		sillMSWallLeft_x, 0, 1,
+		sillMSWallLeft_x, sillOuter_y, 1,
+		sillMSWallRight_x, sillOuter_y, 1,
+		sillMSWallRight_x, 0, 0
+
+	if ms_oppositeSDepth > EPS then
+		hotspot2 boardMSWallLeft_x, 	boardOuter_y, unID : unID = unID +1
+		hotspot2 boardMSWallRight_x,	boardOuter_y, unID : unID = unID +1
+	endif
+	if ms_openingSDepth > EPS then
+		hotspot2 sillMSWallRight_x, 	sillOuter_y, unID : unID = unID +1
+		hotspot2 sillMSWallLeft_x,		sillOuter_y, unID : unID = unID +1
+	endif
+endif
+
+if NSP then
+
+	! Ignore point if location of previous point is same and change contour bit if it is needed
+!!!	define style "text01" "arial", 0.3, 5, 0
+!!!	set style "text01"
+!!!	line_type 1
+
+	_num = nsp/3
+
+	dim temp_coord[][]
+	dim filtered_coord[][]
+	for i = 1 to _num
+		temp_coord[i][1] = get(1)
+		temp_coord[i][2] = get(1)
+		temp_coord[i][3] = get(1)
+
+!!!		text2 temp_coord[i][1], temp_coord[i][2], i
+!!!		circle2 temp_coord[i][1], temp_coord[i][2], 0.01
+	next i
+
+	j = 0
+	for i = 1 to _num
+		if i > 1 then
+			if not((abs(temp_coord[i-1][1] - temp_coord[i][1]) < EPS) & (abs(temp_coord[i-1][2] - temp_coord[i][2]) < EPS)) then
+				j = j + 1
+				filtered_coord[j][1] = temp_coord[i][1]
+				filtered_coord[j][2] = temp_coord[i][2]
+				filtered_coord[j][3] = temp_coord[i][3]
+			else
+				iPrevoiusFlag	= filtered_coord[j][3]
+				iCurrentFlag	= temp_coord[i][3]
+
+				if (iPrevoiusFlag <> iCurrentFlag) then
+					iPrevoiusContourBit	= bittest (iPrevoiusFlag, 0)
+					iCurrentContourBit	= bittest (iCurrentFlag, 0)
+
+					if (iPrevoiusContourBit <> iCurrentContourBit) then
+						filtered_coord[j][3] = iPrevoiusFlag - iPrevoiusContourBit + iCurrentContourBit
+					endif
+				endif
+			endif
+		else
+			j = j + 1
+			filtered_coord[j][1] = temp_coord[i][1]
+			filtered_coord[j][2] = temp_coord[i][2]
+			filtered_coord[j][3] = temp_coord[i][3]
+		endif
+	next i
+
+	for i = 1 to j
+		put filtered_coord[i][1]
+		put filtered_coord[i][2]
+		put filtered_coord[i][3]
+
+!!!		text2 filtered_coord[i][1], filtered_coord[i][2], i
+!!!		circle2 filtered_coord[i][1], filtered_coord[i][2], 0.01
+	next i
+
+	if nsp > 8 then
+		poly2_b NSP/3, 1+2+4,reqMSFillPen,reqMSFillBackPen,
+				get(NSP)
+	else
+		for i = 1 to nsp
+			temp_param = get(1)
+		next i
+	endif
+endif
+del 1
+
+
+1000:
+end  reqBMinSpace, reqMSFillType, reqMSFillPen, reqMSFillBackPen, reqMSContLineType, reqMSContLinePen
+
+
+"revealBoardSideLeft":
+	curveFlag = 3000 * curvedWall * bUseAllRevealPointsBoardLeft
+	for i=idxBoardEndPlasterLeft to idxBoardStartPlasterLeft step -1
+		put leftRevealPnts[i][1],	leftRevealPnts[i][2], curveFlag
+		curveFlag = 0
+		if bSimplifyMSPoly then i = idxBoardStartPlasterLeft
+	next i
+return
+
+"revealSillSideLeft":
+	for i = idxSillEndPlasterLeft to idxSillStartPlasterLeft step -1
+		if bSimplifyMSPoly then i = idxSillStartPlasterLeft
+		put leftRevealPnts[i][1], leftRevealPnts[i][2], 0
+	next i
+return
+
+"revealBoardSideRight":
+	for i=idxBoardStartPlasterRight to idxBoardEndPlasterRight
+		if bSimplifyMSPoly then i = idxBoardEndPlasterRight
+		put rightRevealPnts[i][1],	rightRevealPnts[i][2], 0
+	next i
+return
+
+"revealSillSideRight":
+	curveFlag = 3000 * curvedWall * bUseAllRevealPointsSillRight
+	for i = idxSillStartPlasterRight to idxSillEndPlasterRight
+		put rightRevealPnts[i][1], rightRevealPnts[i][2], curveFlag
+		curveFlag = 0
+		if bSimplifyMSPoly then i = idxSillEndPlasterRight
+	next i
+return
+
+]]>
+</Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+EPS = 0.00001
+NO_MINSPACE		= 0
+D_Revolving		= 1
+D1_NO_SIDELIGHT = 11
+D1_1_SIDELIGHT 	= 12
+D1_PIVOT		= 21
+D1_FOLDING		= 22
+D1_SLIDINGFOLDING = 23
+D1_2_SIDELIGHT	= 30
+D1_DOUBLE_ACT	= 50
+D1_SWING_1_SIDELIGHT = 51
+D1_SWING_2_SIDELIGHT = 52
+D1_POCKET		= 61
+D1_SLIDE_EXT	= 62
+D1_SLIDE_INSIDE	= 63
+D1_SLIDE_CHE	= 64
+D1_POCKET_CHE	= 65
+D3_SLIDE_INT	= 66
+D_SLIDING_1_SIDELIGHT_RAISED = 67
+D_SLIDING_2_SIDELIGHT_RAISED = 68
+D2_POCKET		= 71
+D2_SLIDE_EXT	= 72
+D2_SLIDE_INSIDE	= 73
+D3_SLIDE_USA	= 74
+D2_2_SIDELIGHT	= 81
+GAR_TOP_OPEN_MIR= 90
+GAR_TOP_OPEN	= 91
+GAR_SIMPLE		= 92
+D2_NOSIDELIGHT	= 93
+D2_1_SIDELIGHT	= 94
+D2_ASYMMETRIC	= 95
+D2_FOLDING		= 96
+D2_ASYM_1_SIDELIGHT = 97
+D2_ASYM_2_SIDELIGHT = 98
+D2_DOUBLE_ACT	= 101
+D2_DOUBLE_EGRESS= 102
+
+
+! gs_leaf_optype_m:
+LEAF_EMPTY_DOOR				= 0
+LEAF_1L_SIDE_HUNG			= 1
+LEAF_1L_SIDE_HUNG_M			= 2
+LEAF_1L_DOUBLE_ACTING		= 3
+LEAF_1L_DOUBLE_ACTING_M		= 4
+LEAF_2L_SIDE_HUNG			= 5
+LEAF_2L_DOUBLE_ACTING		= 6
+LEAF_2L_DOUBLE_EGRESS		= 7
+LEAF_2L_DOUBLE_EGRESS_M		= 8
+LEAF_1L_PIVOT				= 9
+LEAF_1L_PIVOT_M				= 10
+LEAF_2L_1SLIDING			= 11
+LEAF_2L_1SLIDING_M			= 12
+LEAF_2L_2SLIDING			= 13
+LEAF_2L_2SLIDING_M			= 14
+LEAF_3L_2SLIDING			= 15
+LEAF_3L_2SLIDING_M			= 16
+LEAF_4L_2SLIDING			= 17
+LEAF_4L_3SLIDING			= 18
+LEAF_4L_3SLIDING_M			= 19
+LEAF_4L_4SLIDING			= 20
+LEAF_4L_4SLIDING_M			= 21
+LEAF_1L_EXTERNAL_SLIDING	= 22
+LEAF_1L_EXTERNAL_SLIDING_M	= 23
+LEAF_2L_EXTERNAL_SLIDING	= 24
+LEAF_1L_POCKET				= 25
+LEAF_1L_POCKET_M			= 26
+LEAF_2L_POCKET				= 27
+LEAF_1L_MULTIPANEL			= 28
+LEAF_1L_MULTIPANEL_M		= 29
+LEAF_2L_MULTIPANEL			= 30
+LEAF_Revolving				= 31
+LEAF_3L_2SLIDING_CENTER		= 32
+LEAF_GAR_1L_UP_AND_OVER		= 100
+LEAF_GAR_1L_UP_SLIDING		= 101
+LEAF_GAR_1L_SECTIONAL		= 102
+LEAF_GAR_2L_SIDE_HUNG		= 103
+LEAF_GAR_2L_ROLLSIDE		= 104
+LEAF_GAR_1L_ROLLUP			= 105
+LEAF_TELESCOPIC_SINGLE		= 106
+LEAF_TELESCOPIC_DOUBLE		= 107
+
+
+
+DIM stOpeningSideList[5]
+	stOpeningSideList[1] = `Width: 300  Depth: 1800`
+	stOpeningSideList[2] = `Width: 550  Depth: 1600`
+	stOpeningSideList[3] = `Width: 700  Depth: 1400`
+	stOpeningSideList[4] = `Width: 1150 Depth: 1200`
+	stOpeningSideList[5] = `Custom`
+
+bInclinedWall	= (abs(WALL_INCL) > EPS)
+curvedWall		= (abs(WIDO_ORIG_DIST) > EPS)
+wallIsLeft		= (SYMB_ROTANGLE > EPS) exor WIDO_REVEAL_SIDE
+signWallIsLeft	= wallIsleft - not(wallIsleft)
+
+if gs_leaf_optype_m = LEAF_1L_PIVOT | gs_leaf_optype_m = LEAF_1L_PIVOT_M then gs_sliding_fixpanel_width_right = 0
+
+
+! ==============================================================================
+! Calculations for Trapezoid Walls
+! ==============================================================================
+
+if abs(WALL_INCL) > EPS then
+	bInclinedWall = 1
+	bInclDir = SYMB_MIRRORED exor (SYMB_ROTANGLE > EPS)	! (0 / 1)
+	iInclDir = not(bInclDir) - bInclDir					! (1 / -1)
+
+	incH = cos(WALL_INCL)
+	incV = sin(WALL_INCL) * iInclDir
+
+	incHor = tan(WALL_INCL)
+else
+	bInclinedWall = 0
+	bInclDir = 0
+	iInclDir = 0
+
+	incH = 0
+	incV = 0
+
+	incHor = 0
+endif
+
+slideMin = 1.1
+
+ms_frame_thk = gs_fthk
+ms_frame_thkin_right = gs_fthk
+ms_frame_thkin_left = gs_fthk
+ms_sill_depth = WIDO_SILL
+bFlipFrame = 0
+
+if gs_frame_wthk or bDiffFrameThk then
+	bFlipFrame = 1
+	ms_sill_depth = 0
+	if gs_sidelight_right then
+		ms_frame_thkin_right = gs_frame_thkin
+	endif
+	if gs_sidelight_left then
+		ms_frame_thkin_left = gs_frame_thkin
+	endif
+endif
+if bCornerFrameCHE then
+	bFlipFrame = 1
+	ms_sill_depth = 0
+	bSimplifyMSPoly = 1
+endif
+if bUSACommMetal then
+	bSimplifyMSPoly = 1
+endif
+!---------------------------------------------
+!Boole for simplified minimap space polygon
+!---------------------------------------------
+
+if bSimplifyMSPoly then
+	ms_frameOffset = 0
+	ms_leftOffset = 0
+	ms_rightOffset = 0
+	ms_sill_depth = WIDO_SILL
+	ms_frame_thk = WIDO_FRAME_THICKNESS
+	ms_frame_thkin_right = WIDO_FRAME_THICKNESS
+	ms_frame_thkin_left = WIDO_FRAME_THICKNESS
+endif
+
+
+
+!---------------------------------------
+! Reveal points
+!---------------------------------------
+
+idxBoardStartPlasterLeft	= iRevealPointsIdx[9]
+idxBoardEndPlasterLeft		= iRevealPointsIdx[10]
+idxBoardStartPlasterRight	= iRevealPointsIdx[19]
+idxBoardEndPlasterRight		= iRevealPointsIdx[20]
+
+idxSillStartPlasterLeft		= iRevealPointsIdx[7]
+idxSillEndPlasterLeft		= iRevealPointsIdx[8]
+idxSillStartPlasterRight	= iRevealPointsIdx[17]
+idxSillEndPlasterRight		= iRevealPointsIdx[18]
+
+
+!---------------------------------------
+! Limits
+!---------------------------------------
+sillLeftMinReveal	= abs(leftRevealPnts[idxSillStartPlasterLeft][1])	+ egressOffset - EgressMSWidth
+sillRightMinReveal	= abs(rightRevealPnts[idxSillStartPlasterRight][1])	- egressOffset
+boardRightMinReveal	= abs(rightRevealPnts[idxBoardEndPlasterRight][1])	- egressOffset
+boardLeftMinReveal	= abs(leftRevealPnts[idxBoardEndPlasterLeft][1])	+ egressOffset - EgressMSWidth
+
+
+
+
+]]>
+</Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+pageStartY = 3 + 31
+
+if bOpSideValues then
+	modSwe = -70
+else
+	modSwe = 0
+endif
+
+ui_style 0,0
+
+fieldWidth = 70
+fieldHeight = 22
+
+xEnd = 440
+xPic = 120 + modSwe
+
+
+!-------------------------------------------
+! Sizes & Positions
+!-------------------------------------------
+PicYSize		= 186
+LeafPicXSize	= 156
+
+if	gs_leaf_optype_m = LEAF_EMPTY_DOOR then
+	LeafPicXSize	= 55
+endif
+if	gs_leaf_optype_m = LEAF_Revolving then
+	PicYSize	= 197
+endif
+if	gs_leaf_optype_m = LEAF_1L_SIDE_HUNG then
+	LeafPicXSize	= 55
+endif
+if	gs_leaf_optype_m = LEAF_1L_PIVOT | \
+	gs_leaf_optype_m = LEAF_1L_MULTIPANEL | \
+	gs_leaf_optype_m = LEAF_1L_MULTIPANEL_M then
+	LeafPicXSize	= 75
+endif
+if	gs_leaf_optype_m = LEAF_2L_SIDE_HUNG | \
+	gs_leaf_optype_m = LEAF_GAR_2L_SIDE_HUNG then
+	LeafPicXSize	= 103
+endif
+if gs_leaf_optype_m = LEAF_2L_MULTIPANEL then
+	LeafPicXSize	= 149
+endif
+if gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING then
+	LeafPicXSize	= 53
+endif
+if	gs_leaf_optype_m = LEAF_1L_POCKET | \
+	gs_leaf_optype_m = LEAF_1L_POCKET_M then
+	LeafPicXSize	= 127
+endif
+if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING then
+	LeafPicXSize	= 123
+endif
+if	gs_leaf_optype_m = LEAF_2L_1SLIDING | \
+	gs_leaf_optype_m = LEAF_2L_2SLIDING | \
+	gs_leaf_optype_m = LEAF_2L_1SLIDING_M | \
+	gs_leaf_optype_m = LEAF_2L_2SLIDING_M | \
+	gs_leaf_optype_m = LEAF_3L_2SLIDING | \
+	gs_leaf_optype_m = LEAF_4L_3SLIDING then
+	LeafPicXSize	= 102
+endif
+if	gs_leaf_optype_m = LEAF_2L_POCKET | \
+	gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING then
+	LeafPicXSize	= 244
+endif
+if	gs_leaf_optype_m = LEAF_4L_2SLIDING | \
+	gs_leaf_optype_m = LEAF_4L_4SLIDING | \
+	gs_leaf_optype_m = LEAF_3L_2SLIDING_CENTER | \
+	gs_leaf_optype_m = LEAF_4L_4SLIDING_M then
+	LeafPicXSize	= 109
+endif
+if	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
+	gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+	gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then
+	LeafPicXSize	= 146
+endif
+if	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+	gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+	gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then
+	PicYSize	= 164
+endif
+if	gs_leaf_optype_m = LEAF_2L_DOUBLE_ACTING | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS_M then
+	LeafPicXSize	= 101
+endif
+if	gs_leaf_optype_m = LEAF_TELESCOPIC_SINGLE | \
+	gs_leaf_optype_m = LEAF_TELESCOPIC_DOUBLE then
+	LeafPicXSize	= 187
+	PicYSize		= 164
+endif
+
+TotalPicXCenter = 200 + modSwe
+if	gs_leaf_optype_m = LEAF_1L_POCKET_M then TotalPicXCenter = TotalPicXCenter - 50
+TotalPicYCenter = 114 + pageStartY
+
+
+xLeafPic		= TotalPicXCenter - INT(LeafPicXSize/2)
+if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | \
+	gs_leaf_optype_m = LEAF_1L_POCKET then TotalPicXCenter = xLeafPic + 30
+
+yPic 			= TotalPicYCenter - INT(PicYSize/2)
+
+
+!-------------------------------------------
+! Sidelight Pictures
+!-------------------------------------------
+if	gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING & \
+	gs_leaf_optype_m <> LEAF_1L_POCKET_M & \
+	gs_leaf_optype_m <> LEAF_2L_POCKET & \
+	gs_leaf_optype_m <> LEAF_Revolving & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
+	gs_leaf_optype_m <> LEAF_GAR_2L_ROLLSIDE & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_ROLLUP & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_SINGLE & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_DOUBLE then
+
+	if	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING | \
+		gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING_M | \
+		gs_leaf_optype_m = LEAF_2L_SIDE_HUNG | \
+		gs_leaf_optype_m = LEAF_GAR_2L_SIDE_HUNG |\
+		gs_leaf_optype_m = LEAF_2L_DOUBLE_ACTING |\
+		gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS |\
+		gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS_M |\
+		gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING |\
+		gs_leaf_optype_m = LEAF_1L_POCKET |\
+		gs_leaf_optype_m = LEAF_2L_1SLIDING |\
+		gs_leaf_optype_m = LEAF_2L_1SLIDING_M |\
+		gs_leaf_optype_m = LEAF_3L_2SLIDING |\
+		gs_leaf_optype_m = LEAF_3L_2SLIDING_CENTER |\
+		gs_leaf_optype_m = LEAF_4L_2SLIDING then
+
+		if gs_sidelight_left then
+			ui_pict 38, xLeafPic - 51, TotalPicYCenter+2, 51, 78, 1		! ui_MS_Left_Inn_Sidelight_SymmOuter.png
+		else
+			ui_pict 37, xLeafPic - 51, TotalPicYCenter+2, 51, 78, 1		! ui_MS_Left_Inn_NoSidelight_SymmOuter.png
+		endif
+	else
+		if gs_sidelight_left then
+			ui_pict 27, xLeafPic - 51, TotalPicYCenter+2, 51, 78, 1		! ui_MS_Left_Inn_Sidelight.png
+		else
+			ui_pict 26, xLeafPic - 51, TotalPicYCenter+2, 51, 78, 1		! ui_MS_Left_Inn_NoSidelight.png
+		endif
+	endif
+
+	if gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | gs_leaf_optype_m = LEAF_EMPTY_DOOR then
+		ui_pict 29, xLeafPic - 51, TotalPicYCenter - 93, 51, 95, 1		! ui_MS_Left_Out_Ended.png
+	else
+		ui_pict 28, xLeafPic - 51, TotalPicYCenter - 93, 51, 95, 1		! ui_MS_Left_Out.png
+	endif
+endif
+
+if	gs_leaf_optype_m <> LEAF_1L_EXTERNAL_SLIDING & \
+	gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING & \
+	gs_leaf_optype_m <> LEAF_1L_POCKET & \
+	gs_leaf_optype_m <> LEAF_2L_POCKET & \
+	gs_leaf_optype_m <> LEAF_Revolving & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
+	gs_leaf_optype_m <> LEAF_GAR_2L_ROLLSIDE & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_ROLLUP & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_SINGLE & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_DOUBLE then
+
+	if gs_sidelight_right then
+		ui_pict 31, xLeafPic + LeafPicXSize, TotalPicYCenter+2, 51, 78, 1		! ui_MS_Right_Inn_Sidelight
+	else
+		ui_pict 30, xLeafPic + LeafPicXSize, TotalPicYCenter+2, 51, 78, 1		! ui_MS_Right_Inn_NoSidelight.png
+	endif
+	if gs_leaf_optype_m = LEAF_1L_POCKET_M | gs_leaf_optype_m = LEAF_EMPTY_DOOR then
+		ui_pict 33, xLeafPic + LeafPicXSize, TotalPicYCenter - 93, 51, 95, 1		! ui_MS_Right_Out_Ended.png
+	else
+		ui_pict 32, xLeafPic + LeafPicXSize, TotalPicYCenter - 93, 51, 95, 1		! ui_MS_Right_Out.png
+	endif
+endif
+
+if	gs_leaf_optype_m <> LEAF_1L_DOUBLE_ACTING & \
+	gs_leaf_optype_m <> LEAF_1L_DOUBLE_ACTING_M & \
+	gs_leaf_optype_m <> LEAF_2L_DOUBLE_ACTING & \
+	gs_leaf_optype_m <> LEAF_2L_DOUBLE_EGRESS & \
+	gs_leaf_optype_m <> LEAF_2L_DOUBLE_EGRESS_M & \
+	gs_leaf_optype_m <> LEAF_Revolving & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
+	gs_leaf_optype_m <> LEAF_GAR_2L_ROLLSIDE & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_ROLLUP & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_SINGLE & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_DOUBLE then
+
+	if	gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING & \
+		gs_leaf_optype_m <> LEAF_1L_POCKET_M & \
+		gs_leaf_optype_m <> LEAF_2L_POCKET then
+
+		if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING |\
+			gs_leaf_optype_m = LEAF_1L_POCKET |\
+			gs_leaf_optype_m = LEAF_2L_SIDE_HUNG |\
+			gs_leaf_optype_m = LEAF_GAR_2L_SIDE_HUNG |\
+			gs_leaf_optype_m = LEAF_2L_1SLIDING |\
+			gs_leaf_optype_m = LEAF_2L_1SLIDING_M |\
+			gs_leaf_optype_m = LEAF_3L_2SLIDING |\
+			gs_leaf_optype_m = LEAF_3L_2SLIDING_CENTER |\
+			gs_leaf_optype_m = LEAF_4L_2SLIDING then
+			ui_pict 41, xLeafPic - 40, TotalPicYCenter + 80, 40, 13, 1		! ui_MS_WidthLeftInnArrow_Symm.png
+		else
+			if gs_leaf_optype_m = LEAF_EMPTY_DOOR then
+				ui_pict 45, xLeafPic - 20, TotalPicYCenter + 80, 20, 13, 1		! ui_MS_WidthLeftInnArrowEmptyDoor.png
+			else
+				ui_pict 34, xLeafPic - 20, TotalPicYCenter + 80, 20, 13, 1		! ui_MS_WidthLeftInnArrow.png
+			endif
+		endif
+	endif
+	if	gs_leaf_optype_m <> LEAF_1L_EXTERNAL_SLIDING & \
+		gs_leaf_optype_m <> LEAF_2L_EXTERNAL_SLIDING & \
+		gs_leaf_optype_m <> LEAF_1L_POCKET & \
+		gs_leaf_optype_m <> LEAF_2L_POCKET then
+		if gs_leaf_optype_m = LEAF_EMPTY_DOOR then
+			ui_pict 46, xLeafPic + LeafPicXSize, TotalPicYCenter + 80, 8, 13, 1		! ui_MS_WidthRightInnArrowEmptyDoor.png
+		else
+			ui_pict 35, xLeafPic + LeafPicXSize, TotalPicYCenter + 80, 8, 13, 1		! ui_MS_WidthRightInnArrow.png
+		endif
+	endif
+endif
+
+XDepthArrows = xLeafPic + LeafPicXSize + 50
+if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | \
+	gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING | \
+	gs_leaf_optype_m = LEAF_1L_POCKET | \
+	gs_leaf_optype_m = LEAF_2L_POCKET then XDepthArrows = xLeafPic + LeafPicXSize
+
+if 	gs_leaf_optype_m <> LEAF_Revolving & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_AND_OVER & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_UP_SLIDING & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_SECTIONAL & \
+	gs_leaf_optype_m <> LEAF_GAR_2L_ROLLSIDE & \
+	gs_leaf_optype_m <> LEAF_GAR_1L_ROLLUP & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_SINGLE & \
+	gs_leaf_optype_m <> LEAF_TELESCOPIC_DOUBLE then
+
+	ui_pict 5, XDepthArrows, TotalPicYCenter - 80, 13, 83, 1		! ui_MS_DepthArrow.png
+	ui_pict 6, XDepthArrows, TotalPicYCenter + 19, 11, 61, 1		! ui_MS_DepthInnArrow.png
+endif
+
+
+!-------------------------------------------
+! Infields
+!-------------------------------------------
+if	gs_leaf_optype_m = LEAF_Revolving then
+	ui_infield "ms_openingSDepth", 	xLeafPic - fieldWidth - 2, TotalPicYCenter - 75, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[1]
+	ui_infield "ms_oppositeSDepth", xLeafPic - fieldWidth - 2, TotalPicYCenter + 57, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[2]
+else
+	if	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+		gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+		gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
+		gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+		gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then
+		ui_infield "ms_openingSDepth", 	xLeafPic - fieldWidth - 2, TotalPicYCenter - 60, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[1]
+		ui_infield "ms_oppositeSDepth", xLeafPic - fieldWidth - 2, TotalPicYCenter + 30, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[2]
+	else
+		if	gs_leaf_optype_m = LEAF_TELESCOPIC_SINGLE | \
+			gs_leaf_optype_m = LEAF_TELESCOPIC_DOUBLE then
+			ui_infield "ms_openingSDepth", 	xLeafPic + LeafPicXSize + 5, TotalPicYCenter - 60, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[1]
+			ui_infield "ms_oppositeSDepth", xLeafPic + LeafPicXSize + 5, TotalPicYCenter + 30, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[2]
+		else
+			ui_infield "ms_openingSDepth", 	XDepthArrows + 15, TotalPicYCenter - 45, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[1]
+			ui_infield "ms_oppositeSDepth", XDepthArrows + 15, TotalPicYCenter + 40, fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[2]
+		endif
+	endif
+endif
+
+
+LeftInfXMod = 0
+RightInfXMod = 0
+if	gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING | \
+	gs_leaf_optype_m = LEAF_2L_POCKET  then		LeftInfXMod = 80
+if	gs_leaf_optype_m = LEAF_1L_POCKET_M then	LeftInfXMod = 65
+if	gs_leaf_optype_m = LEAF_Revolving | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
+	gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+	gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then	LeftInfXMod = 50
+if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | \
+	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING_M | \
+	gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING | \
+	gs_leaf_optype_m = LEAF_1L_POCKET | \
+	gs_leaf_optype_m = LEAF_2L_POCKET then		RightInfXMod = 60
+if	gs_leaf_optype_m = LEAF_Revolving | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
+	gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+	gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then	RightInfXMod = 40
+if	gs_leaf_optype_m = LEAF_TELESCOPIC_SINGLE | \
+	gs_leaf_optype_m = LEAF_TELESCOPIC_DOUBLE then
+	LeftInfXMod = 50
+	RightInfXMod = 50
+endif
+ui_infield "msOpeningSideWidth2",		xLeafPic - fieldWidth + 25 + LeftInfXMod, 	yPic - fieldHeight - 1, fieldWidth, 	fieldHeight ui_tooltip stMinSpaceTooltip[4]
+ui_infield "msOpeningSideWidth1",		xLeafPic + LeafPicXSize - 25 - RightInfXMod, 	yPic - fieldHeight - 1, fieldWidth, 	fieldHeight ui_tooltip stMinSpaceTooltip[3]
+
+
+if	gs_leaf_optype_m <> LEAF_1L_DOUBLE_ACTING & \
+	gs_leaf_optype_m <> LEAF_2L_DOUBLE_ACTING & \
+	gs_leaf_optype_m <> LEAF_2L_DOUBLE_EGRESS & \
+	gs_leaf_optype_m <> LEAF_2L_DOUBLE_EGRESS_M then
+
+	if	gs_leaf_optype_m = LEAF_2L_1SLIDING | \
+		gs_leaf_optype_m = LEAF_2L_2SLIDING | \
+		gs_leaf_optype_m = LEAF_2L_1SLIDING_M | \
+		gs_leaf_optype_m = LEAF_2L_2SLIDING_M | \
+		gs_leaf_optype_m = LEAF_3L_2SLIDING | \
+		gs_leaf_optype_m = LEAF_3L_2SLIDING_CENTER | \
+		gs_leaf_optype_m = LEAF_4L_3SLIDING | \
+		gs_leaf_optype_m = LEAF_4L_3SLIDING_M | \
+		gs_leaf_optype_m = LEAF_4L_2SLIDING | \
+		gs_leaf_optype_m = LEAF_4L_4SLIDING | \
+		gs_leaf_optype_m = LEAF_4L_4SLIDING_M  | \
+		gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING | \
+		gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING_M | \
+		gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING | \
+		gs_leaf_optype_m = LEAF_1L_POCKET | \
+		gs_leaf_optype_m = LEAF_1L_POCKET_M | \
+		gs_leaf_optype_m = LEAF_2L_POCKET then
+		if	gs_leaf_optype_m = LEAF_1L_POCKET_M then
+			ui_infield "ms_slidingWidth",	TotalPicXCenter - INT(fieldWidth/2)+35, 	TotalPicYCenter + INT(PicYSize/2) + 3, 	fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[5]
+		else
+			ui_infield "ms_slidingWidth",	TotalPicXCenter - INT(fieldWidth/2), 	TotalPicYCenter + INT(PicYSize/2) + 3, 	fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[5]
+		endif
+	else
+		ui_infield "msOppositeSideWidth2",	xLeafPic - fieldWidth + 25 + LeftInfXMod, 	TotalPicYCenter + INT(PicYSize/2) + 1, 	fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[7]
+		ui_infield "msOppositeSideWidth1", 	xLeafPic + LeafPicXSize - 25 - RightInfXMod, 	TotalPicYCenter + INT(PicYSize/2) + 1, 	fieldWidth, fieldHeight ui_tooltip stMinSpaceTooltip[6]
+	endif
+endif
+
+!-------------------------------------------
+! Leaf Pictures
+!-------------------------------------------
+if gs_leaf_optype_m = LEAF_EMPTY_DOOR then
+	ui_pict	44, xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_EmptyDoor.png
+endif
+if gs_leaf_optype_m = LEAF_Revolving then
+	ui_pict 1, xPic, yPic, LeafPicXSize, PicYSize, 1		!Revolving.png
+endif
+if gs_leaf_optype_m = LEAF_1L_SIDE_HUNG then
+	ui_pict	7,				xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1.png
+endif
+if gs_leaf_optype_m = LEAF_1L_PIVOT then
+	ui_pict 25,			xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_LeafPivot.png
+endif
+if gs_leaf_optype_m = LEAF_1L_MULTIPANEL then
+	ui_pict 9,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1Folding.png
+endif
+if gs_leaf_optype_m = LEAF_1L_MULTIPANEL_M then
+	ui_pict 10,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1MirrFolding.png
+endif
+if gs_leaf_optype_m = LEAF_2L_SIDE_HUNG then
+	ui_pict 14,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2.png
+endif
+if gs_leaf_optype_m = LEAF_2L_MULTIPANEL then
+	ui_pict 17,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2Folding.png
+endif
+if	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING then
+	ui_pict 8,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1DoubleActing.png
+endif
+if	gs_leaf_optype_m = LEAF_1L_POCKET then
+	ui_pict 12,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1Pocket.png
+endif
+if	gs_leaf_optype_m = LEAF_1L_POCKET_M then
+	ui_pict 11,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1MirrPocket.png
+endif
+if	gs_leaf_optype_m = LEAF_1L_EXTERNAL_SLIDING then
+	ui_pict 13,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf1SlExt.png
+endif
+if	gs_leaf_optype_m = LEAF_2L_1SLIDING | \
+	gs_leaf_optype_m = LEAF_2L_2SLIDING | \
+	gs_leaf_optype_m = LEAF_3L_2SLIDING | \
+	gs_leaf_optype_m = LEAF_4L_3SLIDING then
+	ui_pict 21,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2Sliding.png
+endif
+if	gs_leaf_optype_m = LEAF_3L_2SLIDING_CENTER then
+	ui_pict 36,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2Sliding.png
+endif
+if	gs_leaf_optype_m = LEAF_2L_1SLIDING_M | \
+	gs_leaf_optype_m = LEAF_2L_2SLIDING_M then
+	ui_pict 18,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2MirrSliding.png
+endif
+if gs_leaf_optype_m = LEAF_2L_POCKET then
+	ui_pict 19,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2Pocket.png
+endif
+if gs_leaf_optype_m = LEAF_2L_EXTERNAL_SLIDING then
+	ui_pict 20,			xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2SlExt.png
+endif
+if	gs_leaf_optype_m = LEAF_4L_2SLIDING | \
+	gs_leaf_optype_m = LEAF_4L_4SLIDING | \
+	gs_leaf_optype_m = LEAF_4L_4SLIDING_M then
+	ui_pict 23,		xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf4Sliding.png
+endif
+if	gs_leaf_optype_m = LEAF_2L_DOUBLE_ACTING then
+	ui_pict 16,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2DoubleActing.png
+endif
+if	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS_M then
+	ui_pict 24,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_LeafDoubleEgress.png
+endif
+if	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
+	gs_leaf_optype_m = LEAF_GAR_2L_SIDE_HUNG | \
+	gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+	gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then
+
+	if	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+		gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL then
+		ui_pict 2,						xLeafPic, yPic, LeafPicXSize, PicYSize, 1			!Garage_1_mir.png
+	endif
+	if	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING then
+		ui_pict 3,						xLeafPic, yPic, LeafPicXSize, PicYSize, 1			!Garage_2.png
+	endif
+	if gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE |\
+		gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP then
+		ui_pict 4,						xLeafPic, yPic, LeafPicXSize, PicYSize, 1			!Garage_roll.png
+	endif
+	if	gs_leaf_optype_m = LEAF_GAR_2L_SIDE_HUNG then
+		ui_pict 14,			xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_Leaf2.png
+	endif
+endif
+if	gs_leaf_optype_m = LEAF_TELESCOPIC_SINGLE then
+	ui_pict 42,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_LeafTelescopicSingle.png
+endif
+if	gs_leaf_optype_m = LEAF_TELESCOPIC_DOUBLE then
+	ui_pict 43,	xLeafPic, yPic, LeafPicXSize, PicYSize, 1		! ui_MS_LeafTelescopicDouble.png
+endif
+
+if bOpSideValues then
+	ui_outfield `Opening Side Values`, xPic+200, pageStartY - 5, xEnd - (xPic+220), 18
+	ui_infield "gs_opside_list", xPic+200, 20 + pageStartY, xEnd - (xPic+220), 20
+endif
+
+]]>
+</Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+! =================================================
+! For SWE
+! =================================================
+if bOpSideValues then
+	values "gs_opside_list" stOpeningSideList
+	values "gs_opside_list_m" 0, 1, 2, 3, 4
+
+	if GLOB_MODPAR_NAME = "gs_opside_list" then
+		gs_opside_list_m = 0
+		for i = 1 to 4
+			if gs_opside_list= stOpeningSideList[i] then gs_opside_list_m = i
+		next i
+		parameters gs_opside_list_m = gs_opside_list_m
+	else
+		gs_opside_list = stOpeningSideList[5]
+		for i = 1 to 4
+			if gs_opside_list_m = i then gs_opside_list= stOpeningSideList[gs_opside_list_m]
+		next i
+		parameters gs_opside_list= gs_opside_list
+	endif
+
+	if gs_opside_list_m <> 0 then
+		if gs_opside_list_m = 1 then
+			msOpeningSideWidth2 = 0.3
+			ns_openingSDepth = 1.8
+		endif
+		if gs_opside_list_m = 2 then
+			msOpeningSideWidth2 = 0.55
+			ms_openingSDepth = 1.6
+		endif
+		if gs_opside_list_m = 3 then
+			msOpeningSideWidth2 = 0.7
+			ms_openingSDepth = 1.4
+		endif
+		if gs_opside_list_m = 4 then
+			msOpeningSideWidth2 = 1.115
+			ms_openingSDepth = 1.2
+		endif
+
+		parameters msOpeningSideWidth2 = msOpeningSideWidth2
+		parameters ms_openingSDepth = ms_openingSDepth
+		lock "ms_openingSDepth", "msOpeningSideWidth2"
+	endif
+!else
+!	gs_opside_list_m = 0
+!	parameters gs_opside_list_m = gs_opside_list_m
+!
+!	lock "gs_opside_list", "gs_opside_list_m"
+!	hideparameter "gs_opside_list", "gs_opside_list_m"
+endif
+
+
+! =================================================
+! For ALL
+! =================================================
+
+values "ms_openingSDepth" range [0, )
+values "ms_oppositeSDepth" range [0, )
+
+if	gs_leaf_optype_m = LEAF_Revolving | \
+	gs_leaf_optype_m = LEAF_1L_SIDE_HUNG | \
+	gs_leaf_optype_m = LEAF_1L_SIDE_HUNG_M | \
+	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING | \
+	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING_M | \
+	gs_leaf_optype_m = LEAF_1L_PIVOT | \
+	gs_leaf_optype_m = LEAF_1L_PIVOT_M | \
+	gs_leaf_optype_m = LEAF_1L_MULTIPANEL | \
+	gs_leaf_optype_m = LEAF_1L_MULTIPANEL_M then
+
+	values "msOpeningSideWidth2" range [0, )
+	values "msOpeningSideWidth1" range [0, )
+	values "msOppositeSideWidth2" range [0, )
+	values "msOppositeSideWidth1" range [0, )
+endif
+
+
+if bSlidingSingle or bSlidingDouble then			!single sliding/pocket doors
+	values "msOpeningSideWidth2" range [max(-(EgressMSWidth + msOpeningSideWidth1), -(EgressMSWidth)), )
+	values "msOpeningSideWidth1" range [max(-(EgressMSWidth + msOpeningSideWidth2), -(EgressMSWidth)), )
+
+	if bSlidingSingle then
+		if not(bSlidingMirrored) then
+			values "ms_slidingWidth" range [msOpeningSideWidth2,)
+		else
+			values "ms_slidingWidth" range [msOpeningSideWidth1,)
+		endif
+	else
+		values "ms_slidingWidth" range [0,)
+	endif
+
+	if GLOB_MODPAR_NAME = "msOpeningSideWidth2" or GLOB_MODPAR_NAME = "msOpeningSideWidth1" then
+		ms_slidingWidth = msOpeningSideWidth2 + EgressMSWidth + msOpeningSideWidth1
+	else
+		if bSlidingSingle then
+			if not(bSlidingMirrored) then
+				msOpeningSideWidth1 = ms_slidingWidth - msOpeningSideWidth2 - EgressMSWidth
+			else
+				msOpeningSideWidth2 = ms_slidingWidth - msOpeningSideWidth1- EgressMSWidth
+			endif
+		endif
+	endif
+
+	if GLOB_MODPAR_NAME = "ms_slidingWidth" or GLOB_MODPAR_NAME = "A" then
+		if bSlidingDouble then
+			msOpeningSideWidth2 = (ms_slidingWidth - EgressMSWidth)/2
+			msOpeningSideWidth1 = (ms_slidingWidth - EgressMSWidth)/2
+		else
+			if not(bSlidingMirrored) then
+				msOpeningSideWidth1 = ms_slidingWidth - msOpeningSideWidth2 - EgressMSWidth
+			else
+				msOpeningSideWidth2 = ms_slidingWidth - msOpeningSideWidth1- EgressMSWidth
+			endif
+		endif
+	endif
+
+	if abs(ms_slidingWidth-(msOpeningSideWidth2+msOpeningSideWidth1+EgressMSWidth)) > EPS then
+		ms_slidingWidth = msOpeningSideWidth2+msOpeningSideWidth1+EgressMSWidth
+	endif
+
+	msOppositeSideWidth2 = msOpeningSideWidth2
+	msOppositeSideWidth1 = msOpeningSideWidth1
+
+	parameters msOppositeSideWidth2 = msOppositeSideWidth2
+	parameters msOppositeSideWidth1 = msOppositeSideWidth1
+	parameters msOpeningSideWidth2 = msOpeningSideWidth2
+	parameters msOpeningSideWidth1 = msOpeningSideWidth1
+	parameters ms_slidingWidth = ms_slidingWidth
+	hideparameter "msOppositeSideWidth2", "msOppositeSideWidth1"
+endif
+
+if bTelescopic then
+	values "msOpeningSideWidth2" range [-ac_wallhole_width - msOpeningSideWidth1, )
+	values "msOpeningSideWidth1" range [-ac_wallhole_width - msOpeningSideWidth2, )
+
+	values "msOppositeSideWidth2" range [-ac_wallhole_width - msOppositeSideWidth1, )
+	values "msOppositeSideWidth1" range [-ac_wallhole_width - msOppositeSideWidth2, )
+endif
+
+if	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING | \
+	gs_leaf_optype_m = LEAF_1L_DOUBLE_ACTING_M | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_ACTING | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS_M then
+
+	msOppositeSideWidth2 = msOpeningSideWidth2
+	parameters msOppositeSideWidth2 = msOppositeSideWidth2
+
+	msOppositeSideWidth1 = msOpeningSideWidth1
+	parameters msOppositeSideWidth1 = msOppositeSideWidth1
+
+	hideparameter "msOppositeSideWidth2", "msOppositeSideWidth1"
+endif
+
+if	gs_leaf_optype_m = LEAF_2L_SIDE_HUNG | \
+	gs_leaf_optype_m = LEAF_2L_SIDE_HUNG | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_AND_OVER | \
+	gs_leaf_optype_m = LEAF_GAR_1L_UP_SLIDING | \
+	gs_leaf_optype_m = LEAF_GAR_1L_SECTIONAL | \
+	gs_leaf_optype_m = LEAF_GAR_2L_SIDE_HUNG | \
+	gs_leaf_optype_m = LEAF_GAR_2L_ROLLSIDE | \
+	gs_leaf_optype_m = LEAF_GAR_1L_ROLLUP | \
+	gs_leaf_optype_m = LEAF_2L_MULTIPANEL | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_ACTING | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS | \
+	gs_leaf_optype_m = LEAF_2L_DOUBLE_EGRESS_M then
+
+	values "msOpeningSideWidth2" range (max(-(EgressMSWidth + msOpeningSideWidth1), -EgressMSWidth), )
+	values "msOpeningSideWidth1" range (max(-(EgressMSWidth + msOpeningSideWidth2), -EgressMSWidth), )
+	values "msOppositeSideWidth2" range (max(-(EgressMSWidth + msOppositeSideWidth1), -EgressMSWidth), )
+	values "msOppositeSideWidth1" range (max(-(EgressMSWidth + msOppositeSideWidth2), -EgressMSWidth), )
+endif
+
+]]>
+</Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" path="uipicts/Library Globals/dw_minimalspace/Revolving.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="2" path="uipicts/Library Globals/dw_minimalspace/Garage_1_mir.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="3" path="uipicts/Library Globals/dw_minimalspace/Garage_2.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="4" path="uipicts/Library Globals/dw_minimalspace/Garage_roll.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="5" path="uipicts/Library Globals/dw_minimalspace/ui_MS_DepthArrow.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="6" path="uipicts/Library Globals/dw_minimalspace/ui_MS_DepthInnArrow.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="7" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="8" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1DoubleActing.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="9" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1Folding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="10" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1MirrFolding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="11" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1MirrPocket.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="12" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1Pocket.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="13" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf1SlExt.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="14" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="15" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2Asymmetric.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="16" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2DoubleActing.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="17" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2Folding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="18" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2MirrSliding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="19" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2Pocket.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="20" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2SlExt.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="21" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf2Sliding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="22" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf3Sliding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="23" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf4Sliding.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="24" path="uipicts/Library Globals/dw_minimalspace/ui_MS_LeafDoubleEgress.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="25" path="uipicts/Library Globals/dw_minimalspace/ui_MS_LeafPivot.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="26" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Inn_NoSidelight.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="27" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Inn_Sidelight.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="28" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Out.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="29" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Out_Ended.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="30" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Right_Inn_NoSidelight.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="31" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Right_Inn_Sidelight.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="32" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Right_Out.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="33" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Right_Out_Ended.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="34" path="uipicts/Library Globals/dw_minimalspace/ui_MS_WidthLeftInnArrow.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="35" path="uipicts/Library Globals/dw_minimalspace/ui_MS_WidthRightInnArrow.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="36" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Leaf3SlidingCenter.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="37" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Inn_NoSidelight_SymmOuter.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="38" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Inn_Sidelight_SymmOuter.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="39" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Out_symm.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="40" path="uipicts/Library Globals/dw_minimalspace/ui_MS_Left_Out_symm_Ended.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="41" path="uipicts/Library Globals/dw_minimalspace/ui_MS_WidthLeftInnArrow_Symm.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="42" path="uipicts/Library Globals/dw_minimalspace/ui_MS_LeafTelescopicSingle.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="43" path="uipicts/Library Globals/dw_minimalspace/ui_MS_LeafTelescopicDouble.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="44" path="uipicts/Library Globals/dw_minimalspace/ui_MS_EmptyDoor.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="45" path="uipicts/Library Globals/dw_minimalspace/ui_MS_WidthLeftInnArrowEmptyDoor.png">
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="46" path="uipicts/Library Globals/dw_minimalspace/ui_MS_WidthRightInnArrowEmptyDoor.png">
+</GDLPict>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+]]>
+</Script_BWM>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Keywords>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ac_wallhole_width">
+			<Description><![CDATA["Wallhole Width"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="EgressMSWidth">
+			<Description><![CDATA["Egress Width"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="msOpeningSideWidth2">
+			<Description><![CDATA["Opening Side Width 2"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="msOpeningSideWidth1">
+			<Description><![CDATA["Opening Side Width 1"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ms_openingSDepth">
+			<Description><![CDATA["Opening Side Depth"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="msOppositeSideWidth2">
+			<Description><![CDATA["Opposite Side Width 2"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="msOppositeSideWidth1">
+			<Description><![CDATA["Opposite Side Width 1"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ms_oppositeSDepth">
+			<Description><![CDATA["Opposite Side Depth"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<String Name="gs_opside_list">
+			<Description><![CDATA["Opening Side Values"]]></Description>
+			<Value><![CDATA["Custom"]]></Value>
+		</String>
+		<Integer Name="gs_opside_list_m">
+			<Description><![CDATA["Opening Side Values"]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Length Name="ms_slidingWidth">
+			<Description><![CDATA["Opposite Side Width"]]></Description>
+			<Value>1.1</Value>
+		</Length>
+		<Integer Name="unID">
+			<Description><![CDATA["Hotspot ID"]]></Description>
+			<Value>10400</Value>
+		</Integer>
+		<Length Name="leftRevealPnts">
+			<Description><![CDATA["Left Reveal Points"]]></Description>
+			<ArrayValues FirstDimension="1" SecondDimension="2">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="rightRevealPnts">
+			<Description><![CDATA["Right Reveal Points"]]></Description>
+			<ArrayValues FirstDimension="1" SecondDimension="2">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Integer Name="iRevealPointsIdx">
+			<Description><![CDATA["Reveal Points Index"]]></Description>
+			<ArrayValues FirstDimension="20" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">1</AVal>
+				<AVal Row="3">1</AVal>
+				<AVal Row="4">1</AVal>
+				<AVal Row="5">1</AVal>
+				<AVal Row="6">1</AVal>
+				<AVal Row="7">1</AVal>
+				<AVal Row="8">1</AVal>
+				<AVal Row="9">1</AVal>
+				<AVal Row="10">1</AVal>
+				<AVal Row="11">1</AVal>
+				<AVal Row="12">1</AVal>
+				<AVal Row="13">1</AVal>
+				<AVal Row="14">1</AVal>
+				<AVal Row="15">1</AVal>
+				<AVal Row="16">1</AVal>
+				<AVal Row="17">1</AVal>
+				<AVal Row="18">1</AVal>
+				<AVal Row="19">1</AVal>
+				<AVal Row="20">1</AVal>
+			</ArrayValues>
+		</Integer>
+		<String Name="stMinSpaceTooltip">
+			<Description><![CDATA["Tooltip Strings"]]></Description>
+			<ArrayValues FirstDimension="20" SecondDimension="0">
+				<AVal Row="1"><![CDATA[""]]></AVal>
+				<AVal Row="2"><![CDATA[""]]></AVal>
+				<AVal Row="3"><![CDATA[""]]></AVal>
+				<AVal Row="4"><![CDATA[""]]></AVal>
+				<AVal Row="5"><![CDATA[""]]></AVal>
+				<AVal Row="6"><![CDATA[""]]></AVal>
+				<AVal Row="7"><![CDATA[""]]></AVal>
+				<AVal Row="8"><![CDATA[""]]></AVal>
+				<AVal Row="9"><![CDATA[""]]></AVal>
+				<AVal Row="10"><![CDATA[""]]></AVal>
+				<AVal Row="11"><![CDATA[""]]></AVal>
+				<AVal Row="12"><![CDATA[""]]></AVal>
+				<AVal Row="13"><![CDATA[""]]></AVal>
+				<AVal Row="14"><![CDATA[""]]></AVal>
+				<AVal Row="15"><![CDATA[""]]></AVal>
+				<AVal Row="16"><![CDATA[""]]></AVal>
+				<AVal Row="17"><![CDATA[""]]></AVal>
+				<AVal Row="18"><![CDATA[""]]></AVal>
+				<AVal Row="19"><![CDATA[""]]></AVal>
+				<AVal Row="20"><![CDATA[""]]></AVal>
+			</ArrayValues>
+		</String>
+		<Length Name="ac_unit_width">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="bOpeningDirection">
+			<Description><![CDATA["0: default,1: flipped"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="gs_tolerance_left">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_tolerance_right">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="radSill">
+			<Description><![CDATA["Outside Wall Radius"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="radBoard">
+			<Description><![CDATA["Inside Wall Radius"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="WOD">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="bOpSideValues">
+			<Description><![CDATA["SWE OpeningSide Values Needed"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="egressOffset">
+			<Description><![CDATA["Right Side of Egress"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="bSlidingSingle">
+			<Description><![CDATA["Single Sliding/Pocket door"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bSlidingDouble">
+			<Description><![CDATA["Double Sliding/Pocket door"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bSlidingMirrored">
+			<Description><![CDATA["Mirrored Sliding operation CHE"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="ms_rightOffset">
+			<Description><![CDATA["Offset under Right Frame"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ms_leftOffset">
+			<Description><![CDATA["Offset under Left Frame"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_frame_thk">
+			<Description><![CDATA["Frame thickness"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ms_frameOffset">
+			<Description><![CDATA["Frame Offset in Y direction"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="gs_frame_wthk">
+			<Description><![CDATA["Frame thk = Wall thk"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="gs_frame_thkin">
+			<Description><![CDATA["Frame Thickness Inside"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="gs_sidelight_left">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_sidelight_right">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="gs_sidelight_width_left">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sidelight_width_right">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sliding_fixpanel_width_left">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sliding_fixpanel_width_right">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_fthk">
+			<Description><![CDATA["Absolute Frame Thickness"]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="bDiffFrameThk">
+			<Description><![CDATA["Different Frame Thicknesses"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bCornerFrameCHE">
+			<Description><![CDATA["CHE Corner Frame"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bSimplifyMSPoly">
+			<Description><![CDATA["Simplified MS Polygon"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bUSACommMetal">
+			<Description><![CDATA["USA Commercial and Metal doors"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bSidelightWithoutContour">
+			<Description><![CDATA["Sidelight with no Contour"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bTShapedOpening">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="gs_reveal_left_sL">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_reveal_right_sR">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_reveal_double_innerLeft_sL">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_reveal_double_innerRight_sR">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="thkPlasterAtSillSlLeft">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="thkPlasterAtSillSlRight">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="thkPlasterAtBoardSlLeft">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="thkPlasterAtBoardSlRight">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sidelight_WHole_width_left">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sidelight_parapet_hgt_left">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sidelight_WHole_width_right">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_sidelight_parapet_hgt_right">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Length>
+		<Integer Name="gs_leaf_optype_m">
+			<Description><![CDATA["Opening Type"]]></Description>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="bTelescopic">
+			<Description><![CDATA["telescopic Door"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_highspeedgar">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="gs_sectgar">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+	</Parameters>
+</ParamSection>
+
+</Symbol>
