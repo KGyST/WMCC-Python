@@ -14,16 +14,16 @@ api = Api(app)
 #     return "Hello World!"
 
 
-class ArchicadEngine(Resource):
-    def get(self):
-        return {"ArchicadEngine test": "it's working!"}
-
-    def post(self):
-        data = request.get_json()
-
-        result = createBrandedProduct(data)
-
-        return result
+# class ArchicadEngine(Resource):
+#     def get(self):
+#         return {"ArchicadEngine test": "it's working!"}
+#
+#     def post(self):
+#         data = request.get_json()
+#
+#         result = createBrandedProduct(data)
+#
+#         return result
 
 
 # class CreateLCFEngine(Resource):
@@ -49,7 +49,7 @@ class ArchicadEngine(Resource):
 
 class TestEngine(Resource):
     def get(self):
-        return {"test": "it's working!"}
+        return {"test": "TestEngine is working!"}
 
 
 api.add_resource(TestEngine, '/')
