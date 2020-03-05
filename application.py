@@ -5,19 +5,14 @@ import re
 import tempfile
 from subprocess import check_output
 import shutil
-# import sys
 import datetime
 import jsonpickle
-# import os
 import multiprocessing as mp
-# from functools import partial
-
-# import string
 
 import copy
 import argparse
 
-import http.client, urllib.request, urllib.parse, urllib.error, json, webbrowser, urllib.parse, os, hashlib, base64
+import http.client, urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
 # import pip
 
 from PIL import Image
