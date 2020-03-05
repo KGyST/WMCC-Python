@@ -27,7 +27,7 @@ api = Api(app)
 
 #------------------ External modules------------------
 
-from lxml import etree
+# from lxml import etree
 
 #------------------/External modules------------------
 
