@@ -9,10 +9,10 @@ import datetime
 import jsonpickle
 import multiprocessing as mp
 
-import copy
-import argparse
-
-import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
+# import copy
+# import argparse
+#
+# import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
 # import http.client
 
 # from Pillow import Image
