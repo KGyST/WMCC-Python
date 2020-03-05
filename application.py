@@ -14,8 +14,8 @@ import argparse
 
 import http.client, urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
 
-from PIL import Image
-import io
+# from PIL import Image
+# import io
 
 from flask import Flask, request
 from flask_restful import Resource, Api
