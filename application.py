@@ -13,7 +13,7 @@ import copy
 import argparse
 
 import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
-import http.client
+# import http.client
 
 # from Pillow import Image
 # import io
