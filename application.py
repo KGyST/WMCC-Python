@@ -1771,7 +1771,7 @@ class TestEngine(Resource):
     def get(self):
         return {"test": "ksss"}
 
-api.add_resource(TestEngine, '/createlcf')
+api.add_resource(TestEngine, '/')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)
