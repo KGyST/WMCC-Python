@@ -10,9 +10,9 @@
 # import multiprocessing as mp
 
 import copy
-import argparse
-
-import http.client, urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
+# import argparse
+#
+# import http.client, urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
 
 # from PIL import Image
 # import io
