@@ -1,10 +1,10 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
-# from archicad.WMCC import (
-#     createBrandedProduct,
-#     buildMacroSet,
-#     extractParams,
-# )
+from src.archicad.WMCC import (
+    createBrandedProduct,
+    buildMacroSet,
+    extractParams,
+)
 
 app = Flask(__name__)
 api = Api(app)
@@ -49,7 +49,7 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        return {"test": "request is working!"}
+        return {"test": "src.archicad.WMCC is working!"}
 
 
 api.add_resource(TestEngine, '/')
