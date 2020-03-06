@@ -30,7 +30,7 @@ class TestEngine(Resource):
                 _res = _p.stdout.readlines()
                 return {"test": "samu %s" % e.__class__.__name__} if e else _res
         except BaseException as ee:
-            print(ee.__class__.__name__)
+            return {"test": "samu %s" % ee.__class__.__name__} if e else _res
 
 try:
     from subprocess import check_output, Popen, PIPE
