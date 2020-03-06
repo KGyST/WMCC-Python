@@ -27,7 +27,7 @@ api = Api(app)
 class TestEngine(Resource):
     def get(self):
         global e
-        return {"test": "samu %s" % e.__class__.__name__ if e else "OK"}
+        return {"test": "samu %s" % e.__class__.__name__ + e.message if isinstance(e, ImportError) else "" if e else "OK"}
 
 try:
     # from PIL import Image
