@@ -31,8 +31,8 @@ class TestEngine(Resource):
             # return " ".join([a[0] for a in os.walk(".")])
 
             _p = run(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), capture_output=True)
-            _res = _p.stdout
-            return {"test": "samu %s" % _res}
+            # _res = _p.stdout
+            return {"test": "samu"}
         except OSError as ee:
             return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
         except BaseException as ee:
