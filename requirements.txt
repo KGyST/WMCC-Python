@@ -1,6 +1,6 @@
 flask==1.0.2
 flask-restful==0.3.7
-lxml==4.4.1
+lxml
 requests==2.22.0
 jsonpickle==1.2
 Pillow==7.0.0
