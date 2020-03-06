@@ -15,6 +15,8 @@ import os.path
 # import http.client
 # import io
 
+import time
+
 e = None
 
 from flask import Flask, request
@@ -28,16 +30,16 @@ class TestEngine(Resource):
         try:
             # return " ".join([a[0] for a in os.walk(".")])
 
-            with Popen(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"])) as _p:
-                _res = _p.stdout.readlines()
-                return {"test": "samu %s" % _res}
+            _p = run(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), capture_output=True)
+            _res = _p.stdout
+            return {"test": "samu %s" % _res}
         except OSError as ee:
             return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
         except BaseException as ee:
             return {"test": "BaseException"}
 
 try:
-    from subprocess import check_output, Popen, PIPE
+    from subprocess import check_output, Popen, PIPE, run
     # from PIL import Image
     # from lxml import etree
 except BaseException as ex:
