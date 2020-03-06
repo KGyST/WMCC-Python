@@ -30,7 +30,7 @@ class TestEngine(Resource):
         try:
             # return " ".join([a[0] for a in os.walk(".")])
 
-            _p = run(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]))
+            _p = run(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "hessslp"]))
             # _res = _p.stdout
             return {"test": "samu %s"}
         except OSError as ee:
