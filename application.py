@@ -3,7 +3,6 @@ import os.path
 # import uuid
 # import re
 # import tempfile
-from subprocess import check_output, Popen, PIPE
 # import shutil
 # import datetime
 # import jsonpickle
@@ -26,12 +25,12 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        with Popen(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), stdout=PIPE) as _p:
-            _res = "".join(map(chr, _p.stdout.read()))
-            return {"test": "samu %s" % e.__class__.__name__ if e else _res}
+        with Popen(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), stdout=PIPE, encoding='utf-8') as _p:
+            _res = _p.stdout.readlines()
+            return {"test": "samu %s" % e.__class__.__name__} if e else _res
 
 try:
-    pass
+    from subprocess import check_output, Popen, PIPE
     # from PIL import Image
     # from lxml import etree
 except BaseException as ex:
