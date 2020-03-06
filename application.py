@@ -18,6 +18,8 @@ import http.client
 from PIL import Image
 import io
 
+from lxml import etree
+
 from flask import Flask, request
 from flask_restful import Resource, Api
 
