@@ -30,8 +30,8 @@ class TestEngine(Resource):
         return {"test": "samu %s" % e.__class__.__name__ if e else "OK"}
 
 try:
-    from PIL import Image
-    # from lxml import etree
+    # from PIL import Image
+    from lxml import etree
 except BaseException as ex:
     e = ex
     print(e.__class__.__name__)
