@@ -30,9 +30,9 @@ class TestEngine(Resource):
                 _res = _p.stdout.readlines()
                 return {"test": "samu %s" % e.__class__.__name__} if e else _res
         except OSError as ee:
-            return {"test": "samu %s" % " ".join([a for a in ee.args])}
+            return {"test": "OSError"}
         except BaseException as ee:
-            return " ".join([a for a in ee.args])
+            return {"test": "BaseException"}
         finally:
             return {"finally": "finally"}
 
