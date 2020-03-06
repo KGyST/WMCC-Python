@@ -30,6 +30,7 @@ class TestEngine(Resource):
         return {"test": "samu %s" % e.__class__.__name__ if e else _p.stdout}
 
 try:
+    pass
     # from PIL import Image
     # from lxml import etree
 except BaseException as ex:
