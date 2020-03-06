@@ -29,13 +29,13 @@ class TestEngine(Resource):
         global e
         return {"test": "samu %s" % e.__class__.__name__ + ": " + e.message}
 
-try:
+# try:
     # from PIL import Image
     # from lxml import etree
-except ImportError as e:
-    print(e.__class__.__name__)
-finally:
-    api.add_resource(TestEngine, '/')
+# except ImportError as e:
+#     print(e.__class__.__name__)
+# finally:
+api.add_resource(TestEngine, '/')
 
 
 if __name__ == '__main__':
