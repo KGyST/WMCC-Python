@@ -29,8 +29,9 @@ class TestEngine(Resource):
             with Popen(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), stdout=PIPE, encoding='utf-8') as _p:
                 _res = _p.stdout.readlines()
                 return {"test": "samu %s" % e.__class__.__name__} if e else _res
-        except BaseException as ee:
-            return {"test": "samu %s" % ee.__class__.__name__} if ee else _res
+        except OSError as ee:
+            return {"test": "samu %s" % " ".join([a for a in ee.args])} if ee else _res
+            # return {"test": "samu %s" % ee.__class__.__name__} if ee else _res
 
 try:
     from subprocess import check_output, Popen, PIPE
