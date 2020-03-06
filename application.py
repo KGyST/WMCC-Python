@@ -30,8 +30,8 @@ class TestEngine(Resource):
         return {"test": "samu %s" % e.__class__.__name__ + ": " + e.message}
 
 try:
-    # from PIL import Image
-    from lxml import etree
+    from PIL import Image
+    # from lxml import etree
 except ImportError as e:
     print(e.__class__.__name__)
 finally:
