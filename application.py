@@ -34,7 +34,7 @@ class TestEngine(Resource):
         except BaseException as ee:
             return " ".join([a for a in ee.args])
         finally:
-            return {"finally": ee.__class__.__name__}
+            return {"finally": "finally"}
 
 try:
     from subprocess import check_output, Popen, PIPE
