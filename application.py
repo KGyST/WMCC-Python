@@ -26,13 +26,14 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        return {"test": "samu %s" % e}
+        global e
+        return {"test": "samu %s" % e.__class__.__name__ + ": " + e.message}
 
 try:
     from PIL import Image
     from lxml import etree
 except ImportError as e:
-    pass
+    print(e.__class__.__name__ + ": " + e.message)
 finally:
     api.add_resource(TestEngine, '/')
 
