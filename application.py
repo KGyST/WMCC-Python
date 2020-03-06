@@ -30,8 +30,9 @@ class TestEngine(Resource):
                 _res = _p.stdout.readlines()
                 return {"test": "samu %s" % e.__class__.__name__} if e else _res
         except OSError as ee:
-            return {"test": "samu %s" % " ".join([a for a in ee.args])} if ee else _res
-            # return {"test": "samu %s" % ee.__class__.__name__} if ee else _res
+            return {"test": "samu %s" % " ".join([a for a in ee.args])}
+        finally:
+            return {"finally": "finally"}
 
 try:
     from subprocess import check_output, Popen, PIPE
