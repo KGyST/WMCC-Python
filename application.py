@@ -14,11 +14,9 @@ import argparse
 
 import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
 import http.client
-
-# from PIL import Image
 import io
 
-# from lxml import etree
+e = ""
 
 from flask import Flask, request
 from flask_restful import Resource, Api
@@ -28,9 +26,16 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        return {"test": "samu"}
+        return {"test": "samu %s" % e}
 
-api.add_resource(TestEngine, '/')
+try:
+    from PIL import Image
+    from lxml import etree
+except ImportError as e:
+    pass
+finally:
+    api.add_resource(TestEngine, '/')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
