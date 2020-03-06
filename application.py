@@ -1,20 +1,20 @@
-import os.path
-from os import listdir
-import uuid
-import re
-import tempfile
-from subprocess import check_output
-import shutil
-import datetime
-import jsonpickle
-import multiprocessing as mp
-
-import copy
-import argparse
-
-import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
-import http.client
-import io
+# import os.path
+# from os import listdir
+# import uuid
+# import re
+# import tempfile
+# from subprocess import check_output
+# import shutil
+# import datetime
+# import jsonpickle
+# import multiprocessing as mp
+#
+# import copy
+# import argparse
+#
+# import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
+# import http.client
+# import io
 
 e = ""
 
@@ -32,7 +32,7 @@ class TestEngine(Resource):
 try:
     # from PIL import Image
     from lxml import etree
-except ImportError as e:
+except BaseException as e:
     print(e.__class__.__name__)
 finally:
     api.add_resource(TestEngine, '/')
