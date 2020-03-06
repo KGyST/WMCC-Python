@@ -15,7 +15,7 @@ import argparse
 import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
 import http.client
 
-# from Pillow import Image
+from PIL import Image
 import io
 
 from flask import Flask, request
