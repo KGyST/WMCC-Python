@@ -16,7 +16,7 @@
 # import http.client
 # import io
 
-# e = None
+e = None
 
 from flask import Flask, request
 from flask_restful import Resource, Api
