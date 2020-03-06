@@ -16,7 +16,7 @@
 # import http.client
 # import io
 
-e = None
+# e = None
 
 from flask import Flask, request
 from flask_restful import Resource, Api
@@ -33,7 +33,6 @@ try:
     # from PIL import Image
     from lxml import etree
 except BaseException as ex:
-    global e
     e = ex
     print(e.__class__.__name__)
 finally:
