@@ -32,9 +32,9 @@ class TestEngine(Resource):
         except OSError as ee:
             return {"test": "samu %s" % " ".join([a for a in ee.args])}
         except BaseException as ee:
-            return {"BaseException": ee.__class__.__name__}
+            return " ".join([a for a in ee.args])
         finally:
-            return {"finally": "finally"}
+            return {"finally": ee.__class__.__name__}
 
 try:
     from subprocess import check_output, Popen, PIPE
