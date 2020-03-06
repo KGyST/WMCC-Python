@@ -1766,12 +1766,3 @@ api = Api(app)
 #     with open(destPath, "wb") as file_handle:
 #         file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
 
-
-class TestEngine(Resource):
-    def get(self):
-        return {"test": "samu"}
-
-api.add_resource(TestEngine, '/')
-
-if __name__ == '__main__':
-    app.run(debug=True)
