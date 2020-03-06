@@ -26,12 +26,12 @@ api = Api(app)
 class TestEngine(Resource):
     def get(self):
         try:
-            return " ".join([a[0] for a in os.walk(".")])
+            # return " ".join([a[0] for a in os.walk(".")])
 
-            # with Popen(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"])) as _p:
-            #     # _res = _p.stdout.readlines()
-            #     # return {"test": "samu %s" % e.__class__.__name__ if e else _res}
-            #     return {"test": "samu"}
+            with Popen(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"])) as _p:
+                # _res = _p.stdout.readlines()
+                # return {"test": "samu %s" % e.__class__.__name__ if e else _res}
+                return {"test": "samu"}
         except OSError as ee:
             return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
         except BaseException as ee:
