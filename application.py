@@ -25,9 +25,12 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        with Popen(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), stdout=PIPE, encoding='utf-8') as _p:
-            _res = _p.stdout.readlines()
-            return {"test": "samu %s" % e.__class__.__name__} if e else _res
+        try:
+            with Popen(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]), stdout=PIPE, encoding='utf-8') as _p:
+                _res = _p.stdout.readlines()
+                return {"test": "samu %s" % e.__class__.__name__} if e else _res
+        except BaseException as e:
+            print(e.__class__.__name__)
 
 try:
     from subprocess import check_output, Popen, PIPE
