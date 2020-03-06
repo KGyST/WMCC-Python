@@ -1,9 +1,9 @@
-# import os.path
+import os.path
 # from os import listdir
 # import uuid
 # import re
 # import tempfile
-# from subprocess import check_output
+from subprocess import check_output, Popen, PIPE
 # import shutil
 # import datetime
 # import jsonpickle
@@ -26,12 +26,12 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        global e
-        return {"test": "samu %s" % e.__class__.__name__ if e else "OK"}
+        _p = Popen(" ".join(os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"))
+        return {"test": "samu %s" % e.__class__.__name__ if e else _p.stdout}
 
 try:
     # from PIL import Image
-    from lxml import etree
+    # from lxml import etree
 except BaseException as ex:
     e = ex
     print(e.__class__.__name__)
