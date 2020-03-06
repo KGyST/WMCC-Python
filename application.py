@@ -29,9 +29,8 @@ class TestEngine(Resource):
             # return " ".join([a[0] for a in os.walk(".")])
 
             with Popen(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"])) as _p:
-                # _res = _p.stdout.readlines()
-                # return {"test": "samu %s" % e.__class__.__name__ if e else _res}
-                return {"test": "samu"}
+                _res = _p.stdout.readlines()
+                return {"test": "samu %s" % _res}
         except OSError as ee:
             return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
         except BaseException as ee:
