@@ -31,6 +31,8 @@ class TestEngine(Resource):
                 return {"test": "samu %s" % e.__class__.__name__} if e else _res
         except OSError as ee:
             return {"test": "samu %s" % " ".join([a for a in ee.args])}
+        except BaseException as ee:
+            return {"BaseException": " ".join([a for a in ee.args])}
         finally:
             return {"finally": "finally"}
 
