@@ -32,11 +32,12 @@ class TestEngine(Resource):
         except OSError as ex:
             return f"BaseException: {ex.__class__.__name__} {ex.__str__()} {ex.errno} {ex.strerror} {ex.filename} {ex.filename2}"
 
-from subprocess import check_output, Popen, PIPE, run, DEVNULL
-from PIL import Image
-from lxml import etree
-
-api.add_resource(TestEngine, '/')
+try:
+    from subprocess import check_output, Popen, PIPE, run, DEVNULL
+    from PIL import Image
+    from lxml import etree
+finally:
+    api.add_resource(TestEngine, '/')
 
 
 if __name__ == '__main__':
