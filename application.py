@@ -30,7 +30,7 @@ class TestEngine(Resource):
         try:
             # return " ".join([a[0] for a in os.walk(".")])
 
-            _p = run(" ".join([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "teszt"]))
+            _p = run(" ".join([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"]))
             # _res = _p.stderr
             return {"test": "samu %d" % _p.returncode}
         except OSError as ee:
@@ -40,6 +40,7 @@ class TestEngine(Resource):
 
 try:
     from subprocess import check_output, Popen, PIPE, run
+    print("test")
     # from PIL import Image
     # from lxml import etree
 except BaseException as ex:
