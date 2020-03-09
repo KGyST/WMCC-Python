@@ -17,8 +17,6 @@ import os.path
 
 import time
 
-e = None
-
 from flask import Flask, request
 from flask_restful import Resource, Api
 
@@ -27,29 +25,17 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        # try:
-            # return " ".join([a[0] for a in os.walk(".")])
+        try:
+            with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+                _out = proc.stdout.read()
+                return f"{_out}"
+        except OSError as ex:
+            return f"BaseException: {ex.__class__.__name__} {ex.__str__()} {ex.errno} {ex.strerror} {ex.filename} {ex.filename2}"
 
-            _pp = '"' + os.path.join("src" , "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE") + '"' + " help"
-            print(_pp)
-            _p = run(_pp)
+from subprocess import check_output, Popen, PIPE, run, DEVNULL
+from PIL import Image
+from lxml import etree
 
-            _res = _p.stdout
-            return {"test": "samu %d" % _p.returncode}
-        # except OSError as ee:
-        #     print("OSError")
-        #     return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
-        # except BaseException as ee:
-        #     return {"test": "BaseException"}
-
-# try:
-    from subprocess import check_output, Popen, PIPE, run
-    from PIL import Image
-    from lxml import etree
-# except BaseException as ex:
-#     e = ex
-#     print(e.__class__.__name__)
-# finally:
 api.add_resource(TestEngine, '/')
 
 
