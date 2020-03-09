@@ -42,15 +42,15 @@ class TestEngine(Resource):
         # except BaseException as ee:
         #     return {"test": "BaseException"}
 
-try:
+# try:
     from subprocess import check_output, Popen, PIPE, run
     from PIL import Image
     from lxml import etree
-except BaseException as ex:
-    e = ex
-    print(e.__class__.__name__)
-finally:
-    api.add_resource(TestEngine, '/')
+# except BaseException as ex:
+#     e = ex
+#     print(e.__class__.__name__)
+# finally:
+api.add_resource(TestEngine, '/')
 
 
 if __name__ == '__main__':
