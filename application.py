@@ -27,7 +27,7 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        try:
+        # try:
             # return " ".join([a[0] for a in os.walk(".")])
 
             _pp = '"' + os.path.join("src" , "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE") + '"' + " help"
@@ -36,16 +36,16 @@ class TestEngine(Resource):
 
             _res = _p.stdout
             return {"test": "samu %d" % _p.returncode}
-        except OSError as ee:
-            print("OSError")
-            return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
-        except BaseException as ee:
-            return {"test": "BaseException"}
+        # except OSError as ee:
+        #     print("OSError")
+        #     return {"OSError": "OSError %s" % " ".join([str(a) for a in ee.args])}
+        # except BaseException as ee:
+        #     return {"test": "BaseException"}
 
 try:
     from subprocess import check_output, Popen, PIPE, run
-    # from PIL import Image
-    # from lxml import etree
+    from PIL import Image
+    from lxml import etree
 except BaseException as ex:
     e = ex
     print(e.__class__.__name__)
