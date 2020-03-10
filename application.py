@@ -26,15 +26,10 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        _v = 15
+        _v = 16
 
         try:
-            try:
-                from subprocess import check_output, Popen, PIPE, run, DEVNULL
-                # from PIL import Image
-                # from lxml import etree
-            except ImportError as ex:
-                return f"v{_v} ImportError: {ex.__class__.__name__} {ex.__str__()}"
+
 
             with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
                 _out, _err = proc.communicate()
@@ -44,8 +39,14 @@ class TestEngine(Resource):
         except BaseException as ex:
             return f"v{_v} BaseException: {ex.__class__.__name__} {ex.__str__()}"
 
-
-api.add_resource(TestEngine, '/')
+try:
+    from subprocess import check_output, Popen, PIPE, run, DEVNULL
+    # from PIL import Image
+    # from lxml import etree
+# except ImportError as ex:
+#     return f"v{_v} ImportError: {ex.__class__.__name__} {ex.__str__()}"
+finally:
+    api.add_resource(TestEngine, '/')
 
 
 if __name__ == '__main__':
