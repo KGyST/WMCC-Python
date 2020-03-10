@@ -37,7 +37,7 @@ class TestEngine(Resource):
 
 try:
     from subprocess import check_output, Popen, PIPE, run, DEVNULL
-    # from PIL import Image
+    from PIL import Image
     from lxml import etree
 finally:
     api.add_resource(TestEngine, '/')
