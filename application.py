@@ -17,7 +17,6 @@ import os.path
 
 import time
 
-
 from flask import Flask, request
 from flask_restful import Resource, Api
 
@@ -26,11 +25,9 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        _v = 16
+        _v = 24
 
         try:
-
-
             with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
                 _out, _err = proc.communicate()
                 return f"v{_v} Success: {_out} (error: {_err}) "
@@ -38,14 +35,12 @@ class TestEngine(Resource):
             return f"OSError: {ex.__class__.__name__} {ex.__str__()} {ex.errno} {ex.strerror} {ex.filename} {ex.filename2}"
         except BaseException as ex:
             return f"v{_v} BaseException: {ex.__class__.__name__} {ex.__str__()}"
-
 try:
     from subprocess import check_output, Popen, PIPE, run, DEVNULL
-    # from PIL import Image
-    # from lxml import etree
+    from PIL import Image
+    from lxml import etree
 finally:
     api.add_resource(TestEngine, '/')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
