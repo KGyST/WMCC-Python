@@ -43,8 +43,6 @@ try:
     from subprocess import check_output, Popen, PIPE, run, DEVNULL
     # from PIL import Image
     # from lxml import etree
-# except ImportError as ex:
-#     return f"v{_v} ImportError: {ex.__class__.__name__} {ex.__str__()}"
 finally:
     api.add_resource(TestEngine, '/')
 
