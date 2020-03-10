@@ -28,14 +28,14 @@ class TestEngine(Resource):
         try:
             with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
                 _ret = proc.communicate()
-                # _out = proc.stdout
-                # _err = proc.stdout
-                # _ret = proc.returncode
-                return f"v4 Success: {_ret[0]} (error: {_ret[1]}) "
+                _out = _ret[0]
+                _err = _ret[1]
+                _v = 5
+                return f"v{_v} Success: {_out} (error: {_err}) "
         except OSError as ex:
             return f"OSError: {ex.__class__.__name__} {ex.__str__()} {ex.errno} {ex.strerror} {ex.filename} {ex.filename2}"
         except BaseException as ex:
-            return f"v4 BaseException: {ex.__class__.__name__} {ex.__str__()}"
+            return f"v{_v} BaseException: {ex.__class__.__name__} {ex.__str__()}"
 
 try:
     from subprocess import check_output, Popen, PIPE, run, DEVNULL
