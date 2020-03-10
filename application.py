@@ -26,13 +26,13 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        _v = 14
+        _v = 15
 
         try:
             try:
                 from subprocess import check_output, Popen, PIPE, run, DEVNULL
                 # from PIL import Image
-                from lxml import etree
+                # from lxml import etree
             except ImportError as ex:
                 return f"v{_v} ImportError: {ex.__class__.__name__} {ex.__str__()}"
 
