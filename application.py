@@ -27,11 +27,11 @@ class TestEngine(Resource):
     def get(self):
         try:
             with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
-                _ret = proc.wait()
+                _ret = proc.communicate()
                 _out = proc.stdout.read()
                 _err = proc.stdout.read()
                 # _ret = proc.returncode
-                return f"v2 Success: {_out} (error: {_err}, Returncode: {_ret}) "
+                return f"v3 Success: {_out} (error: {_err}, Returncode: {_ret}) "
         except OSError as ex:
             return f"OSError: {ex.__class__.__name__} {ex.__str__()} {ex.errno} {ex.strerror} {ex.filename} {ex.filename2}"
         except BaseException as ex:
