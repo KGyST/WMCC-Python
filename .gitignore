@@ -1,4 +1,7 @@
 .docker-env
+web.config
+packages
+.test-venv
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 # Byte-compiled / optimized / DLL files
@@ -19,6 +22,7 @@ eggs/
 src/archicad/Target/*
 venv
 .idea
+
 
 lib/
 lib64/
