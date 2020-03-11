@@ -25,7 +25,7 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        _v = 27
+        _v = 28
 
         try:
             with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
@@ -38,7 +38,7 @@ class TestEngine(Resource):
 try:
     from subprocess import check_output, Popen, PIPE, run, DEVNULL
     from PIL import Image
-    # from lxml import etree
+    from lxml import etree
 finally:
     api.add_resource(TestEngine, '/')
 
