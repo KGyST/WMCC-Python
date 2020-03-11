@@ -37,7 +37,7 @@ class TestEngine(Resource):
             return f"v{_v} BaseException: {ex.__class__.__name__} {ex.__str__()}"
 try:
     from subprocess import check_output, Popen, PIPE, run, DEVNULL
-    from lxml import etree
+    # from lxml import etree
     # from PIL import Image
 finally:
     api.add_resource(TestEngine, '/')
