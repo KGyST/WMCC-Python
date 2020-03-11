@@ -25,7 +25,7 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        _v = 29
+        _v = 30
 
         try:
             with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
