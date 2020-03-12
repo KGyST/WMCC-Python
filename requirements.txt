@@ -4,9 +4,4 @@ lxml
 requests
 jsonpickle
 Pillow
-
-click
-itsdangerous
-Jinja2
-MarkupSafe
-Werkzeug
+opencensus-ext-azure
