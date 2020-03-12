@@ -15,7 +15,7 @@ import os.path
 # import http.client
 # import io
 
-import time
+# import time
 
 from flask import Flask, request
 from flask_restful import Resource, Api
@@ -25,10 +25,10 @@ api = Api(app)
 
 class TestEngine(Resource):
     def get(self):
-        _v = 30
+        _v = 32
 
         try:
-            with Popen([os.path.join("src", "archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+            with Popen([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
                 _out, _err = proc.communicate()
                 return f"v{_v} Success: {_out} (error: {_err}) "
         except OSError as ex:
