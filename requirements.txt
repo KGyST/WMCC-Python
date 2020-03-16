@@ -1,11 +1,12 @@
-flask==1.0.2
-flask-restful==0.3.7
-lxml==4.4.1
-requests==2.22.0
-jsonpickle==1.2
+flask
+flask-restful
+lxml
+requests
+jsonpickle
+Pillow
 
-click==6.7
-itsdangerous==0.24
-Jinja2==2.10
-MarkupSafe==1.0
-Werkzeug==0.14.1
+click
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
