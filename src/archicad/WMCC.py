@@ -3,7 +3,7 @@ from os import listdir
 import uuid
 import re
 import tempfile
-from subprocess import check_output
+from subprocess import check_output, Popen, PIPE, DEVNULL
 import shutil
 # import sys
 import datetime
@@ -19,6 +19,7 @@ import argparse
 
 import http.client, urllib.request, urllib.parse, urllib.error, json, webbrowser, urllib.parse, os, hashlib, base64
 # import pip
+import logging
 
 #------------------ External modules------------------
 
@@ -31,13 +32,14 @@ from lxml import etree
 DEBUG                       = False
 CLEANUP                     = False     # Do cleanup after finish
 OUTPUT_XML                  = True      # To retain xmls
-TARGET_GDL_DIR_NAME         = r".\archicad\Target"
-SOURCE_DIR_NAME             = r".\archicad"
-ADDITIONAL_IMAGE_DIR_NAME   = r".\archicad\_IMAGES_GENERIC_"
+_SRC                        = r".\src"
+ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
+TARGET_GDL_DIR_NAME         = os.path.join(_SRC, r"Target")
+TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
+SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
+ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
 WMCC_BRAND_NAME             = "WMCC"
-ARCHICAD_LOCATION           = r".\archicad\Archicad\LP_XMLConverter_18"
 MATERIAL_BASE_OBJECT        = "_dev_material"
-
 
 BO_AUTHOR                   = "BIMobject"
 BO_LICENSE                  = "CC BY-ND"
@@ -46,7 +48,6 @@ BO_LICENSE_VERSION          = "3.0"
 TARGET_IMAGE_DIR_NAME       = "" #REMOVE
 TARGET_XML_DIR_NAME         = "" #REMOVE
 
-TRANSLATIONS_JSON           = r".\archicad\translations.json"
 
 #------------------/Temporary constants------------------
 
@@ -1266,7 +1267,12 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     output = r'"%s" createcontainer "%s" "%s" %s "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName, source_image_dir_name, ADDITIONAL_IMAGE_DIR_NAME)
     print("output: %s" % output)
 
-    check_output(output, shell=True)
+    logging.info("createcontainer")
+    with Popen(output, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+        _out, _err = proc.communicate()
+        logging.info(f"Success: {_out} (error: {_err}) ")
+
+    # check_output(output, shell=True)
 
     print("*****LCF CREATION FINISHED SUCCESFULLY******")
 
@@ -1531,8 +1537,8 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     tempdir = tempfile.mkdtemp()
     tempPicDir = tempfile.mkdtemp()
 
-    print("tempdir: %s" % tempdir)
-    print("tempPicDir: %s" % tempPicDir)
+    logging.debug("tempdir: %s" % tempdir)
+    logging.debug("tempPicDir: %s" % tempPicDir)
 
     pool_map = [{"dest": dest_dict[k],
                  "tempdir": tempdir,
@@ -1568,11 +1574,11 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                 shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
 
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
-    print(r"x2l Command being executed...\n%s" % x2lCommand)
+    logging.info(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:
-        print("ac command:")
-        print(x2lCommand)
+        logging.debug("ac command:")
+        logging.debug(x2lCommand)
         with open(tempdir + "\dict.txt", "w") as d:
             for k in list(dest_dict.keys()):
                 d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
@@ -1585,7 +1591,12 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
             for k in list(id_dict.keys()):
                 d.write(id_dict[k] + "\n")
 
-    check_output(x2lCommand, shell=True)
+    logging.info("x2l")
+    with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+        _out, _err = proc.communicate()
+        logging.info(f"Success: {_out} (error: {_err}) ")
+
+    # check_output(x2lCommand, shell=True)
 
     # cleanup ops
     if CLEANUP:
@@ -1595,10 +1606,10 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         if not OUTPUT_XML:
             shutil.rmtree(tempdir)
     else:
-        print("tempdir: %s" % tempdir)
-        print("tempPicDir: %s" % tempPicDir)
+        logging.debug("tempdir: %s" % tempdir)
+        logging.debug("tempPicDir: %s" % tempPicDir)
 
-    print("*****GSM CREATION FINISHED SUCCESFULLY******")
+    logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
 
 # def ireplace(old, new, text):

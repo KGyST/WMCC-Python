@@ -1,46 +1,77 @@
-import os.path
-# from os import listdir
-# import uuid
-# import re
-# import tempfile
-# import shutil
-# import datetime
-# import jsonpickle
-# import multiprocessing as mp
-#
-# import copy
-# import argparse
-#
-# import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
-# import http.client
-# import io
-
-# import time
+from flask import Flask
+app = Flask(__name__)
 
 from flask import Flask, request
 from flask_restful import Resource, Api
+from logging.config import dictConfig
 
-app = Flask(__name__)
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {
+        'wsgi': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default'
+        },
+        'custom_handler': {
+            'class': 'logging.FileHandler',
+            'formatter': 'default',
+            'filename': r'D:\Git\WMCC Python\myapp.log'
+        }
+    },
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi', 'custom_handler']
+    }
+})
+
+
+from src.archicad.WMCC import (
+    createBrandedProduct,
+    buildMacroSet,
+    extractParams,
+)
+
 api = Api(app)
 
-class TestEngine(Resource):
+class ArchicadEngine(Resource):
     def get(self):
-        _v = 35
+        return {"test": "it's working!"}
 
-        try:
-            with Popen([os.path.join("archicad", "LP_XMLConverter_18", "LP_XMLConverter.EXE"), "help"], stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
-                _out, _err = proc.communicate()
-                return f"v{_v} Success: {_out} (error: {_err}) "
-        except OSError as ex:
-            return f"OSError: {ex.__class__.__name__} {ex.__str__()} {ex.errno} {ex.strerror} {ex.filename} {ex.filename2}"
-        except BaseException as ex:
-            return f"v{_v} BaseException: {ex.__class__.__name__} {ex.__str__()}"
-try:
-    from subprocess import check_output, Popen, PIPE, run, DEVNULL
-    # from lxml import etree
-    # from PIL import Image
-finally:
-    api.add_resource(TestEngine, '/')
+    def post(self):
+        data = request.get_json()
+
+        result = createBrandedProduct(data)
+
+        return result
+
+
+class CreateLCFEngine(Resource):
+    """
+    Creating macroset, to be used by internal GDL developers
+    """
+    def post(self):
+        data = request.get_json()
+        reData = buildMacroSet(data)
+        #FIXME what to do with older versions of this file?
+        return reData
+
+
+class ParameterExtractorEngine(Resource):
+    """
+    Extracting all parameters from a given GDL object, returning it in json
+    """
+    def post(self):
+        data = request.get_json()
+        params = extractParams(data)
+        return params
+
+
+api.add_resource(ArchicadEngine, '/')
+api.add_resource(CreateLCFEngine, '/createlcf')
+api.add_resource(ParameterExtractorEngine, '/extractparams')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
