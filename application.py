@@ -18,7 +18,7 @@ dictConfig({
         'custom_handler': {
             'class': 'logging.FileHandler',
             'formatter': 'default',
-            'filename': r'D:\Git\WMCC Python\myapp.log'
+            'filename': r'myapp.log'
         }
     },
     'root': {
