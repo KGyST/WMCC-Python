@@ -69,9 +69,39 @@ class ParameterExtractorEngine(Resource):
         return params
 
 
+class ReceiveFile_Test(Resource):
+    """
+    dummy class mimicing receiver side
+    """
+    def post(self):
+        import os
+        import base64
+        import logging
+        TARGET_DIR = os.path.join(r".\src", r"Target2")
+
+        data = request.get_json()
+
+        # string = data['base64_encoded_object']
+        # padding = 4 - (len(string) % 4)
+        # string = string + ("=" * padding)
+
+        logging.info(f"ReceiveFile_Test {data['object_name']} ")
+
+        with open(os.path.join(TARGET_DIR, data['object_name']), 'wb') as objectFile:
+            decode = base64.urlsafe_b64decode(data['base64_encoded_object'])
+            objectFile.write(decode)
+
+        with open(os.path.join(TARGET_DIR, data['macroset_name']), 'wb') as objectFile:
+            decode = base64.urlsafe_b64decode(data['base64_encoded_macroset'])
+            objectFile.write(decode)
+
+        return ({"result": "00, OK, 00, 00"})
+
+
 api.add_resource(ArchicadEngine, '/')
 api.add_resource(CreateLCFEngine, '/createlcf')
 api.add_resource(ParameterExtractorEngine, '/extractparams')
+api.add_resource(ReceiveFile_Test, '/setfile')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

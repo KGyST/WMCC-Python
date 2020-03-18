@@ -17,7 +17,7 @@ import multiprocessing as mp
 import copy
 import argparse
 
-import http.client, urllib.request, urllib.parse, urllib.error, json, webbrowser, urllib.parse, os, hashlib, base64
+import http.client, http.server, urllib.request, urllib.parse, urllib.error, json, webbrowser, urllib.parse, os, hashlib, base64
 # import pip
 import logging
 
@@ -313,46 +313,6 @@ class ParamSection:
                               inBold=(e.get('VariableStyle')=='Bold'), )
                 self.append(param, varName)
             self.__paramList[-1].tail = '\n\t'
-
-    def BO_update2(self, prodatURL, currentConfig, bo):
-        '''
-        FIXME
-        BO_update with API v2
-        :param prodatURL:
-        :return:
-        '''
-        _brandName = prodatURL.split('/')[3].encode()
-        _productGUID = prodatURL.split('/')[5].encode()
-        try:
-            brandGUID = bo.brands[_brandName]
-        except KeyError:
-            bo.refreshBrandDict()
-            brandGUID = bo.brands[_brandName]
-
-        _data = bo.getProductData(brandGUID, _productGUID)
-
-        BO_PARAM_TUPLE = (('BO_Title', ''),
-                          ('BO_Separator', ''),
-                          ('BO_prodinfo', ''),
-                          ('BO_prodsku', 'data//'), ('BO_Manufac'), ('BO_brandurl'), ('BO_prodfam'), ('BO_prodgroup'),
-                          # ('BO_mancont'), ('BO_designcont'), ('BO_publisdat'), ('BO_edinum'), ('BO_width'),
-                          # ('BO_height'), ('BO_depth'), ('BO_weight'), ('BO_productguid'),
-                          # ('BO_links'),
-                          # ('BO_boqrurl'), ('BO_producturl'), ('BO_montins'), ('BO_prodcert'), ('BO_techcert'),
-                          # ('BO_youtube'), ('BO_ean'),
-                          # ('BO_real'),
-                          # ('BO_mainmat', 'BO_secmat'),
-                          # ('BO_classific'),
-                          # ('BO_bocat'), ('BO_ifcclas'), ('BO_unspc'), ('BO_uniclass_1_4_code'), ('BO_uniclass_1_4_desc'),
-                          # ('BO_uniclass_2_0_code'), ('BO_uniclass_2_0_desc'), ('BO_uniclass2015_code'), ('BO_uniclass2015_desc'), ('BO_nbs_ref'),
-                          # ('BO_nbs_desc'), ('BO_omniclass_code'), ('BO_omniclass_name'), ('BO_masterformat2014_code'), ('BO_masterformat2014_name'),
-                          # ('BO_uniformat2_code'), ('BO_uniformat2_name'), ('BO_cobie_type_cat'),
-                          # ('BO_regions'),
-                          # ('BO_europe'), ('BO_northamerica'), ('BO_southamerica'), ('BO_middleeast'), ('BO_asia'),
-                          # ('BO_oceania'), ('BO_africa'), ('BO_antarctica'), ('BO_Separator2',)
-                          )
-        for p in BO_PARAM_TUPLE:
-            self.remove_param(p[0])
 
     def createParamfromCSV(self, inParName, inCol, inArrayValues = None):
         splitPars = inParName.split(" ")
@@ -819,6 +779,178 @@ class Param(object):
 
 # -------------------/parameter classes --------------------------------------------------------------------------------
 
+class BOAPIv2(object):
+    """
+    Class currently unused
+    """
+    BROWSER_CLOSE_WINDOW = '''<!DOCTYPE html> 
+                            <html> 
+                                    <script type="text/javascript"> 
+                                        function close_window() { close(); }
+                                    </script>
+                                <body onload="close_window()"/>
+                            </html>'''
+    CLIENT_ID = "NL8IZo82T84ZCOruAZom4LlmrzkQFXPW"
+    CLIENT_SECRET = "5RNNKjqAAA1szIImP0CO2IFNC6Z8OoBMQeiMKwwoxST7ntSFJhIQKVG1s1DEbLOV"
+    REDIRECT_URI = "http://localhost"
+    PORT_NUMBER = 80
+    MAX_PAGE_NUMBER = 10
+    PAGE_MAX_SIZE = 1000
+    code = None
+    server = None
+    brands = {}  # brand permalink-guid
+
+    class myHandler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            global data
+            self.wfile.write(BOAPIv2.BROWSER_CLOSE_WINDOW)
+            data = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
+            BOAPIv2.code = data['code']
+
+            BOAPIv2.server.server_close()
+
+
+    def __init__(self, inCurrentConfig):
+        self.token_type = ""
+        self.refresh_token = ""
+        self.access_token = ""
+
+        if  inCurrentConfig.has_option("BOAPIv2", "token_type") and \
+            inCurrentConfig.has_option("BOAPIv2", "refresh_token"):
+            self.token_type = inCurrentConfig.get("BOAPIv2", "token_type")
+            self.refresh_token = inCurrentConfig.get("BOAPIv2", "refresh_token")
+            self.get_access_token_from_refresh_token()
+
+        if inCurrentConfig.has_option("BOAPIv2", "brands"):
+            b = inCurrentConfig.get("BOAPIv2", "brands").split(', ')
+            self.brands = {k: v for k, v in zip(b[::2], b[1::2])}
+
+
+    def refreshBrandDict(self):
+        page = 1
+        while page < BOAPIv2.MAX_PAGE_NUMBER:
+            res = self.get_data_with_access_token("/admin/v1/brands",
+                                            {"fields": "permalink, id",
+                                             "page": page,
+                                             "pageSize": BOAPIv2.PAGE_MAX_SIZE})
+            rjson = json.load(res)
+            if res.status == http.client.OK:
+                for brand in rjson['data'] :
+                    self.brands[brand['permalink']] = brand['id']
+                if rjson['meta']['hasNextPage']:
+                    page += 1
+                else:
+                    break
+            else:
+                break
+
+    def getProductData(self, inBrandGUID, inProductPermalink):
+        products = self.get_data_with_access_token("/admin/v1/brands/%s/products" % (inBrandGUID, ), {"pageSize": BOAPIv2.PAGE_MAX_SIZE})
+        jProd = json.load(products)
+        foundData = next((prod for prod in jProd['data'] if prod['permalink'].lower() == inProductPermalink.lower()), None)
+        iPage = 1
+
+        while jProd['meta']['hasNextPage'] and not foundData:
+            iPage += 1
+            products = self.get_data_with_access_token("/admin/v1/brands/%s/products" % (inBrandGUID, ), {'page': iPage,
+                                                                                                          "pageSize": BOAPIv2.PAGE_MAX_SIZE})
+            jProd = json.load(products)
+            foundData = next((prod for prod in jProd['data'] if prod['permalink'].lower() == inProductPermalink.lower()), None)
+
+        productGUID = foundData['id'] if foundData else None
+
+        res = json.load(self.get_data_with_access_token("/admin/v1/brands/%s/products/%s" % (inBrandGUID, productGUID, ), {}))
+        return res
+
+        # 1. Logging in with access token
+
+    def get_data_with_access_token(self, inPath, inUrlDict):
+        response = self._get_data_with_access_token(inPath, inUrlDict)
+
+        if response.status != http.client.OK:
+            self.log_in()
+            response = self._get_data_with_access_token(inPath, inUrlDict)
+        return response
+
+    def _get_data_with_access_token(self, inPath, inUrlDict):
+        conn = http.client.HTTPSConnection("api.bimobject.com")
+        headers = {"Content-type": "application/x-www-form-urlencoded",
+                   "Authorization": self.token_type + " " + self.access_token}
+        urlDict = urllib.parse.urlencode(inUrlDict)
+        conn.request("GET", inPath + "?" +  urlDict, '', headers)
+        return conn.getresponse()
+
+    # 2. If access token doesn't work, try refresh_token
+    def get_access_token_from_refresh_token(self):
+        conn = http.client.HTTPSConnection("api.bimobject.com")
+        urlDict = urllib.parse.urlencode({"client_id": BOAPIv2.CLIENT_ID,
+                                    "client_secret": BOAPIv2.CLIENT_SECRET,
+                                    "grant_type": "refresh_token",
+                                    "refresh_token": self.refresh_token, })
+        headers = {"Content-type": "application/x-www-form-urlencoded", }
+        conn.request("POST", "/oauth2/token", urlDict, headers)
+        response = conn.getresponse()
+        if response.status != http.client.OK:
+            self.log_in()
+        else:
+            rjson = json.load(response)
+            self.access_token = rjson['access_token']
+
+    # 3. Logging in explicitely
+    def log_in(self):
+        code_verifier = base64.urlsafe_b64encode(os.urandom(64))
+        code_challenge = base64.urlsafe_b64encode(hashlib.sha256(code_verifier).digest()).rstrip(b'=')
+
+        authorizePath = '/identity/connect/authorize'
+        urlDict = urllib.parse.urlencode({"client_id": BOAPIv2.CLIENT_ID,
+                                    "response_type": "code",
+                                    "redirect_uri": BOAPIv2.REDIRECT_URI,
+                                    "scope": "admin admin.brand admin.product offline_access",
+                                    # "scope"                 : "search_api search_api_downloadbinary",
+                                    "code_challenge": code_challenge,
+                                    "code_challenge_method": "S256",
+                                    "state": "1",
+                                    })
+
+        ue = urllib.parse.urlunparse(('https',
+                                  'accounts.bimobject.com',
+                                  authorizePath,
+                                  '',
+                                  urlDict,
+                                  '',))
+        webbrowser.open(ue)
+        BOAPIv2.server = http.server.HTTPServer(('', BOAPIv2.PORT_NUMBER), BOAPIv2.myHandler)
+
+        try:
+            BOAPIv2.server.serve_forever()
+        except IOError:
+            pass
+
+        urlDict2 = urllib.parse.urlencode({"client_id": BOAPIv2.CLIENT_ID,
+                                     "client_secret": BOAPIv2.CLIENT_SECRET,
+                                     "grant_type": "authorization_code",
+                                     # "grant_type"       : "client_credentials_for_admin",
+                                     "code": BOAPIv2.code,
+                                     "code_verifier": code_verifier,
+                                     "redirect_uri": BOAPIv2.REDIRECT_URI, })
+
+        # print urlDict2
+
+        headers = {"Content-type": "application/x-www-form-urlencoded", }
+        conn = http.client.HTTPSConnection("accounts.bimobject.com")
+        conn.request("POST", "/identity/connect/token", urlDict2, headers)
+        # conn.request("GET", "/identity/connect/authorize", urlDict2, headers)
+        response = conn.getresponse().read()
+        print("response: " + response)
+
+        try:
+            self.access_token  = json.loads(response)['access_token']
+            self.refresh_token = json.loads(response)['refresh_token']
+            self.token_type    = json.loads(response)['token_type']
+        except KeyError:
+            pass
+
 # ------------------- data classes -------------------------------------------------------------------------------------
 
 class GeneralFile(object) :
@@ -1136,14 +1268,16 @@ def resetAll():
 
     all_keywords.clear()
 
-def scanFolders (inFile, inRootFolder):
+
+def scanFolders (inFile, inRootFolder, library_images=False):
     """
     scanning input dir recursively to set up xml and image files' list
     :param inFile:  folder actually to be scanned
     :param outFile: folder at top of hierarchy
+    :param library_images: whether we are scanning library_images (for encoded images) or library folder
     :return:
     """
-    global projectPath
+    global projectPath, imagePath
 
     #FIXME to be rewritten using os.path.walk()
     try:
@@ -1160,17 +1294,19 @@ def scanFolders (inFile, inRootFolder):
                         # set up replacement dict for other files (not only images, indeed)
                         if os.path.splitext(os.path.basename(f))[0].upper() not in source_pict_dict:
                             sI = SourceImage(os.path.relpath(src, inRootFolder), root=inRootFolder)
-                            SIDN = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
-                            if SIDN in sI.fullDirName:
-                                sI.isEncodedImage = True
+                            # SIDN = os.path.join(SOURCE_DIR_NAME, imagePath)
+                            # if SIDN in sI.fullDirName:
+                            #     sI.isEncodedImage = True
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
+                            sI.isEncodedImage = library_images
                 else:
-                    scanFolders(src, inRootFolder)
+                    scanFolders(src, inRootFolder, library_images=library_images)
             except KeyError:
                 print("KeyError %s" % f)
                 continue
     except WindowsError:
         pass
+
 
 def addImageFile(fileName, **kwargs):
     global family_name
@@ -1180,6 +1316,7 @@ def addImageFile(fileName, **kwargs):
             target_name = kwargs["main_version"]
         destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, target_name, **kwargs)
         pict_dict[destItem.fileNameWithExt.upper()] = destItem
+
 
 def addFile(sourceFileName, **kwargs):
     global family_name
@@ -1344,7 +1481,7 @@ def buildMacroSet(inData, main_version="19"):
     :inFolderS: a list of foleder names to go through to build up macros
     :return:
     '''
-    global projectPath
+    global projectPath, imagePath
 
     if "main_version" in inData:
         main_version = inData["main_version"]
@@ -1361,12 +1498,12 @@ def buildMacroSet(inData, main_version="19"):
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath) if imagePath else ""
     if source_image_dir_name:
-        scanFolders(source_image_dir_name, source_image_dir_name)
+        scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
 
     for rootFolder in inData['folder_names']:
-        scanFolders(os.path.join(source_xml_dir_name, rootFolder), source_xml_dir_name)
+        scanFolders(os.path.join(source_xml_dir_name, rootFolder), source_xml_dir_name, library_images=False)
 
         for folder, subFolderS, fileS in os.walk(os.path.join(source_xml_dir_name, rootFolder)):
             for file in fileS:
@@ -1390,9 +1527,9 @@ def buildMacroSet(inData, main_version="19"):
 
     startConversion(targetGDLDirName = tempGDLDirName, sourceImageDirName=source_image_dir_name)
 
-    _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version + "_" + minor_version
+    _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    createLCF(tempGDLDirName, _fileNameWithoutExtension)
+    createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + minor_version)
 
     _stripped_dest_dict = {}
 
@@ -1402,7 +1539,8 @@ def buildMacroSet(inData, main_version="19"):
         _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
-    jsonData = jsonpickle.encode(_stripped_dest_dict)
+    jsonData = jsonpickle.encode({  "minor_version": minor_version,
+                                    "objects": _stripped_dest_dict}, )
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
@@ -1419,23 +1557,25 @@ def createBrandedProduct(inData):
     :param inData:    JSON
     :return:
     """
-    global dest_sourcenames, family_name, projectPath, dest_dict
+    global dest_sourcenames, family_name, projectPath, imagePath, dest_dict
 
     resetAll()
     family_name = inData["family_name"]
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
-    print("tempGDLDirName: %s" % tempGDLDirName)
+    logging.info("tempGDLDirName: %s" % tempGDLDirName)
 
     projectPath = inData["path"]
+    imagePath = inData["imagePath"] if "imagePath" in inData else projectPath
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
 
-    scanFolders(source_xml_dir_name, source_xml_dir_name)
-    scanFolders(source_image_dir_name, source_image_dir_name)
+    scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False)
+    scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
     # --------------------------------------------------------
     if 'materials' in inData:
         addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
+    JSONFileName = "macroset_" + inData["category"] + "_" + inData["main_macroset_version"] + ".json"
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
         translation = json.loads(translatorJSON.read())
 
@@ -1468,13 +1608,14 @@ def createBrandedProduct(inData):
 
         placeableS = []
 
-        _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, inData["dest_dict"])).read())
-        _dest_dict.update(dest_dict)
-        dest_sourcenames = {d.sourceFile.name.upper(): d for d in _dest_dict.values()}
+        inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
+        _dest_dict = inputJson["objects"]
+        dest_dict.update(_dest_dict)
+        dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
 
         for family in inData['family_types']:
             sourceFile = family["source_file"]
-            destItem = addFileUsingMacroset(sourceFile, _dest_dict,
+            destItem = addFileUsingMacroset(sourceFile, dest_dict,
                                             targetFileName=family["type_name"])
 
             placeableS.append(destItem.name)
@@ -1519,14 +1660,49 @@ def createBrandedProduct(inData):
         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
             f.write(masterGDL)
 
-    createLCF(tempGDLDirName, inData["category"] + "_" + family_name)
+    fileName = inData["category"] + "_" + family_name
+
+    createLCF(tempGDLDirName, fileName)
+
+    _paceableName = fileName + ".lcf"
+    _macrosetName = 'macroset' + "_" + inData["category"] + "_" + inData["main_macroset_version"] + "_" + inputJson["minor_version"] + ".lcf"
+    uploadFinishedObject(_paceableName, _macrosetName,
+                         inData["webhook_url"] if "webhook_url" in inData else "127.0.0.1",
+                         inData["webhook_path"] if "webhook_path" in inData else "/setfile" )
 
     if CLEANUP:
         os.rmdir(tempGDLDirName)
+    os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
     return {"placeables": placeableS,
             "materials": availableMaterials,
-            "macroSet": inData["dest_dict"]}
+            "macroSet": JSONFileName}
+
+
+def uploadFinishedObject(inFileName,
+                         inMacrosetName,
+                         inWebhook_url="127.0.0.1" ,
+                         inWebhook_path = "/setfile",
+                         inPORT=5000):
+    """
+    Uploads finished objects by calling a webhook with a POST message
+    FIXME doing it by using a blob storage
+    """
+    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as file:
+        _fileData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
+        _macrosetData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
+
+        urlDict = json.dumps({"object_name": inFileName,
+                              "base64_encoded_object": _fileData,
+                              "macroset_name": inMacrosetName,
+                              "base64_encoded_macroset": _macrosetData,
+                              })
+
+        headers = {"Content-type": "application/json", }
+        conn = http.client.HTTPConnection(inWebhook_url, port=inPORT)
+        conn.request("POST", inWebhook_path, urlDict, headers)
+        response = conn.getresponse().read()
+        logging.info(f"response: {response}")
 
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName=''):
@@ -1596,8 +1772,6 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
 
-    # check_output(x2lCommand, shell=True)
-
     # cleanup ops
     if CLEANUP:
         if _picdir:
@@ -1610,25 +1784,6 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         logging.debug("tempPicDir: %s" % tempPicDir)
 
     logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
-
-
-# def ireplace(old, new, text):
-#     '''
-#     Case insensitive string replacement instead of using regex
-#     Source: https://stackoverflow.com/questions/919056/case-insensitive-replace
-#     :param old:
-#     :param new:
-#     :param text:
-#     :return:
-#     '''
-#     idx = 0
-#     while idx < len(text):
-#         index_l = text.lower().find(old.lower(), idx)
-#         if index_l == -1:
-#             return text
-#         text = text[:index_l] + new + text[index_l + len(old):]
-#         idx = index_l + len(new)
-#     return text
 
 
 def processOneXML(inData):
