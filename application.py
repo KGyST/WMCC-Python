@@ -99,7 +99,7 @@ class ReceiveFile_Test(Resource):
 
 
 api.add_resource(ArchicadEngine, '/')
-api.add_resource(CreateLCFEngine, '/createlcf')
+api.add_resource(CreateLCFEngine, '/createmacroset')
 api.add_resource(ParameterExtractorEngine, '/extractparams')
 api.add_resource(ReceiveFile_Test, '/setfile')
 

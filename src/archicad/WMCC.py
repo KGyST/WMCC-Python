@@ -1519,7 +1519,7 @@ def buildMacroSet(inData, main_version="19"):
                     addImageFile(file, main_version=main_version)
 
     if "LIBRARY_VERSION_WMCC" in dest_sourcenames:
-        dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = int(minor_version)
+        dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = minor_version
 
     tempGDLDirName = tempfile.mkdtemp()
 
@@ -1529,7 +1529,7 @@ def buildMacroSet(inData, main_version="19"):
 
     _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + minor_version)
+    createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
 
     _stripped_dest_dict = {}
 
@@ -1539,7 +1539,7 @@ def buildMacroSet(inData, main_version="19"):
         _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
-    jsonData = jsonpickle.encode({  "minor_version": minor_version,
+    jsonData = jsonpickle.encode({  "minor_version": str(minor_version),
                                     "objects": _stripped_dest_dict}, )
 
     with open(jsonPathName, "w") as file:
@@ -1676,7 +1676,7 @@ def createBrandedProduct(inData):
 
     return {"placeables": placeableS,
             "materials": availableMaterials,
-            "macroSet": JSONFileName}
+            "macroSet": _macrosetName}
 
 
 def uploadFinishedObject(inFileName,
