@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "DEBUG": {
+    "type": "boolean",
+    "description": "Setting log levels. If on, logging.debug and logging.info is logged to APP_LOG_FILE_LOCATION etc."
+  },
+  "CLEANUP": {
+    "type": "boolean",
+    "description": "If true, after file creation, delete (for .lcf/.gsm creation used) temproary folders."
+  },
+  "WMCC_PATH": {
+    "type": "string",
+    "description": "Absolute path to python folder. Maybe a system variable."
+  },
+  "ARCHICAD_LOCATION": {
+    "type": "string",
+    "description": "Relative path to ARCHICAD executables under WMCC_PATH"
+  },
+  "TARGET_GDL_DIR_NAME": {
+    "type": "string",
+    "description": "Relative path to macrosets and placeablesets under WMCC_PATH. Macrosets are stored permanently (uploaded to every brand's product page), while placeablesets (placeables' lcfs) are deleted after product page upload. This is currently under Python source folder."
+  },
+  "ADDITIONAL_IMAGE_DIR_NAME": {
+    "type": "string",
+    "description": "Relative path to icon images for stuff, stored in SVN repo."
+  },
+  "APP_LOG_FILE_LOCATION": {
+    "type": "string",
+    "description": "Log file location of python script, can be in a temporary storage."
+  },
+  "required": [
+    "DEBUG",
+    "CLEANUP",
+    "WMCC_PATH",
+    "ARCHICAD_LOCATION",
+    "TARGET_GDL_DIR_NAME",
+    "ADDITIONAL_IMAGE_DIR_NAME",
+    "APP_LOG_FILE_LOCATION"
+  ]
+}

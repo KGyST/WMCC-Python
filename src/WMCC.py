@@ -3,7 +3,7 @@ from os import listdir
 import uuid
 import re
 import tempfile
-from subprocess import check_output
+from subprocess import check_output, Popen, PIPE, DEVNULL
 import shutil
 import datetime
 import jsonpickle
@@ -12,18 +12,12 @@ import multiprocessing as mp
 import copy
 import argparse
 
-import urllib.request, urllib.parse, urllib.error, json, urllib.parse, os, base64
-import http.client
-
+import json
+import http.client, http.server, urllib.request, urllib.parse, urllib.error, webbrowser, urllib.parse, os, hashlib, base64
+# import pip
+import logging
 from PIL import Image
 import io
-
-from flask import Flask, request
-from flask_restful import Resource, Api
-
-app = Flask(__name__)
-api = Api(app)
-
 
 #------------------ External modules------------------
 
@@ -33,24 +27,27 @@ from lxml import etree
 
 #------------------ Temporary constants------------------
 
-DEBUG                       = False
-CLEANUP                     = False     # Do cleanup after finish
+
 OUTPUT_XML                  = True      # To retain xmls
-TARGET_GDL_DIR_NAME         = r".\archicad\Target"
-SOURCE_DIR_NAME             = r".\archicad"
-ADDITIONAL_IMAGE_DIR_NAME   = r".\archicad\_IMAGES_GENERIC_"
+_SRC                        = r".\src"
+APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
+
+with open(APP_CONFIG, "r") as ac:
+    appJSON                     = json.load(ac)
+    DEBUG                       = appJSON["DEBUG"]
+    CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
+    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
+    SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
+    ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
+
+ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
+TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
 WMCC_BRAND_NAME             = "WMCC"
-ARCHICAD_LOCATION           = r".\archicad\Archicad\LP_XMLConverter_18"
 MATERIAL_BASE_OBJECT        = "_dev_material"
 
 BO_AUTHOR                   = "BIMobject"
 BO_LICENSE                  = "CC BY-ND"
 BO_LICENSE_VERSION          = "3.0"
-
-TARGET_IMAGE_DIR_NAME       = "" #REMOVE
-TARGET_XML_DIR_NAME         = "" #REMOVE
-
-TRANSLATIONS_JSON           = r".\archicad\translations.json"
 
 LOGO_WIDTH_MAX              = 100
 LOGO_HEIGHT_MAX             = 30
@@ -60,6 +57,8 @@ LOGO_HEIGHT_MAX             = 30
 
 ADD_STRING = True   # If sourceFile has not WMCC_BRAND_NAME then add "_" + NEW_BRAND_NAME to at its end
 OVERWRITE = False
+
+#------------------/Temporary constants------------------
 
 PERSONAL_ID = "ac4e5af2-7544-475c-907d-c7d91c810039"    #FIXME to be deleted after BO API v1 is removed
 
@@ -173,6 +172,7 @@ class ParamSection:
 
     def append(self, inEtree, inParName):
         #Adding param to the end
+        #FIXME accepts non-etree and then crashes
         self.__paramList.append(inEtree)
         if not isinstance(inEtree, etree._Comment):
             self.__paramDict[inParName] = inEtree
@@ -1143,11 +1143,13 @@ def resetAll():
 
     all_keywords.clear()
 
-def scanFolders (inFile, inRootFolder):
+
+def scanFolders (inFile, inRootFolder, library_images=False):
     """
     scanning input dir recursively to set up xml and image files' list
     :param inFile:  folder actually to be scanned
     :param outFile: folder at top of hierarchy
+    :param library_images: whether we are scanning library_images (for encoded images) or library folder
     :return:
     """
     global projectPath, imagePath
@@ -1167,19 +1169,19 @@ def scanFolders (inFile, inRootFolder):
                         # set up replacement dict for other files (not only images, indeed)
                         if os.path.splitext(os.path.basename(f))[0].upper() not in source_pict_dict:
                             sI = SourceImage(os.path.relpath(src, inRootFolder), root=inRootFolder)
-                            # No imagePath for AC_18 objects:
-                            if imagePath:
-                                SIDN = os.path.join(SOURCE_DIR_NAME, imagePath)
-                                if SIDN in sI.fullDirName:
-                                    sI.isEncodedImage = True
+                            # SIDN = os.path.join(SOURCE_DIR_NAME, imagePath)
+                            # if SIDN in sI.fullDirName:
+                            #     sI.isEncodedImage = True
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
+                            sI.isEncodedImage = library_images
                 else:
-                    scanFolders(src, inRootFolder)
+                    scanFolders(src, inRootFolder, library_images=library_images)
             except KeyError:
                 print("KeyError %s" % f)
                 continue
     except WindowsError:
         pass
+
 
 def addImageFile(fileName, **kwargs):
     global family_name
@@ -1189,6 +1191,7 @@ def addImageFile(fileName, **kwargs):
             target_name = kwargs["main_version"]
         destItem = DestImage(source_pict_dict[fileName.upper()], WMCC_BRAND_NAME, target_name, **kwargs)
         pict_dict[destItem.fileNameWithExt.upper()] = destItem
+
 
 def addFile(sourceFileName, **kwargs):
     global family_name
@@ -1276,7 +1279,12 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     output = r'"%s" createcontainer "%s" "%s" %s "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName, source_image_dir_name, ADDITIONAL_IMAGE_DIR_NAME)
     print("output: %s" % output)
 
-    check_output(output, shell=True)
+    logging.info("createcontainer")
+    with Popen(output, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+        _out, _err = proc.communicate()
+        logging.info(f"Success: {_out} (error: {_err}) ")
+
+    # check_output(output, shell=True)
 
     print("*****LCF CREATION FINISHED SUCCESFULLY******")
 
@@ -1365,15 +1373,14 @@ def buildMacroSet(inData, main_version="19"):
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath) if imagePath else ""
     if source_image_dir_name:
-        scanFolders(source_image_dir_name, source_image_dir_name)
+        scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
 
     for rootFolder in inData['folder_names']:
-        _f = os.path.join(source_xml_dir_name, rootFolder)
-        scanFolders(_f, source_xml_dir_name)
+        scanFolders(os.path.join(source_xml_dir_name, rootFolder), source_xml_dir_name, library_images=False)
 
-        for folder, subFolderS, fileS in os.walk(_f):
+        for folder, subFolderS, fileS in os.walk(os.path.join(source_xml_dir_name, rootFolder)):
             for file in fileS:
                 if os.path.splitext(file)[1].upper() == ".XML":
                     if os.path.splitext(file)[0].upper() not in dest_dict:
@@ -1387,7 +1394,7 @@ def buildMacroSet(inData, main_version="19"):
                     addImageFile(file, main_version=main_version)
 
     if "LIBRARY_VERSION_WMCC" in dest_sourcenames:
-        dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = int(minor_version)
+        dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = minor_version
 
     tempGDLDirName = tempfile.mkdtemp()
 
@@ -1395,9 +1402,9 @@ def buildMacroSet(inData, main_version="19"):
 
     startConversion(targetGDLDirName = tempGDLDirName, sourceImageDirName=source_image_dir_name)
 
-    _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version + "_" + minor_version
+    _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    createLCF(tempGDLDirName, _fileNameWithoutExtension)
+    createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
 
     _stripped_dest_dict = {}
 
@@ -1407,13 +1414,14 @@ def buildMacroSet(inData, main_version="19"):
         _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
-    jsonData = jsonpickle.encode(_stripped_dest_dict)
+    jsonData = jsonpickle.encode({  "minor_version": str(minor_version),
+                                    "objects": _stripped_dest_dict}, )
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
 
     if CLEANUP:
-        os.rmdir(tempGDLDirName)
+        shutil.rmtree(tempGDLDirName)
 
     return {'LCFName': _fileNameWithoutExtension + ".json"}
 
@@ -1424,23 +1432,25 @@ def createBrandedProduct(inData):
     :param inData:    JSON
     :return:
     """
-    global dest_sourcenames, family_name, projectPath, dest_dict
+    global dest_sourcenames, family_name, projectPath, imagePath, dest_dict
 
     resetAll()
     family_name = inData["family_name"]
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
-    print("tempGDLDirName: %s" % tempGDLDirName)
+    logging.info("tempGDLDirName: %s" % tempGDLDirName)
 
     projectPath = inData["path"]
+    imagePath = inData["imagePath"] if "imagePath" in inData else projectPath
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
 
-    scanFolders(source_xml_dir_name, source_xml_dir_name)
-    scanFolders(source_image_dir_name, source_image_dir_name)
+    scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False)
+    scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
     # --------------------------------------------------------
     if 'materials' in inData:
         addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
+    JSONFileName = "macroset_" + inData["category"] + "_" + inData["main_macroset_version"] + ".json"
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
         translation = json.loads(translatorJSON.read())
 
@@ -1485,15 +1495,17 @@ def createBrandedProduct(inData):
                 i.save(logoFile, 'PNG')
 
         # ------ placeables ------
+
         placeableS = []
 
-        _dest_dict = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, inData["dest_dict"])).read())
-        _dest_dict.update(dest_dict)
-        dest_sourcenames = {d.sourceFile.name.upper(): d for d in _dest_dict.values()}
+        inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
+        _dest_dict = inputJson["objects"]
+        dest_dict.update(_dest_dict)
+        dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
 
         for family in inData['family_types']:
             sourceFile = family["source_file"]
-            destItem = addFileUsingMacroset(sourceFile, _dest_dict,
+            destItem = addFileUsingMacroset(sourceFile, dest_dict,
                                             targetFileName=family["type_name"])
 
             placeableS.append(destItem.name)
@@ -1528,10 +1540,12 @@ def createBrandedProduct(inData):
                             family['parameters'][parameter],
                             translation)
             if _logo:
-                destItem.parameters["sLogoName"] = logo_name
-                destItem.parameters["wCompLogo"] = logo_width
+                # FIXME
+                if "sLogoName" in destItem.parameters and "wCompLogo" in destItem.parameters:
+                    destItem.parameters["sLogoName"] = logo_name
+                    destItem.parameters["wCompLogo"] = logo_width
 
-                # For now:
+    # For now:
     # --------------------------------------------------------
 
     startConversion(targetGDLDirName=tempGDLDirName)
@@ -1541,14 +1555,49 @@ def createBrandedProduct(inData):
         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
             f.write(masterGDL)
 
-    createLCF(tempGDLDirName, inData["category"] + "_" + family_name)
+    fileName = inData["category"] + "_" + family_name
+
+    createLCF(tempGDLDirName, fileName)
+
+    _paceableName = fileName + ".lcf"
+    _macrosetName = 'macroset' + "_" + inData["category"] + "_" + inData["main_macroset_version"] + "_" + inputJson["minor_version"] + ".lcf"
+    uploadFinishedObject(_paceableName, _macrosetName,
+                         inData["webhook_url"] if "webhook_url" in inData else "127.0.0.1",
+                         inData["webhook_path"] if "webhook_path" in inData else "/setfile" )
 
     if CLEANUP:
-        os.rmdir(tempGDLDirName)
+        shutil.rmtree(tempGDLDirName)
+    os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
     return {"placeables": placeableS,
             "materials": availableMaterials,
-            "macroSet": inData["dest_dict"]}
+            "macroSet": _macrosetName}
+
+
+def uploadFinishedObject(inFileName,
+                         inMacrosetName,
+                         inWebhook_url="127.0.0.1" ,
+                         inWebhook_path = "/setfile",
+                         inPORT=5000):
+    """
+    Uploads finished objects by calling a webhook with a POST message
+    FIXME doing it by using a blob storage
+    """
+    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as file:
+        _fileData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
+        _macrosetData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
+
+        urlDict = json.dumps({"object_name": inFileName,
+                              "base64_encoded_object": _fileData,
+                              "macroset_name": inMacrosetName,
+                              "base64_encoded_macroset": _macrosetData,
+                              })
+
+        headers = {"Content-type": "application/json", }
+        conn = http.client.HTTPConnection(inWebhook_url, port=inPORT)
+        conn.request("POST", inWebhook_path, urlDict, headers)
+        response = conn.getresponse().read()
+        logging.info(f"response: {response}")
 
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName=''):
@@ -1559,8 +1608,8 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     tempdir = tempfile.mkdtemp()
     tempPicDir = tempfile.mkdtemp()
 
-    print("tempdir: %s" % tempdir)
-    print("tempPicDir: %s" % tempPicDir)
+    logging.debug("tempdir: %s" % tempdir)
+    logging.debug("tempPicDir: %s" % tempPicDir)
 
     pool_map = [{"dest": dest_dict[k],
                  "tempdir": tempdir,
@@ -1570,8 +1619,11 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  "dest_dict": dest_dict,
                  "family_name": family_name,
                  } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
-    _pool = mp.Pool()
-    _pool.map(processOneXML, pool_map)
+    # _pool = mp.Pool()
+    # _pool.map(processOneXML, pool_map)
+
+    for _p in pool_map:
+        processOneXML(_p)
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -1596,14 +1648,15 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                 shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
 
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
-    print(r"x2l Command being executed...\n%s" % x2lCommand)
+    logging.info(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:
-        print("ac command:")
-        print(x2lCommand)
+        logging.debug("ac command:")
+        logging.debug(x2lCommand)
         with open(tempdir + "\dict.txt", "w") as d:
             for k in list(dest_dict.keys()):
-                d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
+                if not isinstance(dest_dict[k].sourceFile, StrippedSourceXML):
+                    d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
 
         with open(tempdir + "\pict_dict.txt", "w") as d:
             for k in list(pict_dict.keys()):
@@ -1613,7 +1666,10 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
             for k in list(id_dict.keys()):
                 d.write(id_dict[k] + "\n")
 
-    check_output(x2lCommand, shell=True)
+    logging.info("x2l")
+    with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+        _out, _err = proc.communicate()
+        logging.info(f"Success: {_out} (error: {_err}) ")
 
     # cleanup ops
     if CLEANUP:
@@ -1623,29 +1679,10 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         if not OUTPUT_XML:
             shutil.rmtree(tempdir)
     else:
-        print("tempdir: %s" % tempdir)
-        print("tempPicDir: %s" % tempPicDir)
+        logging.debug("tempdir: %s" % tempdir)
+        logging.debug("tempPicDir: %s" % tempPicDir)
 
-    print("*****GSM CREATION FINISHED SUCCESFULLY******")
-
-
-# def ireplace(old, new, text):
-#     '''
-#     Case insensitive string replacement instead of using regex
-#     Source: https://stackoverflow.com/questions/919056/case-insensitive-replace
-#     :param old:
-#     :param new:
-#     :param text:
-#     :return:
-#     '''
-#     idx = 0
-#     while idx < len(text):
-#         index_l = text.lower().find(old.lower(), idx)
-#         if index_l == -1:
-#             return text
-#         text = text[:index_l] + new + text[index_l + len(old):]
-#         idx = index_l + len(new)
-#     return text
+    logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
 
 def processOneXML(inData):
@@ -1736,6 +1773,7 @@ def processOneXML(inData):
         mdp.getroot().append(eCopyright)
 
     # ---------------------BO_update---------------------
+
     parRoot = mdp.find("./ParamSection")
     parPar = parRoot.getparent()
     parPar.remove(parRoot)
@@ -1765,4 +1803,3 @@ def processOneXML(inData):
         pass
     with open(destPath, "wb") as file_handle:
         file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
-

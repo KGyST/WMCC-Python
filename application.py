@@ -28,7 +28,7 @@ dictConfig({
 })
 
 
-from src.archicad.WMCC import (
+from src.WMCC import (
     createBrandedProduct,
     buildMacroSet,
     extractParams,
