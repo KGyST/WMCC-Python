@@ -1587,7 +1587,7 @@ def createBrandedProduct(inData):
 
         # ------ placeables ------
 
-        placeableS = [ ]
+        placeableS = []
 
         inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
         _dest_dict = inputJson["objects"]
