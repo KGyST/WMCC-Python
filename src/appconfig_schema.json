@@ -28,6 +28,12 @@
     "type": "string",
     "description": "Log file location of python script, can be in a temporary storage."
   },
+  "LOGLEVEL": {
+    "type": "integer",
+    "Log level",
+  "enum": [0, 10, 20, 30, 40, 50]
+	
+  },
   "required": [
     "DEBUG",
     "CLEANUP",

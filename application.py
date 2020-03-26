@@ -4,6 +4,16 @@ app = Flask(__name__)
 from flask import Flask, request
 from flask_restful import Resource, Api
 from logging.config import dictConfig
+import os
+import json
+
+_SRC                        = r".\src"
+APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
+
+with open(APP_CONFIG, "r") as ac:
+    appJSON                     = json.load(ac)
+    LOGLEVEL                    = appJSON["LOGLEVEL"]
+    APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
 
 dictConfig({
     'version': 1,
@@ -18,11 +28,11 @@ dictConfig({
         'custom_handler': {
             'class': 'logging.FileHandler',
             'formatter': 'default',
-            'filename': r'myapp.log'
+            'filename': APP_LOG_FILE_LOCATION
         }
     },
     'root': {
-        'level': 'INFO',
+        'level': LOGLEVEL,
         'handlers': ['wsgi', 'custom_handler']
     }
 })

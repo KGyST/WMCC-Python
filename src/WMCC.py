@@ -39,6 +39,8 @@ with open(APP_CONFIG, "r") as ac:
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
     ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
+    LOGLEVEL                    = appJSON["LOGLEVEL"]
+
 
 ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
 TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
@@ -51,7 +53,6 @@ BO_LICENSE_VERSION          = "3.0"
 
 LOGO_WIDTH_MAX              = 100
 LOGO_HEIGHT_MAX             = 30
-
 
 #------------------/Temporary constants------------------
 
@@ -561,33 +562,43 @@ class ReszieableGDLDict(dict):
     List child with incexing from 1 instead of 0
     writing outside of list size resizes list
     """
+    @staticmethod
+    def __new__(cls, *args, **kwargs):
+        res = super().__new__(cls)
+        res.size = 0
+        res.firstLevel = True
+        return res
+
     def __init__(self, inObj=None, firstLevel = True):
-        self.size = 0
-        self.firstLevel = firstLevel
         if not inObj:
-            super(ReszieableGDLDict, self).__init__(self)
+            super().__init__(self)
+            self.size = 0
         elif isinstance(inObj, list):
             _d = {}
+            _size = 0
             for i in range(len(inObj)):
                 if isinstance(inObj[i], list):
                     _d[i+1] = ReszieableGDLDict(inObj[i], firstLevel=False)
                 else:
                     _d[i+1] = inObj[i]
-                self.size = max(self.size, i+1)
-            super(ReszieableGDLDict, self).__init__(_d)
+                _size = max(_size, i+1)
+            super().__init__(_d)
+            self.size = _size
         else:
-            super(ReszieableGDLDict, self).__init__(inObj)
+            super().__init__(inObj)
+            self.size = 0
+        self.firstLevel = firstLevel
 
 
     def __getitem__(self, item):
         if item not in self:
-            dict.__setitem__(self, item, ReszieableGDLDict({}))
+            dict.__setitem__(self, item, ReszieableGDLDict({}, firstLevel = False))
             self.size = max(self.size, item)
         return dict.__getitem__(self, item)
 
     def __setitem__(self, key, value, firstLevel=True):
         if self.firstLevel and isinstance(value, list):
-            dict.__setitem__(self, key, ReszieableGDLDict(value))
+            dict.__setitem__(self, key, ReszieableGDLDict(value, firstLevel = False))
         else:
             dict.__setitem__(self, key, value)
         self.size = max(self.size, key)
@@ -664,15 +675,15 @@ class Param(object):
 
     def __setitem__(self, key, value):
         if isinstance(value, list):
-            self._aVals[key] = self.__toFormat(value)
-            self.__fd = max(self.__fd, key)
+            self._aVals[key+1] = self.__toFormat(value)
+            self.__fd = max(self.__fd, key+1)
             self.__sd = max(self.__sd, len(value))
         else:
             if self.__sd == 0:
-                self._aVals[key] = self.__toFormat(value)
+                self._aVals[key+1] = self.__toFormat(value)
             else:
-                self._aVals[key] = self.__toFormat(value)
-            self.__fd = max(self.__fd, key)
+                self._aVals[key+1] = self.__toFormat(value)
+            self.__fd = max(self.__fd, key+1)
 
     def setValue(self, inVal):
         if type(inVal) == list:
@@ -841,10 +852,10 @@ class Param(object):
         for _, (rowIdx, row) in enumerate(self._aVals.items()):
             for _, (colIdx, cell) in enumerate(row.items()):
                 if self.__sd:
-                    arrayValue = etree.Element("AVal", Column=str(colIdx + 1), Row=str(rowIdx + 1))
+                    arrayValue = etree.Element("AVal", Column=str(colIdx), Row=str(rowIdx))
                 else:
-                    arrayValue = etree.Element("AVal", Row=str(rowIdx + 1))
-                arrayValue.tail = '\n\t\t\t'
+                    arrayValue = etree.Element("AVal", Row=str(rowIdx))
+                arrayValue.tail = '\n\t\t\t\t'
                 aValue.append(arrayValue)
                 arrayValue.text = self._valueToString(cell)
         arrayValue.tail = '\n\t\t\t'
@@ -1594,7 +1605,8 @@ def createBrandedProduct(inData):
                 for _i in range(14):
                     destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + family_name]
 
-                destItem.parameters["sMaterialS"] = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+                s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+                destItem.parameters["sMaterialS"] = s_
                 destItem.parameters["iVersionNumber"][1] = [int(inData["minimum_required_macroset_version"]), 0]
 
                 for parameter in family['parameters']:
@@ -1620,7 +1632,6 @@ def createBrandedProduct(inData):
                             family['parameters'][parameter],
                             translation)
             if _logo:
-                # FIXME
                 if "sLogoName" in destItem.parameters and "wCompLogo" in destItem.parameters:
                     destItem.parameters["sLogoName"] = logo_name
                     destItem.parameters["wCompLogo"] = logo_width
@@ -1701,12 +1712,12 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
 
     ## If single processing is needed for debugging, disable this
-    # _pool = mp.Pool()
-    # _pool.map(processOneXML, pool_map)
+    _pool = mp.Pool()
+    _pool.map(processOneXML, pool_map)
 
     ## ...and enable this
-    for _p in pool_map:
-        processOneXML(_p)
+    # for _p in pool_map:
+    #     processOneXML(_p)
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -1817,9 +1828,6 @@ def processOneXML(inData):
                 if family_name:
                     fromRE += '(?!' + family_name + ')'
                 t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
-
-                # t = ireplace(pict_dict[pr].sourceFile.fileNameWithOutExt, pict_dict[pr].fileNameWithOutExt, t)
-
             section.text = etree.CDATA(t)
 
     if dest.bPlaceable:
