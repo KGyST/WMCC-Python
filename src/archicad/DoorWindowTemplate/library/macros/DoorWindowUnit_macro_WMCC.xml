@@ -2541,11 +2541,10 @@ return
 ! ------------------------------------------------------------------------------
 	xCompLogo	= 1
 	yCompLogo	= 2
-	hCompLogo	= 30						! logo height on UI								! TODO
-	wCompLogo	= (70/35) * hCompLogo		! real (width/height) of the logo file (pixel)	! TODO
-	dStartSep	= 61
+	hCompLogo	= 30
+	dStartSep	= xCompLogo + wCompLogo + 5
 
-!	ui_pict "company_logo", xCompLogo, yCompLogo, wCompLogo, hCompLogo, 1		! TODO
+	ui_pict sLogoName, xCompLogo, yCompLogo, wCompLogo, hCompLogo, 1		! TODO
 
 	ui_separator dStartSep, 29, 443, 29
 
@@ -3675,9 +3674,9 @@ endif
 	</License>
 </Copyright>
 
-<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+<ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>22</Version>
+		<Version>25</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -9845,6 +9844,20 @@ endif
 			</Flags>
 			<Value><![CDATA["RAL3005-Wine_Red"]]></Value>
 		</String>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["FamilyName_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>36</Value>
+		</Integer>
 	</Parameters>
 </ParamSection>
 
