@@ -359,9 +359,9 @@ http://www.bimobject.com
 	</License>
 </Copyright>
 
-<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+<ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>22</Version>
+		<Version>25</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<HoleBits>
 			<WDBit_3DFrame/>
@@ -5595,6 +5595,116 @@ http://www.bimobject.com
 			</Flags>
 			<Value><![CDATA["Glass"]]></Value>
 		</String>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Default_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>69</Value>
+		</Integer>
+
+		<!-- Warnings: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="Warnings">
+			<Description><![CDATA["Warnings"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		<Integer Name="iUIWarnState">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Length Name="UIWarnTypeS">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="1" SecondDimension="2">
+				<AVal Column="1" Row="1">3</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="xMinW">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.5</Value>
+		</Length>
+		<Length Name="yMinH">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.45</Value>
+		</Length>
+		<Length Name="xMaxW">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<Length Name="yMaxH">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.05</Value>
+		</Length>
+		<Length Name="xWarnMin">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.5</Value>
+		</Length>
+		<Length Name="yWarnMin">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.45</Value>
+		</Length>
+		<Length Name="xWarnMax">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<Length Name="yWarnMax">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.05</Value>
+		</Length>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["FamilyName_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>69</Value>
+		</Integer>
 
 		<!-- Warnings: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
 
