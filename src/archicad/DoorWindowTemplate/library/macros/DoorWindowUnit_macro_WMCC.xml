@@ -44,7 +44,7 @@
 
 <Script_3D SectVersion="20" SectionFlags="0" SubIdent="0">
 <![CDATA[
-!if iDetLevel2D	= DETLEVEL_2D_SCALE then 
+!if iDetLevel2D	= DETLEVEL_2D_SCALE then
 !	iDetLevel2D	= 10
 !	if GLOB_SCALE > 20 + EPS then iDetLevel2D	= 50
 !	if GLOB_SCALE > 70 + EPS then iDetLevel2D	= 100
@@ -64,7 +64,7 @@ if isWindow then
 	! =============================================================================
 	! GS Corner Window Functions
 	! =============================================================================
-	
+
 	call "GS Corner Window Functions_WMCC",
 		parameters all	iWindowShape				= iWindowShape,
 						gs_IsCurved					= gs_IsCurved,
@@ -101,7 +101,7 @@ if isWindow then
 							xform11, xform12, xform13, xform14,
 							xform21, xform22, xform23, xform24,
 							xform31, xform32, xform33, xform34,
-	
+
 							bOplines3d, opLineType3dIn, opLineType3dOut, gs_opline_style_m, gs_opLinePen,
 							bShowAddHotspots, bShowAddHotspotsForIS, bShowUnitHotspots
 else
@@ -143,10 +143,10 @@ else
 							xform11, xform12, xform13, xform14,
 							xform21, xform22, xform23, xform24,
 							xform31, xform32, xform33, xform34,
-	
+
 							bOplines3d, opLineType3dIn, opLineType3dOut, gs_opline_style_m, gs_opLinePen,
 							bShowAddHotspots, bShowAddHotspotsForIS, bShowUnitHotspots, bShowEgressHotspots, bShowLeafHotspots,
-	
+
 							! Extra Sizes for Pocket Doors
 							gs_unit_extra_left,
 							gs_unit_extra_right
@@ -221,7 +221,7 @@ endif
 		sMaterialS				= sMaterialS,
 		iOpeningType			= iOpeningTypes[1],
 		iSelectableProfiles		= iSelectableProfiles,
-		LeafBoxA				= ac_unit_width,		
+		LeafBoxA				= ac_unit_width,
 		LeafBoxB				= ac_unit_height,
 		Zone~					= 1,
 		iZoneOpening			= iOpeningTypes,
@@ -305,11 +305,11 @@ end
 			xCutB	= 0
 		endif
 		pen WALL_SECT_PEN
-	
+
 
 		if	WALL_SKINS_NUMBER > 1 &\
 			GLOB_CONTEXT = 4 then
-	
+
 			FinishSkinNum = 0
 			FinishSkinThk = 0
 			if PlacedOnOutside exor (jk = 2) then
@@ -321,7 +321,7 @@ end
 				SkinCheckEnd	= WALL_SKINS_NUMBER
 				SkinCheckStep	= 1
 			endif
-	
+
 			for kk = SkinCheckStart to SkinCheckEnd step SkinCheckStep
 				if abs(WALL_SKINS_PARAMS[kk][15] - 1) <EPS then
 					FinishSkinNum = kk
@@ -330,7 +330,7 @@ end
 					kk = SkinCheckEnd
 				endif
 			next kk
-	
+
 			skinLength = WIDO_SILL	!WALL_THICKNESS - gs_frame_thk
 			if jk = 2 then
 				skinLength = WALL_THICKNESS - WIDO_SILL - gs_frame_thk
@@ -363,24 +363,24 @@ end
 				endif
 				SkinCheckEnd	= FinishSkinNum
 				skinThkAct = 0
-	
+
 				pen WALL_VIEW_PEN
-	
+
 				if (bNeedOpDirMig exor not(WIDO_REVEAL_SIDE)) exor (jk=2) then
 					material WALL_MAT_B
 				else
 					material WALL_MAT_A
 				endif
-	
-	
+
+
 				for kk = SkinCheckStart to SkinCheckEnd step SkinCheckStep
 					skinFill	= WALL_SKINS_PARAMS[kk][1]
 					skinPen		= WALL_SKINS_PARAMS[kk][4]
 					skinBckgPen	= WALL_SKINS_PARAMS[kk][5]
 					skinThk		= WALL_SKINS_PARAMS[kk][2]
-	
+
 					sect_fill skinFill, skinBckgPen, skinPen, WALL_SKINS_PARAMS[kk][SkinLinePenInd2]
-	
+
 					firstSkinCutOffs = 0.01 * ((kk = SkinCheckStart) | (kk = SkinCheckEnd))	! due to wallniche wrong masking (lines cannot be eliminate if it starts on the facade)
 
 					addz 0	!gs_frame_thk + skinThkAct
@@ -389,7 +389,7 @@ end
 
 						if	((kk < SkinCheckEnd) & not(PlacedOnOutside exor (jk = 2))) |\
 							((kk > SkinCheckEnd) & (PlacedOnOutside exor (jk = 2))) then
-		
+
 							addz -firstSkinCutOffs
 							wallniche 4, 1, 1 + 64 + 128,
 								0, 0, 1, skinLength + firstSkinCutOffs,
@@ -404,7 +404,7 @@ end
 								-xCutL - skinThkAct - skinThk,	xCutT + skinThkAct + skinThk,	14,
 								xCutR + skinThkAct + skinThk,	xCutT + skinThkAct + skinThk,	14,
 								xCutR + skinThkAct + skinThk,	xCutB,	14,
-		
+
 								xCutR + skinThkAct,		xCutB,	15,
 								xCutR + skinThkAct,		xCutT + skinThkAct,	15,
 								-xCutL - skinThkAct,	xCutT + skinThkAct,	15,
@@ -425,7 +425,7 @@ end
 								-xCutL - FinishSkinThk,	xCutT + FinishSkinThk,	14,
 								xCutR + FinishSkinThk,	xCutT + FinishSkinThk,	14,
 								xCutR + FinishSkinThk,	xCutB + hCutSill,	14,
-		
+
 								xCutR + skinThkAct + skinThk,	xCutB,	14,
 								xCutR + skinThkAct + skinThk,	xCutT + skinThkAct + skinThk,	14,
 								-xCutL - skinThkAct - skinThk,	xCutT + skinThkAct + skinThk,	14,
@@ -433,7 +433,7 @@ end
 
 						else
 
-							addz skinThkAct 
+							addz skinThkAct
 
 							addz -firstSkinCutOffs
 							wallniche 4, 1, 1 + 64 + 128,
@@ -449,7 +449,7 @@ end
 								-xCutL - skinThkAct - skinThk,	xCutT + skinThkAct + skinThk,	14,
 								xCutR + skinThkAct + skinThk,	xCutT + skinThkAct + skinThk,	14,
 								xCutR + skinThkAct + skinThk,	xCutB - hCutSill,	14,
-		
+
 								xCutR + skinThkAct,		xCutB - hCutSill,	15,
 								xCutR + skinThkAct,		xCutT + skinThkAct,	15,
 								-xCutL - skinThkAct,	xCutT + skinThkAct,	15,
@@ -460,12 +460,12 @@ end
 					endif
 
 					del 1
-	
+
 					skinThkAct = skinThkAct + WALL_SKINS_PARAMS[kk][2]
 				next kk
-	
+
 				del 1
-	
+
 				if TurnedSkinCutNum then
 					for jj = 1 to TurnedSkinCutNum
 						cutend
@@ -504,7 +504,7 @@ if isWindow then
 	! =============================================================================
 	! GS Corner Window Functions
 	! =============================================================================
-	
+
 	call "GS Corner Window Functions_WMCC",
 		parameters all	iWindowShape			= iWindowShape,
 						gs_IsCurved				= gs_IsCurved,
@@ -581,7 +581,7 @@ else
 							gs_iSlidingType,
 							gs_swingLineType,
 							bShowAddHotspots, bShowUnitHotspots, bShowEgressHotspots, bShowLeafHotspots,
-	
+
 							! Extra Sizes for Pocket Doors
 							gs_unit_extra_left,
 							gs_unit_extra_right
@@ -636,7 +636,7 @@ if gs_iSwingType <> 3 then	! Opening Axis Line
 call "Leaf_WMCC" parameters all \
 		iOpeningType			= iOpeningTypes[1],
 		iSelectableProfiles		= iSelectableProfiles,
-		LeafBoxA				= ac_unit_width,		
+		LeafBoxA				= ac_unit_width,
 		LeafBoxB				= ac_unit_height,
 		Zone~					= 1,
 		iZoneOpening			= iOpeningTypes,
@@ -691,7 +691,7 @@ end
 	for jk = 1 to iSkinTurningSides		! we have to draw on both sides (in/out) if window is not on the facade
 
 		yCut	= gs_frame_thk
-	
+
 		dSill	= 0
 		xCutR	= ac_unit_width/2 - gs_reveal_right
 		xCutL	= ac_unit_width/2 - gs_reveal_left
@@ -702,10 +702,10 @@ end
 
 
 		pen WALL_SECT_PEN
-	
+
 		fill gs_wallhole_fill
-	
-	
+
+
 		for i = 1 to 2
 			bIsWallCutSide = 1
 			if i = 1 then
@@ -713,7 +713,7 @@ end
 			else
 				if	abs(gs_left_oversize) > eps then bIsWallCutSide = 0
 			endif
-	
+
 			xCutAct = xCutR * (i = 1) + xCutL * (i = 2)
 
 
@@ -733,7 +733,7 @@ end
 						SkinCheckEnd	= WALL_SKINS_NUMBER
 						SkinCheckStep	= 1
 					endif
-	
+
 					for kk = SkinCheckStart to SkinCheckEnd step SkinCheckStep
 						if abs(WALL_SKINS_PARAMS[kk][15] - 1) <EPS then
 							FinishSkinNum = kk
@@ -742,7 +742,7 @@ end
 							kk = SkinCheckEnd
 						endif
 					next kk
-	
+
 					skinLength = WIDO_SILL	!WALL_THICKNESS - gs_frame_thk
 					if jk = 2 then
 						skinLength = WALL_THICKNESS - WIDO_SILL - gs_frame_thk
@@ -785,14 +785,14 @@ end
 							skinPen		= WALL_SKINS_PARAMS[kk][4]
 							skinBckgPen	= WALL_SKINS_PARAMS[kk][5]
 							skinThk		= WALL_SKINS_PARAMS[kk][2]
-	
+
 							if skinLength > (skinThkAct + skinThk) then
 
 
 								fill skinFill
 								if	((kk < SkinCheckEnd) & not(PlacedOnOutside exor (jk = 2))) |\
 									((kk > SkinCheckEnd) & (PlacedOnOutside exor (jk = 2))) then
-	
+
 								wallhole2 6, 32, gs_wallhole_pen_fg, gs_wallhole_pen_bg,
 									0, 0, 0,
 									xCutAct + skinThkAct,					skinThkAct,				1,
@@ -811,14 +811,14 @@ end
 										xCutAct + skinThkAct + skinThk,		skinThkAct + skinThk,	1,
 										xCutAct + skinThkAct + skinThk,		skinLength,	1,
 										xCutAct + skinThkAct,					skinLength,	1
-		
+
 									line_type WALL_SKINS_PARAMS[kk][SkinLineTypeInd1]
 									pen WALL_SKINS_PARAMS[kk][SkinLinePenInd1]
 									wallline2	xCutAct + skinThkAct + FinishSkinThk,	skinThkAct + skinThk,
 												xCutAct + skinThkAct + skinThk,		skinThkAct + skinThk
 									wallline2	xCutAct + skinThkAct + skinThk,		skinThkAct + skinThk,
 												xCutAct + skinThkAct + skinThk,		skinLength
-		
+
 									line_type WALL_SKINS_PARAMS[kk][SkinLineTypeInd2]
 									pen WALL_SKINS_PARAMS[kk][SkinLinePenInd2]
 									wallline2	xCutAct + skinThkAct + skinThk,		skinLength,
@@ -849,8 +849,8 @@ end
 									pen WALL_SKINS_PARAMS[kk][SkinLinePenInd1]
 									wallline2	xCutAct + skinThkAct + skinThk,	skinThkAct + skinThk,
 												xCutAct + skinThkAct + skinThk,	skinLength
-		
-		
+
+
 									line_type WALL_SKINS_PARAMS[kk][SkinLineTypeInd2]
 									pen WALL_SKINS_PARAMS[kk][SkinLinePenInd2]
 									wallline2	xCutAct + skinThkAct + skinThk,	skinLength,
@@ -865,7 +865,7 @@ end
 
 							skinThkAct = skinThkAct + WALL_SKINS_PARAMS[kk][2]
 						next kk
-	
+
 						del 1
 					else
 !						wallline2 xCutAct, -yCut, xCutAct, -gs_frame_thk - WIDO_SILL	!-WALL_THICKNESS
@@ -874,9 +874,9 @@ end
 !					wallline2 xCutAct, -yCut, xCutAct, -gs_frame_thk - WIDO_SILL	!-WALL_THICKNESS
 
 				endif
-	
+
 			endif
-	
+
 			mul2 -1, 1
 		next i
 		del 2
@@ -1020,7 +1020,7 @@ LEAF_GAR_1L_ROLLUP			= 105
 	OPTYPE_TILT_TURN_M							= 6		! Tilt and Turn Mirrored
 	OPTYPE_BOTTOM_HUNG							= 7		! Bottom Hung									!
 	OPTYPE_TOP_HUNG								= 8		! Top Hung										!
-	OPTYPE_HOR_PIVOT							= 9		! Horizontal Pivot Hung							!	
+	OPTYPE_HOR_PIVOT							= 9		! Horizontal Pivot Hung							!
 	OPTYPE_VER_PIVOT							= 10	! Vertical Pivotted								!
 	OPTYPE_TILT_SLIDE							= 11	! Tilt and Slide
 	OPTYPE_DOUBLE_TILT_SLIDE					= 12	! in place of OPTYPE_LEFT_SLIDING
@@ -1170,8 +1170,8 @@ dim sMatNames[15]
 	MAT_SASH_OUT	= 13	: sMatNames[MAT_SASH_OUT] =		`Sash Inner Surface`		! Sash outer, if differs from frame
 	MAT_FOAM 		= 14 	: sMatNames[MAT_FOAM] =			`Foam`	 					! Foam fillings
 	MAT_SHUTSLAT	= 15	: sMatNames[MAT_SHUTSLAT] =		`Shutter Slats`		 		! Shutter slats
-if not(isWindow) then sMatNames[MAT_SASH_IN] = `Leaf Outer Surface` 
-if not(isWindow) then sMatNames[MAT_SASH_OUT] = `Leaf Inner Surface`	 
+if not(isWindow) then sMatNames[MAT_SASH_IN] = `Leaf Outer Surface`
+if not(isWindow) then sMatNames[MAT_SASH_OUT] = `Leaf Inner Surface`
 
 !iType2D - 2d pen settings
 dim sFillNames[14]
@@ -1278,7 +1278,7 @@ if bEnableSkinturning then
 		parameters	gs_reveal_left		= gs_reveal_left,
 					gs_reveal_top		= gs_reveal_top
 	endif
-	
+
 	if gs_reveal_type_bottom_int = 2 then	! no reveal
 		gs_reveal_bottom = 0
 		parameters gs_reveal_bottom = gs_reveal_bottom
@@ -1310,8 +1310,8 @@ fillPenFg_thermal	= gs_bFills * fillPenFg_thermal
 fillPenBg_thermal	= gs_bFills * fillPenBg_thermal
 
 gs_fillShCover		= gs_bFills * gs_fillShCover
-gs_penShCov_fg		= gs_bFills * gs_penShCov_fg 
-gs_penShCov_bg		= gs_bFills * gs_penShCov_bg 
+gs_penShCov_fg		= gs_bFills * gs_penShCov_fg
+gs_penShCov_bg		= gs_bFills * gs_penShCov_bg
 
 
 ! ==============================================================================
@@ -1486,7 +1486,7 @@ if GLOB_SCRIPT_TYPE = 4 | GLOB_SCRIPT_TYPE = 5 then
 									iUiID_OpeningType,	iParID_OpeningType,
 									iUiID_OpLines,		iParID_OpLines,
 									iUiID_WinSettOpModAttr,	iParID_WinSettOpModAttr,
-							
+
 									! Wall Opening group
 									iUiID_WallOpening,	iParID_WallOpening,
 									iUiID_Reveal,		iParID_Reveal,
@@ -1494,7 +1494,7 @@ if GLOB_SCRIPT_TYPE = 4 | GLOB_SCRIPT_TYPE = 5 then
 									iUiID_WallInset,	iParID_WallInset,
 									iUiID_MasonryArch,	iParID_MasonryArch,
 									iUiID_WallOpModelAttr,	iParID_WallOpModelAttr,
-							
+
 									! Fixtures and Fittings group
 									iUiID_FixtureFitting,	iParID_FixtureFitting,
 									iUiID_CustomCorner,		iParID_CustomCorner,
@@ -1506,7 +1506,7 @@ if GLOB_SCRIPT_TYPE = 4 | GLOB_SCRIPT_TYPE = 5 then
 									iUiID_Shutter,			iParID_Shutter,
 									iUiID_BayBowSillBoard,	iParID_BayBowSillBoard,
 									iUiID_FixFittingModAttr, iParID_FixFittingModAttr,
-							
+
 									iUiID_FloorPlanSection,	iParID_FloorPlanSection,
 									iUiID_Descriptions,		iParID_Descriptions,
 									iUiID_Product,			iParID_Product,
@@ -1537,7 +1537,7 @@ if GLOB_SCRIPT_TYPE = 4 | GLOB_SCRIPT_TYPE = 5 then
 									iUiID_OpLinesSideSashes,	iParID_OpLinesSideSashes,
 									iUiID_OpeningGar,		iParID_OpeningGar,
 									iUiID_DoorSettOpModAttr,	iParID_DoorSettOpModAttr,
-									
+
 									! Wall Opening group
 									iUiID_WallOpening,		iParID_WallOpening,
 									iUiID_Reveal,			iParID_Reveal,
@@ -1545,7 +1545,7 @@ if GLOB_SCRIPT_TYPE = 4 | GLOB_SCRIPT_TYPE = 5 then
 									iUiID_MasonryArch,		iParID_MasonryArch,
 									iUiID_Tolerances,		iParID_Tolerances,
 									iUiID_WallOpModelAttr,	iParID_WallOpModelAttr,
-									
+
 									! Fixtures and Fittings group
 									iUiID_FixtureFitting,	iParID_FixtureFitting,
 									iUiID_Threshold,		iParID_Threshold,
@@ -1556,7 +1556,7 @@ if GLOB_SCRIPT_TYPE = 4 | GLOB_SCRIPT_TYPE = 5 then
 									iUiID_CasingIn,			iParID_CasingIn,
 									iUiID_Shutter,			iParID_Shutter,
 									iUiID_FixFittingModAttr, iParID_FixFittingModAttr,
-						
+
 									iUiID_FloorPlanSection,	iParID_FloorPlanSection,
 									iUiID_MinSpace,			iParID_MinSpace,
 									iUiID_Descriptions,		iParID_Descriptions,
@@ -1630,7 +1630,7 @@ sUIFillS[FILL_HANDLE][FP_FILL] 		= `Handle Fill Type`
 sUIFillS[FILL_HANDLE][FP_LTYPE]		= `Handle Linetype`
 
 ! ==================================================================
-! Materials 
+! Materials
 ! ==================================================================
 
 define material "mSealant_WMCC" 20,
@@ -1783,7 +1783,7 @@ goto "endMasterSript"
 	endif
 	LeafBox[1][2]	= ac_unit_height - unitDUpper - unitDLower + leafDUpper + leafDLower
 	LeafBox[2][2]	= LeafBox[1][2]
-	
+
 	dim	LeafPos[][3]
 	if iLeafNum = 2 then
 		LeafPos[1][1]	= LeafBox[1][1]/2		! at center
@@ -1798,7 +1798,7 @@ goto "endMasterSript"
 	endif
 	LeafPos[1][2]	= ac_unit_height/2 - (unitDUpper - unitDLower)/2
 	LeafPos[2][2]	= LeafPos[1][2]
-	
+
 	LeafPos[1][3]	= 0
 	LeafPos[2][3]	= -OpenSign * \
 						( (gs_leaf_optype_m	= LEAF_2L_1SLIDING) |\
@@ -1904,7 +1904,7 @@ idxPage = idxPage + 1
 !--------------------------------------------------------------------------------
 if iUiID_Product  then
 	uiUsedPageIDs[idxPage][1]	= iUiID_Product		: uiUsedPageIDs[idxPage][2]		= iParID_Product
-	uiUsedPageNames[idxPage][1]	= `Product Settings`	
+	uiUsedPageNames[idxPage][1]	= `Product Settings`
 	if isWindow then
 		uiUsedPageNames[idxPage][2]	= "uiTab_WindowSettings_flat_WMCC"
 	else
@@ -2106,7 +2106,7 @@ for iTabs = 1 to vardim1(uiUsedPageIDs)
 		if gs_ui_current_page = iUiID_Descriptions then
 			gosub "pageCallListing"
 		endif
-	endif	
+	endif
 	if uiUsedPageIDs[iTabs][1]= iUiID_Product then
 		ui_page	uiUsedPageIDs[iTabs][1], uiUsedPageIDs[iTabs][2], uiUsedPageNames[iTabs][1], uiUsedPageNames[iTabs][2]
 		if gs_ui_current_page = iUiID_Product then
@@ -2158,7 +2158,7 @@ if isWindow then
 !	if	iWindowClass = WINCLASS_SINGLE_HUNG |\
 !		iWindowClass = WINCLASS_DOUBLE_HUNG |\
 !		iWindowClass = WINCLASS_HORIZONTAL_SLIDING then iPanelType = 2
-	
+
 	call "GS Corner Window Functions_WMCC",
 		parameters all	uiUsedPageIDs				= uiUsedPageIDs,
 !!						bOpeningDirection			= bOpeningDirection,
@@ -2244,7 +2244,7 @@ end
 !!												bFoldingDoor			= bFoldingDoor,
 !!												iDoorPanelType			= iDoorPanelType,
 !!												stHandleTypes 			= stHandleTypes,
-!!												gs_handle_type_m		= gs_handle_type_m, 
+!!												gs_handle_type_m		= gs_handle_type_m,
 !!												stLeafOpeningType		= stLeafOpeningType,
 !!												gs_leaf_optype_m		= gs_leaf_optype_m,
 !!												gs_leaf_num				= gs_leaf_num,
@@ -2451,11 +2451,11 @@ return
 	! ================================================================================
 	! ListField
 	! ================================================================================
-	
+
 	itemID = 1
-	
+
 	ui_listfield listFieldDoorOpSettAttrID, 0, 34, 444, 265 - 34
-	
+
 	ui_listitem itemID, listFieldDoorOpSettAttrID, "iDetlevel3D",		0,	"ui_list_detailLevel3D_flat_WMCC",	`3D Detail Level`	: itemID = itemID + 1
 	ui_listitem itemID, listFieldDoorOpSettAttrID, "iDetlevelSE",		0,	"ui_list_detailLevel3D_flat_WMCC",	`Section/Elevation Detail Level`	: itemID = itemID + 1
 	ui_listitem itemID, listFieldDoorOpSettAttrID, "gs_shadow",			0,	"ui_list_shadow_flat_WMCC"			: itemID = itemID + 1
@@ -2466,17 +2466,17 @@ return
 	! Override MVO for 3D Projections
 	! =============================================================================
 	itemID = 10
-	
+
 	ui_listitem itemID, listFieldDoorOpSettAttrID, "bOverride_MVO_3D", 				0		: itemID = itemID + 1
 	if bOverride_MVO_3D then
 		ui_listitem itemID, listFieldDoorOpSettAttrID, "or_bOplines3D", 			1		: itemID = itemID + 1
 	endif
-	
+
 	if or_bOplines3D & bOverride_MVO_3D then
 		ui_listitem itemID, listFieldDoorOpSettAttrID, "or_opLineType3dIn", 		1		: itemID = itemID + 1
 		ui_listitem itemID, listFieldDoorOpSettAttrID, "or_opLineType3dOut", 		1		: itemID = itemID + 1
 		ui_listitem itemID, listFieldDoorOpSettAttrID, "or_opLineStyle", 			1		: itemID = itemID + 1
-	
+
 		ui_listitem itemID, listFieldDoorOpSettAttrID, "or_opLinePen",	1,	"ui_list_contourPen_flat_WMCC"		: itemID = itemID + 1
 	endif
 
@@ -2485,7 +2485,7 @@ return
 	! ================================================================================
 	itemID = 60
 
-	ui_listitem itemID, listFieldDoorOpSettAttrID, 	"", 						0, 		"", `Surfaces`										: itemID = itemID + 1	
+	ui_listitem itemID, listFieldDoorOpSettAttrID, 	"", 						0, 		"", `Surfaces`										: itemID = itemID + 1
 	ui_listitem{2} itemID, listFieldDoorOpSettAttrID,	materialS[MAT_HANDLE],	1,		"ui_list_surface_flat_WMCC", sMatNameS[MAT_HANDLE]	: itemID = itemID + 1
 !	ui_listitem{2} itemID, listFieldDoorOpSettAttrID,	materialS[MAT_GLASS],	1,		"ui_list_surface_flat_WMCC", sMatNameS[MAT_GLASS]		: itemID = itemID + 1
 
@@ -2494,7 +2494,7 @@ return
 	! Frame and Leaf 3D Pens
 	! ================================================================================
 	itemID = 80
-	
+
 	ui_listitem itemID, listFieldDoorOpSettAttrID, "", 0, "", `Frame and Leaf 3D Pens`		: itemID = itemID + 1
 !	if bShowFrame3DPen then
 		ui_listitem itemID, listFieldDoorOpSettAttrID, "gs_frame_pen",				1,		"ui_list_pencolor_flat_WMCC"		: itemID = itemID + 1
@@ -2521,14 +2521,14 @@ return
 
 	yPos = yPos + 45
 
-	ui_style 0, 1	
+	ui_style 0, 1
 	ui_outfield `Inner surface`, 	x1, yPos, 135, 15
 	ui_style 0, 0
 	ui_infield{2} sui_MatIn, 		x1, yPos + 15, 135, 25
 
 	yPos = yPos + 45
 
-	ui_style 0, 1	
+	ui_style 0, 1
 	ui_outfield `Glass material`, 	x1, yPos, 135, 15
 	ui_style 0, 0
 	ui_infield{2} sui_MatGlass, 	x1, yPos + 15, 135, 25
@@ -2541,11 +2541,10 @@ return
 ! ------------------------------------------------------------------------------
 	xCompLogo	= 1
 	yCompLogo	= 2
-	hCompLogo	= 30						! logo height on UI								! TODO
-	wCompLogo	= (70/35) * hCompLogo		! real (width/height) of the logo file (pixel)	! TODO
-	dStartSep	= 61
+	hCompLogo	= 30
+	dStartSep	= xCompLogo + wCompLogo + 5
 
-!	ui_pict "company_logo", xCompLogo, yCompLogo, wCompLogo, hCompLogo, 1		! TODO
+	ui_pict sLogoName, xCompLogo, yCompLogo, wCompLogo, hCompLogo, 1		! TODO
 
 	ui_separator dStartSep, 29, 443, 29
 
@@ -2917,7 +2916,7 @@ endif
 
 CALL "Leaf_WMCC" Parameters all \
 	iOpeningType			= iOpeningTypes[1],											! Starting from 1
-	LeafBoxA				= ac_unit_width,											! For calculating leaf min/max sizes	
+	LeafBoxA				= ac_unit_width,											! For calculating leaf min/max sizes
 	LeafBoxB				= ac_unit_height,
 	returned_parameters xMinW, yMinH, xMaxW, yMaxH, 									! Absolute min/max sizes
 						xWarnMin, yWarnMin, xWarnMax, yWarnMax,							! Min/max sizes over that there is a warning
@@ -2931,14 +2930,14 @@ parameters	xMinW			= xMinW,
 			yMinH			= yMinH,
 			xMaxW			= xMaxW,
 			yMaxH			= yMaxH,
-			xWarnMin		= xWarnMin, 
-			yWarnMin		= yWarnMin, 
-			xWarnMax		= xWarnMax, 	
+			xWarnMin		= xWarnMin,
+			yWarnMin		= yWarnMin,
+			xWarnMax		= xWarnMax,
 			yWarnMax		= yWarnMax,
 			gs_list_glassarea		= calculatedArea,
 			gs_list_glassperimeter	= calculatedPerimeter
 
-!--------------- warning tab display control!--------------- 
+!--------------- warning tab display control!---------------
 
 WarnTypeS[1][1] = 0
 WarnTypeS[1][2] = 0
@@ -2946,7 +2945,7 @@ WarnTypeS[1][2] = 0
 bSizeConstraintViolated	=	(ac_unit_width  > xMaxW 		& xMaxW > EPS) \					!TODO xMaxW = 0 when there is not constraint -1
 						|	(ac_unit_height > yMaxH 		& yMaxH > EPS) \
 						|	(ac_unit_width  < xMinW + EPS	& xMinW > EPS) \
-						|	(ac_unit_height < yMinH + EPS	& yMinH > EPS) 
+						|	(ac_unit_height < yMinH + EPS	& yMinH > EPS)
 
 if bSizeConstraintViolated then
 	if	GLOB_MODPAR_NAME = "A" \
@@ -2986,7 +2985,7 @@ parameters UIWarnTypeS = WarnTypeS
 !---------------/warning tab display control!---------------
 
 values "iOpeningTypeS" iOpeningTypeValS
-						
+
 if	GLOB_MODPAR_NAME = "aOpeningS2D" \
 |	GLOB_MODPAR_NAME = "aOpeningS3D" \
 then
@@ -3002,7 +3001,7 @@ endif
 
 if GLOB_MODPAR_NAME = "bTilt" then
 	for _i = 1 to iNumberofZones
-		if aTiltS[_i] then 
+		if aTiltS[_i] then
 			aOpenings3D[_i] = 0
 		endif
 	next _i
@@ -3034,7 +3033,7 @@ if	GLOB_MODPAR_NAME = "iOpeningTypeS" then
 		! For combined windows
 		xHandle[3] = xHandle[1]
 		xMullionPos[2] = ac_unit_width / 2
-		
+
 		parameters 	xMullionPos	= xMullionPos,
 					xHandle		= xHandle
 	endif
@@ -3120,7 +3119,7 @@ if isWindow then
 						unitWidthArr				= unitWidthArr,
 						unitHeightArr				= unitHeightArr,
 						iDimLimitations				= iDimLimitations,
-						!----------Corner----------------	
+						!----------Corner----------------
 						gs_CornConnTypeEnable		= gs_CornConnTypeEnable,
 						bLeftCornerFunction			= bLeftCornerFunction,
 						leftCornerAngle				= leftCornerAngle,
@@ -3237,7 +3236,7 @@ endif
 if bUseDoublageSystem then
 	parWallThk	= WALL_THICKNESS
 	parameters parWallThk = parWallThk
-	
+
 	!!ac_wido_sill	= WALL_THICKNESS - DoublageThk
 	!!gs_wido_sill	= ac_wido_sill
 	parameters	ac_wido_sill	= ac_wido_sill,
@@ -3274,26 +3273,26 @@ if	gs_leaf_optype_m = LEAF_2L_2SLIDING then
 	values "gs_open_3D_2_w" range [0, maxOpenWidth]
 
 	if GLOB_MODPAR_NAME = "gs_open_2D_w" then
-		if gs_open_2D_2_w > (maxOpenWidth - gs_open_2D_w) then 
+		if gs_open_2D_2_w > (maxOpenWidth - gs_open_2D_w) then
 			gs_open_2D_2_w = (maxOpenWidth - gs_open_2D_w)
 			parameters gs_open_2D_2_w = gs_open_2D_2_w
 		endif
 	endif
 	if GLOB_MODPAR_NAME = "gs_open_2D_2_w" then
-		if gs_open_2D_w > (maxOpenWidth - gs_open_2D_2_w) then 
+		if gs_open_2D_w > (maxOpenWidth - gs_open_2D_2_w) then
 			gs_open_2D_w = (maxOpenWidth - gs_open_2D_2_w)
 			parameters gs_open_2D_w = gs_open_2D_w
 		endif
 	endif
 
 	if GLOB_MODPAR_NAME = "gs_open_3D_w" then
-		if gs_open_3D_2_w > (maxOpenWidth - gs_open_3D_w) then 
+		if gs_open_3D_2_w > (maxOpenWidth - gs_open_3D_w) then
 			gs_open_3D_2_w = (maxOpenWidth - gs_open_3D_w)
 			parameters gs_open_3D_2_w = gs_open_3D_2_w
 		endif
 	endif
 	if GLOB_MODPAR_NAME = "gs_open_3D_2_w" then
-		if gs_open_3D_w > (maxOpenWidth - gs_open_3D_2_w) then 
+		if gs_open_3D_w > (maxOpenWidth - gs_open_3D_2_w) then
 			gs_open_3D_w = (maxOpenWidth - gs_open_3D_2_w)
 			parameters gs_open_3D_w = gs_open_3D_w
 		endif
@@ -3551,12 +3550,12 @@ then
 		!!lFillS[FILL_GLASS]			= 1
 	endif
 
-	if	GLOB_MODPAR_NAME = "fillPenBg_sealant" then		
+	if	GLOB_MODPAR_NAME = "fillPenBg_sealant" then
 		pFillS[FILL_SEALANT][FP_BGPEN]		= fillPenBg_sealant
 	endif
 	if	GLOB_MODPAR_NAME = "fillPenFg_sealant" then
 		pFillS[FILL_SEALANT][FP_FGPEN]		= fillPenFg_sealant
-		!!pFillS[FILL_SEALANT][FP_CONTPEN]	= 
+		!!pFillS[FILL_SEALANT][FP_CONTPEN]	=
 	endif
 	if	GLOB_MODPAR_NAME = "fillType_sealant" then
 		fFillS[FILL_SEALANT]				= fillType_sealant
@@ -3570,20 +3569,20 @@ then
 		pFillS[FILL_THERMAL][FP_FGPEN]		= fillPenFg_thermal
 	endif
 	if	GLOB_MODPAR_NAME = "fillType_thermal" then
-		!!pFillS[FILL_THERMAL][FP_CONTPEN]	= 
+		!!pFillS[FILL_THERMAL][FP_CONTPEN]	=
 		fFillS[FILL_THERMAL]				= fillType_thermal
 
 		!!lFillS[FILL_THERMAL]				= 1
 	endif
 
-	if	GLOB_MODPAR_NAME = "gs_penShCov_bg" then		
+	if	GLOB_MODPAR_NAME = "gs_penShCov_bg" then
 		pFillS[FILL_EMPTY][FP_BGPEN]		= gs_penShCov_bg
 	endif
 	if	GLOB_MODPAR_NAME = "gs_penShCov_fg" then
 		pFillS[FILL_EMPTY][FP_FGPEN]		= gs_penShCov_fg
 	endif
 	if	GLOB_MODPAR_NAME = "gs_fillShCover" then
-		!!pFillS[FILL_EMPTY][FP_CONTPEN]	= 
+		!!pFillS[FILL_EMPTY][FP_CONTPEN]	=
 		fFillS[FILL_EMPTY]					= gs_fillShCover
 		!!lFillS[FILL_EMPTY]				= 1
 	endif
@@ -3675,9 +3674,9 @@ endif
 	</License>
 </Copyright>
 
-<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+<ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>22</Version>
+		<Version>25</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<StatBits>
 			<STBit_FixSize/>
@@ -9845,6 +9844,20 @@ endif
 			</Flags>
 			<Value><![CDATA["RAL3005-Wine_Red"]]></Value>
 		</String>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["FamilyName_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>36</Value>
+		</Integer>
 	</Parameters>
 </ParamSection>
 

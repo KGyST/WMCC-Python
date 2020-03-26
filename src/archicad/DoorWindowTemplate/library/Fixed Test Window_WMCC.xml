@@ -171,22 +171,22 @@ endif
 
 ! ==============================================================================
 ! ==============================================================================
-if abs (iLibError) > eps then 
+if abs (iLibError) > eps then
 	xCompLogo	= 1
 	yCompLogo	= 1
 	hCompLogo	= 30						! logo height on UI								! TODO
 	wCompLogo	= (70/35) * hCompLogo		! real (width/height) of the logo file (pixel)	! TODO
 	dStartSep	= 61
-	
+
 	! ------------------------------------------------------------------------------
-	
+
 	ui_dialog strUiDialogTitle
 
 	ui_current_page gs_ui_current_page
 	ui_page gs_ui_current_page, -1, strUiPageTitle, "menu_icon_alert_ac20"
-	
+
 	ui_separator dStartSep, 29, 443, 29
-	
+
 !	ui_pict "company_logo", xCompLogo, yCompLogo, wCompLogo, hCompLogo, 1
 
 	nameAC = ""
@@ -194,30 +194,30 @@ if abs (iLibError) > eps then
 	isWin = (strstr (nameAC, ".exe") or strstr (nameAC, ".EXE"))
 	ui_pict_button ui_link, strLinktoManufact, "", 282, 2 * isWin, 161, 25 - 4 * isWin, 0, BO_brandurl
 	! ------------------------------------------------------------------------------
-	
+
 	ui_pict "ui_exclamation_mark(2)_30x93", 1, 36, 30, 93, 1
 	ui_pict "ui_exclamation_mark(2)_30x93", 412, 36, 30, 93, 1
-	
+
 	ui_style 0, 1
 	ui_outfield uiStrError, 33, 36, 378, 66, 2
-	
+
 	ui_pict_button ui_link, uiStrDownloadMacroLib, "", 33, 105, 378, 22, 0, strProductLink
 	ui_style 0, 0
-	
+
 	ui_separator 1, 132, 442, 132
-	
+
 	! ------------------------------------------------------------------------------
-	
+
 	strBIMobject	= `To download more high quality objects please visit us at bimobject.com`
 	strWantToGet	= `Want to get more out of your BIM objects?`
 	strDownloadApp	= `Download our ArchiCAD app now!`
-	
+
 	! -----------------------------------------------------------------------------
-	
+
 	wLogo	= 169
 	xLogo	= (444 - wLogo) / 2
 	yLogo	= 137
-	
+
 	nIcon	= 5
 	dIcon	= 18
 	wIcon	= 32
@@ -226,24 +226,24 @@ if abs (iLibError) > eps then
 	yIcon	= yLogo + 76
 	dx		= wIcon + dIcon
 	wDLButton	= nIcon * wIcon + (nIcon - 1) * dIcon
-	
+
 	uilink_bimobject	= "http://www.bimobject.com"
 	uilink_bo_facebook	= "https://www.facebook.com/BIMobject"
 	uilink_bo_youtube	= "https://www.youtube.com/user/BIMobject/videos"
 	uilink_bo_twitter	= "https://twitter.com/BIMobject"
 	uilink_bo_linkedin	= "https://www.linkedin.com/company/bimobject"
 	uilink_bo_app		= "http://info.bimobject.com/archicad-app"
-	
+
 	yy = yLogo
 	ui_pict "bimobject_logo_info", xLogo, yy, 169, 30, 1
 	yy = yy + 33
-	
+
 	ui_outfield strWantToGet, 0, yy, 444, 14, 2
 	yy = yy + 18
-	
+
 	ui_button ui_link, strDownloadApp, xIcon, yy, wDLButton, 16, 0, uilink_bo_app
 	yy = yy + 42
-	
+
 	xx	= xIcon
 	ui_pict_button ui_link, "", "ui_icon_website", xx, yIcon, wIcon, hIcon, 0, uilink_bimobject
 	xx	= xx + dx
@@ -254,7 +254,7 @@ if abs (iLibError) > eps then
 	ui_pict_button ui_link, "", "ui_icon_twitter", xx, yIcon, wIcon, hIcon, 0, uilink_bo_twitter
 	xx	= xx + dx
 	ui_pict_button ui_link, "", "ui_icon_linkedin", xx, yIcon, wIcon, hIcon, 0, uilink_bo_linkedin
-	
+
 	ui_outfield strBIMobject, 0, 250, 444, 14, 2
 endif
 
@@ -359,9 +359,9 @@ http://www.bimobject.com
 	</License>
 </Copyright>
 
-<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+<ParamSection SectVersion="25" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
-		<Version>22</Version>
+		<Version>25</Version>
 		<AutoHotspots>no</AutoHotspots>
 		<HoleBits>
 			<WDBit_3DFrame/>
@@ -5595,6 +5595,20 @@ http://www.bimobject.com
 			</Flags>
 			<Value><![CDATA["Glass"]]></Value>
 		</String>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Default_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>69</Value>
+		</Integer>
 
 		<!-- Warnings: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
 
