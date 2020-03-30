@@ -1,0 +1,26 @@
+{
+  "Door_Window": {
+    "19": {
+      "path": "DoorWindowTemplate_19\\library",
+      "image_path": "DoorWindowTemplate_19\\library_images",
+      "current_minor_version": 20200101
+    },
+    "19_1": {
+      "path": "DoorWindowTemplate_19_1\\library",
+      "image_path": "DoorWindowTemplate_19_1\\library_images",
+      "current_minor_version": 20200131
+    }
+  },
+  "Kitchen Cabinets": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Kitchen Cabinets 18",
+      "current_minor_version": 2020010
+    }
+  },
+  "School Furniture": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\School Furniture 18",
+      "current_minor_version": 20200101
+    }
+  }
+}

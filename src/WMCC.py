@@ -14,7 +14,6 @@ import argparse
 
 import json
 import http.client, http.server, urllib.request, urllib.parse, urllib.error, webbrowser, urllib.parse, os, hashlib, base64
-# import pip
 import logging
 from PIL import Image
 import io
@@ -39,13 +38,23 @@ with open(APP_CONFIG, "r") as ac:
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
     ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
+    WEBHOOK_HOST                = appJSON["WEBHOOK_HOST"]
+    WEBHOOK_PORT                = appJSON["WEBHOOK_PORT"]
+    WEBHOOK_PATH                = appJSON["WEBHOOK_PATH"]
     LOGLEVEL                    = appJSON["LOGLEVEL"]
 
+    if isinstance(LOGLEVEL, str):
+        LOGLEVEL = {'notset':   0,
+                    'debug':    10,
+                    'info':     20,
+                    'warning':  30,
+                    'error':    40,
+                    'critical':    50, }[LOGLEVEL]
 
 ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
 TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
 WMCC_BRAND_NAME             = "WMCC"
-MATERIAL_BASE_OBJECT        = "_dev_material"
+MATERIAL_BASE_OBJECT        = "_dev_material"       # Maybe can be changed per project and goes to a json
 
 BO_AUTHOR                   = "BIMobject"
 BO_LICENSE                  = "CC BY-ND"
@@ -689,12 +698,12 @@ class Param(object):
         if type(inVal) == list:
             self.aVals = self.__toFormat(inVal)
             if self.value:
-                print("WARNING: value -> array change: %s" % self.name)
+                logging.warning("WARNING: value -> array change: %s" % self.name)
             self.value = None
         else:
             self.value = self.__toFormat(inVal)
             if self.aVals:
-                print("WARNING: array -> value change: %s" % self.name)
+                logging.warning("WARNING: array -> value change: %s" % self.name)
             self.aVals = None
 
     def __toFormat(self, inData):
@@ -1268,10 +1277,15 @@ def scanFolders (inFile, inRootFolder, library_images=False):
                 else:
                     scanFolders(src, inRootFolder, library_images=library_images)
             except KeyError:
-                print("KeyError %s" % f)
+                logging.warning("KeyError %s" % f)
                 continue
     except WindowsError:
-        pass
+        # Usually for nonexistent folders
+        if not os.path.exists(inFile):
+            absPath = os.path.abspath(inFile)
+            logging.warning(f"Folder to be scanned doesn't exitsts: {absPath}")
+        else:
+            raise
 
 
 def addImageFile(fileName, **kwargs):
@@ -1296,7 +1310,7 @@ def addFile(sourceFileName, **kwargs):
         dest_sourcenames[destItem.sourceFile.name.upper()] = destItem
     else:
         #FIXME File should be in library_additional, possibly worth of checking it or add a warning
-        print("Warning: %s not in replacement_dict" % sourceFileName)
+        logging.warning(("Warning: %s not in replacement_dict" % sourceFileName))
         return
     return destItem
 
@@ -1368,7 +1382,7 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
         source_image_dir_name = '"' + source_image_dir_name + '"'
 
     output = r'"%s" createcontainer "%s" "%s" %s "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName, source_image_dir_name, ADDITIONAL_IMAGE_DIR_NAME)
-    print("output: %s" % output)
+    logging.info("output: %s" % output)
 
     logging.info("createcontainer")
     with Popen(output, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
@@ -1377,7 +1391,7 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
 
     # check_output(output, shell=True)
 
-    print("*****LCF CREATION FINISHED SUCCESFULLY******")
+    logging.info("*****LCF CREATION FINISHED SUCCESFULLY******")
 
 
 def unitConvert(inParameterName,
@@ -1489,7 +1503,7 @@ def buildMacroSet(inData, main_version="19"):
 
     tempGDLDirName = tempfile.mkdtemp()
 
-    print("tempGDLDirName: %s" % tempGDLDirName)
+    logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
     startConversion(targetGDLDirName = tempGDLDirName, sourceImageDirName=source_image_dir_name)
 
@@ -1528,11 +1542,17 @@ def createBrandedProduct(inData):
     resetAll()
     family_name = inData["family_name"]
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
-    logging.info("tempGDLDirName: %s" % tempGDLDirName)
+    logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
-    projectPath = inData["path"]
-    imagePath = inData["imagePath"] if "imagePath" in inData else projectPath
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
+    with open(os.path.join(_SRC, "categoryData.json"), "r") as versionJSON:
+        settingsJSON = json.load(versionJSON)
+        main_version = inData["main_macroset_version"]
+        _cat  = inData["category"]
+        category = settingsJSON[_cat][main_version]
+        projectPath = category["path"]
+        imagePath = category["imagePath"] if "imagePath" in category else projectPath
+
+    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
 
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False)
@@ -1541,7 +1561,7 @@ def createBrandedProduct(inData):
     if 'materials' in inData:
         addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
-    JSONFileName = "macroset_" + inData["category"] + "_" + inData["main_macroset_version"] + ".json"
+    JSONFileName = "macroset_" + inData["category"] + "_" + main_version + ".json"
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
         translation = json.loads(translatorJSON.read())
 
@@ -1590,6 +1610,7 @@ def createBrandedProduct(inData):
         placeableS = []
 
         inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
+        minor_version = inputJson["minor_version"]
         _dest_dict = inputJson["objects"]
         dest_dict.update(_dest_dict)
         dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
@@ -1636,7 +1657,6 @@ def createBrandedProduct(inData):
                     destItem.parameters["sLogoName"] = logo_name
                     destItem.parameters["wCompLogo"] = logo_width
 
-    # For now:
     # --------------------------------------------------------
 
     startConversion(targetGDLDirName=tempGDLDirName)
@@ -1651,10 +1671,11 @@ def createBrandedProduct(inData):
     createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + inData["category"] + "_" + inData["main_macroset_version"] + "_" + inputJson["minor_version"] + ".lcf"
+    _macrosetName = 'macroset' + "_" + inData["category"] + "_" + main_version + "_" + minor_version + ".lcf"
     uploadFinishedObject(_paceableName, _macrosetName,
-                         inData["webhook_url"] if "webhook_url" in inData else "127.0.0.1",
-                         inData["webhook_path"] if "webhook_path" in inData else "/setfile" )
+                         inData["webhook_url"] if "webhook_url" in inData else WEBHOOK_HOST,
+                         inData["webhook_port"] if "webhook_port" in inData else WEBHOOK_PORT,
+                         inData["webhook_path"] if "webhook_path" in inData else WEBHOOK_PATH )
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
@@ -1667,28 +1688,30 @@ def createBrandedProduct(inData):
 
 def uploadFinishedObject(inFileName,
                          inMacrosetName,
-                         inWebhook_url="127.0.0.1" ,
-                         inWebhook_path = "/setfile",
-                         inPORT=5000):
+                         inWebhook_url,
+                         inPORT,
+                         inWebhook_path,
+                         ):
     """
     Uploads finished objects by calling a webhook with a POST message
-    FIXME doing it by using a blob storage
     """
     with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as file:
         _fileData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
-        _macrosetData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
 
-        urlDict = json.dumps({"object_name": inFileName,
-                              "base64_encoded_object": _fileData,
-                              "macroset_name": inMacrosetName,
-                              "base64_encoded_macroset": _macrosetData,
-                              })
+        with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as file:
+            _macrosetData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
 
-        headers = {"Content-type": "application/json", }
-        conn = http.client.HTTPConnection(inWebhook_url, port=inPORT)
-        conn.request("POST", inWebhook_path, urlDict, headers)
-        response = conn.getresponse().read()
-        logging.info(f"response: {response}")
+            urlDict = json.dumps({"object_name": inFileName,
+                                  "base64_encoded_object": _fileData,
+                                  "macroset_name": inMacrosetName,
+                                  "base64_encoded_macroset": _macrosetData,
+                                  })
+
+            headers = {"Content-type": "application/json", }
+            conn = http.client.HTTPConnection(inWebhook_url, port=inPORT)
+            conn.request("POST", inWebhook_path, urlDict, headers)
+            response = conn.getresponse().read()
+            logging.info(f"response: {response}")
 
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName=''):
@@ -1742,7 +1765,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                 shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
 
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
-    logging.info(r"x2l Command being executed...\n%s" % x2lCommand)
+    logging.debug(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:
         logging.debug("ac command:")
@@ -1760,7 +1783,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
             for k in list(id_dict.keys()):
                 d.write(id_dict[k] + "\n")
 
-    logging.info("x2l")
+    logging.debug("x2l")
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
@@ -1793,7 +1816,7 @@ def processOneXML(inData):
     destPath = os.path.join(tempdir, dest.relPath)
     destDir = os.path.dirname(destPath)
 
-    print("%s -> %s" % (srcPath, destPath,))
+    logging.info("%s -> %s" % (srcPath, destPath,))
 
     mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
     mdp.getroot().attrib[dest.sourceFile.ID] = dest.guid
@@ -1810,8 +1833,8 @@ def processOneXML(inData):
             m.find(dest.sourceFile.ID).text = d.guid
             _calledMacroSet.add(d.name.upper())
         except KeyError:
-            if not os.path.exists(os.path.join(SOURCE_DIR_NAME, projectPath, "library_additional", key + ".gsm")):
-                print("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
+            if not os.path.exists(os.path.join(SOURCE_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")):
+                logging.warning("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
 
     for sect in ["./Script_2D", "./Script_3D", "./Script_1D", "./Script_PR", "./Script_UI", "./Script_VL",
                  "./Script_FWM", "./Script_BWM", ]:
@@ -1880,7 +1903,7 @@ def processOneXML(inData):
     for m in mdp.findall("./Ancestry/" + dest.sourceFile.ID):
         guid = m.text
         if guid.upper() in id_dict:
-            print("ANCESTRY: %s" % guid)
+            logging.debug("ANCESTRY: %s" % guid)
             par = m.getparent()
             par.remove(m)
 

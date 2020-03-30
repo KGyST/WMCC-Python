@@ -1,0 +1,46 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "description": "The root schema comprises the entire JSON document.",
+    "required": [
+        "items"
+    ],
+    "properties": {
+        "items": {
+            "type": "array",
+            "description": "An explanation about the purpose of this instance.",
+            "items": {
+                "type": "object",
+                "description": "An explanation about the purpose of this instance.",
+                "required": [
+                    "item",
+                    "properties"
+                ],
+                "properties": {
+                    "item": {
+                        "type": "string",
+                        "description": "An explanation about the purpose of this instance."
+                    },
+                    "properties": {
+                        "type": "array",
+                        "description": "An explanation about the purpose of this instance.",
+                        "items": {
+                            "type": "array",
+                            "description": "An explanation about the purpose of this instance.",
+                            "items": {
+                                "type": "object",
+                                "description": "An explanation about the purpose of this instance.",
+                                "required": [
+                                    "major_version",
+                                    "path",
+                                    "macroset",
+                                    "current_minor_version"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

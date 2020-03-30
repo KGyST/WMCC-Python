@@ -12,8 +12,16 @@ APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 
 with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
-    LOGLEVEL                    = appJSON["LOGLEVEL"]
     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
+    LOGLEVEL                    = appJSON["LOGLEVEL"]
+
+    if isinstance(LOGLEVEL, str):
+        LOGLEVEL = {'notset':   0,
+                    'debug':    10,
+                    'info':     20,
+                    'warning':  30,
+                    'error':    40,
+                    'critical': 50, }[LOGLEVEL]
 
 dictConfig({
     'version': 1,
@@ -81,7 +89,7 @@ class ParameterExtractorEngine(Resource):
 
 class ReceiveFile_Test(Resource):
     """
-    dummy class mimicing receiver side
+    dummy class mimicing receiver side, only for testing purposes
     """
     def post(self):
         import os

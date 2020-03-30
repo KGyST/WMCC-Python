@@ -29,10 +29,34 @@
     "description": "Log file location of python script, can be in a temporary storage."
   },
   "LOGLEVEL": {
-    "type": "integer",
-    "Log level",
-  "enum": [0, 10, 20, 30, 40, 50]
-	
+    "type": [
+      "integer",
+      "string"
+    ],
+    "description": "Log level for WMCC.py and application.py, integer or can be a string",
+    "enum": [
+      0,
+      10,
+      20,
+      30,
+      40,
+      50,
+      "notset",
+      "debug",
+      "info",
+      "warning",
+      "error",
+      "critical"
+    ]
+  },
+  "WEBHOOK_HOST": {
+    "type": "string"
+  },
+  "WEBHOOK_PORT": {
+    "type": "integer"
+  },
+  "WEBHOOK_PATH": {
+    "type": "string"
   },
   "required": [
     "DEBUG",
