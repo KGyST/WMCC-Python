@@ -56,7 +56,7 @@ api = Api(app)
 
 class ArchicadEngine(Resource):
     def get(self):
-        return {"test": "it's working!"}
+        return {"test": "It's working!"}
 
     def post(self):
         data = request.get_json()
@@ -98,10 +98,6 @@ class ReceiveFile_Test(Resource):
         TARGET_DIR = os.path.join(r".\src", r"Target2")
 
         data = request.get_json()
-
-        # string = data['base64_encoded_object']
-        # padding = 4 - (len(string) % 4)
-        # string = string + ("=" * padding)
 
         logging.info(f"ReceiveFile_Test {data['object_name']} ")
 

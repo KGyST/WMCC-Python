@@ -34,6 +34,7 @@ APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     DEBUG                       = appJSON["DEBUG"]
+    MULTIPROCESS                = appJSON["MULTIPROCESS"]
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
@@ -1463,6 +1464,8 @@ def buildMacroSet(inData, main_version="19"):
     '''
     global projectPath, imagePath
 
+    logging.debug("*** Macroset creation started ***")
+
     if "main_version" in inData:
         main_version = inData["main_version"]
 
@@ -1539,6 +1542,8 @@ def createBrandedProduct(inData):
     """
     global dest_sourcenames, family_name, projectPath, imagePath, dest_dict
 
+    logging.debug("*** Product creation started ***")
+
     resetAll()
     family_name = inData["family_name"]
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
@@ -1557,7 +1562,9 @@ def createBrandedProduct(inData):
 
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False)
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
+
     # --------------------------------------------------------
+
     if 'materials' in inData:
         addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
@@ -1735,12 +1742,14 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
 
     ## If single processing is needed for debugging, disable this
-    _pool = mp.Pool()
-    _pool.map(processOneXML, pool_map)
-
+    if MULTIPROCESS:
+        logging.debug(f"CPU count: {mp.cpu_count()}")
+        _pool = mp.Pool(mp.cpu_count())
+        _pool.map(processOneXML, pool_map)
+    else:
     ## ...and enable this
-    # for _p in pool_map:
-    #     processOneXML(_p)
+        for _p in pool_map:
+            processOneXML(_p)
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -1816,7 +1825,8 @@ def processOneXML(inData):
     destPath = os.path.join(tempdir, dest.relPath)
     destDir = os.path.dirname(destPath)
 
-    logging.info("%s -> %s" % (srcPath, destPath,))
+    if not MULTIPROCESS:
+        logging.info("%s -> %s" % (srcPath, destPath,))
 
     mdp = etree.parse(srcPath, etree.XMLParser(strip_cdata=False))
     mdp.getroot().attrib[dest.sourceFile.ID] = dest.guid
@@ -1834,7 +1844,8 @@ def processOneXML(inData):
             _calledMacroSet.add(d.name.upper())
         except KeyError:
             if not os.path.exists(os.path.join(SOURCE_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")):
-                logging.warning("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
+                if not MULTIPROCESS:
+                    logging.warning("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
 
     for sect in ["./Script_2D", "./Script_3D", "./Script_1D", "./Script_PR", "./Script_UI", "./Script_VL",
                  "./Script_FWM", "./Script_BWM", ]:
@@ -1903,7 +1914,8 @@ def processOneXML(inData):
     for m in mdp.findall("./Ancestry/" + dest.sourceFile.ID):
         guid = m.text
         if guid.upper() in id_dict:
-            logging.debug("ANCESTRY: %s" % guid)
+            if not MULTIPROCESS:
+                logging.debug("ANCESTRY: %s" % guid)
             par = m.getparent()
             par.remove(m)
 
