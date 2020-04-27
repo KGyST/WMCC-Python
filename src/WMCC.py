@@ -1602,12 +1602,12 @@ def createBrandedProduct(inData):
             materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
             # --------- textures -----------
-            if ('texture_name' in material) and ('base64_encoded_texture' in material):
+            if 'base64_encoded_texture' in material:
                 if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
                     os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
-                with open(os.path.join(tempGDLDirName, 'surfaces', material['texture_name']), 'wb') as textureFile:
+                with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
                     textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
-                materialMacro.parameters['sTextureName'] = os.path.splitext(material['texture_name'])[0]
+                materialMacro.parameters['sTextureName'] = os.path.splitext(material['name'] + "_texture.png")[0]
 
         # --------- logo -----------
         _logo = None
