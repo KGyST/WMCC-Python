@@ -1,13 +1,10 @@
 {
   "DEBUG": true,
   "CLEANUP": false,
-  "MULTIPROCESS": true,
+  "MULTIPROCESS": false,
   "WMCC_PATH": "D:\\Git\\WMCC Python",
   "TARGET_GDL_DIR_NAME": ".\\src\\Target",
   "ARCHICAD_LOCATION": ".\\src\\archicad\\LP_XMLConverter_18",
   "APP_LOG_FILE_LOCATION": ".\\myapp.log",
-  "LOGLEVEL": 10,
-  "WEBHOOK_HOST": "wmcc.ad.bimobject.com",
-  "WEBHOOK_PORT": 80,
-  "WEBHOOK_PATH": "/setfile"
+  "LOGLEVEL": 10
 }

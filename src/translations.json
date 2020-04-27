@@ -28,7 +28,7 @@
         "Name": "Öffnungslichte Höhe"
       }
     },
-    "Inner frame material": {
+    "Interior Frame Material": {
       "ARCHICAD": {
         "Name": "sui_MatIn",
         "Type": "PAR_STRING"
@@ -53,7 +53,7 @@
         "Name": "Innenmaterial"
       }
     },
-    "Outer frame material": {
+    "Exterior Frame Material": {
       "ARCHICAD": {
         "Name": "sui_MatOut",
         "Type": "PAR_STRING"
@@ -78,7 +78,7 @@
         "Name": "Außenmaterial"
       }
     },
-    "Glazing": {
+    "Glass Panel Material": {
       "ARCHICAD": {
         "Name": "sui_MatGlass",
         "Type": "PAR_STRING"
@@ -88,24 +88,6 @@
       },
       "Revit GER": {
         "Name": "Glasmaterial"
-      }
-    },
-    "iRed": {
-      "ARCHICAD": {
-        "Name": "iRed",
-        "Type": "PAR_INT"
-      }
-    },
-    "iGreen": {
-      "ARCHICAD": {
-        "Name": "iGreen",
-        "Type": "PAR_INT"
-      }
-    },
-    "iBlue": {
-      "ARCHICAD": {
-        "Name": "iBlue",
-        "Type": "PAR_INT"
       }
     },
     "rgb": {

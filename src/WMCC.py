@@ -1548,7 +1548,7 @@ def buildMacroSet(inData, main_version="19"):
 
 def createBrandedProduct(inData):
     """
-    creates branded product's lcf based on macroset's into a json file(like macroset_200130.json) extracted names/guids
+    Creates branded product's lcf based on macroset's into a json file(like macroset_200130.json) extracted names/guids
     :param inData:    JSON
     :return:
     """
@@ -1589,10 +1589,9 @@ def createBrandedProduct(inData):
         #FIXME organize it into a factory class
         availableMaterials = []
         for material in inData['template']['materials']:
-            availableMaterials += [material["name"] + "_" + family_name]
+            availableMaterials += [material["name"]]                    #  + "_" + family_name
             materialMacro = addFile(MATERIAL_BASE_OBJECT,
-                                    targetFileName=material["name"] + "_" + family_name)
-            #TODO
+                                    targetFileName=material["name"]) #  + "_" + family_name
             for parameter in material['parameters']:
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
                 materialMacro.parameters[translatedParameter] = unitConvert(
@@ -1625,7 +1624,7 @@ def createBrandedProduct(inData):
             with open(os.path.join(tempGDLDirName, logo_name + ".png"), 'wb') as logoFile:
                 i.save(logoFile, 'PNG')
 
-        # ------ placeables ------
+        # ------ placeables and their prameters ------
 
         placeableS = []
 
@@ -1649,10 +1648,6 @@ def createBrandedProduct(inData):
                 s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
                 destItem.parameters["sMaterialS"] = s_
                 destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
-
-                destItem.parameters["sui_MatIn"]    = availableMaterials[0]
-                destItem.parameters["sui_MatOut"]   = availableMaterials[0]
-                destItem.parameters["sui_MatGlass"] = availableMaterials[0]
 
                 for parameter in family['parameters']:
                     parameterName = parameter['name']
@@ -1678,6 +1673,12 @@ def createBrandedProduct(inData):
                                 parameter,
                                 family['parameters'][parameter],
                                 translation)
+
+                # ------Material parameters --------------------------------------------------
+
+                for translatedParameterName in family['materialParameters']:
+                    translatedParameter = translation["parameters"][translatedParameterName['name']]['ARCHICAD']["Name"]
+                    destItem.parameters[translatedParameter] = translatedParameterName['value']
 
                 # ------Manufacturer parameters --------------------------------------------------
 
