@@ -110,7 +110,7 @@
     },
     "rgb": {
       "ARCHICAD": {
-        "Name": "iRGBS",
+        "Name": "iDiffuseColorS",
         "Type": "PAR_INT"
       }
     },

@@ -39,9 +39,9 @@ with open(APP_CONFIG, "r") as ac:
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
     ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
-    WEBHOOK_HOST                = appJSON["WEBHOOK_HOST"]
-    WEBHOOK_PORT                = appJSON["WEBHOOK_PORT"]
-    WEBHOOK_PATH                = appJSON["WEBHOOK_PATH"]
+    # WEBHOOK_HOST                = appJSON["WEBHOOK_HOST"]
+    # WEBHOOK_PORT                = appJSON["WEBHOOK_PORT"]
+    # WEBHOOK_PATH                = appJSON["WEBHOOK_PATH"]
     LOGLEVEL                    = appJSON["LOGLEVEL"]
 
     if isinstance(LOGLEVEL, str):
@@ -209,7 +209,7 @@ class ParamSection:
     def insertBefore(self, inParName, inEtree):
         self.__paramList.insert(self.__getIndex(inParName), inEtree)
 
-    def insertAsChild(self, inParentParName, inEtree):
+    def insertAsChild(self, inParentParName, inPar):
         """
         inserting under a title
         :param inParentParName:
@@ -218,8 +218,8 @@ class ParamSection:
         :return:
         """
         base = self.__getIndex(inParentParName)
-        i = 1
         if self.__paramList[base].iType == PAR_TITLE:
+            i = 1
             nP = self.__paramList[base + i]
             try:
                 while nP.iType != PAR_TITLE and \
@@ -227,9 +227,15 @@ class ParamSection:
                     i += 1
                     nP = self.__paramList[base + i]
             except IndexError:
+                #FIXME testing inserting right at the end
                 pass
-            self.__paramList.insert(base + i, inEtree)
-            self.__paramDict[inEtree.name] = inEtree
+            if isinstance(inPar, Param):
+                self.__paramList.insert(base + i, inPar)
+                self.__paramDict[inPar.name] = inPar
+            else:
+                #_element
+                self.__paramList.insert(base + i, Param(inPar))
+                self.__paramDict[inPar.attrib['Name']] = Param(inPar)
 
     def remove_param(self, inParName):
         if inParName in self.__paramDict:
@@ -243,7 +249,10 @@ class ParamSection:
         pass
 
     def __getIndex(self, inName):
-        return [p.name for p in self.__paramList].index(inName)
+        if inName in self.__paramDict:
+            return self.__paramList.index(self.__paramDict[inName])
+        else:
+            return -1
 
     def get(self, inName):
         '''
@@ -590,7 +599,10 @@ class ReszieableGDLDict(dict):
                 if isinstance(inObj[i], list):
                     _d[i+1] = ReszieableGDLDict(inObj[i], firstLevel=False)
                 else:
-                    _d[i+1] = inObj[i]
+                    if firstLevel:
+                        _d[i+1] = ReszieableGDLDict([inObj[i]], firstLevel=False)
+                    else:
+                        _d[i+1] = inObj[i]
                 _size = max(_size, i+1)
             super().__init__(_d)
             self.size = _size
@@ -1545,17 +1557,18 @@ def createBrandedProduct(inData):
     logging.debug("*** Product creation started ***")
 
     resetAll()
-    family_name = inData["family_name"]
+    family_name = inData["productName"]
     tempGDLDirName = os.path.join(tempfile.mkdtemp(), family_name)
+    os.makedirs(tempGDLDirName)
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
-    with open(os.path.join(_SRC, "categoryData.json"), "r") as versionJSON:
-        settingsJSON = json.load(versionJSON)
-        main_version = inData["main_macroset_version"]
-        _cat  = inData["category"]
-        category = settingsJSON[_cat][main_version]
-        projectPath = category["path"]
-        imagePath = category["imagePath"] if "imagePath" in category else projectPath
+    with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
+        settingsJSON = json.load(categoryData)
+        main_version = inData["ARCHICAD_template"]["main_macroset_version"]
+        category  = inData["ARCHICAD_template"]["category"]
+        subCategory = settingsJSON[category][main_version]
+        projectPath = subCategory["path"]
+        imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
 
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
@@ -1568,18 +1581,18 @@ def createBrandedProduct(inData):
     if 'materials' in inData:
         addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
-    JSONFileName = "macroset_" + inData["category"] + "_" + main_version + ".json"
+    JSONFileName = "macroset_" + category + "_" + main_version + ".json"
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
         translation = json.loads(translatorJSON.read())
 
         # ------ surfaces ------
         #FIXME organize it into a factory class
         availableMaterials = []
-        for material in inData['materials']:
-            availableMaterials += [material["material_name"] + "_" + family_name]
+        for material in inData['template']['materials']:
+            availableMaterials += [material["name"] + "_" + family_name]
             materialMacro = addFile(MATERIAL_BASE_OBJECT,
-                                    targetFileName=material["material_name"] + "_" + family_name)
-
+                                    targetFileName=material["name"] + "_" + family_name)
+            #TODO
             for parameter in material['parameters']:
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
                 materialMacro.parameters[translatedParameter] = unitConvert(
@@ -1587,7 +1600,7 @@ def createBrandedProduct(inData):
                     material['parameters'][parameter],
                     translation
                 )
-            materialMacro.parameters["sSurfaceName"] = material["material_name"] + "_" + family_name
+            materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
             # --------- textures -----------
             if ('texture_name' in material) and ('base64_encoded_texture' in material):
@@ -1622,43 +1635,66 @@ def createBrandedProduct(inData):
         dest_dict.update(_dest_dict)
         dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
 
-        for family in inData['family_types']:
-            sourceFile = family["source_file"]
+        for family in inData['variationsData']:
+            sourceFile = inData["ARCHICAD_template"]["source_file"]
             destItem = addFileUsingMacroset(sourceFile, dest_dict,
-                                            targetFileName=family["type_name"])
+                                            targetFileName=family["variationName"])
 
             placeableS.append(destItem.name)
 
             if 'parameters' in family:
                 for _i in range(14):
-                    destItem.parameters["sMaterialValS"][_i] = availableMaterials + ["Glass_" + family_name]
+                    destItem.parameters["sMaterialValS"][_i] = availableMaterials # + ["Glass_" + family_name]
 
                 s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
                 destItem.parameters["sMaterialS"] = s_
-                destItem.parameters["iVersionNumber"][1] = [int(inData["minimum_required_macroset_version"]), 0]
+                destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
+
+                destItem.parameters["sui_MatIn"]    = availableMaterials[0]
+                destItem.parameters["sui_MatOut"]   = availableMaterials[0]
+                destItem.parameters["sui_MatGlass"] = availableMaterials[0]
 
                 for parameter in family['parameters']:
-                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                    if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
-                        firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
+                    parameterName = parameter['name']
+                    if parameterName in translation["parameters"]:
+                        translatedParameter = translation["parameters"][parameterName]['ARCHICAD']["Name"]
+                        if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                            firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
 
-                        if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
-                            secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
+                            if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
+                                secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
 
-                            destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
-                                parameter,
-                                family['parameters'][parameter],
-                                translation)
+                                destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
+                                    parameter,
+                                    family['parameters'][parameter],
+                                    translation)
+                            else:
+                                destItem.parameters[translatedParameter][firstPosition] = unitConvert(
+                                    parameter,
+                                    family['parameters'][parameter],
+                                    translation)
                         else:
-                            destItem.parameters[translatedParameter][firstPosition] = unitConvert(
+                            destItem.parameters[translatedParameter] = unitConvert(
                                 parameter,
                                 family['parameters'][parameter],
                                 translation)
-                    else:
-                        destItem.parameters[translatedParameter] = unitConvert(
-                            parameter,
-                            family['parameters'][parameter],
-                            translation)
+
+                # ------Manufacturer parameters --------------------------------------------------
+
+                for parameter in family['dataParameters']:
+                    parameterDescription = parameter['name']
+                    #FIXME better renaming, char change/removal
+                    parameterName = 'mp_' + '_'.join(parameterDescription.split(' '))[:32]
+
+                    par = Param(inType = PAR_STRING,
+                        inName = parameterName,
+                        inDesc = parameter['name'],
+                        inValue = parameter['value'],
+                        inAVals = None,
+                        inChild=True,
+                                )
+
+                    destItem.parameters.insertAsChild("gs_list", par.eTree, )
             if _logo:
                 if "sLogoName" in destItem.parameters and "wCompLogo" in destItem.parameters:
                     destItem.parameters["sLogoName"] = logo_name
@@ -1673,20 +1709,20 @@ def createBrandedProduct(inData):
         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
             f.write(masterGDL)
 
-    fileName = inData["category"] + "_" + family_name
+    fileName = inData['ARCHICAD_template']["category"] + "_" + family_name
 
     createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + inData["category"] + "_" + main_version + "_" + minor_version + ".lcf"
+    _macrosetName = 'macroset' + "_" + inData['ARCHICAD_template']["category"] + "_" + main_version + "_" + minor_version + ".lcf"
     uploadFinishedObject(_paceableName, _macrosetName,
-                         inData["webhook_url"] if "webhook_url" in inData else WEBHOOK_HOST,
-                         inData["webhook_port"] if "webhook_port" in inData else WEBHOOK_PORT,
-                         inData["webhook_path"] if "webhook_path" in inData else WEBHOOK_PATH )
+                         inData["webhook"],
+                         80,
+                         )
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
-    os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
+        os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
     return {"placeables": placeableS,
             "materials": availableMaterials,
@@ -1695,30 +1731,52 @@ def createBrandedProduct(inData):
 
 def uploadFinishedObject(inFileName,
                          inMacrosetName,
-                         inWebhook_url,
+                         inWebhook,
                          inPORT,
-                         inWebhook_path,
                          ):
     """
     Uploads finished objects by calling a webhook with a POST message
     """
-    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as file:
-        _fileData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
 
-        with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as file:
-            _macrosetData = base64.urlsafe_b64encode(file.read()).decode("utf-8")
+    parseResult = urllib.parse.urlparse(inWebhook)
+    webhook_url = parseResult[1]
+    webhook_path = parseResult[2]
+    brandId         = urllib.parse.parse_qs(parseResult[4])['brandId']
+    productPageId   = urllib.parse.parse_qs(parseResult[4])['productPageId']
+    fileType        = urllib.parse.parse_qs(parseResult[4])['fileType']
 
-            urlDict = json.dumps({"object_name": inFileName,
-                                  "base64_encoded_object": _fileData,
-                                  "macroset_name": inMacrosetName,
-                                  "base64_encoded_macroset": _macrosetData,
+    headers = {"Content-type": "application/json", }
+    conn = http.client.HTTPConnection(webhook_url, port=inPORT)
+
+    with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
+        _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
+
+        macroSetURLDict = json.dumps({"macroset_name": inMacrosetName,
+                              "base64_encoded_macroset": _macrosetData,
+                              "brandId": brandId,
+                              "productPageId": productPageId,
+                              "fileType": fileType,
+                              })
+
+        conn.request("POST", webhook_path, macroSetURLDict, headers)
+        response = conn.getresponse()
+        logging.info(f"Macroset uploaded, response: {response.status} {response.reason} {response.msg}")
+
+    conn = http.client.HTTPConnection(webhook_url, port=inPORT)
+
+    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as placeableObject:
+        _placeableObjectData = base64.urlsafe_b64encode(placeableObject.read()).decode("utf-8")
+
+        fileURLDict = json.dumps({"object_name": inFileName,
+                              "base64_encoded_object": _placeableObjectData,
+                              "brandId": brandId,
+                              "productPageId": productPageId,
+                              "fileType": fileType,
                                   })
 
-            headers = {"Content-type": "application/json", }
-            conn = http.client.HTTPConnection(inWebhook_url, port=inPORT)
-            conn.request("POST", inWebhook_path, urlDict, headers)
-            response = conn.getresponse().read()
-            logging.info(f"response: {response}")
+        conn.request("POST", webhook_path, fileURLDict, headers)
+        response = conn.getresponse()
+        logging.info(f"Placeable uploaded, response: {response.status} {response.reason} {response.msg}")
 
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName=''):
