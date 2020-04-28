@@ -3,12 +3,14 @@
     "19": {
       "path": "DoorWindowTemplate_19\\library",
       "image_path": "DoorWindowTemplate_19\\library_images",
-      "current_minor_version": 20200101
+      "current_minor_version": 20200101,
+      "macros": ["DoorWindowTemplate_19\\library\\macros"]
     },
     "19_1": {
       "path": "DoorWindowTemplate_19_1\\library",
       "image_path": "DoorWindowTemplate_19_1\\library_images",
-      "current_minor_version": 20200131
+      "current_minor_version": 20200131,
+      "macros": ["DoorWindowTemplate_19_1\\library\\macros"]
     }
   },
   "Kitchen Cabinets": {

@@ -197,11 +197,11 @@ class ParamSection:
         if isinstance(item, str):
             return self.__paramDict[item]
 
-    def append(self, inEtree, inParName):
+    def append(self, inParam, inParName):
         #Adding param to the end
-        self.__paramList.append(inEtree)
-        if not isinstance(inEtree, etree._Comment):
-            self.__paramDict[inParName] = inEtree
+        self.__paramList.append(inParam)
+        if not isinstance(inParam, etree._Comment):
+            self.__paramDict[inParName] = inParam
 
     def insertAfter(self, inParName, inEtree):
         self.__paramList.insert(self.__getIndex(inParName) + 1, inEtree)
@@ -576,7 +576,7 @@ class ParamSection:
                      inAVals=arrayValues)
 
 
-class ReszieableGDLDict(dict):
+class ResizeableGDLDict(dict):
     """
     List child with incexing from 1 instead of 0
     writing outside of list size resizes list
@@ -597,33 +597,46 @@ class ReszieableGDLDict(dict):
             _size = 0
             for i in range(len(inObj)):
                 if isinstance(inObj[i], list):
-                    _d[i+1] = ReszieableGDLDict(inObj[i], firstLevel=False)
+                    _d[i+1] = ResizeableGDLDict(inObj[i], firstLevel=False)
                 else:
                     if firstLevel:
-                        _d[i+1] = ReszieableGDLDict([inObj[i]], firstLevel=False)
+                        _d[i+1] = ResizeableGDLDict([inObj[i]], firstLevel=False)
                     else:
                         _d[i+1] = inObj[i]
                 _size = max(_size, i+1)
             super().__init__(_d)
             self.size = _size
-        else:
+        elif isinstance(inObj, ResizeableGDLDict):
             super().__init__(inObj)
+            self.size = inObj.size
+            firstLevel = inObj.firstLevel
+        elif not firstLevel:
+            super().__init__({1: inObj})
             self.size = 0
         self.firstLevel = firstLevel
 
 
     def __getitem__(self, item):
         if item not in self:
-            dict.__setitem__(self, item, ReszieableGDLDict({}, firstLevel = False))
+            dict.__setitem__(self, item, ResizeableGDLDict({}, firstLevel = False))
             self.size = max(self.size, item)
         return dict.__getitem__(self, item)
 
     def __setitem__(self, key, value, firstLevel=True):
-        if self.firstLevel and isinstance(value, list):
-            dict.__setitem__(self, key, ReszieableGDLDict(value, firstLevel = False))
+        if self.firstLevel:
+            if isinstance(value, list):
+                dict.__setitem__(self, key, ResizeableGDLDict(value, firstLevel = False))
+            else:
+                dict.__setitem__(self, key, ResizeableGDLDict([value], firstLevel = False))
         else:
             dict.__setitem__(self, key, value)
         self.size = max(self.size, key)
+
+    def __deepcopy__(self, inO):
+        res = ResizeableGDLDict(self)
+        res.firstLevel = self.firstLevel
+        res.size = self.size
+        return res
 
 
 class Param(object):
@@ -697,15 +710,15 @@ class Param(object):
 
     def __setitem__(self, key, value):
         if isinstance(value, list):
-            self._aVals[key+1] = self.__toFormat(value)
-            self.__fd = max(self.__fd, key+1)
-            self.__sd = max(self.__sd, len(value))
+            self._aVals[key] = self.__toFormat(value)
+            self.__fd = max(self.__fd, key)
+            self.__sd = len(value)
         else:
             if self.__sd == 0:
-                self._aVals[key+1] = self.__toFormat(value)
+                self._aVals[key] = self.__toFormat(value)
             else:
-                self._aVals[key+1] = self.__toFormat(value)
-            self.__fd = max(self.__fd, key+1)
+                self._aVals[key] = self.__toFormat(value)
+            self.__fd = max(self.__fd, key)
 
     def setValue(self, inVal):
         if type(inVal) == list:
@@ -889,13 +902,13 @@ class Param(object):
             self.__fd = int(inValues.attrib["FirstDimension"])
             self.__sd = int(inValues.attrib["SecondDimension"])
             if self.__sd > 0:
-                self._aVals = ReszieableGDLDict()
+                self._aVals = ResizeableGDLDict()
                 for v in inValues.iter("AVal"):
                     x = int(v.attrib["Column"])
                     y = int(v.attrib["Row"])
                     self._aVals[y][x] = self.__toFormat(v.text)
             else:
-                self._aVals = ReszieableGDLDict()
+                self._aVals = ResizeableGDLDict()
                 for v in inValues.iter("AVal"):
                     y = int(v.attrib["Row"])
                     self._aVals[y][1] = self.__toFormat(v.text)
@@ -905,7 +918,7 @@ class Param(object):
             self.__sd = len(inValues[0]) if isinstance(inValues[0], list) and len (inValues[0]) > 1 else 0
 
             _v = list(map(self.__toFormat, inValues))
-            self._aVals = ReszieableGDLDict(_v)
+            self._aVals = ResizeableGDLDict(_v)
             self.aValsTail = '\n' + 2 * '\t'
         else:
             self._aVals = None
@@ -1423,6 +1436,10 @@ def unitConvert(inParameterName,
                 "cm": 0.01,
                 "mm" : 0.001}
 
+    if not inTranslationLib:
+        #No translation needed
+        return inParameterValue
+
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
 
@@ -1546,6 +1563,49 @@ def buildMacroSet(inData, main_version="19"):
     return {'LCFName': _fileNameWithoutExtension + ".json"}
 
 
+def setParameter(inJSONSection, inDestItem, inTranslationDict):
+    '''
+    :param inJSONSection:
+    :param inDestItem:
+    :param inTranslationDict:
+    :return:
+    '''
+    for parameter in inJSONSection['parameters']:
+        parameterName = parameter['name']
+        firstPosition   = None if not "FirstPosition" in parameter else parameter["FirstPosition"]
+        secondPosition  = None if not "SecondPosition" in parameter else parameter["SecondPosition"]
+
+        if parameterName in inTranslationDict["parameters"]:
+            translatedParameterName = inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]
+            translationDict = inTranslationDict
+        else:
+            translatedParameterName = parameterName
+            translationDict = None
+
+        if parameterName in inTranslationDict["parameters"]:
+            if "FirstPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
+                firstPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["FirstPosition"]
+
+                if "SecondPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
+                    secondPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["SecondPosition"]
+            #FIXME if parameter is not in translationDict it's thrown
+            if firstPosition:
+                inDestItem.parameters[translatedParameterName][firstPosition][1]  = unitConvert(
+                    parameterName,
+                    parameter["value"],
+                    translationDict)
+                if secondPosition:
+                    inDestItem.parameters[translatedParameterName][firstPosition][secondPosition] = unitConvert(
+                        parameterName,
+                        parameter["value"],
+                        translationDict)
+            else:
+                inDestItem.parameters[translatedParameterName] = unitConvert(
+                    parameterName,
+                    parameter["value"],
+                    translationDict)
+
+
 def createBrandedProduct(inData):
     """
     Creates branded product's lcf based on macroset's into a json file(like macroset_200130.json) extracted names/guids
@@ -1564,8 +1624,9 @@ def createBrandedProduct(inData):
 
     with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
         settingsJSON = json.load(categoryData)
-        main_version = inData["ARCHICAD_template"]["main_macroset_version"]
-        category  = inData["ARCHICAD_template"]["category"]
+        AC_template = inData["template"]["ARCHICAD_template"]
+        main_version = AC_template["main_macroset_version"]
+        category  = AC_template["category"]
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
         imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
@@ -1624,7 +1685,7 @@ def createBrandedProduct(inData):
             with open(os.path.join(tempGDLDirName, logo_name + ".png"), 'wb') as logoFile:
                 i.save(logoFile, 'PNG')
 
-        # ------ placeables and their prameters ------
+        # ------ placeables and their parameters ------
 
         placeableS = []
 
@@ -1635,44 +1696,23 @@ def createBrandedProduct(inData):
         dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
 
         for family in inData['variationsData']:
-            sourceFile = inData["ARCHICAD_template"]["source_file"]
+            sourceFile = AC_template["source_file"]
             destItem = addFileUsingMacroset(sourceFile, dest_dict,
                                             targetFileName=family["variationName"])
 
             placeableS.append(destItem.name)
 
-            if 'parameters' in family:
-                for _i in range(14):
-                    destItem.parameters["sMaterialValS"][_i] = availableMaterials # + ["Glass_" + family_name]
+            for _i in range(1, 15):
+                destItem.parameters["sMaterialValS"][_i]  = availableMaterials
 
-                s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
-                destItem.parameters["sMaterialS"] = s_
-                destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
+            s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+            destItem.parameters["sMaterialS"] = s_
+            destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
 
-                for parameter in family['parameters']:
-                    parameterName = parameter['name']
-                    if parameterName in translation["parameters"]:
-                        translatedParameter = translation["parameters"][parameterName]['ARCHICAD']["Name"]
-                        if "FirstPosition" in translation["parameters"][parameter]['ARCHICAD']:
-                            firstPosition = translation["parameters"][parameter]['ARCHICAD']["FirstPosition"]
+            setParameter(family, destItem, translation)
 
-                            if "SecondPosition" in translation["parameters"][parameter]['ARCHICAD']:
-                                secondPosition = translation["parameters"][parameter]['ARCHICAD']["SecondPosition"]
-
-                                destItem.parameters[translatedParameter][firstPosition][secondPosition] = unitConvert(
-                                    parameter,
-                                    family['parameters'][parameter],
-                                    translation)
-                            else:
-                                destItem.parameters[translatedParameter][firstPosition] = unitConvert(
-                                    parameter,
-                                    family['parameters'][parameter],
-                                    translation)
-                        else:
-                            destItem.parameters[translatedParameter] = unitConvert(
-                                parameter,
-                                family['parameters'][parameter],
-                                translation)
+            if 'parameters' in AC_template:
+                setParameter(AC_template, destItem, translation)
 
                 # ------Material parameters --------------------------------------------------
 
@@ -1710,12 +1750,12 @@ def createBrandedProduct(inData):
         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
             f.write(masterGDL)
 
-    fileName = inData['ARCHICAD_template']["category"] + "_" + family_name
+    fileName = AC_template["category"] + "_" + family_name
 
     createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + inData['ARCHICAD_template']["category"] + "_" + main_version + "_" + minor_version + ".lcf"
+    _macrosetName = 'macroset' + "_" + AC_template["category"] + "_" + main_version + "_" + minor_version + ".lcf"
     uploadFinishedObject(_paceableName, _macrosetName,
                          inData["webhook"],
                          80,

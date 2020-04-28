@@ -1,6 +1,6 @@
 {
   "parameters": {
-    "Rough Width": {
+    "Width": {
       "Measurement": "mm",
       "ARCHICAD": {
         "Name": "A",
@@ -14,7 +14,7 @@
         "Name": "Öffnungslichte Breite"
       }
     },
-    "Rough Height": {
+    "Height": {
       "Measurement": "mm",
       "ARCHICAD": {
         "Name": "B",
