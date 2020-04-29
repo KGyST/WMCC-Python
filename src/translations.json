@@ -160,39 +160,15 @@
         "Type": "PAR_REAL"
       }
     },
-    "iSpecularRed": {
+    "iSpecularColorS": {
       "ARCHICAD": {
-        "Name": "iSpecularRed",
+        "Name": "iSpecularColorS",
         "Type": "PAR_INT"
       }
     },
-    "iSpecularGreen": {
+    "iEmissionColorS": {
       "ARCHICAD": {
-        "Name": "iSpecularGreen",
-        "Type": "PAR_INT"
-      }
-    },
-    "iSpecularBlue": {
-      "ARCHICAD": {
-        "Name": "iSpecularBlue",
-        "Type": "PAR_INT"
-      }
-    },
-    "iEmissionRed": {
-      "ARCHICAD": {
-        "Name": "iEmissionRed",
-        "Type": "PAR_INT"
-      }
-    },
-    "iEmissionGreen": {
-      "ARCHICAD": {
-        "Name": "iEmissionGreen",
-        "Type": "PAR_INT"
-      }
-    },
-    "iEmissionBlue": {
-      "ARCHICAD": {
-        "Name": "iEmissionBlue",
+        "Name": "iEmissionColorS",
         "Type": "PAR_INT"
       }
     },

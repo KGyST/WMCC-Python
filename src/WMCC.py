@@ -39,9 +39,6 @@ with open(APP_CONFIG, "r") as ac:
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
     ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
-    # WEBHOOK_HOST                = appJSON["WEBHOOK_HOST"]
-    # WEBHOOK_PORT                = appJSON["WEBHOOK_PORT"]
-    # WEBHOOK_PATH                = appJSON["WEBHOOK_PATH"]
     LOGLEVEL                    = appJSON["LOGLEVEL"]
 
     if isinstance(LOGLEVEL, str):
@@ -709,6 +706,9 @@ class Param(object):
         return self._aVals[item]
 
     def __setitem__(self, key, value):
+        if key == 0:
+            logging.error(f"0 indexing in {self.name}, NOT done")
+            return
         if isinstance(value, list):
             self._aVals[key] = self.__toFormat(value)
             self.__fd = max(self.__fd, key)
@@ -1270,7 +1270,7 @@ def resetAll():
     all_keywords.clear()
 
 
-def scanFolders (inFile, inRootFolder, library_images=False):
+def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[]):
     """
     scanning input dir recursively to set up xml and image files' list
     :param inFile:  folder actually to be scanned
@@ -1300,8 +1300,8 @@ def scanFolders (inFile, inRootFolder, library_images=False):
                             #     sI.isEncodedImage = True
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
                             sI.isEncodedImage = library_images
-                else:
-                    scanFolders(src, inRootFolder, library_images=library_images)
+                elif os.path.relpath(src, SOURCE_DIR_NAME) not in folders_to_skip:
+                    scanFolders(src, inRootFolder, library_images=library_images, folders_to_skip=folders_to_skip)
             except KeyError:
                 logging.warning("KeyError %s" % f)
                 continue
@@ -1588,7 +1588,6 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
 
                 if "SecondPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
                     secondPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["SecondPosition"]
-            #FIXME if parameter is not in translationDict it's thrown
             if firstPosition:
                 inDestItem.parameters[translatedParameterName][firstPosition][1]  = unitConvert(
                     parameterName,
@@ -1604,6 +1603,9 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
                     parameterName,
                     parameter["value"],
                     translationDict)
+        else:
+            #FIXME if parameter is not in translationDict it's thrown
+            logging.warning(f"Parameter {parameterName} is NOT used in {inDestItem.name}")
 
 
 def createBrandedProduct(inData):
@@ -1634,7 +1636,7 @@ def createBrandedProduct(inData):
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
 
-    scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False)
+    scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
