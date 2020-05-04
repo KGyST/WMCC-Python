@@ -1240,9 +1240,10 @@ class StrippedSourceXML:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inName, inFullPath):
+    def __init__(self, inName, inFullPath, inGUID):
         self.name = inName
         self.fullPath = inFullPath
+        self.guid = inGUID
 
 
 class StrippedDestXML:
@@ -1547,12 +1548,12 @@ def buildMacroSet(inData, main_version="19"):
 
     for k, v in dest_dict.items():
         # dest_dict[k].sourceFile.scripts = None
-        _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, )
+        _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, v.sourceFile.guid, )
         _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
-    jsonData = jsonpickle.encode({  "minor_version": str(minor_version),
-                                    "objects": _stripped_dest_dict}, )
+    jsonData = json.dumps(json.loads(jsonpickle.encode({  "minor_version": str(minor_version),
+                                    "objects": _stripped_dest_dict}, )), indent=4)
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
@@ -1614,7 +1615,7 @@ def createBrandedProduct(inData):
     :param inData:    JSON
     :return:
     """
-    global dest_sourcenames, family_name, projectPath, imagePath, dest_dict
+    global dest_sourcenames, family_name, projectPath, imagePath, dest_dict, id_dict
 
     logging.debug("*** Product creation started ***")
 
@@ -1695,6 +1696,7 @@ def createBrandedProduct(inData):
         minor_version = inputJson["minor_version"]
         _dest_dict = inputJson["objects"]
         dest_dict.update(_dest_dict)
+        id_dict = {d.sourceFile.guid.upper(): d.guid for d in dest_dict.values()}
         dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
 
         for family in inData['variationsData']:
@@ -1840,6 +1842,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  "pict_dict": pict_dict,
                  "dest_dict": dest_dict,
                  "family_name": family_name,
+                 "id_dict": id_dict,
                  } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
 
     ## If single processing is needed for debugging, disable this
