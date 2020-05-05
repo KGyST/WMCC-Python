@@ -1760,7 +1760,7 @@ def createBrandedProduct(inData):
 
     _paceableName = fileName + ".lcf"
     _macrosetName = 'macroset' + "_" + AC_template["category"] + "_" + main_version + "_" + minor_version + ".lcf"
-    uploadFinishedObject(_paceableName, _macrosetName,
+    success = uploadFinishedObject(_paceableName, _macrosetName,
                          inData["webhook"],
                          80,
                          )
@@ -1769,10 +1769,12 @@ def createBrandedProduct(inData):
         shutil.rmtree(tempGDLDirName)
         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
-    return {"placeables": placeableS,
+    if success :
+        return {"placeables": placeableS,
             "materials": availableMaterials,
             "macroSet": _macrosetName}
-
+    else:
+        return {"Error: client side TimeOut"}
 
 def uploadFinishedObject(inFileName,
                          inMacrosetName,
@@ -1793,36 +1795,40 @@ def uploadFinishedObject(inFileName,
     headers = {"Content-type": "application/json", }
     conn = http.client.HTTPConnection(webhook_url, port=inPORT)
 
-    with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
-        _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
+    try:
+        with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
+            _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
 
-        macroSetURLDict = json.dumps({"macroset_name": inMacrosetName,
-                              "base64_encoded_macroset": _macrosetData,
-                              "brandId": brandId,
-                              "productPageId": productPageId,
-                              "fileType": fileType,
-                              })
-
-        conn.request("POST", webhook_path, macroSetURLDict, headers)
-        response = conn.getresponse()
-        logging.info(f"Macroset uploaded, response: {response.status} {response.reason} {response.msg}")
-
-    conn = http.client.HTTPConnection(webhook_url, port=inPORT)
-
-    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as placeableObject:
-        _placeableObjectData = base64.urlsafe_b64encode(placeableObject.read()).decode("utf-8")
-
-        fileURLDict = json.dumps({"object_name": inFileName,
-                              "base64_encoded_object": _placeableObjectData,
-                              "brandId": brandId,
-                              "productPageId": productPageId,
-                              "fileType": fileType,
+            macroSetURLDict = json.dumps({"macroset_name": inMacrosetName,
+                                  "base64_encoded_macroset": _macrosetData,
+                                  "brandId": brandId,
+                                  "productPageId": productPageId,
+                                  "fileType": fileType,
                                   })
 
-        conn.request("POST", webhook_path, fileURLDict, headers)
-        response = conn.getresponse()
-        logging.info(f"Placeable uploaded, response: {response.status} {response.reason} {response.msg}")
+            conn.request("POST", webhook_path, macroSetURLDict, headers)
+            response = conn.getresponse()
+            logging.info(f"Macroset uploaded, response: {response.status} {response.reason} {response.msg}")
 
+        conn = http.client.HTTPConnection(webhook_url, port=inPORT)
+
+        with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as placeableObject:
+            _placeableObjectData = base64.urlsafe_b64encode(placeableObject.read()).decode("utf-8")
+
+            fileURLDict = json.dumps({"object_name": inFileName,
+                                  "base64_encoded_object": _placeableObjectData,
+                                  "brandId": brandId,
+                                  "productPageId": productPageId,
+                                  "fileType": fileType,
+                                      })
+
+            conn.request("POST", webhook_path, fileURLDict, headers)
+            response = conn.getresponse()
+            logging.info(f"Placeable uploaded, response: {response.status} {response.reason} {response.msg}")
+        return True
+    except TimeoutError:
+        logging.ERROR(f"Object cretation is successful but client didn't respond: TimeoutError")
+        return False
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName=''):
     """
