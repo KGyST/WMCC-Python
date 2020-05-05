@@ -1760,21 +1760,42 @@ def createBrandedProduct(inData):
 
     _paceableName = fileName + ".lcf"
     _macrosetName = 'macroset' + "_" + AC_template["category"] + "_" + main_version + "_" + minor_version + ".lcf"
-    success = uploadFinishedObject(_paceableName, _macrosetName,
-                         inData["webhook"],
-                         80,
-                         )
+    # success = uploadFinishedObject(_paceableName, _macrosetName,
+    #                      inData["webhook"],
+    #                      80,
+    #                      )
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
-    if success :
-        return {"placeables": placeableS,
-            "materials": availableMaterials,
-            "macroSet": _macrosetName}
-    else:
-        return {"Error: client side TimeOut"}
+    # if success :
+    #     return {"placeables": placeableS,
+    #         "materials": availableMaterials,
+    #         "macroSet": _macrosetName}
+    # else:
+    #     return {"response": "Error: client side TimeOut"}
+
+    return createResponesFiles(_paceableName, _macrosetName,
+                               )
+
+def createResponesFiles(inFileName,
+                         inMacrosetName,):
+    """
+    Creates finished objects
+    """
+    with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
+        _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
+
+    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as placeableObject:
+        _placeableObjectData = base64.urlsafe_b64encode(placeableObject.read()).decode("utf-8")
+
+    return {"macroset_name": inMacrosetName,
+            "base64_encoded_macroset": _macrosetData,
+            "object_name": inFileName,
+            "base64_encoded_object": _placeableObjectData,
+            }
+
 
 def uploadFinishedObject(inFileName,
                          inMacrosetName,
