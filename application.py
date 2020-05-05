@@ -41,7 +41,7 @@ dictConfig({
     },
     'root': {
         'level': LOGLEVEL,
-        'handlers': ['custom_handler']
+        'handlers': ['wsgi', 'custom_handler']
     }
 })
 

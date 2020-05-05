@@ -1760,21 +1760,10 @@ def createBrandedProduct(inData):
 
     _paceableName = fileName + ".lcf"
     _macrosetName = 'macroset' + "_" + AC_template["category"] + "_" + main_version + "_" + minor_version + ".lcf"
-    # success = uploadFinishedObject(_paceableName, _macrosetName,
-    #                      inData["webhook"],
-    #                      80,
-    #                      )
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
-
-    # if success :
-    #     return {"placeables": placeableS,
-    #         "materials": availableMaterials,
-    #         "macroSet": _macrosetName}
-    # else:
-    #     return {"response": "Error: client side TimeOut"}
 
     return createResponesFiles(_paceableName, _macrosetName,
                                )
@@ -1804,6 +1793,7 @@ def uploadFinishedObject(inFileName,
                          ):
     """
     Uploads finished objects by calling a webhook with a POST message
+    UNUSED NOW
     """
 
     parseResult = urllib.parse.urlparse(inWebhook)
