@@ -1656,11 +1656,11 @@ def createBrandedProduct(inData):
             availableMaterials += [material["name"]]                    #  + "_" + family_name
             materialMacro = addFile(MATERIAL_BASE_OBJECT,
                                     targetFileName=material["name"]) #  + "_" + family_name
-            for parameter in material['parameters']:
+            for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
                 translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
                 materialMacro.parameters[translatedParameter] = unitConvert(
                     parameter,
-                    material['parameters'][parameter],
+                    material[parameter],
                     translation
                 )
             materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
