@@ -1827,7 +1827,7 @@ def uploadFinishedObject(inFileName,
             logging.info(f"Placeable uploaded, response: {response.status} {response.reason} {response.msg}")
         return True
     except TimeoutError:
-        logging.ERROR(f"Object cretation is successful but client didn't respond: TimeoutError")
+        logging.error(f"Object cretation is successful but client didn't respond: TimeoutError")
         return False
 
 def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName=''):
