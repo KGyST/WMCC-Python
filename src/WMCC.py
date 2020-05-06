@@ -13,7 +13,7 @@ import copy
 import argparse
 
 import json
-import http.client, http.server, urllib.request, urllib.parse, urllib.error, webbrowser, urllib.parse, os, hashlib, base64
+import http.client, http.server, urllib.request, urllib.parse, urllib.error, urllib.parse, os, base64
 import logging
 from PIL import Image
 import io
@@ -2059,20 +2059,27 @@ def processOneXML(inData):
 
 
 def enQueueJob(inEndPoint, inData, inPID):
+    jobQueue = {
+        "isJobActive": False,
+        "jobList": []}
+
     jobData = {"endPoint":  inEndPoint,
                "data":      inData,
                "PID":       inPID}
 
-    while not os.access(JOBDATA_PATH, os.R_OK):
-        sleep(1)
+    if os.path.exists(JOBDATA_PATH):
+        while not os.access(JOBDATA_PATH, os.R_OK):
+            sleep(1)
 
-    jobFile = open(JOBDATA_PATH, "r")
-    jobQueue = json.load(jobFile)
+        jobFile = open(JOBDATA_PATH, "r")
+        jobQueue = json.load(jobFile)
+        jobFile.close()
+
     jobQueue["jobList"].append(jobData)
-    jobFile.close()
 
-    while not os.access(JOBDATA_PATH, os.W_OK):
-        sleep(1)
+    if os.path.exists(JOBDATA_PATH):
+        while not os.access(JOBDATA_PATH, os.W_OK):
+            sleep(1)
 
     with open(JOBDATA_PATH, "w") as jobFile:
         json.dump(jobQueue, jobFile, indent=4)
@@ -2080,7 +2087,7 @@ def enQueueJob(inEndPoint, inData, inPID):
     if not jobQueue["isJobActive"]:
         deQueueJob()
     else:
-        print("ACTIVE")
+        logging.debug("A DeQueue is ACTIVE")
 
 
 def deQueueJob():
@@ -2116,7 +2123,11 @@ def deQueueJob():
             result = {"result": f"An unspecified server error occured: {e}"}
             # raise
 
-        resultDict = json.load(open(RESULTDATA_PATH, "r"))
+        resultDict = {}
+
+        if os.path.exists(RESULTDATA_PATH):
+            resultDict = json.load(open(RESULTDATA_PATH, "r"))
+
         resultDict[job["PID"]] = result
 
         with open(RESULTDATA_PATH, "w") as resultFile:
