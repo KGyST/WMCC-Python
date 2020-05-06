@@ -7,6 +7,8 @@ from logging.config import dictConfig
 import os
 import json
 
+import time
+
 _SRC                        = r".\src"
 APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 
@@ -14,6 +16,8 @@ with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
     LOGLEVEL                    = appJSON["LOGLEVEL"]
+    JOBDATA_PATH                = os.path.join(_SRC, "Target", appJSON["JOBDATA"])
+    RESULTDATA_PATH             = os.path.join(_SRC, "Target", appJSON["RESULTDATA"])
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -47,12 +51,36 @@ dictConfig({
 
 
 from src.WMCC import (
-    createBrandedProduct,
-    buildMacroSet,
     extractParams,
+    enQueueJob,
 )
 
 api = Api(app)
+
+def getResult(inPID):
+    result = None
+    sPID = str(inPID)
+
+    while not result:
+        while not os.access(RESULTDATA_PATH, os.R_OK):
+            time.sleep(1)
+        with open(RESULTDATA_PATH, "r") as resultFile:
+            try:
+                resultQueue = json.load(resultFile)
+            except json.JSONDecodeError:
+                #WTF
+                pass
+            if sPID in resultQueue:
+                result = resultQueue[sPID]
+                del resultQueue[sPID]
+        if result:
+            while not os.access(RESULTDATA_PATH, os.W_OK):
+                time.sleep(1)
+            with open(RESULTDATA_PATH, "w") as resultFile:
+                json.dump(resultQueue, resultFile, indent=4)
+
+    return result
+
 
 class ArchicadEngine(Resource):
     def get(self):
@@ -61,9 +89,10 @@ class ArchicadEngine(Resource):
     def post(self):
         data = request.get_json()
 
-        result = createBrandedProduct(data)
+        pid = os.getpid()
+        enQueueJob("/", data, pid)
 
-        return result
+        return getResult(pid)
 
 
 class CreateLCFEngine(Resource):
@@ -72,9 +101,11 @@ class CreateLCFEngine(Resource):
     """
     def post(self):
         data = request.get_json()
-        reData = buildMacroSet(data)
-        #FIXME what to do with older versions of this file?
-        return reData
+
+        pid = os.getpid()
+        enQueueJob("/createmacroset", data, pid)
+
+        return getResult(pid)
 
 
 class ParameterExtractorEngine(Resource):

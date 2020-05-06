@@ -90,7 +90,7 @@
         "Name": "Glasmaterial"
       }
     },
-    "rgb": {
+    "RGB": {
       "ARCHICAD": {
         "Name": "iDiffuseColorS",
         "Type": "PAR_INT"

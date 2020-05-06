@@ -3,7 +3,7 @@ from os import listdir
 import uuid
 import re
 import tempfile
-from subprocess import check_output, Popen, PIPE, DEVNULL
+from subprocess import Popen, PIPE, DEVNULL
 import shutil
 import datetime
 import jsonpickle
@@ -17,6 +17,7 @@ import http.client, http.server, urllib.request, urllib.parse, urllib.error, web
 import logging
 from PIL import Image
 import io
+from time import sleep
 
 #------------------ External modules------------------
 
@@ -40,6 +41,8 @@ with open(APP_CONFIG, "r") as ac:
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
     ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
     LOGLEVEL                    = appJSON["LOGLEVEL"]
+    JOBDATA_PATH                = os.path.join(_SRC, "Target", appJSON["JOBDATA"])
+    RESULTDATA_PATH             = os.path.join(_SRC, "Target", appJSON["RESULTDATA"])
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -1617,7 +1620,7 @@ def createBrandedProduct(inData):
     """
     global dest_sourcenames, family_name, projectPath, imagePath, dest_dict, id_dict
 
-    logging.debug("*** Product creation started ***")
+    logging.debug(f"*** Product creation started *** {inData['productName']}")
 
     resetAll()
     family_name = inData["productName"]
@@ -2050,3 +2053,90 @@ def processOneXML(inData):
         pass
     with open(destPath, "wb") as file_handle:
         file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
+
+
+# ---------------------Job queue--------------------
+
+
+def enQueueJob(inEndPoint, inData, inPID):
+    jobData = {"endPoint":  inEndPoint,
+               "data":      inData,
+               "PID":       inPID}
+
+    while not os.access(JOBDATA_PATH, os.R_OK):
+        sleep(1)
+
+    jobFile = open(JOBDATA_PATH, "r")
+    jobQueue = json.load(jobFile)
+    jobQueue["jobList"].append(jobData)
+    jobFile.close()
+
+    while not os.access(JOBDATA_PATH, os.W_OK):
+        sleep(1)
+
+    with open(JOBDATA_PATH, "w") as jobFile:
+        json.dump(jobQueue, jobFile, indent=4)
+
+    if not jobQueue["isJobActive"]:
+        deQueueJob()
+    else:
+        print("ACTIVE")
+
+
+def deQueueJob():
+    result = None
+
+    if not checkIfReady():
+        # Another process must be busy
+        return
+
+    jobFile = open(JOBDATA_PATH, "r")
+    jobQueue = json.load(jobFile)
+
+    jobList = jobQueue["jobList"]
+
+    if jobList and not jobQueue["isJobActive"]:
+        job = jobList[0]
+        jobQueue["jobList"] = jobList[1:]
+        jobQueue["isJobActive"] = True
+
+        while not os.access(JOBDATA_PATH, os.W_OK):
+            sleep(1)
+
+        with open(JOBDATA_PATH, "w") as jobFile:
+            json.dump(jobQueue, jobFile, indent=4)
+
+        endPoint = job['endPoint']
+        try:
+            if endPoint == "/":
+                result = createBrandedProduct(job['data'])
+            elif endPoint == "/createmacroset":
+                result = buildMacroSet(job['data'])
+        except Exception as e:
+            result = {"result": f"An unspecified server error occured: {e}"}
+            # raise
+
+        resultDict = json.load(open(RESULTDATA_PATH, "r"))
+        resultDict[job["PID"]] = result
+
+        with open(RESULTDATA_PATH, "w") as resultFile:
+            json.dump(resultDict, resultFile, indent=4)
+
+    jobFile = open(JOBDATA_PATH, "r")
+    jobQueue = json.load(jobFile)
+
+    jobQueue["isJobActive"] = False
+
+    with open(JOBDATA_PATH, "w") as jobFile:
+        json.dump(jobQueue, jobFile, indent=4)
+
+    if jobQueue["jobList"]:
+        deQueueJob()
+
+
+def checkIfReady():
+    while not os.access(JOBDATA_PATH, os.R_OK):
+        sleep(1)
+
+    jobData = json.load(open(JOBDATA_PATH, "r"))
+    return not jobData["isJobActive"]
