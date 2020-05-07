@@ -10,6 +10,3 @@ itsdangerous
 Jinja2
 MarkupSafe
 Werkzeug
-
-redis==3.4.1
-rq==1.2.2
