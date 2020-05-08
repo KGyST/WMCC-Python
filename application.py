@@ -6,8 +6,11 @@ from flask_restful import Resource, Api
 from logging.config import dictConfig
 import os
 import json
+import functools
+import logging
 
 import time
+import signal
 
 _SRC                        = r".\src"
 APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
@@ -90,6 +93,7 @@ class ArchicadEngine(Resource):
         data = request.get_json()
 
         pid = os.getpid()
+        logging.debug("".join(["/", "PID: ", str(pid)]))
         enQueueJob("/", data, pid)
 
         return getResult(pid)
@@ -103,6 +107,8 @@ class CreateLCFEngine(Resource):
         data = request.get_json()
 
         pid = os.getpid()
+        logging.debug("".join(["/createmacroset", "PID: ", str(pid)]))
+
         enQueueJob("/createmacroset", data, pid)
 
         return getResult(pid)
@@ -143,10 +149,49 @@ class ReceiveFile_Test(Resource):
         return ({"result": "00, OK, 00, 00"})
 
 
+class ResetJobQueue(Resource):
+    def post(self):
+        while not os.access(JOBDATA_PATH, os.R_OK):
+            time.sleep(1)
+
+        with open(JOBDATA_PATH, "r") as jobFile:
+            jobQueue = json.load(jobFile)
+
+            kill = functools.partial(os.kill, signal.SIGTERM)
+
+            jobsToKill = [str(j['PID']) for j in jobQueue["jobList"]]
+            if "activeJobPID" in jobQueue:
+                jobsToKill += [str(jobQueue["activeJobPID"])]
+            logging.info(' '.join(jobsToKill))
+
+            map(kill, [j['PID'] for j in jobQueue["jobList"]])
+
+        jobQueue = {
+            "isJobActive": False,
+            "jobList": []}
+
+        while not os.access(JOBDATA_PATH, os.W_OK):
+            time.sleep(1)
+
+        with open(JOBDATA_PATH, "w") as jobFile:
+            json.dump(jobQueue, jobFile, indent=4)
+
+        resultDict = {}
+
+        while not os.access(RESULTDATA_PATH, os.W_OK):
+            time.sleep(1)
+
+        with open(RESULTDATA_PATH, "w") as resultFile:
+            json.dump(resultDict, resultFile, indent=4)
+
+        return {'result': 'OK',
+                'jobs_killed': ' '.join(jobsToKill)}
+
 api.add_resource(ArchicadEngine, '/')
 api.add_resource(CreateLCFEngine, '/createmacroset')
 api.add_resource(ParameterExtractorEngine, '/extractparams')
 api.add_resource(ReceiveFile_Test, '/setfile')
+api.add_resource(ResetJobQueue, '/resetjobqueue')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

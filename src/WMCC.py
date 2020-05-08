@@ -1340,7 +1340,7 @@ def addFile(sourceFileName, **kwargs):
         dest_sourcenames[destItem.sourceFile.name.upper()] = destItem
     else:
         #FIXME File should be in library_additional, possibly worth of checking it or add a warning
-        logging.warning(("Warning: %s not in replacement_dict" % sourceFileName))
+        logging.error(("Error: %s not in replacement_dict" % sourceFileName))
         return
     return destItem
 
@@ -1640,7 +1640,7 @@ def createBrandedProduct(inData):
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
 
-    scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'])
+    scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'] if 'macro_folders' in subCategory else [])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
@@ -1709,14 +1709,14 @@ def createBrandedProduct(inData):
 
             placeableS.append(destItem.name)
 
-            for _i in range(1, 15):
-                destItem.parameters["sMaterialValS"][_i]  = availableMaterials
-
-            s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
-            destItem.parameters["sMaterialS"] = s_
-            destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
-
-            setParameter(family, destItem, translation)
+            # for _i in range(1, 15):
+            #     destItem.parameters["sMaterialValS"][_i]  = availableMaterials
+            #
+            # s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+            # destItem.parameters["sMaterialS"] = s_
+            # destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
+            #
+            # setParameter(family, destItem, translation)
 
             if 'parameters' in AC_template:
                 setParameter(AC_template, destItem, translation)
@@ -1754,6 +1754,8 @@ def createBrandedProduct(inData):
 
     if availableMaterials:
         masterGDL = createMasterGDL(surfaces=availableMaterials)
+        if not os.path.exists(os.path.join(tempGDLDirName, "surfaces")):
+            os.mkdir(os.path.join(tempGDLDirName, "surfaces"))
         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
             f.write(masterGDL)
 
@@ -1903,18 +1905,20 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     if DEBUG:
         logging.debug("ac command:")
         logging.debug(x2lCommand)
-        with open(tempdir + "\dict.txt", "w") as d:
-            for k in list(dest_dict.keys()):
-                if not isinstance(dest_dict[k].sourceFile, StrippedSourceXML):
-                    d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
 
-        with open(tempdir + "\pict_dict.txt", "w") as d:
-            for k in list(pict_dict.keys()):
-                d.write(pict_dict[k].sourceFile.fullPath + "->" + pict_dict[k].relPath+ "\n")
+        if not CLEANUP:
+            with open(tempdir + "\dict.txt", "w") as d:
+                for k in list(dest_dict.keys()):
+                    if not isinstance(dest_dict[k].sourceFile, StrippedSourceXML):
+                        d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
 
-        with open(tempdir + "\id_dict.txt", "w") as d:
-            for k in list(id_dict.keys()):
-                d.write(id_dict[k] + "\n")
+            with open(tempdir + "\pict_dict.txt", "w") as d:
+                for k in list(pict_dict.keys()):
+                    d.write(pict_dict[k].sourceFile.fullPath + "->" + pict_dict[k].relPath+ "\n")
+
+            with open(tempdir + "\id_dict.txt", "w") as d:
+                for k in list(id_dict.keys()):
+                    d.write(id_dict[k] + "\n")
 
     logging.debug("x2l")
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
@@ -2106,6 +2110,7 @@ def deQueueJob():
         job = jobList[0]
         jobQueue["jobList"] = jobList[1:]
         jobQueue["isJobActive"] = True
+        jobQueue["activeJobPID"] = job['PID']
 
         while not os.access(JOBDATA_PATH, os.W_OK):
             sleep(1)
@@ -2121,7 +2126,7 @@ def deQueueJob():
                 result = buildMacroSet(job['data'])
         except Exception as e:
             result = {"result": f"An unspecified server error occured: {e}"}
-            # raise
+            raise
 
         resultDict = {}
 
@@ -2137,6 +2142,7 @@ def deQueueJob():
     jobQueue = json.load(jobFile)
 
     jobQueue["isJobActive"] = False
+    del jobQueue["activeJobPID"]
 
     with open(JOBDATA_PATH, "w") as jobFile:
         json.dump(jobQueue, jobFile, indent=4)
