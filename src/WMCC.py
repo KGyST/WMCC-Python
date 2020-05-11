@@ -184,8 +184,8 @@ class ParamSection:
         if key in self.__paramDict:
             self.__paramDict[key].setValue(value)
         else:
-            _param = self.createParam(value, key)
-            self.append(value, _param)
+            _param = self.createParam(key, value)
+            self.append(_param, key, )
 
     def __delitem__(self, key):
         del self.__paramDict[key]
@@ -222,7 +222,8 @@ class ParamSection:
             i = 1
             nP = self.__paramList[base + i]
             try:
-                while nP.iType != PAR_TITLE and \
+                while   nP.iType != PAR_TITLE and \
+                        nP.iType != PAR_COMMENT and \
                         PARFLG_CHILD in nP.flags:
                     i += 1
                     nP = self.__paramList[base + i]
@@ -521,7 +522,7 @@ class ParamSection:
                     self.__paramDict[parName].desc = " ".join(parsedArgs.desc)
 
     @staticmethod
-    def createParam(inParName, inCol, inArrayValues=None, inParType=None):
+    def createParam(inParName, inParValue, inArrayValues=None, inParType=None):
         """
         From a key, value pair (like placeable.params[key] = value) detect desired param type and create param
         FIXME checking for numbers whether inCol can be converted when needed
@@ -548,17 +549,17 @@ class ParamSection:
         if not inArrayValues:
             arrayValues = None
             if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL,):
-                inCol = float(inCol)
+                inParValue = float(inParValue)
             elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN,):
-                inCol = int(inCol)
+                inParValue = int(inParValue)
             elif parType in (PAR_BOOL,):
-                inCol = bool(int(inCol))
+                inParValue = bool(int(inParValue))
             elif parType in (PAR_STRING,):
-                inCol = inCol
+                inParValue = inParValue
             elif parType in (PAR_TITLE,):
-                inCol = None
+                inParValue = None
         else:
-            inCol = None
+            inParValue = None
             if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL,):
                 arrayValues = [float(x) if type(x) != list else [float(y) for y in x] for x in inArrayValues]
             elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN,):
@@ -568,11 +569,11 @@ class ParamSection:
             elif parType in (PAR_STRING,):
                 arrayValues = [x if type(x) != list else [y for y in x] for x in inArrayValues]
             elif parType in (PAR_TITLE,):
-                inCol = None
+                inParValue = None
 
         return Param(inType=parType,
                      inName=inParName,
-                     inValue=inCol,
+                     inValue=inParValue,
                      inAVals=arrayValues)
 
 
@@ -1576,8 +1577,8 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
     '''
     for parameter in inJSONSection['parameters']:
         parameterName = parameter['name']
-        firstPosition   = None if not "FirstPosition" in parameter else parameter["FirstPosition"]
-        secondPosition  = None if not "SecondPosition" in parameter else parameter["SecondPosition"]
+        firstPosition = None
+        secondPosition = None
 
         if parameterName in inTranslationDict["parameters"]:
             translatedParameterName = inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]
@@ -1586,12 +1587,20 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
             translatedParameterName = parameterName
             translationDict = None
 
-        if parameterName in inTranslationDict["parameters"]:
-            if "FirstPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
-                firstPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["FirstPosition"]
+        if translatedParameterName in inDestItem.parameters:
+            if translationDict is not None:
+                if "FirstPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
+                    firstPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["FirstPosition"]
 
-                if "SecondPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
-                    secondPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["SecondPosition"]
+                    if "SecondPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
+                        secondPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["SecondPosition"]
+
+            if "FirstPosition" in parameter:
+                firstPosition = parameter["FirstPosition"]
+
+            if "SecondPosition" in parameter:
+                secondPosition = parameter["SecondPosition"]
+
             if firstPosition:
                 inDestItem.parameters[translatedParameterName][firstPosition][1]  = unitConvert(
                     parameterName,
@@ -1630,9 +1639,9 @@ def createBrandedProduct(inData):
 
     with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
         settingsJSON = json.load(categoryData)
-        AC_template = inData["template"]["ARCHICAD_template"]
-        main_version = AC_template["main_macroset_version"]
-        category  = AC_template["category"]
+        AC_templateData = inData["template"]["ARCHICAD_template"]
+        main_version = AC_templateData["main_macroset_version"]
+        category  = AC_templateData["category"]
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
         imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
@@ -1699,27 +1708,35 @@ def createBrandedProduct(inData):
         minor_version = inputJson["minor_version"]
         _dest_dict = inputJson["objects"]
         dest_dict.update(_dest_dict)
-        id_dict = {d.sourceFile.guid.upper(): d.guid for d in dest_dict.values()}
-        dest_sourcenames = {d.sourceFile.name.upper(): d for d in dest_dict.values()}
+        id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
+        dest_sourcenames    = {d.sourceFile.name.upper(): d         for d in dest_dict.values()}
 
         for family in inData['variationsData']:
-            sourceFile = AC_template["source_file"]
+            sourceFile = AC_templateData["source_file"]
             destItem = addFileUsingMacroset(sourceFile, dest_dict,
                                             targetFileName=family["variationName"])
 
             placeableS.append(destItem.name)
 
-            # for _i in range(1, 15):
-            #     destItem.parameters["sMaterialValS"][_i]  = availableMaterials
-            #
-            # s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
-            # destItem.parameters["sMaterialS"] = s_
-            # destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
-            #
-            # setParameter(family, destItem, translation)
+            # ------ If object is ready for WMCC --------------------------------------------------
 
-            if 'parameters' in AC_template:
-                setParameter(AC_template, destItem, translation)
+            if  "sMaterialValS"     in destItem.parameters \
+            and "sMaterialS"        in destItem.parameters \
+            and "iVersionNumber"    in destItem.parameters:
+                for _i in range(1, 15):
+                    destItem.parameters["sMaterialValS"][_i]  = availableMaterials
+
+                s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+                destItem.parameters["sMaterialS"] = s_
+                destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
+
+            if "translations" in AC_templateData:
+                translation["parameters"].update(AC_templateData["translations"])
+
+            setParameter(family, destItem, translation)
+
+            if 'parameters' in AC_templateData:
+                setParameter(AC_templateData, destItem, translation)
 
                 # ------Material parameters --------------------------------------------------
 
@@ -1759,12 +1776,12 @@ def createBrandedProduct(inData):
         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
             f.write(masterGDL)
 
-    fileName = AC_template["category"] + "_" + family_name
+    fileName = AC_templateData["category"] + "_" + family_name
 
     createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + AC_template["category"] + "_" + main_version + "_" + minor_version + ".lcf"
+    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + minor_version + ".lcf"
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
@@ -2126,7 +2143,17 @@ def deQueueJob():
                 result = buildMacroSet(job['data'])
         except Exception as e:
             result = {"result": f"An unspecified server error occured: {e}"}
-            raise
+            logging.error(result["result"])
+            # from signal import SIGTERM
+            jobQueue["isJobActive"] = False
+            jobQueue["activeJobPID"] = ''
+            while not os.access(JOBDATA_PATH, os.W_OK):
+                sleep(1)
+
+            with open(JOBDATA_PATH, "w") as jobFile:
+                json.dump(jobQueue, jobFile, indent=4)
+
+            # os.kill(job['PID'], SIGTERM)
 
         resultDict = {}
 
