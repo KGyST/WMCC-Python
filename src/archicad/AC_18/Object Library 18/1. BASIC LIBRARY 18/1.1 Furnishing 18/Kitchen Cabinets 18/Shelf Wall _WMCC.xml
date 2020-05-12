@@ -1,4 +1,4 @@
-<Symbol IsArchivable="no" IsPlaceable="yes" MainGUID="A9685CA6-87B8-4D67-931A-9D9CEF1A2865" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="no" IsPlaceable="yes" MainGUID="9453FDB4-F254-45E9-BEEF-3005ECAF558A" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -12,8 +12,8 @@
 		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["FM_types_WMCC"]]></MName>
-		<MainGUID>FDE85812-F9A8-4766-99D5-13A994097F30</MainGUID>
+		<MName><![CDATA["FM_types"]]></MName>
+		<MainGUID>E6E5DF6D-DEA4-4FDB-8749-A9B90961F189</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -693,7 +693,7 @@ dim stSideVisValues[4]
 <Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
 
 
-call "FM_types_WMCC" parameters all
+call "FM_types" parameters all
 
 values "A" range (0, )
 values "B" range (0, )
@@ -2121,7 +2121,8 @@ return
 		<WDMirrorThickness>0</WDMirrorThickness>
 		<WDWallInset>0</WDWallInset>
 		<SymbolColor>0</SymbolColor>
-	</ParamSectHeader><Parameters>
+	</ParamSectHeader>
+	<Parameters>
 		<Length Name="A">
 			<Description><![CDATA["Dimension 1"]]></Description>
 			<Value>0.6</Value>

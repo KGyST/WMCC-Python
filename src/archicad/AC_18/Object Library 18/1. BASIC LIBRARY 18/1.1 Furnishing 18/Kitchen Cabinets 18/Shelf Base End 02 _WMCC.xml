@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="8140EC23-76D0-471A-818D-9FA5FEAD87AA" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="0D9EA429-CF4A-4FCD-9578-10B2983208EC" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <MigrationTable SectVersion="1" SectionFlags="0" SubIdent="0">
 	<MigrationTableElement>
 		<MainGUID>53C47DA5-0C7B-4F17-973D-DE6049DCFF8A</MainGUID>
@@ -593,7 +593,7 @@ return
 <Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
 
 reqBMinSpace = 0
-call "fa_minimalspace_WMCC" parameters all MSType = 0, unID = 3000,
+call "fa_minimalspace" parameters all MSType = 0, unID = 3000,
 							returned_parameters reqBMinSpace,
 												MSFillType,
 												MSFillPen,
@@ -941,7 +941,7 @@ else
 	values "zzyzx" RANGE [count_th+toe_h+(shelf_num+2)*0.02,)
 endif
 
-CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
+CALL "Kitchen Cabinets UI macro" parameters all \
 									pageIds = pageIds,
 									CornCabType = 1,
 									bEdgeBevel = 1,
@@ -1572,7 +1572,7 @@ dim pageIcos[4]
 
 
 
-CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
+CALL "Kitchen Cabinets UI macro" parameters all \
 									pageIds = pageIds,
 									pageNames = pageNames,
 									pageIcos = pageIcos,
@@ -1624,7 +1624,7 @@ UI_STYLE 0,1
 UI_OUTFIELD	`Countertop Edge Type:`, 267,	40,	170,13
 UI_STYLE 0,0
 
-call "Kitchen Cabinets UI macro_WMCC" parameters bCounterInfieldOnly = 1,
+call "Kitchen Cabinets UI macro" parameters bCounterInfieldOnly = 1,
 											counterInfieldXPos	= 297,
 											counterInfieldYPos	= 62
 UI_PICT	"ui_CabTopViewShelf2(13)",	XX,	YY+22,	PX,	PY,1
@@ -1675,16 +1675,16 @@ ui_infield	"MSFront",	xPict+195,   yPict-dist*2,	wGap,	hGap ui_tooltip `Minimal 
 
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
-		<MName><![CDATA["fa_minimalspace_WMCC"]]></MName>
-		<MainGUID>2F8FA50F-951D-4497-A1EB-0C86CE41071D</MainGUID>
+		<MName><![CDATA["fa_minimalspace"]]></MName>
+		<MainGUID>9F9DF3E3-25C6-4974-9B7E-5DF30AB63FC0</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["Kitchen Cabinets UI macro_WMCC"]]></MName>
-		<MainGUID>5F315F42-3B88-468E-9395-E84C8A9F5789</MainGUID>
+		<MName><![CDATA["Kitchen Cabinets UI macro"]]></MName>
+		<MainGUID>59AEB586-A607-4249-B227-DFF3281C807D</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["Kitchen Cabinets UI macro_WMCC"]]></MName>
-		<MainGUID>5F315F42-3B88-468E-9395-E84C8A9F5789</MainGUID>
+		<MName><![CDATA["Kitchen Cabinets UI macro"]]></MName>
+		<MainGUID>59AEB586-A607-4249-B227-DFF3281C807D</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -2438,7 +2438,8 @@ return
 		<WDMirrorThickness>0</WDMirrorThickness>
 		<WDWallInset>0</WDWallInset>
 		<SymbolColor>0</SymbolColor>
-	</ParamSectHeader><Parameters>
+	</ParamSectHeader>
+	<Parameters>
 		<Length Name="A">
 			<Description><![CDATA["Cabinet Width"]]></Description>
 			<Value>0.3</Value>

@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="42421819-34F4-4E93-BC37-C1EC04902B29" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="5A7668E6-45A0-4B28-AA95-A13B32492795" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
 <Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
@@ -90,7 +90,7 @@ endif
 ! CALL GENERAL BASE CABINET
 if gs_detlevel_3D_m=2 then
 
-	CALL "fa_gen_basecabinet_WMCC" PARAMETERS a=a, b=b, zzyzx=zzyzx,
+	CALL "fa_gen_basecabinet" PARAMETERS a=a, b=b, zzyzx=zzyzx,
 			gs_detlevel_3D_m=gs_detlevel_3D_m, dob_face=dob_face, count_th=count_th,
 			front_cab=0, rear_cab=rear_cab, left_cab=left_cab,fr_th1=fr_th1,
 			right_cab=right_cab, toe_h=toe_h, side_vis_m=0,
@@ -180,7 +180,7 @@ END
 	endif
 
 	cabdoortyp_unID=unID
-	CALL "fa_cabdoortyp_WMCC" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
+	CALL "fa_cabdoortyp" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
 		gs_full_edit=gs_full_edit,door_ang=door_ang,door_w=door_w1,door_h=door_h,
 		gs_door_type_m=gs_door_type_m,gs_cust_p=gs_cust_p,doorframe_w=doorframe_w,
 		vert_gnum=vert_gnum,hor_gnum=hor_gnum,gs_cont_pen=gs_cont_pen,
@@ -207,7 +207,7 @@ END
 	endif
 
 	cabdoortyp_unID=unID
-	CALL "fa_cabdoortyp_WMCC" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
+	CALL "fa_cabdoortyp" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
 		gs_full_edit=gs_full_edit,door_ang=door_ang,door_w=door_w2,door_h=door_h,
 		gs_door_type_m=gs_door_type_m,gs_cust_p=gs_cust_p,doorframe_w=doorframe_w,
 		vert_gnum=vert_gnum,hor_gnum=hor_gnum,gs_cont_pen=gs_cont_pen,
@@ -227,7 +227,7 @@ END
 	mulx -1
 
 	cabdoortyp_unID=unID
-	CALL "fa_cabdoortyp_WMCC" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
+	CALL "fa_cabdoortyp" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
 		gs_full_edit=gs_full_edit,door_ang=door_ang,door_w=door_w2,door_h=door_h,
 		gs_door_type_m=gs_door_type_m,gs_cust_p=gs_cust_p,doorframe_w=doorframe_w,
 		vert_gnum=vert_gnum,hor_gnum=hor_gnum,gs_cont_pen=gs_cont_pen,
@@ -260,7 +260,7 @@ END
 	gs_full_edit=0
 
 	cabdoortyp_unID=unID
-	CALL "fa_cabdoortyp_WMCC" PARAMETERS ALL cabdoortyp_unID=cabdoortyp_unID,
+	CALL "fa_cabdoortyp" PARAMETERS ALL cabdoortyp_unID=cabdoortyp_unID,
 		fr_th1=0.02,gs_cust_p=gs_cust_p_end,doorframe_w=doorframe_w_end,
 		doorframe_mat=doorframe_mat_end,doorglas_mat=doorframe_mat_end,
 		gs_bevel=gs_bevel,
@@ -398,7 +398,7 @@ dim pageNames[4]
 	pageNames[3] = ""
 	pageNames[4] = ""
 
-CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
+CALL "Kitchen Cabinets UI macro" parameters all \
 									pageIds = pageIds,
 									pageNames = pageNames,
 									CornCabType = 0,
@@ -443,7 +443,7 @@ values "B" range (0, )
 values "door_ang" range [0,180]
 
 
-CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
+CALL "Kitchen Cabinets UI macro" parameters all \
 									pageIds = pageIds,
 									CornCabType = 0,
 									bEdgeBevel = 1,
@@ -900,20 +900,20 @@ CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
 		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["fa_gen_basecabinet_WMCC"]]></MName>
-		<MainGUID>3ECD6FA9-2261-4EBB-B566-18F4650A199D</MainGUID>
+		<MName><![CDATA["fa_gen_basecabinet"]]></MName>
+		<MainGUID>8274FBAD-D650-4740-844E-F176BAD74B9E</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["fa_cabdoortyp_WMCC"]]></MName>
-		<MainGUID>0FFA6B6B-721E-433B-8B8B-A837C5F57022</MainGUID>
+		<MName><![CDATA["fa_cabdoortyp"]]></MName>
+		<MainGUID>AA8324E0-6EC1-46BD-8A8B-ADF773F128A2</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["Kitchen Cabinets UI macro_WMCC"]]></MName>
-		<MainGUID>5F315F42-3B88-468E-9395-E84C8A9F5789</MainGUID>
+		<MName><![CDATA["Kitchen Cabinets UI macro"]]></MName>
+		<MainGUID>59AEB586-A607-4249-B227-DFF3281C807D</MainGUID>
 	</Macro>
 	<Macro>
-		<MName><![CDATA["Kitchen Cabinets UI macro_WMCC"]]></MName>
-		<MainGUID>5F315F42-3B88-468E-9395-E84C8A9F5789</MainGUID>
+		<MName><![CDATA["Kitchen Cabinets UI macro"]]></MName>
+		<MainGUID>59AEB586-A607-4249-B227-DFF3281C807D</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -1747,7 +1747,8 @@ return
 		<WDMirrorThickness>0</WDMirrorThickness>
 		<WDWallInset>0</WDWallInset>
 		<SymbolColor>0</SymbolColor>
-	</ParamSectHeader><Parameters>
+	</ParamSectHeader>
+	<Parameters>
 		<Length Name="A">
 			<Description><![CDATA["Cabinet Width"]]></Description>
 			<Value>1.5</Value>

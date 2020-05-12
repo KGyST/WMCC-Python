@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="F4163B76-5E16-495B-A5B4-ECCBF37AC98B" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="E4CF4F62-AC61-416B-85E7-AFE16815D1C6" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -559,7 +559,7 @@ endif
 <Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
 
 
-call "FM_types_WMCC" parameters all
+call "FM_types" parameters all
 
 VALUES "gs_detlevel_3D" `Detailed`,`Simple`,`Off`
 VALUES "gs_detlevel_3D_m" 0,1,2
@@ -1132,8 +1132,8 @@ parameters ac_toplevel = placementHeight+zzyzx
 
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
-		<MName><![CDATA["FM_types_WMCC"]]></MName>
-		<MainGUID>FDE85812-F9A8-4766-99D5-13A994097F30</MainGUID>
+		<MName><![CDATA["FM_types"]]></MName>
+		<MainGUID>E6E5DF6D-DEA4-4FDB-8749-A9B90961F189</MainGUID>
 	</Macro>
 </CalledMacros>
 
@@ -1974,7 +1974,8 @@ return
 		<WDMirrorThickness>0</WDMirrorThickness>
 		<WDWallInset>0</WDWallInset>
 		<SymbolColor>0</SymbolColor>
-	</ParamSectHeader><Parameters>
+	</ParamSectHeader>
+	<Parameters>
 		<Length Name="A">
 			<Description><![CDATA["Cabinet Width"]]></Description>
 			<Value>0.3</Value>
