@@ -24,5 +24,38 @@
       "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\School Furniture 18",
       "current_minor_version": 20200101
     }
+  },
+  "Appliances": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18",
+      "current_minor_version": 20200101
+    }
+  },
+  "Sinks": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Sinks 18",
+      "current_minor_version": 20200101
+    }
+  },
+  "Taps, Fountains": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Taps, Fountains 18",
+      "current_minor_version": 20200101
+    }
+  },
+  "Cabinets and Shelves": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18"
+    }
+  },
+  "Chairs": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Chairs 18"
+    }
+  },
+  "Tables": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Tables 18"
+    }
   }
 }

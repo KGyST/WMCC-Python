@@ -1341,7 +1341,7 @@ def addFile(sourceFileName, **kwargs):
         dest_sourcenames[destItem.sourceFile.name.upper()] = destItem
     else:
         #FIXME File should be in library_additional, possibly worth of checking it or add a warning
-        logging.error(("Error: %s not in replacement_dict" % sourceFileName))
+        logging.error((f"Error: {sourceFileName} not in replacement_dict: no such source macro!"))
         return
     return destItem
 
@@ -1668,22 +1668,23 @@ def createBrandedProduct(inData):
             availableMaterials += [material["name"]]                    #  + "_" + family_name
             materialMacro = addFile(MATERIAL_BASE_OBJECT,
                                     targetFileName=material["name"]) #  + "_" + family_name
-            for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
-                translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                materialMacro.parameters[translatedParameter] = unitConvert(
-                    parameter,
-                    material[parameter],
-                    translation
-                )
-            materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
+            if materialMacro:
+                for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
+                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                    materialMacro.parameters[translatedParameter] = unitConvert(
+                        parameter,
+                        material[parameter],
+                        translation
+                    )
+                materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
-            # --------- textures -----------
-            if 'base64_encoded_texture' in material:
-                if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
-                    os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
-                with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
-                    textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
-                materialMacro.parameters['sTextureName'] = os.path.splitext(material['name'] + "_texture.png")[0]
+                # --------- textures -----------
+                if 'base64_encoded_texture' in material:
+                    if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
+                        os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
+                    with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
+                        textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
+                    materialMacro.parameters['sTextureName'] = os.path.splitext(material['name'] + "_texture.png")[0]
 
         # --------- logo -----------
         _logo = None
@@ -1704,9 +1705,14 @@ def createBrandedProduct(inData):
 
         placeableS = []
 
-        inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
-        minor_version = inputJson["minor_version"]
-        _dest_dict = inputJson["objects"]
+        try:
+            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
+            minor_version = inputJson["minor_version"]
+            _dest_dict = inputJson["objects"]
+        except FileNotFoundError:
+            minor_version = None
+            _dest_dict = {}
+
         dest_dict.update(_dest_dict)
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
         dest_sourcenames    = {d.sourceFile.name.upper(): d         for d in dest_dict.values()}
@@ -1720,9 +1726,10 @@ def createBrandedProduct(inData):
 
             # ------ If object is ready for WMCC --------------------------------------------------
 
-            if  "sMaterialValS"     in destItem.parameters \
-            and "sMaterialS"        in destItem.parameters \
-            and "iVersionNumber"    in destItem.parameters:
+            if  "sMaterialValS"         in destItem.parameters \
+            and "sMaterialS"            in destItem.parameters \
+            and "iVersionNumber"        in destItem.parameters \
+            and "current_minor_version" in subCategory:
                 for _i in range(1, 15):
                     destItem.parameters["sMaterialValS"][_i]  = availableMaterials
 
@@ -1781,7 +1788,7 @@ def createBrandedProduct(inData):
     createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + minor_version + ".lcf"
+    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + minor_version + ".lcf" if minor_version else None
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
@@ -1790,22 +1797,24 @@ def createBrandedProduct(inData):
     return createResponesFiles(_paceableName, _macrosetName,
                                )
 
-def createResponesFiles(inFileName,
+def createResponesFiles( inFileName,
                          inMacrosetName,):
     """
     Creates finished objects
     """
-    with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
-        _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
+    result = {}
+    if inMacrosetName:
+        with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
+            _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
+            result.update({ "macroset_name":            inMacrosetName,
+                            "base64_encoded_macroset":  _macrosetData,})
 
     with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as placeableObject:
         _placeableObjectData = base64.urlsafe_b64encode(placeableObject.read()).decode("utf-8")
+        result.update({ "object_name": inFileName,
+                        "base64_encoded_object": _placeableObjectData,})
 
-    return {"macroset_name": inMacrosetName,
-            "base64_encoded_macroset": _macrosetData,
-            "object_name": inFileName,
-            "base64_encoded_object": _placeableObjectData,
-            }
+    return result
 
 
 def uploadFinishedObject(inFileName,
@@ -2142,18 +2151,20 @@ def deQueueJob():
             elif endPoint == "/createmacroset":
                 result = buildMacroSet(job['data'])
         except Exception as e:
-            result = {"result": f"An unspecified server error occured: {e}"}
-            logging.error(result["result"])
-            # from signal import SIGTERM
-            jobQueue["isJobActive"] = False
-            jobQueue["activeJobPID"] = ''
-            while not os.access(JOBDATA_PATH, os.W_OK):
-                sleep(1)
+            if not DEBUG:
+                result = {"result": f"An unspecified server error occured: {e}"}
+                logging.error(result["result"])
+                # from signal import SIGTERM
+                jobQueue["isJobActive"] = False
+                jobQueue["activeJobPID"] = ''
+                while not os.access(JOBDATA_PATH, os.W_OK):
+                    sleep(1)
 
-            with open(JOBDATA_PATH, "w") as jobFile:
-                json.dump(jobQueue, jobFile, indent=4)
-
-            # os.kill(job['PID'], SIGTERM)
+                with open(JOBDATA_PATH, "w") as jobFile:
+                    json.dump(jobQueue, jobFile, indent=4)
+            else:
+                raise
+                # os.kill(job['PID'], SIGTERM)
 
         resultDict = {}
 
