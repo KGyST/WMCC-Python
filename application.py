@@ -162,7 +162,7 @@ class ResetJobQueue(Resource):
             jobsToKill = [str(j['PID']) for j in jobQueue["jobList"]]
             if "activeJobPID" in jobQueue:
                 jobsToKill += [str(jobQueue["activeJobPID"])]
-            logging.info(' '.join(jobsToKill))
+            logging.info('Jobs killed: ' + ' '.join(jobsToKill))
 
             map(kill, [j['PID'] for j in jobQueue["jobList"]])
 

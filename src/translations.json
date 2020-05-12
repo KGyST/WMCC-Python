@@ -6,12 +6,6 @@
         "Name": "A",
         "Type": "PAR_LENGTH",
         "Measurement": "m"
-      },
-      "Revit ENU": {
-        "Name": "Rough Width"
-      },
-      "Revit GER": {
-        "Name": "Öffnungslichte Breite"
       }
     },
     "Height": {
@@ -20,12 +14,6 @@
         "Name": "B",
         "Type": "PAR_LENGTH",
         "Measurement": "m"
-      },
-      "Revit ENU": {
-        "Name": "Rough Height"
-      },
-      "Revit GER": {
-        "Name": "Öffnungslichte Höhe"
       }
     },
     "Interior Frame Material": {
@@ -45,12 +33,6 @@
         "Name": "sMaterialValS",
         "Type": "PAR_STRING",
         "FirstPosition": 1
-      },
-      "Revit ENU": {
-        "Name": "Inner frame material"
-      },
-      "Revit GER": {
-        "Name": "Innenmaterial"
       }
     },
     "Exterior Frame Material": {
