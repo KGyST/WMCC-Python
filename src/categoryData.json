@@ -31,18 +31,6 @@
       "current_minor_version": 20200101
     }
   },
-  "Sinks": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Sinks 18",
-      "current_minor_version": 20200101
-    }
-  },
-  "Taps, Fountains": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Taps, Fountains 18",
-      "current_minor_version": 20200101
-    }
-  },
   "Cabinets and Shelves": {
     "19": {
       "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18"
@@ -56,6 +44,23 @@
   "Tables": {
     "19": {
       "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Tables 18"
+    }
+  },
+  "Bathtubs, Showers, Jacuzzis": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Bathtubs, Showers, Jacuzzis 18"
+    }
+  },
+  "Sinks": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Sinks 18",
+      "current_minor_version": 20200101
+    }
+  },
+  "Taps, Fountains": {
+    "19": {
+      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Taps, Fountains 18",
+      "current_minor_version": 20200101
     }
   }
 }
