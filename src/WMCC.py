@@ -1500,15 +1500,18 @@ def buildMacroSet(inData, main_version="19"):
 
     logging.debug("*** Macroset creation started ***")
 
-    if "main_version" in inData:
-        main_version = inData["main_version"]
-
+    category = inData["category"]
+    main_version = inData["main_version"]
     minor_version = datetime.date.today().strftime("%Y%m%d")
     if "minor_version" in inData:
         minor_version = inData["minor_version"]
 
-    projectPath = inData["path"] if "path" in inData else ""
-    imagePath = inData["imagePath"] if "imagePath" in inData else ""
+    with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
+        settingsJSON = json.load(categoryData)
+        subCategory = settingsJSON[category][main_version]
+        projectPath = subCategory["path"]
+        imagePath = subCategory["imagePath"] if "imagePath" in subCategory else ""
+        subCategory["current_minor_version"] = int(minor_version)
 
     resetAll()
 
@@ -1565,7 +1568,14 @@ def buildMacroSet(inData, main_version="19"):
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
 
-    return {'LCFName': _fileNameWithoutExtension + ".json"}
+    with open(os.path.join(_SRC, "categoryData.json"), "w") as categoryData:
+        json.dump(settingsJSON, categoryData, indent=4)
+
+    return {'LCFName':          _fileNameWithoutExtension + ".json",
+            "category":         category,
+            "main_version":     main_version,
+            "minor_version ":   minor_version,
+    }
 
 
 def setParameter(inJSONSection, inDestItem, inTranslationDict):
@@ -1796,6 +1806,7 @@ def createBrandedProduct(inData):
 
     return createResponesFiles(_paceableName, _macrosetName,
                                )
+
 
 def createResponesFiles( inFileName,
                          inMacrosetName,):
@@ -2137,6 +2148,7 @@ def deQueueJob():
         jobQueue["jobList"] = jobList[1:]
         jobQueue["isJobActive"] = True
         jobQueue["activeJobPID"] = job['PID']
+        logging.debug(f"Job started: {job['PID']}")
 
         while not os.access(JOBDATA_PATH, os.W_OK):
             sleep(1)

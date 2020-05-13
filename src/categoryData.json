@@ -1,66 +1,101 @@
 {
-  "Door_Window": {
-    "19": {
-      "path": "DoorWindowTemplate_19\\library",
-      "image_path": "DoorWindowTemplate_19\\library_images",
-      "current_minor_version": 20200101,
-      "macro_folders": ["DoorWindowTemplate_19\\library\\macros"]
+    "Door_Window": {
+        "19": {
+            "path": "DoorWindowTemplate_19\\library",
+            "image_path": "DoorWindowTemplate_19\\library_images",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "DoorWindowTemplate_19\\library\\macros"
+            ]
+        },
+        "19_1": {
+            "path": "DoorWindowTemplate_19_1\\library",
+            "image_path": "DoorWindowTemplate_19_1\\library_images",
+            "current_minor_version": 20200131,
+            "macro_folders": [
+                "DoorWindowTemplate_19_1\\library\\macros"
+            ]
+        }
     },
-    "19_1": {
-      "path": "DoorWindowTemplate_19_1\\library",
-      "image_path": "DoorWindowTemplate_19_1\\library_images",
-      "current_minor_version": 20200131,
-      "macro_folders": ["DoorWindowTemplate_19_1\\library\\macros"]
+    "Kitchen_Cabinets": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Kitchen Cabinets 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Kitchen Cabinets 18\\macros"
+            ]
+        }
+    },
+    "School_Furniture": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\School Furniture 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\School Furniture 18\\macros"
+            ]
+        }
+    },
+    "Appliances": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18\\macros"
+            ]
+        }
+    },
+    "Cabinets_and_Shelves": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18\\macros"
+            ]
+        }
+    },
+    "Chairs": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Chairs 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Chairs 18\\macros"
+            ]
+        }
+    },
+    "Tables": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Tables 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Tables 18\\macros"
+            ]
+        }
+    },
+    "Bathtubs_Showers_Jacuzzis": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Bathtubs, Showers, Jacuzzis 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Bathtubs, Showers, Jacuzzis 18\\macros"
+            ]
+        }
+    },
+    "Sinks": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Sinks 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Sinks 18\\macros"
+            ]
+        }
+    },
+    "Taps_Fountains": {
+        "19": {
+            "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Taps, Fountains 18",
+            "current_minor_version": 20200513,
+            "macro_folders": [
+                "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Taps, Fountains 18\\macros"
+            ]
+        }
     }
-  },
-  "Kitchen Cabinets": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Kitchen Cabinets 18",
-      "current_minor_version": 2020010
-    }
-  },
-  "School Furniture": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\School Furniture 18",
-      "current_minor_version": 20200101
-    }
-  },
-  "Appliances": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18",
-      "current_minor_version": 20200101
-    }
-  },
-  "Cabinets and Shelves": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18"
-    }
-  },
-  "Chairs": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Chairs 18"
-    }
-  },
-  "Tables": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Tables 18"
-    }
-  },
-  "Bathtubs, Showers, Jacuzzis": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Bathtubs, Showers, Jacuzzis 18"
-    }
-  },
-  "Sinks": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Sinks 18",
-      "current_minor_version": 20200101
-    }
-  },
-  "Taps, Fountains": {
-    "19": {
-      "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Taps, Fountains 18",
-      "current_minor_version": 20200101
-    }
-  }
 }
