@@ -1,0 +1,2931 @@
+<Symbol IsArchivable="yes" IsPlaceable="no" MainGUID="974D0ACC-2970-4E6A-ADD1-CAA452F2D7AB" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>C76BC373-89AE-4368-A490-BB2485825242</MainGUID>
+	<MainGUID>3FCE1BC2-9644-44D4-9D5F-4DBF6C762CA4</MainGUID>
+</Ancestry>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+unID = officeCab01_unID
+
+if gs_detlevel_3D_m = 0 then end
+
+if NOT(gs_shadow) then shadow off
+
+if GLOB_CONTEXT > 20 and GLOB_CONTEXT < 40 or gs_detlevel_3D_m = 1 then 		!! for Simple Model and in 3D Windoow
+	if GLOB_CONTEXT > 20 and GLOB_CONTEXT < 40 then
+		iResol = 3
+	else
+		iResol = 8
+	endif
+else
+	iResol = gs_resol
+endif
+
+resol iResol
+
+PEN gs_cont_pen
+
+! -----------------------------------------------------------------------------
+! Cabinet parameter transform for cabindex 2
+! -----------------------------------------------------------------------------
+
+if iCabIndex = 2 then
+	drawer_num			= drawer_num_2
+	drawerThk			= drawerThk2
+	gs_drawerHeights	= gs_drawerHeights_2
+	gs_knobHorPos		= gs_knobHorPos_2
+endif
+
+
+! -----------------------------------------------------------------------------
+! Cabinet body
+! -----------------------------------------------------------------------------
+
+cabinetHeight = zzyzx - baseHeight - topThk
+
+MATERIAL gs_cabinet_mat
+ADD 0, drawerThk, baseHeight
+BLOCK a, b - drawerThk, cabinetHeight
+DEL 1
+
+GOSUB 1000
+
+
+! -----------------------------------------------------------------------------
+! Top
+! -----------------------------------------------------------------------------
+
+IF bTopCover THEN
+	MATERIAL count_mat
+	ADDZ zzyzx - topThk
+	BLOCK a, b, topThk
+	DEL 1
+ENDIF
+
+GOSUB 2000
+
+
+! -----------------------------------------------------------------------------
+! Base
+! -----------------------------------------------------------------------------
+
+IF gs_baseType_m > 0 THEN
+	MATERIAL gs_base_mat
+
+	IF gs_baseType_m = 1 THEN		! castor
+		FOR k = 1 TO 2
+			ADD 0.02, 0.05, gs_baseHeight/2
+			ROTX 90
+			ROTY 90
+			RESOL 1.5 * iResol
+			CYLIND 0.02, gs_baseHeight/2
+			ADDZ a - 0.06
+			CYLIND 0.02, gs_baseHeight/2
+			DEL 4
+			ADDY b - 0.1
+		NEXT k
+		DEL 2
+	ELSE
+		ADDY drawerThk
+		BLOCK a, b - drawerThk, gs_baseHeight
+		DEL 1
+	ENDIF
+ENDIF
+
+
+! -----------------------------------------------------------------------------
+! Drawers
+! -----------------------------------------------------------------------------
+
+ADDZ zzyzx - topThk
+FOR m = 1 TO drawer_num
+	MATERIAL gs_door_mat
+
+	bottomDiff = 0
+	IF ABS(baseHeight) < EPS AND m = drawer_num THEN bottomDiff = 0.005
+
+	ADDZ -gs_drawerHeights[m] + bottomDiff
+
+	if gs_detlevel_3D_m = 1 | (gs_detlevel_3D_m = 2 & gs_bevel = 0) then
+		PRISM_ 4, gs_drawerHeights[m] - 0.005 - bottomDiff,
+			0, 0, 15,
+			a, 0, 15,
+			a, drawerThk, 15,
+			0, drawerThk, 15
+	else
+		addy drawerThk
+		rotx 90
+		fprism_ gs_door_mat, gs_door_mat, gs_door_mat, gs_door_mat,
+			5, drawerThk, 45, 0.01,
+				0, 0, 15,
+				a, 0, 15,
+				a, gs_drawerHeights[m] - 0.005 - bottomDiff, 15,
+				0, gs_drawerHeights[m] - 0.005 - bottomDiff, 15,
+				0, 0, -1
+		del 2
+	endif
+
+	gosub 2000
+
+	if gs_knob_type_m <> 0 then
+		! --- Knob hotspots ---
+		IF gs_editableKnobs THEN
+			ADD a/2 + gs_knobHorPos, 0, (gs_drawerHeights[m] - 0.005)/2 + gs_knobVerPos_m * (gs_drawerHeights[m] - 0.005)/4
+			IF iCabIndex = 1 THEN
+
+				HOTSPOT 0, 0, gs_knobPosArray[m][2], unID, gs_knobPosArray[m][1], 1+128 : unID = unID + 1
+				HOTSPOT gs_knobPosArray[m][1], 0, gs_knobPosArray[m][2], unID, gs_knobPosArray[m][1], 2 : unID = unID + 1
+				HOTSPOT -1, 0, gs_knobPosArray[m][2], unID, gs_knobPosArray[m][1], 3 : unID = unID + 1
+
+				HOTSPOT gs_knobPosArray[m][1], 0, 0, unID, gs_knobPosArray[m][2], 1+128 : unID = unID + 1
+				HOTSPOT gs_knobPosArray[m][1], 0, gs_knobPosArray[m][2], unID, gs_knobPosArray[m][2], 2 : unID = unID + 1
+				HOTSPOT gs_knobPosArray[m][1], 0, -1, unID, gs_knobPosArray[m][2], 3 : unID = unID + 1
+
+			ELSE
+
+				HOTSPOT 0, 0, gs_knobPosArray_2[m][2], unID, gs_knobPosArray_2[m][1], 1+128 : unID = unID + 1
+				HOTSPOT gs_knobPosArray_2[m][1], 0, gs_knobPosArray_2[m][2], unID, gs_knobPosArray_2[m][1], 2 : unID = unID + 1
+				HOTSPOT -1, 0, gs_knobPosArray_2[m][2], unID, gs_knobPosArray_2[m][1], 3 : unID = unID + 1
+
+				HOTSPOT gs_knobPosArray_2[m][1], 0, 0, unID, gs_knobPosArray_2[m][2], 1+128 : unID = unID + 1
+				HOTSPOT gs_knobPosArray_2[m][1], 0, gs_knobPosArray_2[m][2], unID, gs_knobPosArray_2[m][2], 2 : unID = unID + 1
+				HOTSPOT gs_knobPosArray_2[m][1], 0, -1, unID, gs_knobPosArray_2[m][2], 3 : unID = unID + 1
+
+			ENDIF
+			DEL 1
+		ENDIF
+
+		! --- Knob ---
+		IF iCabIndex = 1 THEN
+			knobXDiff = gs_knobPosArray[m][1]
+			knobZDiff = gs_knobPosArray[m][2]
+		ELSE
+			knobXDiff = gs_knobPosArray_2[m][1]
+			knobZDiff = gs_knobPosArray_2[m][2]
+		ENDIF
+		ADD  a/2 + gs_knobHorPos + knobXDiff, 0, (gs_drawerHeights[m] - 0.005)/2 + gs_knobVerPos_m * (gs_drawerHeights[m] - 0.005)/4 + knobZDiff
+
+		if gs_knob_type_m=4 or gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 or gs_knob_type_m=8 then
+			ROTY 90
+		endif
+
+		if gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 or gs_knob_type_m=8 then
+			addz 0.05
+		endif
+
+		if gs_knob_type_m=8 then
+			roty 180
+			addz 0.1
+		endif
+
+		if gs_knob_type_m=4 then
+			ADDz 0.05
+		endif
+
+		CALL "fa_knobtyp_CS_WMCC" PARAMETERS	knob_size			= 0.1,
+										gs_detlevel_3D_m	= gs_detlevel_3D_m,
+										gs_knob_type_m		= gs_knob_type_m,
+										gs_resol			= iResol,
+										gs_shadow			= gs_shadow,
+										gs_cont_pen			= gs_cont_pen,
+										gs_knob_mat			= gs_knob_mat
+
+		IF gs_knob_type_m=4 or gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 or gs_knob_type_m=8 then
+			del 2
+		endif
+		if gs_knob_type_m=8 then
+			del 2
+		endif
+
+		del 1
+	endif
+NEXT m
+
+DEL drawer_num + 1
+
+! ======================================================================
+officeCab01_unID = unID
+end officeCab01_unID
+! ======================================================================
+
+
+
+1000:
+
+roty 90
+vert 0, 0, 0
+vert 1, 0, 0
+vert 0, 1, 0
+vert 0, 0, 1
+del 1
+
+coor 2, -1, -2, -3, -4
+
+base
+
+body -1
+
+return
+
+
+
+2000:
+
+vert 0, 0, 0
+vert 1, 0, 0
+vert 0, 1, 0
+vert 0, 0, 1
+
+coor 2, -1, -2, -3, -4
+
+base
+
+body -1
+
+return
+
+
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+unID = officeCab01_unID
+
+if NOT(bPartOfLayout) then call "fa_minimalspace_CS_WMCC" parameters all MSType = 1, unID = 3000
+
+pen gs_cont_pen
+line_type 1 + 3 * bPartOfLayout
+fill gs_fill_type
+
+if NOT(bPartOfLayout) then
+	hotspot2 0,		b,		unID : unID = unID + 1
+	hotspot2 a/2,	b,		unID : unID = unID + 1
+	hotspot2 a/2,	b/2,	unID : unID = unID + 1
+endif
+
+if drawer2d then
+	for i = 1 to drawer_num
+				line2 0,0-0.02,a,0-0.02
+				add2 0,-0.02
+	next i
+	del drawer_num
+endif
+
+poly2_b 5, 1 + 2 * NOT(bPartOfLayout) + 4, gs_fill_pen, gs_back_pen,
+	0, 0, 1,
+	a, 0, 1,
+	a, b, NOT(bPartOfLayout),
+	0, b, NOT(bPartOfLayout),
+	0, 0, -1
+
+if NOT(bPartOfLayout) then call "Resize_A_B_ZZYZX" parameters all
+
+! ======================================================================
+officeCab01_unID = unID
+end officeCab01_unID
+! ======================================================================
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+EPS = 0.0001
+
+CABINET			= 0
+SIMPLE_DESK		= 1
+LAYOUT_ISLAND	= 2
+LAYOUT_LINEAR	= 3
+WS_SOLO			= 4
+
+dim st_knobtypes[9]
+	st_knobtypes[1]=`None`
+	st_knobtypes[2]=`Style 1`
+	st_knobtypes[3]=`Style 2`
+	st_knobtypes[4]=`Style 3`
+	st_knobtypes[5]=`Style 4`
+	st_knobtypes[6]=`Style 5`
+	st_knobtypes[7]=`Style 6`
+	st_knobtypes[8]=`Style 7`
+	st_knobtypes[9]=`Style 8`
+
+dim stDrawerSchemes[5]
+	stDrawerSchemes[1] = `Scheme 1`
+	stDrawerSchemes[2] = `Scheme 2`
+	stDrawerSchemes[3] = `Scheme 3`
+	stDrawerSchemes[4] = `Scheme 4`
+	stDrawerSchemes[5] = `Custom`
+
+baseHeight = gs_baseHeight * (gs_baseType_m > 0)
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+if NOT(bPartOfLayout) then
+	call "FM_types_CS_WMCC" parameters all
+
+	values "A" range [0.2,)
+	values "B" range [0.2,)
+	values "zzyzx" range [0.2,)
+
+	values "gs_detlevel_3D" `Detailed`,`Simple`,`Off`
+	values "gs_detlevel_3D_m" 0, 1, 2
+
+	values "gs_resol" range [3,)
+
+	if gs_cont_pen=0 then parameters gs_cont_pen=7
+	if gs_fill_pen=0 then parameters gs_fill_pen=91
+
+	if gs_detlevel_3D_m = 1 then
+		hideparameter "gs_resol"
+	endif
+	if gs_detlevel_3D_m = 0 then hideparameter "gs_resol", "gs_shadow"
+
+	if GLOB_MODPAR_NAME = "gs_detlevel_3D" then
+		if gs_detlevel_3D = `Off`		then parameters gs_detlevel_3D_m = 0
+		if gs_detlevel_3D = `Simple`	then parameters gs_detlevel_3D_m = 1
+		if gs_detlevel_3D = `Detailed`	then parameters gs_detlevel_3D_m = 2
+	else
+		if gs_detlevel_3D_m = 0 then parameters gs_detlevel_3D = `Off`
+		if gs_detlevel_3D_m = 1 then parameters gs_detlevel_3D = `Simple`
+		if gs_detlevel_3D_m = 2 then parameters gs_detlevel_3D = `Detailed`
+	endif
+
+
+	call "ui_tabcontrol" parameters	controlType = 1,
+									nTabs = 4,
+									gs_ui_current_page = gs_ui_current_page
+endif
+
+! -----------------------------------------------------------------------------
+! Base Parameters
+! -----------------------------------------------------------------------------
+
+if bPartOfLayout then
+	gs_baseType_m	= bCabBase * 2
+	parameters gs_baseType_m = gs_baseType_m
+
+!	lock			"gs_baseType",
+	lock			"gs_baseType_m"
+!	hideparameter	"gs_baseType",
+	hideparameter	"gs_baseType_m"
+else
+	values "gs_baseType" `Off`, `Castor`, `Toe`
+	values "gs_baseType_m" 0, 1, 2
+
+	lock			"bCabBase"
+	hideparameter	"bCabBase"
+
+	if GLOB_MODPAR_NAME = "gs_baseType" then
+		if gs_baseType = `Off` then gs_baseType_m = 0
+		if gs_baseType = `Castor` then gs_baseType_m = 1
+		if gs_baseType = `Toe` then gs_baseType_m = 2
+		parameters gs_baseType_m = gs_baseType_m
+	else
+		if gs_baseType_m = 0 then gs_baseType = `Off`
+		if gs_baseType_m = 1 then gs_baseType = `Castor`
+		if gs_baseType_m = 2 then gs_baseType = `Toe`
+		parameters gs_baseType = gs_baseType
+	endif
+endif
+
+if gs_baseType_m > 0 then
+	values "gs_baseHeight" range (0,)
+else
+	hideparameter "gs_base_mat", "gs_baseHeight"
+	lock "gs_base_mat", "gs_baseHeight"
+endif
+
+if NOT(bPartOfLayout) then
+	if (GLOB_MODPAR_NAME = "gs_baseType" or GLOB_MODPAR_NAME = "gs_baseType_m" or \
+		GLOB_MODPAR_NAME = "gs_baseHeight") then
+
+		zzyzx = gs_baseHeight * (gs_baseType_m > 0) + topThk
+		for i = 1 to drawer_num
+			zzyzx = zzyzx + gs_drawerHeights[i]
+		next i
+		parameters zzyzx = zzyzx
+	endif
+endif
+
+
+! enableDrawerSchemes - possible values
+!	2		- enable Scheme 1
+!	4		- enable Scheme 2
+!	8		- enable Scheme 3
+!	16		- enable Scheme 4
+!	32		- enable Custom
+
+if enableDrawerSchemes < EPS then enableDrawerSchemes = 2 + 4 + 8 + 16 + 32
+
+dim drawerSchemeValueList[]
+j = 1
+for i = 1 to vardim1(stDrawerSchemes)
+	if bittest(enableDrawerSchemes, i) then
+		put i
+		drawerSchemeValueList[j] = stDrawerSchemes[i]
+		j = j + 1
+	endif
+next i
+
+values "gs_drawerScheme_m" get(NSP)
+values "gs_drawerScheme" drawerSchemeValueList
+
+if GLOB_MODPAR_NAME = "gs_drawerScheme" then
+	for iDr = 1 to vardim1(stDrawerSchemes)
+		if gs_drawerScheme = stDrawerSchemes[iDr] then gs_drawerScheme_m = iDr
+	next iDr
+	parameters gs_drawerScheme_m = gs_drawerScheme_m
+else
+	gs_drawerScheme = stDrawerSchemes[max(gs_drawerScheme_m, 1)]
+	parameters gs_drawerScheme = gs_drawerScheme
+endif
+
+! -----------------------------------------------------------------------------
+! Drawer Parameters
+! -----------------------------------------------------------------------------
+
+xDrawerKnobPosMod = 0
+if gs_knob_type_m > 3 then xDrawerKnobPosMod = 0.05
+
+if NOT(bShowDrawer1WidthParam) then
+	lock 			"gs_officeCab_width"
+	hideparameter	"gs_officeCab_width"
+endif
+if NOT(bShowDrawer2WidthParam) then
+	lock 			"gs_officeCab_width_2"
+	hideparameter 	"gs_officeCab_width_2"
+endif
+
+if bShowDrawer1Params then
+	values "drawerThk" range [0.01,)
+
+	mainHeight = zzyzx - topThk - baseHeight
+	values "drawer_num" range [1, MIN(6, INT(mainHeight / 0.04))]
+	if drawer_num > MIN(6, INT(mainHeight / 0.04)) then drawer_num = MIN(6, INT(mainHeight / 0.04))
+	if drawer_num < 1 then drawer_num = 1
+
+	if gs_drawerScheme_m = 1 then
+		drawerHeight = mainHeight / drawer_num
+		for i = 1 to drawer_num
+			parameters gs_drawerHeights[i] = drawerHeight
+		next i
+
+		hideparameter "gs_topDrawerH",
+				"gs_bottomDrawerH",
+				"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+
+		lock	"gs_topDrawerH",
+				"gs_bottomDrawerH",
+				"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+	endif
+
+	if gs_drawerScheme_m = 2 then
+		if drawer_num = 1 then
+			gs_topDrawerH = mainHeight
+			lock "gs_topDrawerH"
+			parameters gs_topDrawerH = gs_topDrawerH, gs_drawerHeights[1] = gs_topDrawerH
+		else
+			values "gs_topDrawerH" range [0.04, mainHeight - (drawer_num - 1) * 0.04]
+			if gs_topDrawerH > mainHeight - (drawer_num - 1) * 0.04 then gs_topDrawerH = mainHeight - (drawer_num - 1) * 0.04
+			if gs_topDrawerH <  0.04 then gs_topDrawerH = 0.04
+
+			parameters gs_drawerHeights[1] = gs_topDrawerH
+
+			drawerHeight = (mainHeight - gs_topDrawerH) / (drawer_num - 1)
+
+			for i = 2 to drawer_num
+				parameters gs_drawerHeights[i] = drawerHeight
+			next i
+		endif
+
+		hideparameter "gs_bottomDrawerH",
+				"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+
+		lock	"gs_bottomDrawerH",
+				"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+	endif
+
+	if gs_drawerScheme_m = 3 then
+		if drawer_num = 1 then
+			gs_bottomDrawerH = mainHeight
+			lock "gs_bottomDrawerH"
+			parameters gs_bottomDrawerH = gs_bottomDrawerH, gs_drawerHeights[1] = gs_bottomDrawerH
+		else
+			values "gs_bottomDrawerH" range [0.04, mainHeight - (drawer_num - 1) * 0.04]
+			if gs_bottomDrawerH > mainHeight - (drawer_num - 1) * 0.04 then gs_bottomDrawerH = mainHeight - (drawer_num - 1) * 0.04
+			if gs_bottomDrawerH < 0.04 then gs_bottomDrawerH = 0.04
+
+			drawerHeight = (mainHeight - gs_bottomDrawerH) / (drawer_num - 1)
+
+			for i = 1 to drawer_num - 1
+				parameters gs_drawerHeights[i] = drawerHeight
+			next i
+
+			parameters gs_drawerHeights[drawer_num] = gs_bottomDrawerH
+		endif
+
+		hideparameter "gs_topDrawerH",
+				"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+
+		lock	"gs_topDrawerH",
+				"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+	endif
+
+	if gs_drawerScheme_m = 4 then
+		if drawer_num = 1 then
+			gs_topDrawerH = mainHeight
+			lock "gs_topDrawerH", "gs_bottomDrawerH"
+			parameters gs_topDrawerH = gs_topDrawerH, gs_drawerHeights[1] = gs_topDrawerH
+		else
+			if drawer_num = 2 then
+				values "gs_topDrawerH" range [0.04, mainHeight - 0.04]
+				if gs_topDrawerH > mainHeight - 0.04 then gs_topDrawerH = mainHeight - 0.04
+				if gs_topDrawerH < 0.04 then gs_topDrawerH = 0.04
+
+				gs_bottomDrawerH = mainHeight - gs_topDrawerH
+				lock "gs_bottomDrawerH"
+				parameters gs_bottomDrawerH = gs_bottomDrawerH,
+							gs_drawerHeights[1] = gs_topDrawerH,
+							gs_drawerHeights[2] = gs_bottomDrawerH
+			else
+				values "gs_topDrawerH" range [0.04, mainHeight - (drawer_num - 1) * 0.04]
+				if gs_topDrawerH > mainHeight - (drawer_num - 1) * 0.04 then gs_topDrawerH = mainHeight - (drawer_num - 1) * 0.04
+				if gs_topDrawerH < 0.04 then gs_topDrawerH = 0.04
+
+				values "gs_bottomDrawerH" range [0.04, mainHeight - (drawer_num - 2) * 0.04 - gs_topDrawerH]
+				if gs_bottomDrawerH > mainHeight - (drawer_num - 2) * 0.04 - gs_topDrawerH then gs_bottomDrawerH = mainHeight - (drawer_num - 2) * 0.04 - gs_topDrawerH
+				if gs_bottomDrawerH < 0.04 then gs_bottomDrawerH = 0.04
+
+				drawerHeight = (mainHeight - gs_topDrawerH - gs_bottomDrawerH) / (drawer_num - 2)
+
+				parameters gs_drawerHeights[1] = gs_topDrawerH
+
+				for i = 2 to drawer_num - 1
+					parameters gs_drawerHeights[i] = drawerHeight
+				next i
+
+				parameters gs_drawerHeights[drawer_num] = gs_bottomDrawerH
+			endif
+		endif
+
+		hideparameter "gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+
+		lock	"gs_drawerH_1",
+				"gs_drawerH_2",
+				"gs_drawerH_3",
+				"gs_drawerH_4",
+				"gs_drawerH_5",
+				"gs_drawerH_6"
+	endif
+
+	if gs_drawerScheme_m = 5 then
+		if GLOB_MODPAR_NAME = "gs_drawerScheme_m" or GLOB_MODPAR_NAME = "gs_drawerScheme" or GLOB_MODPAR_NAME = "drawer_num" then
+			if drawer_num = 1 then
+				gs_drawerH_1 = mainHeight
+			endif
+
+			if drawer_num = 2 then
+				gs_drawerH_1 = mainHeight/2
+				gs_drawerH_2 = mainHeight/2
+			endif
+
+			if drawer_num = 3 then
+				gs_drawerH_1 = mainHeight/3
+				gs_drawerH_2 = mainHeight/3
+				gs_drawerH_3 = mainHeight/3
+			endif
+
+			if drawer_num = 4 then
+				gs_drawerH_1 = mainHeight/4
+				gs_drawerH_2 = mainHeight/4
+				gs_drawerH_3 = mainHeight/4
+				gs_drawerH_4 = mainHeight/4
+			endif
+
+			if drawer_num = 5 then
+				gs_drawerH_1 = mainHeight/5
+				gs_drawerH_2 = mainHeight/5
+				gs_drawerH_3 = mainHeight/5
+				gs_drawerH_4 = mainHeight/5
+				gs_drawerH_5 = mainHeight/5
+			endif
+
+			if drawer_num = 6 then
+				gs_drawerH_1 = mainHeight/6
+				gs_drawerH_2 = mainHeight/6
+				gs_drawerH_3 = mainHeight/6
+				gs_drawerH_4 = mainHeight/6
+				gs_drawerH_5 = mainHeight/6
+				gs_drawerH_6 = mainHeight/6
+			endif
+
+			parameters gs_drawerH_1 = gs_drawerH_1
+			parameters gs_drawerH_2 = gs_drawerH_2
+			parameters gs_drawerH_3 = gs_drawerH_3
+			parameters gs_drawerH_4 = gs_drawerH_4
+			parameters gs_drawerH_5 = gs_drawerH_5
+			parameters gs_drawerH_6 = gs_drawerH_6
+
+		endif
+
+		if drawer_num = 1 then
+			gs_drawerH_1 = mainHeight
+			parameters gs_drawerH_1 = gs_drawerH_1
+			lock "gs_drawerH_1"
+		else
+			values "gs_drawerH_1" range [0.04, mainHeight - (drawer_num - 1) * 0.04]
+		endif
+
+		if drawer_num > 1 then
+			if drawer_num = 2 then
+				gs_drawerH_2 = mainHeight - gs_drawerH_1
+				parameters gs_drawerH_2 = gs_drawerH_2
+				lock "gs_drawerH_2"
+			else
+				values "gs_drawerH_2" range [0.04, mainHeight - gs_drawerH_1 - (drawer_num - 2) * 0.04]
+			endif
+		endif
+
+		if drawer_num > 2 then
+			if drawer_num = 3 then
+				gs_drawerH_3 = mainHeight - gs_drawerH_1 - gs_drawerH_2
+				parameters gs_drawerH_3 = gs_drawerH_3
+				lock "gs_drawerH_3"
+			else
+				values "gs_drawerH_3" range [0.04, mainHeight - gs_drawerH_1 - gs_drawerH_2 - (drawer_num - 3) * 0.04]
+			endif
+		endif
+
+		if drawer_num > 3 then
+			if drawer_num = 4 then
+				gs_drawerH_4 = mainHeight - gs_drawerH_1 - gs_drawerH_2 - gs_drawerH_3
+				parameters gs_drawerH_4 = gs_drawerH_4
+				lock "gs_drawerH_4"
+			else
+				values "gs_drawerH_4" range [0.04, mainHeight - gs_drawerH_1 - gs_drawerH_2 - gs_drawerH_3 - (drawer_num - 4) * 0.04]
+			endif
+		endif
+
+		if drawer_num > 4 then
+			if drawer_num = 5 then
+				gs_drawerH_5 = mainHeight - gs_drawerH_1 - gs_drawerH_2 - gs_drawerH_3 - gs_drawerH_4
+				parameters gs_drawerH_5 = gs_drawerH_5
+				lock "gs_drawerH_5"
+			else
+				values "gs_drawerH_5" range [0.04, mainHeight - gs_drawerH_1 - gs_drawerH_2 - gs_drawerH_3 - gs_drawerH_4 - (drawer_num - 5) * 0.04]
+			endif
+		endif
+
+		if drawer_num > 5 then
+			gs_drawerH_6 = mainHeight - gs_drawerH_1 - gs_drawerH_2 - gs_drawerH_3 - gs_drawerH_4 - gs_drawerH_5
+			parameters gs_drawerH_6 = gs_drawerH_6
+			lock "gs_drawerH_6"
+		endif
+
+		hideparameter "gs_topDrawerH",
+				"gs_bottomDrawerH"
+
+		lock	"gs_topDrawerH",
+				"gs_bottomDrawerH"
+
+		parameters gs_drawerHeights[1] = gs_drawerH_1
+		parameters gs_drawerHeights[2] = gs_drawerH_2
+		parameters gs_drawerHeights[3] = gs_drawerH_3
+		parameters gs_drawerHeights[4] = gs_drawerH_4
+		parameters gs_drawerHeights[5] = gs_drawerH_5
+		parameters gs_drawerHeights[6] = gs_drawerH_6
+
+		if drawer_num < 2 then
+			hideparameter "gs_drawerH_2"
+			lock "gs_drawerH_2"
+		endif
+		if drawer_num < 3 then
+			hideparameter "gs_drawerH_3"
+			lock "gs_drawerH_3"
+		endif
+		if drawer_num < 4 then
+			hideparameter "gs_drawerH_4"
+			lock "gs_drawerH_4"
+		endif
+		if drawer_num < 5 then
+			hideparameter "gs_drawerH_5"
+			lock "gs_drawerH_5"
+		endif
+		if drawer_num < 6 then
+			hideparameter "gs_drawerH_6"
+			lock "gs_drawerH_6"
+		endif
+
+	endif
+
+	for hi = 1 to drawer_num
+		if gs_knobPosArray[hi][1] < -A/2 - gs_knobHorPos + 0.02 + xDrawerKnobPosMod then
+			xTempKnobPos = -A/2 - gs_knobHorPos + 0.02 + xDrawerKnobPosMod
+			parameters gs_knobPosArray[hi][1] = xTempKnobPos
+		endif
+		if gs_knobPosArray[hi][1] > A/2 - gs_knobHorPos - 0.02 - xDrawerKnobPosMod then
+			xTempKnobPos = A/2 - gs_knobHorPos - 0.02 - xDrawerKnobPosMod
+			parameters gs_knobPosArray[hi][1] = xTempKnobPos
+		endif
+		if gs_knobPosArray[hi][2] < -(gs_drawerHeights[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights[hi] - 0.005)/4 + 0.02 then
+			yTempKnobPos = -(gs_drawerHeights[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights[hi] - 0.005)/4 + 0.02
+			parameters gs_knobPosArray[hi][2] = yTempKnobPos
+		endif
+		if gs_knobPosArray[hi][2] > (gs_drawerHeights[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights[hi] - 0.005)/4 - 0.02 then
+			yTempKnobPos = (gs_drawerHeights[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights[hi] - 0.005)/4 - 0.02
+			parameters gs_knobPosArray[hi][2] = yTempKnobPos
+		endif
+	next hi
+else
+	lock			"drawer_num",
+					"drawerThk",
+					"gs_drawerScheme",
+					"gs_drawerScheme_m",
+					"gs_topDrawerH",
+					"gs_bottomDrawerH",
+					"gs_drawerH_1",
+					"gs_drawerH_2",
+					"gs_drawerH_3",
+					"gs_drawerH_4",
+					"gs_drawerH_5",
+					"gs_drawerH_6",
+					"gs_knobHorPos"
+
+	hideparameter 	"drawer_num",
+					"drawerThk",
+					"gs_drawerScheme",
+					"gs_drawerScheme_m",
+					"gs_topDrawerH",
+					"gs_bottomDrawerH",
+					"gs_drawerH_1",
+					"gs_drawerH_2",
+					"gs_drawerH_3",
+					"gs_drawerH_4",
+					"gs_drawerH_5",
+					"gs_drawerH_6",
+					"gs_knobHorPos"
+endif
+
+if bShowDrawer2Params then
+	values "drawerThk2" range [0.01,)
+
+	values "gs_drawerScheme_2" `Scheme 1`, `Scheme 2`, `Scheme 3`, `Scheme 4`, `Custom`
+	values "gs_drawerScheme_m_2" 1, 2, 3, 4, 5
+
+	if GLOB_MODPAR_NAME = "gs_drawerScheme_2" then
+		if gs_drawerScheme_2 = `Scheme 1` then gs_drawerScheme_m_2 = 1
+		if gs_drawerScheme_2 = `Scheme 2` then gs_drawerScheme_m_2 = 2
+		if gs_drawerScheme_2 = `Scheme 3` then gs_drawerScheme_m_2 = 3
+		if gs_drawerScheme_2 = `Scheme 4` then gs_drawerScheme_m_2 = 4
+		if gs_drawerScheme_2 = `Custom` then gs_drawerScheme_m_2 = 5
+		parameters gs_drawerScheme_m_2 = gs_drawerScheme_m_2
+	else
+		if gs_drawerScheme_m_2 = 1 then gs_drawerScheme_2 = `Scheme 1`
+		if gs_drawerScheme_m_2 = 2 then gs_drawerScheme_2 = `Scheme 2`
+		if gs_drawerScheme_m_2 = 3 then gs_drawerScheme_2 = `Scheme 3`
+		if gs_drawerScheme_m_2 = 4 then gs_drawerScheme_2 = `Scheme 4`
+		if gs_drawerScheme_m_2 = 5 then gs_drawerScheme_2 = `Custom`
+		parameters gs_drawerScheme_2 = gs_drawerScheme_2
+	endif
+
+	mainHeight = zzyzx - topThk - baseHeight
+	values "drawer_num_2" range [1, MIN(6, INT(mainHeight / 0.04))]
+	if drawer_num_2 > MIN(6, INT(mainHeight / 0.04)) then drawer_num_2 = MIN(6, INT(mainHeight / 0.04))
+	if drawer_num_2 < 1 then drawer_num_2 = 1
+
+	if gs_drawerScheme_m_2 = 1 then
+		drawerHeight = mainHeight / drawer_num_2
+		for i = 1 to drawer_num_2
+			parameters gs_drawerHeights_2[i] = drawerHeight
+		next i
+
+		hideparameter "gs_topDrawerH_2",
+				"gs_bottomDrawerH_2",
+				"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+
+		lock	"gs_topDrawerH_2",
+				"gs_bottomDrawerH_2",
+				"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+	endif
+
+	if gs_drawerScheme_m_2 = 2 then
+		if drawer_num_2 = 1 then
+			gs_topDrawerH_2 = mainHeight
+			lock "gs_topDrawerH_2"
+			parameters gs_topDrawerH_2 = gs_topDrawerH_2, gs_drawerHeights_2[1] = gs_topDrawerH_2
+		else
+			values "gs_topDrawerH_2" range [0.04, mainHeight - (drawer_num_2 - 1) * 0.04]
+			if gs_topDrawerH_2 > mainHeight - (drawer_num_2 - 1) * 0.04 then gs_topDrawerH_2 = mainHeight - (drawer_num_2 - 1) * 0.04
+			if gs_topDrawerH_2 <  0.04 then gs_topDrawerH_2 = 0.04
+
+			parameters gs_drawerHeights_2[1] = gs_topDrawerH_2
+
+			drawerHeight = (mainHeight - gs_topDrawerH_2) / (drawer_num_2 - 1)
+
+			for i = 2 to drawer_num_2
+				parameters gs_drawerHeights_2[i] = drawerHeight
+			next i
+		endif
+
+		hideparameter "gs_bottomDrawerH_2",
+				"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+
+		lock	"gs_bottomDrawerH_2",
+				"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+	endif
+
+	if gs_drawerScheme_m_2 = 3 then
+		if drawer_num_2 = 1 then
+			gs_bottomDrawerH_2 = mainHeight
+			lock "gs_bottomDrawerH_2"
+			parameters gs_bottomDrawerH_2 = gs_bottomDrawerH_2, gs_drawerHeights_2[1] = gs_bottomDrawerH_2
+		else
+			values "gs_bottomDrawerH_2" range [0.04, mainHeight - (drawer_num_2 - 1) * 0.04]
+			if gs_bottomDrawerH_2 > mainHeight - (drawer_num_2 - 1) * 0.04 then gs_bottomDrawerH_2 = mainHeight - (drawer_num_2 - 1) * 0.04
+			if gs_bottomDrawerH_2 < 0.04 then gs_bottomDrawerH_2 = 0.04
+
+			drawerHeight = (mainHeight - gs_bottomDrawerH_2) / (drawer_num_2 - 1)
+
+			for i = 1 to drawer_num_2 - 1
+				parameters gs_drawerHeights_2[i] = drawerHeight
+			next i
+
+			parameters gs_drawerHeights_2[drawer_num_2] = gs_bottomDrawerH_2
+		endif
+
+		hideparameter "gs_topDrawerH_2",
+				"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+
+		lock	"gs_topDrawerH_2",
+				"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+	endif
+
+	if gs_drawerScheme_m_2 = 4 then
+		if drawer_num_2 = 1 then
+			gs_topDrawerH_2 = mainHeight
+			lock "gs_topDrawerH_2", "gs_bottomDrawerH_2"
+			parameters gs_topDrawerH_2 = gs_topDrawerH_2, gs_drawerHeights_2[1] = gs_topDrawerH_2
+		else
+			if drawer_num_2 = 2 then
+				values "gs_topDrawerH_2" range [0.04, mainHeight - 0.04]
+				if gs_topDrawerH_2 > mainHeight - 0.04 then gs_topDrawerH_2 = mainHeight - 0.04
+				if gs_topDrawerH_2 < 0.04 then gs_topDrawerH_2 = 0.04
+
+				gs_bottomDrawerH_2 = mainHeight - gs_topDrawerH_2
+				lock "gs_bottomDrawerH_2"
+				parameters gs_bottomDrawerH_2 = gs_bottomDrawerH_2,
+							gs_drawerHeights_2[1] = gs_topDrawerH_2,
+							gs_drawerHeights_2[2] = gs_bottomDrawerH_2
+			else
+				values "gs_topDrawerH_2" range [0.04, mainHeight - (drawer_num_2 - 1) * 0.04]
+				if gs_topDrawerH_2 > mainHeight - (drawer_num_2 - 1) * 0.04 then gs_topDrawerH_2 = mainHeight - (drawer_num_2 - 1) * 0.04
+				if gs_topDrawerH_2 < 0.04 then gs_topDrawerH_2 = 0.04
+
+				values "gs_bottomDrawerH_2" range [0.04, mainHeight - (drawer_num_2 - 2) * 0.04 - gs_topDrawerH_2]
+				if gs_bottomDrawerH_2 > mainHeight - (drawer_num_2 - 2) * 0.04 - gs_topDrawerH_2 then gs_bottomDrawerH_2 = mainHeight - (drawer_num_2 - 2) * 0.04 - gs_topDrawerH_2
+				if gs_bottomDrawerH_2 < 0.04 then gs_bottomDrawerH_2 = 0.04
+
+				drawerHeight = (mainHeight - gs_topDrawerH_2 - gs_bottomDrawerH_2) / (drawer_num_2 - 2)
+
+				parameters gs_drawerHeights_2[1] = gs_topDrawerH_2
+
+				for i = 2 to drawer_num_2 - 1
+					parameters gs_drawerHeights_2[i] = drawerHeight
+				next i
+
+				parameters gs_drawerHeights_2[drawer_num_2] = gs_bottomDrawerH_2
+			endif
+		endif
+
+		hideparameter "gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+
+		lock	"gs_drawerH_1_2",
+				"gs_drawerH_2_2",
+				"gs_drawerH_3_2",
+				"gs_drawerH_4_2",
+				"gs_drawerH_5_2",
+				"gs_drawerH_6_2"
+	endif
+
+	if gs_drawerScheme_m_2 = 5 then
+		if GLOB_MODPAR_NAME = "gs_drawerScheme_m_2" or GLOB_MODPAR_NAME = "gs_drawerScheme_2" or GLOB_MODPAR_NAME = "drawer_num_2" then
+			if drawer_num_2 = 1 then
+				gs_drawerH_1_2 = mainHeight
+			endif
+
+			if drawer_num_2 = 2 then
+				gs_drawerH_1_2 = mainHeight/2
+				gs_drawerH_2_2 = mainHeight/2
+			endif
+
+			if drawer_num_2 = 3 then
+				gs_drawerH_1_2 = mainHeight/3
+				gs_drawerH_2_2 = mainHeight/3
+				gs_drawerH_3_2 = mainHeight/3
+			endif
+
+			if drawer_num_2 = 4 then
+				gs_drawerH_1_2 = mainHeight/4
+				gs_drawerH_2_2 = mainHeight/4
+				gs_drawerH_3_2 = mainHeight/4
+				gs_drawerH_4_2 = mainHeight/4
+			endif
+
+			if drawer_num_2 = 5 then
+				gs_drawerH_1_2 = mainHeight/5
+				gs_drawerH_2_2 = mainHeight/5
+				gs_drawerH_3_2 = mainHeight/5
+				gs_drawerH_4_2 = mainHeight/5
+				gs_drawerH_5_2 = mainHeight/5
+			endif
+
+			if drawer_num_2 = 6 then
+				gs_drawerH_1_2 = mainHeight/6
+				gs_drawerH_2_2 = mainHeight/6
+				gs_drawerH_3_2 = mainHeight/6
+				gs_drawerH_4_2 = mainHeight/6
+				gs_drawerH_5_2 = mainHeight/6
+				gs_drawerH_6_2 = mainHeight/6
+			endif
+
+			parameters gs_drawerH_1_2 = gs_drawerH_1_2
+			parameters gs_drawerH_2_2 = gs_drawerH_2_2
+			parameters gs_drawerH_3_2 = gs_drawerH_3_2
+			parameters gs_drawerH_4_2 = gs_drawerH_4_2
+			parameters gs_drawerH_5_2 = gs_drawerH_5_2
+			parameters gs_drawerH_6_2 = gs_drawerH_6_2
+
+		endif
+
+		if drawer_num_2 = 1 then
+			gs_drawerH_1 = mainHeight
+			parameters gs_drawerH_1_2 = gs_drawerH_1_2
+			lock "gs_drawerH_1_2"
+		else
+			values "gs_drawerH_1_2" range [0.04, mainHeight - (drawer_num_2 - 1) * 0.04]
+		endif
+
+		if drawer_num_2 > 1 then
+			if drawer_num_2 = 2 then
+				gs_drawerH_2_2 = mainHeight - gs_drawerH_1_2
+				parameters gs_drawerH_2_2 = gs_drawerH_2_2
+				lock "gs_drawerH_2_2"
+			else
+				values "gs_drawerH_2_2" range [0.04, mainHeight - gs_drawerH_1_2 - (drawer_num_2 - 2) * 0.04]
+			endif
+		endif
+
+		if drawer_num_2 > 2 then
+			if drawer_num_2 = 3 then
+				gs_drawerH_3_2 = mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2
+				parameters gs_drawerH_3_2 = gs_drawerH_3_2
+				lock "gs_drawerH_3_2"
+			else
+				values "gs_drawerH_3_2" range [0.04, mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2 - (drawer_num_2 - 3) * 0.04]
+			endif
+		endif
+
+		if drawer_num_2 > 3 then
+			if drawer_num_2 = 4 then
+				gs_drawerH_4_2 = mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2 - gs_drawerH_3_2
+				parameters gs_drawerH_4_2 = gs_drawerH_4_2
+				lock "gs_drawerH_4_2"
+			else
+				values "gs_drawerH_4_2" range [0.04, mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2 - gs_drawerH_3_2 - (drawer_num_2 - 4) * 0.04]
+			endif
+		endif
+
+		if drawer_num_2 > 4 then
+			if drawer_num_2 = 5 then
+				gs_drawerH_5_2 = mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2 - gs_drawerH_3_2 - gs_drawerH_4_2
+				parameters gs_drawerH_5_2 = gs_drawerH_5_2
+				lock "gs_drawerH_5_2"
+			else
+				values "gs_drawerH_5_2" range [0.04, mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2 - gs_drawerH_3_2 - gs_drawerH_4_2 - (drawer_num_2 - 5) * 0.04]
+			endif
+		endif
+
+		if drawer_num_2 > 5 then
+			gs_drawerH_6_2 = mainHeight - gs_drawerH_1_2 - gs_drawerH_2_2 - gs_drawerH_3_2 - gs_drawerH_4_2 - gs_drawerH_5_2
+			parameters gs_drawerH_6_2 = gs_drawerH_6_2
+			lock "gs_drawerH_6_2"
+		endif
+
+		hideparameter "gs_topDrawerH_2",
+				"gs_bottomDrawerH_2"
+
+		lock	"gs_topDrawerH_2",
+				"gs_bottomDrawerH_2"
+
+		parameters gs_drawerHeights_2[1] = gs_drawerH_1_2
+		parameters gs_drawerHeights_2[2] = gs_drawerH_2_2
+		parameters gs_drawerHeights_2[3] = gs_drawerH_3_2
+		parameters gs_drawerHeights_2[4] = gs_drawerH_4_2
+		parameters gs_drawerHeights_2[5] = gs_drawerH_5_2
+		parameters gs_drawerHeights_2[6] = gs_drawerH_6_2
+
+		if drawer_num_2 < 2 then
+			hideparameter "gs_drawerH_2_2"
+			lock "gs_drawerH_2_2"
+		endif
+		if drawer_num_2 < 3 then
+			hideparameter "gs_drawerH_3_2"
+			lock "gs_drawerH_3_2"
+		endif
+		if drawer_num_2 < 4 then
+			hideparameter "gs_drawerH_4_2"
+			lock "gs_drawerH_4_2"
+		endif
+		if drawer_num_2 < 5 then
+			hideparameter "gs_drawerH_5_2"
+			lock "gs_drawerH_5_2"
+		endif
+		if drawer_num_2 < 6 then
+			hideparameter "gs_drawerH_6_2"
+			lock "gs_drawerH_6_2"
+		endif
+
+	endif
+
+	for hi = 1 to drawer_num_2
+		if gs_knobPosArray_2[hi][1] < -gs_officeCab_width_2/2 - gs_knobHorPos_2 + 0.02 + xDrawerKnobPosMod then
+			xTempKnobPos = -gs_officeCab_width_2/2 - gs_knobHorPos_2 + 0.02 + xDrawerKnobPosMod
+			parameters gs_knobPosArray_2[hi][1] = xTempKnobPos
+		endif
+		if gs_knobPosArray_2[hi][1] > gs_officeCab_width_2/2 - gs_knobHorPos_2 - 0.02 - xDrawerKnobPosMod then
+			xTempKnobPos = gs_officeCab_width_2/2 - gs_knobHorPos_2 - 0.02 - xDrawerKnobPosMod
+			parameters gs_knobPosArray_2[hi][1] = xTempKnobPos
+		endif
+		if gs_knobPosArray_2[hi][2] < -(gs_drawerHeights_2[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights_2[hi] - 0.005)/4 + 0.02 then
+			yTempKnobPos = -(gs_drawerHeights_2[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights_2[hi] - 0.005)/4 + 0.02
+			parameters gs_knobPosArray_2[hi][2] = yTempKnobPos
+		endif
+		if gs_knobPosArray_2[hi][2] > (gs_drawerHeights_2[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights_2[hi] - 0.005)/4 - 0.02 then
+			yTempKnobPos = (gs_drawerHeights_2[hi] - 0.005)/2 - gs_knobVerPos_m * (gs_drawerHeights_2[hi] - 0.005)/4 - 0.02
+			parameters gs_knobPosArray_2[hi][2] = yTempKnobPos
+		endif
+	next hi
+else
+	lock 			"drawer_num_2",
+					"drawerThk2",
+					"gs_drawerScheme_2",
+					"gs_drawerScheme_m_2",
+					"gs_topDrawerH_2",
+					"gs_bottomDrawerH_2",
+					"gs_drawerH_1_2",
+					"gs_drawerH_2_2",
+					"gs_drawerH_3_2",
+					"gs_drawerH_4_2",
+					"gs_drawerH_5_2",
+					"gs_drawerH_6_2",
+					"gs_knobHorPos_2"
+
+	hideparameter	"drawer_num_2",
+					"drawerThk2",
+					"gs_drawerScheme_2",
+					"gs_drawerScheme_m_2",
+					"gs_topDrawerH_2",
+					"gs_bottomDrawerH_2",
+					"gs_drawerH_1_2",
+					"gs_drawerH_2_2",
+					"gs_drawerH_3_2",
+					"gs_drawerH_4_2",
+					"gs_drawerH_5_2",
+					"gs_drawerH_6_2",
+					"gs_knobHorPos_2"
+endif
+
+! -----------------------------------------------------------------------------
+! Knob Parameters
+! -----------------------------------------------------------------------------
+
+values "gs_knob_type_m" 0, 1, 2, 3, 4, 5, 6, 7, 8		! for UI
+
+values "gs_knobVerPos" `Top`, `Middle`, `Bottom`
+values "gs_knobVerPos_m" 1, 0, -1
+
+if GLOB_MODPAR_NAME = "gs_knobVerPos" then
+	gs_knobVerPos_m = 1
+	if gs_knobVerPos = `Middle` then gs_knobVerPos_m = 0
+	if gs_knobVerPos = `Bottom` then gs_knobVerPos_m = -1
+	parameters gs_knobVerPos_m = gs_knobVerPos_m
+else
+	gs_knobVerPos = `Top`
+	if gs_knobVerPos_m = 0 then gs_knobVerPos = `Middle`
+	if gs_knobVerPos_m = -1 then gs_knobVerPos = `Bottom`
+	parameters gs_knobVerPos = gs_knobVerPos
+endif
+
+if bShowCommonCabParams then
+	values "gs_knob_type" st_knobtypes
+
+	if GLOB_MODPAR_NAME = "gs_knob_type" then
+		for iKnob = 1 to 9
+			if gs_knob_type = st_knobtypes[iKnob] then
+				gs_knob_type_m = iKnob - 1
+			endif
+		next iKnob
+		parameters gs_knob_type_m = gs_knob_type_m
+	else
+		gs_knob_type = st_knobtypes[gs_knob_type_m+1]
+		parameters gs_knob_type = gs_knob_type
+	endif
+
+	if gs_knob_type_m = 0 then
+		lock			"gs_knobHorPos",
+						"gs_knobHorPos_2",
+						"gs_knobVerPos",
+						"gs_knobVerPos_m",
+						"gs_editableKnobs",
+						"gs_knob_mat"
+		hideparameter	"gs_knobHorPos",
+						"gs_knobHorPos_2",
+						"gs_knobVerPos",
+						"gs_knobVerPos_m",
+						"gs_editableKnobs",
+						"gs_knob_mat"
+	endif
+
+	values "gs_knobHorPos" range [-A / 2 + 0.02, A / 2 - 0.02]
+	if bShowDrawer2Params then
+		values "gs_knobHorPos_2" range [-gs_officeCab_width_2 / 2 + 0.02, gs_officeCab_width_2 / 2 - 0.02]
+	endif
+else
+	lock			"gs_knob_type",
+					"gs_knob_type_m",
+					"gs_knobHorPos",
+					"gs_knobHorPos_2",
+					"gs_knobVerPos",
+					"gs_knobVerPos_m",
+					"gs_editableKnobs",
+					"gs_cabinet_mat",
+					"gs_door_mat",
+					"gs_base_mat",
+					"gs_knob_mat",
+					"gs_bevel"
+
+	hideparameter	"gs_knob_type",
+					"gs_knob_type_m",
+					"gs_knobHorPos",
+					"gs_knobHorPos_2",
+					"gs_knobVerPos",
+					"gs_knobVerPos_m",
+					"gs_editableKnobs",
+					"gs_cabinet_mat",
+					"gs_door_mat",
+					"gs_base_mat",
+					"gs_knob_mat",
+					"gs_bevel"
+endif
+
+if NOT(bShowDrawer1Params) and NOT(bShowDrawer2Params) then
+	lock			"gs_baseType",
+					"gs_baseType_m",
+					"bCabBase",
+					"gs_baseHeight"
+
+	hideparameter	"gs_baseType",
+					"gs_baseType_m",
+					"bCabBase",
+					"gs_baseHeight"
+endif
+
+]]></Script_VL>
+
+<Picture MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="0" length_in_bytes="5855" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000800000
+	008008020000004C5CF69C0000169C4944415478DAED9DF7735BD795C7F72FD8
+	99FCB43BF16C7667765226D9F54F9B1F76EDC456BCEE45B6C691ED75127B9258
+	D1BA445623454AEC0D6C60270892007B13C5DE3BC126F62A9162EF040B249260
+	132593D90F78CDB7342DD3B20A0D90EF0CC40101F001EF7C70CFF9DE73EE7DFA
+	BBBFC9F6BD9AF90298D30F19A68797170DEBB7573736BE9001EC9F6D6E6EF475
+	E8CA33022BB343ABF323EA8AA39B75973BEB736EB4978FF436E9C77A6ECE8E2D
+	1B6FAEDF5ED9DCD890013C62BB7B67BDAB31BF3C33B03A2F1CEF57E58557E5AA
+	2B735415D9211559C1E59941FCD4E5A878EA6A71CC36980A1398D1EE5BB3632B
+	C65B028C0CE0416C6DC5D85275052FE3DF3D6EB0018CEE6B602A05989258C074
+	6C8399028C346236376400DF68C685D9FAD278FCB887EBEF0F4C18242ABF0286
+	50167EB524A6A932A5E32A60CA47FB9A67C67BE70D932B4BB7EEAEAFC900FE66
+	981EA929D088A0FF186E5F822176F116DB6042E0545310595F1AD752957AAD31
+	BFAF5337DAD73233B10DE6CEEDCDCDCD4301802821BCB387131F1B18356F2D42
+	99182EDB6034024CD7FF83E99B374C6C83D938380008D39C3C5ED8C353DF2798
+	2C094CB06E0BCCD512C05C1160C6FAB7C0CC01667EE38B3B160680EF516F4725
+	A7C7D972DA1670CBFB0A18904860AE16479566AA867A3B2C06000359C84DBE6E
+	9C9B45DF6A0B35C56981218AD36D0D959601606DD5D8522DC94DCBBED515690A
+	520322032EF9BB7ED6D9526501008CF33392DCB4E81B0AAAAE509393A40CF7B3
+	55799F8F0A7136CCEACD1C802437430E80F76B0B23D363BDD44A5BB5AF75A8F2
+	524CB4766060D0AC0120374506B3FCA01F59931F91A275572B6DC27CACC2039D
+	9392124355611D1DE69B84919B8D841D001C80944B152431DC05EFAB7CCE8707
+	BB27242468B4514141415D5D5DE608607343C8CD4021372DFA46D02FCF52C584
+	3AAA7D2FA87CACB46ADF84C4A4C8484D7878787070B0F9011072B321EF60C8CD
+	AB45C8CD204D905D98F07E7840626272444404DEE7A7190210D5CD032337B5F9
+	29FEC84DBEFB61BE36311A557C42A2703D667E0084DC2C893B3072332BC117B9
+	89E051F9DAC4456BE2E213D56A357E37530074134575F300081E00A4C5789172
+	F17E989F7D7C5C74744C9CF0BE9902981AB9AECB11D54D8B173CA4AE648D3B31
+	47ED6315E6EF84DCD446450BEF9B2900AA9B14AA0E86DCACCC5127A85DC208FA
+	C8CD20B7C4C4448D462BE2BE190210D5CD8AADEAE641A8AF956586C68438AA95
+	1710FBC8CDC4A4E488488DF0BE1902107233F760C8CD3AE4667A307213EF877A
+	9BE4664242922437CD1000727391E6D141929B1101174D532DDF0BB15A358247
+	F2BC190210D5CD0329376D63A32363E312C417DF4C0120370F4675B3B640C84D
+	CF2DB969A5F6476EC6C4C44A72D32C014C8D5ED7E5AA2A0F8EDC74C3FB61BEC8
+	4DC78484F8A8E818E17D3305307CA311B95965F972B3CE2437C312C24D72D3F4
+	DD0F72DF2937CD11C09D3BEBDD2DA5A5E9017C6E14E7D6CD7253AE909BA2BA79
+	3E32D43B29292522225278DF4C01CC8DB676E8A2DB74F14D6531F525519C0600
+	2891C383994B65AE9AFB028C05C8CDB460ED96DC54795B69D426B989E785F7CD
+	178071AA797EA8F8D650D9CDC1D2B9FEE2A9EEFC89EB79436D99BD8D57BAAF5E
+	6EAD8C6F2E8F45CC89A5B52011379D9981C1FB26B9E97FD124F67DAC4D727347
+	75D3AC01AC4CB7AE4FE96EEB6B5626AA96C62A17472B1646CAA59B0033D35B04
+	98F1AEDC81E6F4DEA62B5DB5C92D95714D8029D420362430FB3F6224B9999DB8
+	253795D6A13E36B1319131B1F1C2FB160060E8467354B04366BC4F6D4144674D
+	C26867D6CD81E2A5B18ADBFAEAF5E9DAB5A96A139871DD3618D3CFF961094CA1
+	BEA760AC3367A00530699D35498C184259EDBDC1840B308FB899BE436E52DD4C
+	406E4AD54DCB00303C9A9199434D362424C4C75BE1E1E6A070B5F571B709F377
+	8853BBE624F9D514840366CC04A60830EBFA9AF5E91A1398C92FC12C42652798
+	01C014E96F148C76660FB666F436A6755427B555253496C5102870192418250F
+	0F06CCFC4C8E345537A9AFA9039C4D72334A929B1602606969697575EDF6EDDB
+	FC5B5A5E9999358C8C8EB7B57755EA6AB2B273A9D68684047B29DC3C5C1D142E
+	B6BE2630F6B1612EB9C97EF4843BAB4D600CFD45CBE39580E10698D5AF802917
+	60B819064A00C38819E9C826C7F434A43262DA74090D25D1578BB58081CA7D83
+	91AA9BCE081EBCAF5579252525D34C1791C792002C2C2C180C869BDB363F3FCF
+	2346A3716565656D0D28D8BAD1B8343B6702D3DAD6A9ABAECDC8CC8E8E8E058C
+	2760DC1CDC9D2E3062429576020C7B60BA6A134D60068A5626748432128C0865
+	4672CC2E30436573FD25B37DC593DDF9A38069CFECA9BF4C8E41950930F87AE7
+	881190B6E5A603629F45541A95CFCEEAA66502D8D36E6D19AF64B808305081CC
+	A27169CE70737864ACADBDB3AABA363D238BE93E0B3ABC14EE62C4047ADB8507
+	38266B1505A9817585913DF529E35DD9B7064B56274D60D6BF0A8638B633F91B
+	06B6C05CCF23C70CB66676D75FBE5697D25A19478E294937C94DBCCF2D5A139C
+	90982CC9CD0309E0DBC14823667D7D1D3A8031DCBC353834D2D6D1A5AB328189
+	8F4F60C4287D3C3D5CED3C5C6C941EB624CC648D02EDC8EA0401667EA874756B
+	C4881CB33CA1337E4D95F11AC60D25B610CF732AE466941AEFAB25D71F2A00FC
+	D5F2F2D2EDB555187C2B18460C99865036333BD7D73FD8DADE59525671252D43
+	1B15E5EFEF478E7173BEA870B1F1F5B051FB03C6232FC5BFBE58DB539F3CD195
+	BD305C4A2813AAECF654F59ABE2637C927D0D33A3E561B1B172F52EE61046034
+	2E363436E7E4972E2E2EAEADAD2C2F191716E6F1FBDE23861CC3EB01B3BABABA
+	955FD65756578D4BCBFAE9D9FE81A1D6B68E92D272C050BD0908F0F754B87E09
+	C6FD4278804352A447616A604B79F4951825D54DA9997E1801E04ABEFBA74E5B
+	FDF2A9977DFC3545A5B59DD77A27A7A67906304B4B789803E36D41C460BA6D1B
+	8FF3CCAE030A30E41801461A3153FA99FEC1E1E6D676C0A4A567B26C2D2438C8
+	D44C9704CFE10480BF6667675DDDDC9E7FE1D5975E7FEFE8DB7FFEE084B5835B
+	687874467E497D4575EBB59EE1B18939FD0C4448DDCB7CC717168D0C007E1FE2
+	99A96930DC0F66A1CA2430EB26BB939B97C7AC4578EAF08E007E26252539393A
+	FA2A951A6D74706884BD93D75FCF3A7C7CCAFEC4A797ACEC94EEBE516151D959
+	050DB58DBDCD9D6337060DA313F393D34B6DD7C6B28B1A47C726C438F84E2652
+	4B4E4E4E6868E8A106801131262727718483834370705061614143437D6B4B4B
+	4B6B5B45852E332B2F363E25541DAD0C8C7055049DB1723E7BC1C5C6CEF3ACB5
+	EBE7E71C54E131D3D333F332808794A1447A1814141428954A5B5BDB4B972EBA
+	BBBBE39AA8A828AA02972FA72426C48785A97C7D7D1C1D1D6C6C6C2EDADA2A14
+	1EA5A525E409DE9723C8001E0A00C69F2334272626EAEAEAB2B2B2341A8D8F8F
+	8F42A180848B8B8BABABAB97971753331EC76B6C7920732C2F2F8B0826037804
+	00240CB855789631313A3A3A383878E3C68DDEDEDEB1B1B19999195EC3B3E452
+	29ECC800F600F0B00E223D08B1BF4B8D0A9301EC01E0319A0C400620039001DC
+	B321B3B665244902B788D73280FD03805C61E9125ABEBEBE1ED18286818198F7
+	63BBC0C8001E3D808181010068B55A3F3F3F4F4F4F373737543CF72934A6A4A4
+	00A6A1A10130287DCE5C2AC80086A123C0C8001E4108C2A7CCA770A85EAF47BF
+	5350282A2ABA7CF9726464A400C3948A9FCC78A9410A308D8D8D80E1F5FC9534
+	62B823C0E02919C0774EC29CDEAEB23026C04C4D4DF5F5F5353737171616A6A6
+	A6F21101C32C172ABEBEBECC75A3A3A3AF5CB9525A5A0ABCFEFE7E265F020C68
+	C5412430980CE07E55D01E60B8C3238426C0343535316200C088F1F7F7F7F0F0
+	A014019B808000821BC0CACACA80F74D60F80C028C0C606FFBF67A3DD18C3B3C
+	3E3E3E4E28ABADAD255851B50E0B0B63C4000623C7040606521D024C79793960
+	C84380E13822188A83EC042303B8774FD8943FB6DCFD4D230605B573C4F01423
+	A6A7A707308432923FA99EBC0212C03062386D464C7A7ABA008342132346647E
+	09706E6EEE616FC8889E704B6B474959150DC8B55522C91E3DE1BDC01085788A
+	1CD3DDDD7DF5EA550146E418900830A29E0A1842596B6B6B666666727232A3EA
+	5077C4F82E9E3E7BE1E9236F0684C6EAAA9B7B7A0769AC7334C02C191745150E
+	1CDC04955D3DE1FB01236AABD7AE5D034C5E5E1E179261C490F3A3B7ECB0F784
+	E7E6E6A8F8FFE6BF5F7EF1B5F7DE7AF7E49F3EB675568469E3B2730AAA5BDA7B
+	BB7B59483733BFB06CB8B9C0E22DE32248F0305E5E1819199F98D47384FBCC31
+	945425302243C821E8CB2F355F4907077B85C2333C42EB1F18666BAF38F9E985
+	8F3EB6F9EC9C9BD525A5C22F2626A93823AFBEA8A2BDBB6F72727A71DEB8B6B4
+	76F75AEF547651F3E8D8E4C282DC927CB89E305287E8ECE4E418A65295961437
+	363610A01B1A9A4A4A2B52523362E25242D4D11EDEC14E6EFE36F6DEB68E4A17
+	45889DB3DF196BE7C010CDF48CDC137E143D6118E00E6664B47CEDECECB81319
+	199198989092929C9E7625353525225CEDE3ED4D4FD876CB985113CD292CC93D
+	E18705208D03B2E5C8C8884EA76322863211750B676767564B383A3A2263989A
+	F1785ADA95969666BD7E8A80CE775F9E093F3C80DD18981670281AC24CAC981E
+	776FD9D0D0104A464C1A703D6F27D7821E6F4F586A080BE33E6F21F784E58E98
+	0C400620033047008469E6963BCBC232807D058090A7F345F5913914EA85A583
+	028954AFE7570146EE093F16002C1D8C8D8DE57C280BD34591AA8F2CB045D757
+	5656B2A013994FE50712523566271819C0230841E2CB4E3260405CBF7EBDA6A6
+	263F3F3F2ECEB40788AE16F35B96DC42885FA1959D9D0D98F6F676C03062885D
+	A27EB9138CDC13FE6E49788FB230F779018D14CAC234520418954AE5EDED2D5A
+	8FDCE1E3728500C0482346AC821647D815CA6400F700F05DCBC29834EFC5E38C
+	18D6A68B50268161D010CA24309D9D9D7B8391013CF826617C2AE218C6AF3C8B
+	AF01535D5D0D18460CE57B784005A3A3C2AFF1F1F180A9AAAAE23C79319F8183
+	DC33F9CB00F6EE09AF7C2B18692117CF0E0F0F3314F03B6060000978482386D3
+	E6419E829C00C39FEC3C086030001CF6868C28C075765DD755D7AF2CB32462D9
+	6814CB17BF65D0ECBA10850083C4A2FFCE09575454D0EF2594B16C021E2CD383
+	0D7770B70043AC231551D066A5058AE0B0F784CF9CB3F9F573C7422312EBEADB
+	060647E7E60C54DEE8CE2F6D751FC5CE0CD38BC50D130CC4E37B8221D3F0C527
+	61504C65C4304DC1FBF481018318A36B0F24B9273CE7E4E4FCCC91175F78F59D
+	DFBEFFE9FF9E72F4F089884DCE2BA9686CEDE81B1AD58F4FCECCCE521C5D4258
+	E16383610ED3EBA7B94211EDFB3D5A027B5CBA05E38E1C824CAEE1AFC8AEF6F6
+	76EEEE8A505584C23BF0F47987139F5C38F1C9C5D3D60A0737956F70526C4A71
+	61596B43EB48FFC8CD8191B971FDFCF8A4A1EBC6787E592BAD79799FF0C3E600
+	3428D3346767272E855D5ECEE2C3A6A6E6E6BABAFAFC8292A494F4084D7C5068
+	949B67B0F5450F5B071F07D740776FB59B67C8053B4FFF20CDE4E4940CE011F4
+	84112A191919A44AFABDF420954ADFA828EDE594E48CF4B4ACCC0CBAC2B488DD
+	DC5CD9426C6D6D7DDECA8ABE31AF271BC83DE147D613265BA26158B3C66A353E
+	3730582FE4E4E4040F0C25A3F4F5C55F94FCD84ACF8C5AEE093FAE9E300342E8
+	16F60D5050EAD8329AC3D49758E2C9B3724FF8B13764A4CB01614BD88E0BD7C8
+	C538B9232603B01C00A83BEAED3280EF078038382BE6F7A921C3BC5FDA8B2AF7
+	84093ED439A6A7A7F7E93FF567D91AB52D3A2D6C5CA13DC949A267F6D8247CB0
+	01D0C0402E73CAC239FBB44F989E89280B7B6D19E18F4223E546C0701520C0A0
+	23610018D113DE05E6C00088D4683865CE5172CE3EED1316D5476211C5327820
+	DEA93ED291A72F2F1AC214EBD9C60521D6D80A306C5961DDE7DE602C08009B3B
+	39597B3B7B3CB0D339FB9784773552844F253004447698B26EA5A4A4242D2D8D
+	7D74020CB35C018611438918305CEF802998D8562F81D99563CC0D00BBCF8801
+	1F7EF0E1915F3DCBEEA9EF09C09EB66B2FAA04866DF28C1876660B309C09F57A
+	56B5884DC2ECB2E39BC58861DF1DD73B2094A12BC488117DC7AF83D97F001AAD
+	8694FB87DFFDFEDF7FF68BCF3F3EB5B9B1695E001E180CD521F699B2711E3060
+	20B931564428A3A3C2990386BDDD8C986F05F3980070B96F6D94963B674F9D79
+	FE99E7DE7EF52D7F6FBF5DCE31F79EB049C2AEACECBD7B5B12543C82A319318C
+	06C020363879468C62DBD8C741934B8C18720C6050681C8D83EC04833D92860C
+	EFE5EDE5FDF6D1632F3DF3FC1FDFFBF09D37DE2EC82BB02400741FBBBB6FD4D5
+	37AFAC2CE3192E44B9ABD1789F607850E418AEFE414915308432720C4844B39E
+	5046F2675B3DD8B82602638B5D92B488493C0F2337F3F2F30AF20BDE7AFDCDE7
+	9E39F2CA732F5A9F3AC798B3240038CFEA82FD6F5E7A27323AB5A1B973787482
+	A3D09A5FDEEE09C3E39EB19D2778FC9E17A290F2B600430D555C88428C18A927
+	CCE55A489B0FD613E6AF38086388B7E0F4EFDEBD6B7A97DEBE3DD2AFF9B6241D
+	9D9C7EF5EC0BCFBFF2CE9BC74FB0353540957839A3B4BCAAB9EB3AFF77C0E4DC
+	DCFCEC1CDBB4E74D25D12D20789BC6FDD8D884FE3E2E9B0B184C80D9A5CAC43E
+	E107F63E22FB8B2FBEB81FE798F5AA0824335FC94B972EB9BABAFB078438BBF9
+	7E76FAD21F4F9EFFE8938B7F3DEFEEE01E16A04A898CCDCD2D6AECE8191F18BD
+	A937ACDD5C589F35ACF4F44F9756758D4F4CC1E0C1B6403D5812266451662003
+	8913B76C00A21F49EF858040FF2B4AABA9D2E988150D8D8DD5357559D9F9D1B1
+	C9C12AADA76F083D61678F10F609DBBBA03234EEDE61979CFDBC956A76CBF3D6
+	FB360F506D196B8A1EC04566DD132625129D9991B14F98ADA9818101CCC84C0D
+	E1ACCCFCBCDCF474260791C81B7A93E7CE9D3B73E62C2F2382CFCC4C93C3F76D
+	22C68B91C22CCAE37C0F14004C74BE48955C1788552AA8170604EEB6B7B7A7FF
+	CE4FA87879B1E1201030AC6B632185D498DC1F00841D3E189996933D8000240C
+	D225E780211AC22D5B46C988AF1E33009E15AFD9CF52047213FD2AF4E50106B0
+	7B15FBD20EE3D75D73DA7D0380F7D14B426E3E98C91DB1070480DCC4FB2CF5DD
+	D8D8E01C6500FB0A8069F34EB92903D83700BBE5A6650010EB9C61700000303D
+	96E4A6C5001085DF5B98B4118CE21A3B52EEDC217D717537D8983D80DD72D392
+	0008DBD8324E2F3D252D3733A7B8A0282B33934EFDE4C484D0EC867B997900D8
+	2D372D1280B0E1A161675B47575BC7931F9EF8D1133FFAE13FFC30213E9EC7EF
+	DCB9236D27C2A41163F806DB4F00A2BE26C94DCB06D0D6DCFAD11FFEF4F95F3E
+	FBFDF1F77FF2AF3F79E21F9F282C28BCE72B373737193180917AF1985803FA4D
+	601E0380DD72D3E2013437363DF7D4B3C75E3BFADA8BAF00E0C95F3C39313E71
+	FF7F0E15090C261A58E21A20D84383D90D00B949D6A50228DEFD200098999E3E
+	F2F4AF7FFEE39F3EF9F37FFBC1DFFFE0E489930FFF99243094E00598156C7B1B
+	B05414BA4F301200C20E00A87370FC83030063456A6C4CACB7A7F7459B8B23C3
+	238FFB130B30B4A5C4EA15512CC2A456810443AA6A7087CB25D04FA7AEC711CC
+	1280E51B714C8059DB3278747574D238A44D0F0353025087F33219C03ED98C7E
+	DADF5319E0EDAF70767FFD95577FF6E39F06F907CA00F6CFFA7BFBECADED3C9D
+	3D3EFEF3C97FF9A77F7EEA3FFEB3B4B04406B07FD6D1D6FEBBE3EF2391DF3D76
+	FCE8CB6FBCFBE63BDDD7BA6500FB6794778E3CF5CCD3BFFCAF63AF1CFDEDD1E3
+	A74E7E46629001EC9F21964283428E1F7BFBCD57DFF8F07F3E282F2EE34119C0
+	F7604820B182CA3CEDFF00181B7C901FE0AD660000000049454E44AE426082
+	]]>
+</Picture>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" length_in_bytes="227" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000004D0000
+	00B10203000000FC37D8410000000C504C5445000000F1F1F1FFFFFF000000B5
+	09AF470000000174524E530040E6D8660000007B49444154785EED95210E8030
+	0C459BEC00DC03D5A40E0457E24868140912C39148B04B06C835BF0A43C87F6E
+	6F4F54B50249E8D938B93F72283547589A932A11FEE76D89E63C4D45BAB96691
+	0C642AA8D44F4B4A4A4A4A4ABCBD33BA08A348EBCA29B808A8C423FDB364C992
+	254B962C5309EE66BFD5ACA602B900E96741E49EFDD0A00000000049454E44AE
+	426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="2" length_in_bytes="426" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000001900000
+	004902030000006E97980C0000000373424954080808DBE14FE000000009504C
+	5445FFFFFFFF00000000009A9502910000000374524E53FF00FF69EC1FBE0000
+	00097048597300000E9C00000E9C01079453DD0000001C74455874536F667477
+	6172650041646F62652046697265776F726B732043533571B5E336000000F749
+	4441545885ED59410AC3300C0B3DED19FB54FFD3F7EC9563633490CA548EBDC4
+	04E7D083B02BE438164DCBFE59AF73EDE772C4CAF77994DFDA6AA0235649B6E3
+	1A8830F4C29BDC4AF2785E0311865E7893AB57C21243256CADD912C23D690351
+	D7B07173BB6B1A897B0BA364D4496C1C6CE1694A86ECC9BA24EC018DAFC444A2
+	2983EB809430F6809A484C4A3A92F5241D6508AAA40DB438234D3244C930128B
+	9FD02416678CA5A4C572D4AB9373D4F776CDFF94C42749675491B481E98C409D
+	CE4FA4D2ACED8C43AE3DE8AF5F4B09E35CE03862AB91A4334A9838BBD219256C
+	C87D976976855202F724499224490290107F732CD81B0BF42661C0C65F820000
+	000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="3" length_in_bytes="183" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000006D0000
+	0087020300000061493F2100000009504C5445000000FFFFFF00000073C68371
+	0000000174524E530040E6D8660000005249444154785EEDD7A10D80401044D1
+	09955C36C1D0CF51C4F5B33D6CB64A24E6320E41F2BF7D62F4C876F5B68818D2
+	3977DD92CAE0D10635FE8620088220B81C667E8066F30D0441100441FF3FCB7F
+	5EDB03E39503631D54B6DA0000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="4" length_in_bytes="193" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000006D0000
+	0087020300000061493F210000000C504C5445000000F0F0F0FFFFFF000000C8
+	AFB02E0000000174524E530040E6D8660000005949444154785EEDD5B109C030
+	10435141163AB82E4D56F25CC910DEC733189C050E1586A4FA6A5FA3EECBEE5A
+	E53233A4F3AEF6489A068F655051230882DDE1189F60DF7A0B82E07605A72B6F
+	FBB1BC2008525E10A4BC21BB17F4E3F0DA26BB30730000000049454E44AE4260
+	82
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="5" length_in_bytes="195" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000006D0000
+	0087020300000061493F210000000C504C5445000000F0F0F0FFFFFF000000C8
+	AFB02E0000000174524E530040E6D8660000005B49444154785EEDD4B1098040
+	1044D1011B5AD8CCC496AE2E2DE2FAB91A16CE068E010313FD93BE6C822FBB63
+	2E979921EDE76A97A432B84D838A0F23D81D8EF10A768E071F77A85CFBDA2FDA
+	07D23E90F6D13E90F681B42F647703C4BFFDEB14D5B6B30000000049454E44AE
+	426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="6" length_in_bytes="196" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000006D0000
+	0087020300000061493F210000000C504C5445000000F0F0F0FFFFFF000000C8
+	AFB02E0000000174524E530040E6D8660000005C49444154785EEDD3B10D8030
+	1043514B2C74D27534AC94B96088EC93194E0A0B44A601AAEFF6572E9EEC8EB9
+	5C6686B49FAB5D92CAC46D9AA8782F12BB8B637C12FB4F3F891E5239BC0DBC4F
+	11BC28032F11BC44F08217BCE00DD9DD34170B0B6C11E9090000000049454E44
+	AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="7" length_in_bytes="199" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000006D0000
+	0087020300000061493F210000000C504C5445000000F0F0F0FFFFFF000000C8
+	AFB02E0000000174524E530040E6D8660000005F49444154785EED93B10D8030
+	10C44E62A197BEA361A5CC1586609FCCF0525820BA8E86F85A17D7D8B2BBE672
+	9919D2D957BB259581C73450F157F83838C617D07FF62DA1B7AF9CF16D23E3C9
+	811CC801E3311EE3C9811CC801E3313E64F7023435181C62692B2B0000000049
+	454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="8" length_in_bytes="199" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000006D0000
+	0087020300000061493F210000000C504C5445000000F0F0F0FFFFFF000000C8
+	AFB02E0000000174524E530040E6D8660000005F49444154785EEDD2B109C030
+	10435141163AB82E4D56F25CCE10D9C7331C380B18758604BEDA5FA879B2BBE6
+	729919D2D957BB259589C73451F1EDF8B838C68EE83FFB8FA397504E5F431FFA
+	D0B735A20F7DE8431FFAD0873EF4A12F64F7023453252D38C8C5BB0000000049
+	454E44AE426082
+	]]>
+</GDLPict>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+textElevInfield		= 4
+textElevBoolean		= 2
+textElevMaterial	= 4
+
+infieldHeight = 19
+outfieldHeight = 15
+
+IF bOnlyDrawerUI THEN
+	GOSUB 2000
+ELSE
+	GOSUB 1000
+ENDIF
+
+! -----------------------------------------------------------------------------
+END
+! -----------------------------------------------------------------------------
+
+1000:
+	UI_DIALOG `Office Cabinet Settings`
+
+	UI_CURRENT_PAGE gs_ui_current_page
+	UI_PAGE gs_ui_current_page
+
+	DIM tabTitles[4]
+		tabTitles[1] = `Drawer`
+		tabTitles[2] = `Knobs & Base`
+		tabTitles[3] = `Appearance`
+		tabTitles[4] = `Minimal Space`
+
+	DIM tabIcons[4]
+		tabIcons[1] = "ui_tab_furniture_drawer(1)"
+		tabIcons[2] = "ui_tab_furniture_knob(1)"
+		tabIcons[3] = "ui_tab_furniture_appearance(1)"
+		tabIcons[4] = "ui_tab_minimalspace(1)"
+
+	FILE_DEPENDENCE "ui_tab_furniture_drawer(1)"
+	FILE_DEPENDENCE "ui_tab_furniture_knob(1)"
+	FILE_DEPENDENCE "ui_tab_furniture_appearance(1)"
+	FILE_DEPENDENCE "ui_tab_minimalspace(1)"
+
+	CALL "ui_tabcontrol" parameters	controlType = 1,
+									nTabs = 4,
+									gs_ui_current_page = gs_ui_current_page,
+									tabTitles = tabTitles,
+									tabIcons = tabIcons
+
+
+
+	! -----------------------------------------------------------------------------
+	UI_PAGE 1		! Drawer
+	! -----------------------------------------------------------------------------
+
+	GOSUB 2000
+
+
+	! -----------------------------------------------------------------------------
+	UI_PAGE 2		! Knobs & Base
+	! -----------------------------------------------------------------------------
+
+	y0 = 40
+	x1 = 5
+	x2 = 105
+	x3 = 229
+	x4 = 330
+	dy = 26
+	y = y0
+
+	bHideXDrawerKnobPos = 0
+	if gs_knob_type_m = 0 then bHideXDrawerKnobPos = 1
+	bHideZDrawerKnobPos = 0
+	if gs_knob_type_m = 0 then bHideZDrawerKnobPos = 1
+
+	UI_STYLE 0,1
+	UI_OUTFIELD `Knob`, x1, y, x2-x1-1, 18
+	UI_STYLE 0,0
+
+	y = y + dy
+
+	UI_OUTFIELD `Style`, x1, y, x2-x1-1, 18
+	UI_INFIELD{3} "gs_knob_type_m", x2, y, 110, 95,
+				2, "Knob_Types_N(13)",
+				12, 4,
+				84,118,60,80,
+				1,`Style 1`, 1,
+				2,`Style 2`, 2,
+				3,`Style 3`, 3,
+				4,`Style 4`, 4,
+				5,`Style 5`, 5,
+				6,`Style 6`, 6,
+				7,`Style 7`, 7,
+				8,`Style 8`, 8,
+				9,`None`, 0
+
+	y = y + 5 * dy
+
+	UI_OUTFIELD `Hor. Position`, x1, y, x2-x1-1, outfieldHeight, 4 * bHideXDrawerKnobPos
+	UI_INFIELD "gs_knobHorPos", x2, y - textElevInfield, 110, infieldHeight
+	y = y + dy
+
+	UI_OUTFIELD `Vert. Position`, x1, y, x2-x1-1, outfieldHeight, 4 * bHideZDrawerKnobPos
+	UI_INFIELD "gs_knobVerPos", x2, y - textElevInfield, 110, infieldHeight
+
+
+	UI_SEPARATOR 222, 40, 222, 265
+	y = y0
+
+	UI_STYLE 0,1
+	UI_OUTFIELD `Base`, x3, y, x4-x3-1, 18
+	UI_STYLE 0,0
+
+	y = y + dy
+	UI_OUTFIELD `Type`, x3, y, x4-x3-1, outfieldHeight
+	UI_INFIELD "gs_baseType", x4, y - textElevInfield, 100, infieldHeight
+
+	y= y + dy
+	UI_OUTFIELD `Height`, x3, y, x4-x3-1, outfieldHeight
+	UI_INFIELD "gs_baseHeight", x4, y - textElevInfield, 100, infieldHeight
+
+
+	! -----------------------------------------------------------------------------
+	UI_PAGE 3		! Apperarance
+	! -----------------------------------------------------------------------------
+
+	x1 = 3
+	x4 = 217
+	x3 = x4-35
+	x2 = x4-120
+
+	x5 = x1+222
+	x6 = x2+222
+	x8 = x4+222
+	x7 = x8-80
+
+	y0 = 35
+	dy = 23
+
+	y = y0
+
+	UI_STYLE 0,1
+	UI_OUTFIELD `2D Representation`, x1, y, x4-x1, 18
+	UI_STYLE 0,0
+
+	y = y + dy
+	UI_OUTFIELD `Contour Pen`, x1, y, x3-x1-1, 18
+	UI_INFIELD "gs_cont_pen", x3, y - textElevMaterial, x4-x3, 20
+
+	y = y + dy
+	UI_OUTFIELD `Fill Type`, x1, y, x2-x1-1, 18
+	UI_INFIELD "gs_fill_type", x2, y - textElevMaterial, x4-x2, 20
+
+	y = y + dy
+	UI_OUTFIELD `Fill Pen`, x1, y, x3-x1-1, 18
+	UI_INFIELD "gs_fill_pen", x3, y - textElevMaterial, x4-x3, 20
+
+	y = y + dy
+	UI_OUTFIELD `Fill Background Pen`, x1, y, x3-x1-1, 18
+	UI_INFIELD "gs_back_pen", x3, y - textElevMaterial, x4-x3, 20
+
+	y = y + dy
+	UI_INFIELD{3} "drawer2d", x1, y, x3-x1-1, 18,
+			7, "",
+			2,
+			1, 20, 20, 20, 20,
+			0, `Show Drawer in 2D`, 0,
+			1, `Show Drawer in 2D`, 1
+
+	ysep = y + dy + 2
+
+	UI_SEPARATOR 222, 40, 222, ysep-5
+
+	y = y0
+	UI_STYLE 0,1
+	UI_OUTFIELD `3D Representation`, x5, y, x8-x5-1, 18
+	UI_STYLE 0,0
+
+	y = y + dy
+	UI_OUTFIELD `3D`, x5, y, x7-x5-1, outfieldHeight
+	UI_INFIELD "gs_detlevel_3d", x7, y - textElevInfield, x8-x7, infieldHeight
+
+	y = y + dy
+
+	UI_OUTFIELD `Resolution`, x5, y, x7-x5-1, outfieldHeight
+	UI_INFIELD "gs_resol", x7, y - textElevInfield, x8-x7, infieldHeight
+
+	y = y + dy
+	UI_INFIELD{3} "gs_shadow", x5, y, x8-x5-1, 18,
+			7, "",
+			2,
+			1, 20, 20, 20, 20,
+			0, `Shadow`, 0,
+			1, `Shadow`, 1
+
+	UI_SEPARATOR x1, ysep, 444-x1, ysep
+
+	y = ysep + 3
+	UI_STYLE 0,1
+	UI_OUTFIELD `Surfaces`, x1, y, x4-x1, 18
+	UI_STYLE 0,0
+
+	y = y + dy
+	UI_OUTFIELD `Cabinet`, x1, y, x2-x1-1, 18
+	UI_INFIELD "gs_cabinet_mat", x2, y - textElevMaterial, x4-x2, 22
+
+	UI_OUTFIELD `Knob`, x5, y, x6-x5-1, 18
+	UI_INFIELD "gs_knob_mat", x6, y - textElevMaterial, x8-x6, 22
+
+	y = y + dy
+	UI_OUTFIELD `Counter`, x1, y, x2-x1-1, 18
+	UI_INFIELD "count_mat", x2, y - textElevMaterial, x4-x2, 22
+
+	UI_OUTFIELD `Base`, x5, y, x6-x5-1, 18
+	UI_INFIELD "gs_base_mat", x6, y - textElevMaterial, x8-x6, 22
+
+	y = y + dy
+	UI_OUTFIELD `Drawer`, x1, y, x2-x1-1, 18
+	UI_INFIELD "gs_door_mat", x2, y - textElevMaterial, x4-x2, 22
+
+
+	! -----------------------------------------------------------------------------
+	UI_PAGE 4		! Minimal Space
+	! -----------------------------------------------------------------------------
+
+	UI_PICT 1, 150, 75, 77, 177, 1			!minSpace
+
+	UI_INFIELD "A", 158, 55, 60, 18
+	UI_INFIELD "B", 230, 113, 60, 18
+	UI_INFIELD "MSFront", 230, 200, 60, 18
+
+RETURN
+
+! -----------------------------------------------------------------------------
+! Drawer tabpage
+! -----------------------------------------------------------------------------
+
+2000:
+
+	xCenter	= 222
+	yCenter	= 120
+
+	xLeftStr1	= 230 - 220
+	Strlength1	= 110
+	xLeftStr2	= 345 - 220
+	Strlength2	= 90
+	yLeftStr1	= 35
+	yCurrent	= yLeftStr1
+
+	ui_outfield `No. of Drawers`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+	yCurrent = yCurrent - textElevInfield
+	if iCabIndex = 1 then
+		ui_infield "drawer_num", xLeftStr2, yCurrent, Strlength2, infieldHeight
+	else
+		ui_infield "drawer_num_2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+	endif
+	yCurrent = yCurrent + 25
+
+	ui_outfield `Scheme`, xLeftStr1, yCurrent, Strlength1, 16
+	if iCabIndex = 1 then
+		ui_infield{3} "gs_drawerScheme_m", xLeftStr2, yCurrent, Strlength2, 110,
+			2, 2, 5, 1,		!ui_cab01_scheme.png
+			80, 90, 80, 73,
+			1, `Scheme 1`, 1,
+			2, `Scheme 2`, 2,
+			3, `Scheme 3`, 3,
+			4, `Scheme 4`, 4,
+			5, `Custom`, 5
+	else
+		ui_infield{3} "gs_drawerScheme_m_2", xLeftStr2, yCurrent, Strlength2, 110,
+			2, 2, 5, 1,		!ui_cab01_scheme.png
+			80, 90, 80, 73,
+			1, `Scheme 1`, 1,
+			2, `Scheme 2`, 2,
+			3, `Scheme 3`, 3,
+			4, `Scheme 4`, 4,
+			5, `Custom`, 5
+	endif
+
+	yCurrent = 175
+	ui_infield{3} "gs_bevel", xLeftStr1, yCurrent, Strlength1, 20,
+		7, "",
+		2,
+		1, 20, 20, 20, 20,
+		0, `Edge Bevel`, 0,
+		1, `Edge Bevel`, 1
+	yCurrent = yCurrent + 25
+
+	ui_outfield `Drawer Thickness`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+	yCurrent = yCurrent - textElevInfield
+	if iCabIndex = 1 then
+		ui_infield "drawerThk", xLeftStr2, yCurrent, Strlength2, infieldHeight
+	else
+		ui_infield "drawerThk2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+	endif
+	yCurrent = yCurrent + 25
+
+	if bOnlyDrawerUI then
+		ui_outfield `Cabinet Width`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+		yCurrent = yCurrent - textElevInfield
+		if iCabIndex = 1 then
+			ui_infield "gs_officeCab_width", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		else
+			ui_infield "gs_officeCab_width_2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		endif
+	endif
+
+	ui_separator xCenter, 32, xCenter, 265
+
+	xLeftStr1	= 230
+	Strlength1	= 110
+	xLeftStr2	= 345
+	Strlength2	= 90
+	yLeftStr1	= 35
+	yCurrent	= yLeftStr1
+
+	ui_outfield `Drawer Heights`, xLeftStr1, yCurrent, Strlength1, 16
+	yCurrent = yCurrent + 25 - textElevInfield
+
+	if (gs_drawerScheme_m = 2 and iCabIndex = 1) or (gs_drawerScheme_m_2 = 2 and iCabIndex = 2) then
+		ui_outfield `Top Drawer Height`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+		yCurrent = yCurrent - textElevInfield
+		if iCabIndex = 1 then
+			ui_infield "gs_topDrawerH", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		else
+			ui_infield "gs_topDrawerH_2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		endif
+	endif
+
+	if (gs_drawerScheme_m = 3 and iCabIndex = 1) or (gs_drawerScheme_m_2 = 3 and iCabIndex = 2) then
+		ui_outfield `Bottom Drawer Height`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+		yCurrent = yCurrent - textElevInfield
+		if iCabIndex = 1 then
+			ui_infield "gs_bottomDrawerH", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		else
+			ui_infield "gs_bottomDrawerH_2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		endif
+	endif
+
+	if (gs_drawerScheme_m = 4 and iCabIndex = 1) or (gs_drawerScheme_m_2 = 4 and iCabIndex = 2) then
+		ui_outfield `Top Drawer Height`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+		yCurrent = yCurrent - textElevInfield
+		if iCabIndex = 1 then
+			ui_infield "gs_topDrawerH", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		else
+			ui_infield "gs_topDrawerH_2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		endif
+		yCurrent = yCurrent + 25
+
+		ui_outfield `Bottom Drawer Height`, xLeftStr1, yCurrent, Strlength1, outfieldHeight
+		yCurrent = yCurrent - textElevInfield
+		if iCabIndex = 1 then
+			ui_infield "gs_bottomDrawerH", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		else
+			ui_infield "gs_bottomDrawerH_2", xLeftStr2, yCurrent, Strlength2, infieldHeight
+		endif
+	endif
+
+	if (gs_drawerScheme_m = 5 and iCabIndex = 1) or (gs_drawerScheme_m_2 = 5 and iCabIndex = 2) then
+		if (drawer_num = 1 and iCabIndex = 1) or (drawer_num_2 = 1 and iCabIndex = 2) then
+			ui_pict 3, xLeftStr1, yCurrent, 109, 135, 1			!drawer1
+			y0 = 58
+		endif
+		if (drawer_num = 2 and iCabIndex = 1) or (drawer_num_2 = 2 and iCabIndex = 2) then
+			ui_pict 4, xLeftStr1, yCurrent, 109, 135, 1			!drawer2
+			y0 = 30
+			dy = 58
+		endif
+		if (drawer_num = 3 and iCabIndex = 1) or (drawer_num_2 = 3 and iCabIndex = 2) then
+			ui_pict 5, xLeftStr1, yCurrent, 109, 135, 1			!drawer3
+			y0 = 15
+			dy = 45
+		endif
+		if (drawer_num = 4 and iCabIndex = 1) or (drawer_num_2 = 4 and iCabIndex = 2) then
+			ui_pict 6, xLeftStr1, yCurrent, 109, 135, 1			!drawer4
+			y0 = 10
+			dy = 34
+		endif
+		if (drawer_num = 5 and iCabIndex = 1) or (drawer_num_2 = 5 and iCabIndex = 2) then
+			ui_pict 7, xLeftStr1, yCurrent, 109, 135, 1			!drawer5
+			y0 = 5
+			dy = 27
+		endif
+		if (drawer_num = 6 and iCabIndex = 1) or (drawer_num_2 = 6 and iCabIndex = 2) then
+			ui_pict 8, xLeftStr1, yCurrent, 109, 135, 1			!drawer6
+			y0 = 3
+			dy = 22
+		endif
+
+		yCurrent = yCurrent + y0
+
+		if iCabIndex = 1 then
+			ui_infield "gs_drawerH_1", xLeftStr2, yCurrent, Strlength2, 20
+
+			if drawer_num > 1 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_2", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num > 2 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_3", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num > 3 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_4", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num > 4 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_5", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num > 5 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_6", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+		else
+			ui_infield "gs_drawerH_1_2", xLeftStr2, yCurrent, Strlength2, 20
+
+			if drawer_num_2 > 1 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_2_2", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num_2 > 2 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_3_2", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num_2 > 3 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_4_2", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num_2 > 4 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_5_2", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+			if drawer_num_2 > 5 then
+				yCurrent = yCurrent + dy
+				ui_infield "gs_drawerH_6_2", xLeftStr2, yCurrent, Strlength2, 20
+			endif
+		endif
+	endif
+
+RETURN
+
+
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["fa_minimalspace_CS_WMCC"]]></MName>
+		<MainGUID>904E8549-5FA9-4906-BD5E-3C80B3C7CF0D</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Resize_A_B_ZZYZX"]]></MName>
+		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_knobtyp_CS_WMCC"]]></MName>
+		<MainGUID>9C1B3499-D22D-40E9-B158-455C4C25170A</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["ui_tabcontrol"]]></MName>
+		<MainGUID>D512885C-336A-4161-B8CB-EE5DC5D09FFE</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["FM_types_CS_WMCC"]]></MName>
+		<MainGUID>3790739C-38F0-48CA-A8F7-5E84135DF498</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["ui_tabcontrol"]]></MName>
+		<MainGUID>D512885C-336A-4161-B8CB-EE5DC5D09FFE</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_UIDefault/>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>0.4</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>0.6</Value>
+		</Length>
+		<Length Name="zzyzx">
+			<Description><![CDATA["Total Height"]]></Description>
+			<Value>0.6</Value>
+		</Length>
+		<Boolean Name="bPartOfLayout">
+			<Description><![CDATA["Called as a Part of Layout"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<String Name="gs_detlevel_3D">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="gs_detlevel_3D_m">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+
+		<!-- gs_drawers: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_drawers">
+			<Description><![CDATA["Drawers"]]></Description>
+		</Title>
+		<Length Name="gs_officeCab_width">
+			<Description><![CDATA["Drawer Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.4</Value>
+		</Length>
+		<Integer Name="drawer_num">
+			<Description><![CDATA["No. of Drawers"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+		<Length Name="drawerThk">
+			<Description><![CDATA["Drawer Thickness "]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<Boolean Name="gs_bevel">
+			<Description><![CDATA["Edge Bevel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<String Name="gs_drawerScheme">
+			<Description><![CDATA["Scheme"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Scheme 1"]]></Value>
+		</String>
+		<Integer Name="gs_drawerScheme_m">
+			<Description><![CDATA["Scheme"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="gs_topDrawerH">
+			<Description><![CDATA["Top Drawer Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_bottomDrawerH">
+			<Description><![CDATA["Bottom Drawer Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_1">
+			<Description><![CDATA["Drawer Height 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_2">
+			<Description><![CDATA["Drawer Height 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_3">
+			<Description><![CDATA["Drawer Height 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_4">
+			<Description><![CDATA["Drawer Height 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_5">
+			<Description><![CDATA["Drawer Height 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_6">
+			<Description><![CDATA["Drawer Height 6"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerHeights">
+			<Description><![CDATA["Drawer Heights"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="6" SecondDimension="0">
+				<AVal Row="1">0.1325</AVal>
+				<AVal Row="2">0.1325</AVal>
+				<AVal Row="3">0.1325</AVal>
+				<AVal Row="4">0.1325</AVal>
+				<AVal Row="5">0</AVal>
+				<AVal Row="6">0</AVal>
+			</ArrayValues>
+		</Length>
+
+		<!-- gs_drawers_2: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_drawers_2">
+			<Description><![CDATA["Drawers"]]></Description>
+		</Title>
+		<Length Name="gs_officeCab_width_2">
+			<Description><![CDATA["Drawer Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.4</Value>
+		</Length>
+		<Integer Name="drawer_num_2">
+			<Description><![CDATA["No. of Drawers"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+		<Length Name="drawerThk2">
+			<Description><![CDATA["Drawer Thickness "]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<String Name="gs_drawerScheme_2">
+			<Description><![CDATA["Scheme"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Scheme 1"]]></Value>
+		</String>
+		<Integer Name="gs_drawerScheme_m_2">
+			<Description><![CDATA["Scheme"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="gs_topDrawerH_2">
+			<Description><![CDATA["Top Drawer Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_bottomDrawerH_2">
+			<Description><![CDATA["Bottom Drawer Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_1_2">
+			<Description><![CDATA["Drawer Height 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_2_2">
+			<Description><![CDATA["Drawer Height 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_3_2">
+			<Description><![CDATA["Drawer Height 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_4_2">
+			<Description><![CDATA["Drawer Height 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_5_2">
+			<Description><![CDATA["Drawer Height 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerH_6_2">
+			<Description><![CDATA["Drawer Height 6"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_drawerHeights_2">
+			<Description><![CDATA["Drawer Heights"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="6" SecondDimension="0">
+				<AVal Row="1">0.1375</AVal>
+				<AVal Row="2">0.1375</AVal>
+				<AVal Row="3">0.1375</AVal>
+				<AVal Row="4">0.1375</AVal>
+				<AVal Row="5">0</AVal>
+				<AVal Row="6">0</AVal>
+			</ArrayValues>
+		</Length>
+
+		<!-- gs_knob_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_knob_type">
+			<Description><![CDATA["Knob"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 1"]]></Value>
+		</String>
+		<Integer Name="gs_knob_type_m">
+			<Description><![CDATA["Knob Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="gs_knobHorPos">
+			<Description><![CDATA["Knob Horizontal Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="gs_knobHorPos_2">
+			<Description><![CDATA["Knob Horizontal Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<String Name="gs_knobVerPos">
+			<Description><![CDATA["Knob Vertical Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Middle"]]></Value>
+		</String>
+		<Integer Name="gs_knobVerPos_m">
+			<Description><![CDATA["Knob Vertical Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Boolean Name="gs_editableKnobs">
+			<Description><![CDATA["Hotspots for Editing Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="gs_knobPosArray">
+			<Description><![CDATA["Knob Position for Hotspot"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="6" SecondDimension="2">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="1" Row="2">0</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+				<AVal Column="1" Row="3">0</AVal>
+				<AVal Column="2" Row="3">0</AVal>
+				<AVal Column="1" Row="4">0</AVal>
+				<AVal Column="2" Row="4">0</AVal>
+				<AVal Column="1" Row="5">0</AVal>
+				<AVal Column="2" Row="5">0</AVal>
+				<AVal Column="1" Row="6">0</AVal>
+				<AVal Column="2" Row="6">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="gs_knobPosArray_2">
+			<Description><![CDATA["Knob Position for Hotspot"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="6" SecondDimension="2">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="1" Row="2">0</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+				<AVal Column="1" Row="3">0</AVal>
+				<AVal Column="2" Row="3">0</AVal>
+				<AVal Column="1" Row="4">0</AVal>
+				<AVal Column="2" Row="4">0</AVal>
+				<AVal Column="1" Row="5">0</AVal>
+				<AVal Column="2" Row="5">0</AVal>
+				<AVal Column="1" Row="6">0</AVal>
+				<AVal Column="2" Row="6">0</AVal>
+			</ArrayValues>
+		</Length>
+
+		<!-- gs_baseType: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_baseType">
+			<Description><![CDATA["Base Type"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Castor"]]></Value>
+		</String>
+		<Boolean Name="bCabBase">
+			<Description><![CDATA["Base"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="gs_baseType_m">
+			<Description><![CDATA["Base Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="gs_baseHeight">
+			<Description><![CDATA["Base Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.05</Value>
+		</Length>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D Representation"]]></Description>
+		</Title>
+		<Boolean Name="drawer2d">
+			<Description><![CDATA["Drawer in 2D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<PenColor Name="gs_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_fill_pen">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="gs_back_pen">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+
+		<!-- gs_min_space: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_min_space">
+			<Description><![CDATA["Minimal Space"]]></Description>
+		</Title>
+		<Length Name="MSFront">
+			<Description><![CDATA["Minimal Space in Front"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.9</Value>
+		</Length>
+
+		<!-- gs_3D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_3D_representation">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Integer Name="gs_resol">
+			<Description><![CDATA["Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>16</Value>
+		</Integer>
+		<Boolean Name="gs_shadow">
+			<Description><![CDATA["Shadow"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- gs_material: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_material">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Material Name="gs_cabinet_mat">
+			<Description><![CDATA["Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>18</Value>
+		</Material>
+		<Material Name="count_mat">
+			<Description><![CDATA["Counter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>15</Value>
+		</Material>
+		<Material Name="gs_door_mat">
+			<Description><![CDATA["Drawer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>18</Value>
+		</Material>
+		<Material Name="gs_knob_mat">
+			<Description><![CDATA["Knob"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="gs_base_mat">
+			<Description><![CDATA["Base"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>49</Value>
+		</Material>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+		<RealNum Name="gs_list_cost">
+			<Description><![CDATA["Cost"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_manufacturer">
+			<Description><![CDATA["Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_note">
+			<Description><![CDATA["Note/Remarks"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_location">
+			<Description><![CDATA["Location"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_accessories">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_Type">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Furniture"]]></Value>
+		</String>
+		<Integer Name="iFMType">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>16</Value>
+		</Integer>
+		<String Name="FM_InventoryNumber">
+			<Description><![CDATA["Inventory Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_SerialNumber">
+			<Description><![CDATA["Serial Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductionYear">
+			<Description><![CDATA["Production Year"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="FM_ObjectWeight">
+			<Description><![CDATA["Object Weight"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_ObjectWeightUnit">
+			<Description><![CDATA["Object Weight Unit"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["kg"]]></Value>
+		</String>
+		<String Name="gs_list_custom1">
+			<Description><![CDATA["User Defined 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom2">
+			<Description><![CDATA["User Defined 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom3">
+			<Description><![CDATA["User Defined 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom4">
+			<Description><![CDATA["User Defined 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom5">
+			<Description><![CDATA["User Defined 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+
+		<!-- gs_onorm_Title: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_onorm_Title">
+			<Description><![CDATA["ONORM Listing Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		<String Name="gs_onorm_dimensions">
+			<Description><![CDATA["Width/Depth/Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_manufacturer">
+			<Description><![CDATA["ONORM Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight_value">
+			<Description><![CDATA["Base Height Value"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight">
+			<Description><![CDATA["Onorm Base Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_assemblydate">
+			<Description><![CDATA["Assembly Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext1">
+			<Description><![CDATA["Additional Information 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext2">
+			<Description><![CDATA["Additional Information 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_aks">
+			<Description><![CDATA["AKS Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_product">
+			<Description><![CDATA["Product Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_leistungbuch">
+			<Description><![CDATA["Collection of Specifications ID"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_description">
+			<Description><![CDATA["ONORM Description"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_number">
+			<Description><![CDATA["Onorm Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_id">
+			<Description><![CDATA["ID Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_admission">
+			<Description><![CDATA["Admission Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_modification">
+			<Description><![CDATA["Modification Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_tozonenumber">
+			<Description><![CDATA["To Zone Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Integer Name="gs_ui_current_page">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="bTopCover">
+			<Description><![CDATA["Top Cover"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="topThk">
+			<Description><![CDATA["Top Thickness"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<Integer Name="iCabIndex">
+			<Description><![CDATA["Cab 1 or 2"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="bOnlyDrawerUI">
+			<Description><![CDATA["Called for Only Drawer UI"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="officeCab01_unID">
+			<Description><![CDATA["unID"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Boolean Name="bShowDrawer1Params">
+			<Description><![CDATA["Show Drawer 1 Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="bShowDrawer2Params">
+			<Description><![CDATA["Show Drawer 2 Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bShowDrawer1WidthParam">
+			<Description><![CDATA["Show Drawer 1 Width Parameter"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="bShowDrawer2WidthParam">
+			<Description><![CDATA["Show Drawer 2 Width Parameter"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bShowCommonCabParams">
+			<Description><![CDATA["Show Common Cab Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="enableDrawerSchemes">
+			<Description><![CDATA["Enabled Drwer Schemes"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+	</Parameters>
+</ParamSection>
+</Symbol>
