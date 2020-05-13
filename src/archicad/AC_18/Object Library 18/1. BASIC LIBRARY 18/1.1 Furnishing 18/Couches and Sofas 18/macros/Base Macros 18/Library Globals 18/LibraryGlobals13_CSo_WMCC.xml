@@ -1,0 +1,1413 @@
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="9B9C4950-4458-4300-99DD-2212839B0C98" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>B176ABF1-5813-478F-926B-28EE7C5DC1F7</MainGUID>
+	<MainGUID>4FD10D67-2F29-4844-A65A-6597589B0CB5</MainGUID>
+	<MainGUID>709CC5CC-6817-4C56-A74B-BED99DDB5FFA</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+dim stOpeningLineStyle[2]
+	stOpeningLineStyle[1] = `Handle`		!Style 1
+	stOpeningLineStyle[2] = `Hinges`		!Style 2
+
+dim stOpeningLineType[5]
+	stOpeningLineType[1] = `Solid Line`
+	stOpeningLineType[2] = `Dashed`
+	stOpeningLineType[3] = `Dotted`
+	stOpeningLineType[4] = `Dash & Dotted`
+	stOpeningLineType[5] = `None`
+
+dim stSwingType[3]
+	stSwingType[1] = `Curved`
+	stSwingType[2] = `Straight`
+	stSwingType[3] = `Simple Line`
+
+dim stLineShapeSlidingType[3]
+	stLineShapeSlidingType[1] = `None`
+	stLineShapeSlidingType[2] = `Arrow`
+	stLineShapeSlidingType[3] = `Simple Line`
+
+! D_iSwingType:
+LINE_SHAPE_SWING_NONE			= 0
+LINE_SHAPE_SWING_CURVED			= 1
+LINE_SHAPE_SWING_STRAIGHT		= 2
+LINE_SHAPE_SWING_SIMPLE_LINE	= 3
+
+! D_iSlidingType:
+LINE_SHAPE_SLIDING_NONE			= 0
+LINE_SHAPE_SLIDING_ARROW		= 1
+LINE_SHAPE_SLIDING_SIMPLE_LINE	= 2
+
+! iLSymbol
+PLANSYMB_REALISTIC				= 1
+PLANSYMB_ELECTRIC				= 2
+PLANSYMB_RCP					= 3
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+totalWidth		= 600
+tabTop			= 5
+tabLeft			= 5
+tabRight		= 5
+rowDist			= 25
+column2PosX		= totalWidth / 2
+
+outfieldLength1	= totalWidth / 2 - tabLeft - tabRight
+outfieldLength2	= (totalWidth / 2 - tabLeft - tabRight) / 2 - 1
+
+y0				= 5
+x1				= tabLeft
+x2				= column2PosX + tabLeft
+dy				= 29
+dyradio			= 24
+
+_stDialogTitle = `Miscellaneous Settings for Library Parts (ArchiCAD Library 18)`
+if bEnableSecondaryOpLineTypes then
+	ui_dialog _stDialogTitle, 600, 525
+	ui_separator totalWidth / 2, 0, totalWidth / 2, 524
+else
+	if bControlForSlidingDoor then
+		if bEnableNEDFireRating then
+			ui_dialog _stDialogTitle, 600, 510 + 60
+			ui_separator totalWidth / 2, 0, totalWidth / 2, 509 + 60
+		else
+			ui_dialog _stDialogTitle, 600, 435 + 60
+			ui_separator totalWidth / 2, 0, totalWidth / 2, 434 + 60
+		endif
+	else
+		ui_dialog _stDialogTitle, 600, 410 + 60
+		ui_separator totalWidth / 2, 0, totalWidth / 2, 409 + 60
+	endif
+endif
+
+
+! =============================================================================
+! Minimal space settings
+! =============================================================================
+
+y = y0
+ui_infield{3}	"showBMinSpace", x1, y-4,	outfieldLength1, 20,
+		7, "", 2, 1, 0, 0, 0, 0,
+		1, `Show Minimal Space of Furnishings and Doors`, 0,
+		2, `Show Minimal Space of Furnishings and Doors`, 1
+
+iFlag = 4 * not(showBMinSpace)
+!iFlag = 0	! Prevent flashing
+
+y = y + dy
+
+if showBMinSpace then
+	ui_pict 1, x1+40, y+2, 20, 20, 1		! ui_contour_line.png
+else
+	ui_pict 2, x1+40, y+2, 20, 20, 1		! ui_contour_line_lock.png
+endif
+ui_infield "MSContLineType", 		x1+70, 	y-1, 	outfieldLength1 - 70, 	26 ui_tooltip `Contour Line Type`
+
+y = y + dy
+
+if showBMinSpace then
+	ui_pict 9, column2PosX - 35 - tabRight - 80, y+2, 23, 17, 1		! ui_pen.png
+else
+	ui_pict 10, column2PosX - 35 - tabRight - 80, y+2, 23, 17, 1		! ui_pen_lock.png
+endif
+ui_infield "iMSContLinePen", column2PosX - 35 - tabRight - 40,	y, 	30,		20 ui_tooltip `Contour Line Pen`
+ui_infield "MSContLinePen", column2PosX - 35 - tabRight,	y, 	35,		20 ui_tooltip `Contour Line Pen`
+
+y = y + dy
+
+if showBMinSpace then
+	ui_pict 7, x1+40, y+2, 20, 20, 1		! ui_fill_type.png
+else
+	ui_pict 8, x1+40, y+2, 20, 20, 1		! ui_fill_type_lock.png
+endif
+ui_infield "MSFillType", x1+70, 	y-1, 	outfieldLength1 - 70,	26 ui_tooltip `Fill Type`
+
+y = y + dy
+
+if showBMinSpace then
+	ui_pict 5, column2PosX - 35 - tabRight - 86, y+2, 29, 16, 1		! ui_fill_pen.png
+else
+	ui_pict 6, column2PosX - 35 - tabRight - 86, y+2, 29, 16, 1		! ui_fill_pen_lock.png
+endif
+ui_infield "iMSFillPen", column2PosX - 35 - tabRight - 40,	y, 	30,		20 ui_tooltip `Fill Pen`
+ui_infield "MSFillPen", column2PosX - 35 - tabRight,	y, 	35,		20 ui_tooltip `Fill Pen`
+
+y = y + dy
+
+if showBMinSpace then
+	ui_pict 3, column2PosX - 35 - tabRight - 86, y+2, 29, 16, 1		! ui_fill_bg_pen.png
+else
+	ui_pict 4, column2PosX - 35 - tabRight - 86, y+2, 29, 16, 1		! ui_fill_bg_pen_lock.png
+endif
+ui_infield "iMSFillBackPen", column2PosX - 35 - tabRight - 40,	y, 	30,		20 ui_tooltip `Background Pen`
+ui_infield "MSFillBackPen", column2PosX - 35 - tabRight,	y, 	35,		20 ui_tooltip `Background Pen`
+
+
+! =============================================================================
+! Lamps and lights override
+! =============================================================================
+
+y = y + dy
+ui_separator x1, y, column2PosX - tabRight, y
+y = y + dy / 3
+
+ui_outfield `Lamps and HVAC Floor Plan Symbols`, x1, y, outfieldLength1, 18
+
+y = y + dyradio
+
+ui_radiobutton "iLSymbol", PLANSYMB_REALISTIC, `Realistic`, 	x1+20, y, 245, 20
+y = y + dyradio
+
+ui_radiobutton "iLSymbol", PLANSYMB_ELECTRIC, `Electric`, 	x1+20, y, 245, 20
+y = y + dyradio
+
+ui_radiobutton "iLSymbol",PLANSYMB_RCP, `Reflected Ceiling Plan`, 	x1+20, y, 245, 20
+
+
+! =============================================================================
+! 3D accessories settings
+! =============================================================================
+
+dy1 = 23
+
+y = y + dy
+ui_separator x1, y, column2PosX - tabRight, y
+y = y + dy / 3
+
+
+ui_infield{3}	"hideBKnobs",		x1,	y,	outfieldLength1,	 20,
+		7, "", 2, 1, 0, 0, 0, 0,
+		1, `Hide Furniture Knobs in 3D`, 0,
+		2, `Hide Furniture Knobs in 3D`, 1
+
+y = y + dy1
+
+ui_infield{3}	"hideBTaps",		x1,	y,	outfieldLength1,	 20,
+		7, "", 2, 1, 0, 0, 0, 0,
+		1, `Hide Taps in 3D`, 0,
+		2, `Hide Taps in 3D`, 1
+
+y = y + dy1
+
+if bEnableWindowHandle then
+	_stHandleHide = `Hide Door and Window Handles in 3D`
+else
+	_stHandleHide = `Hide Door Handles and Knobs in 3D`
+endif
+
+ui_infield{3}	"hideBDoorHandles",		x1,	y,	outfieldLength1,	 20,
+		7, "", 2, 1, 0, 0, 0, 0,
+		1, _stHandleHide, 0,
+		2, _stHandleHide, 1
+
+
+isavailable = 0
+isInArchiCAD = APPLICATION_QUERY ("MEPMODELER", "IsAvailable()", isavailable)
+isMEPEnabled = (isavailable OR isInArchiCAD = 0)
+
+if isMEPEnabled then
+	y = y + dy1
+	ui_separator x1, y, column2PosX - tabRight, y
+	y = y + dy / 3
+
+	ui_infield{3}	"showMEPConnect",		x1,	y,	outfieldLength1,	 20,
+			7, "", 2, 1, 0, 0, 0, 0,
+			1, `Show MEP Connections`, 0,
+			2, `Show MEP Connections`, 1
+endif
+
+if bEnableSecondaryOpLineTypes then
+	gosub "DACH_DWUI"
+else
+	gosub "INT_DWUI"
+endif
+
+
+end
+
+
+
+! =============================================================================
+"INT_DWUI":
+! =============================================================================
+! Door 2D swing settings
+! =============================================================================
+
+	x1 = x2
+
+	y = y0
+	ui_outfield `Doors Opening Line in 2D Symbolic Display`, x1, y, outfieldLength1, 18
+	y = y + dy
+	if bControlForSlidingDoor then
+		ui_outfield `Line Shape - Doors`, x1, y, outfieldLength2, 18
+		ui_infield{3}	"D_iSwingType",	x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	20,
+				8, "", 3, 1,
+				0, 0, 0, 0,
+				1, stSwingType[1],	LINE_SHAPE_SWING_CURVED,
+				2, stSwingType[2],	LINE_SHAPE_SWING_STRAIGHT,
+				3, stSwingType[3],	LINE_SHAPE_SWING_SIMPLE_LINE
+
+		y = y + dy
+		ui_outfield `Line Shape - Sliding Doors`, x1, y, outfieldLength2, 18
+		ui_infield{3}	"D_iSlidingType",	x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	20,
+				8, "", 3, 1,
+				0, 0, 0, 0,
+				1, stLineShapeSlidingType[1],	LINE_SHAPE_SLIDING_NONE,
+				2, stLineShapeSlidingType[2],	LINE_SHAPE_SLIDING_ARROW,
+				3, stLineShapeSlidingType[3],	LINE_SHAPE_SLIDING_SIMPLE_LINE
+	else
+		ui_outfield `Line Shape`, x1+30, y, outfieldLength2 - 30, 18
+
+		ui_infield{3}	"D_iSwingType",	x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	20,
+				8, "", 2, 1,
+				0, 0, 0, 0,
+				1, stSwingType[1], LINE_SHAPE_SWING_CURVED,
+				2, stSwingType[2], LINE_SHAPE_SWING_STRAIGHT
+	endif
+	y = y + dy
+
+	ui_pict 1, x1 + outfieldLength2 + 2 - 25, y+2, 20, 20, 1		! ui_contour_line.png
+	ui_infield "D_swingLineType", 		x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	26 ui_tooltip `Line Type`
+
+	y = y + dy
+
+	ui_pict 9, totalWidth - 35 - tabRight - 80, y+2, 23, 17, 1		! ui_pen.png
+	ui_infield "D_iOpLinePen", 		totalWidth - 35 - tabRight - 40,	y, 	30,		20 ui_tooltip `Opening Line and Swing Pen`
+	ui_infield "D_opLinePen", 		totalWidth - 35 - tabRight,	y, 	35,		20 ui_tooltip `Opening Line and Swing Pen`
+
+	y = y + dy
+	ui_separator x1, y, totalWidth - tabRight, y
+	y = y + dy / 3
+
+! =============================================================================
+! Window 2D swing settings
+! =============================================================================
+
+!	ui_outfield `Windows/Skylights Opening Line in 2D Symbolic Display`, x1, y, outfieldLength1, 18
+	ui_outfield `Windows/Skylights Opening Line`, x1, y, outfieldLength1, 18
+	y = y + 19
+	ui_outfield `in 2D Symbolic Display`, x1, y, outfieldLength1, 18
+
+	y = y + dy
+	ui_outfield `Line Shape`, x1+30*not(bControlForSlidingDoor), y, outfieldLength2 - 30 * not(bControlForSlidingDoor), 18
+	UI_INFIELD{3}	"W_iSwingType",	x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	20,
+			8, "", 2, 1,
+			0, 0, 0, 0,
+			1, stSwingType[1], LINE_SHAPE_SWING_CURVED,
+			2, stSwingType[2], LINE_SHAPE_SWING_STRAIGHT
+
+	y = y + dy
+
+	ui_pict 1, x1 + outfieldLength2 + 2 - 25, y+2, 20, 20, 1		! ui_contour_line.png
+	ui_infield "W_swingLineType", 		x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	26 ui_tooltip `Line Type`
+
+	y = y + dy
+
+	ui_pict 9, totalWidth - 35 - tabRight - 80, y+2, 23, 17, 1		! ui_pen.png
+	ui_infield "W_iOpLinePen", 		totalWidth - 35 - tabRight - 40,	y, 	30,		20 ui_tooltip `Opening Line and Swing Pen`
+	ui_infield "W_opLinePen", 		totalWidth - 35 - tabRight,	y, 	35,		20 ui_tooltip `Opening Line and Swing Pen`
+
+	y = y + dy
+	ui_separator x2, y, 590, y
+	y = y + dy / 3
+
+! =============================================================================
+! Door 3D opening lines settings
+! =============================================================================
+
+	ui_outfield `Show Opening Lines in 3D Projections`, x2, y, outfieldLength1, 18
+	y = y + 20
+	ui_infield{3}	"D_showBOpLine3D",		column2PosX + tabLeft + outfieldLength2 + 2,	y,	outfieldLength2, 20,
+			7, "", 2, 1, 0, 0, 0, 0,
+			1, `on Doors`, 0,
+			2, `on Doors`, 1
+	y = y + dy
+
+	ui_infield{3}	"W_showBOpLine3D",		column2PosX + tabLeft + outfieldLength2 + 2,	y,	outfieldLength2, 20,
+			7, "", 2, 1, 0, 0, 0, 0,
+			1, `on Windows`, 0,
+			2, `on Windows`, 1
+	y = y + dy
+
+	ui_infield{3}	"S_showBOpLine3D",		column2PosX + tabLeft + outfieldLength2 + 2,	y,	outfieldLength2, 20,
+			7, "", 2, 1, 0, 0, 0, 0,
+			1, `on Skylights`, 0,
+			2, `on Skylights`, 1
+
+	iFlag = 4 * (not(D_showBOpLine3D) and not(W_showBOpLine3D) and not(S_showBOpLine3D))
+
+	y = y + dy
+	ui_outfield `Line Type Opening Side`, x2, y, outfieldLength2, 15, iFlag
+	ui_infield{3}	"gs_opline_type_m",		column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 20,
+			8, "", 3, 1, 0, 0, 0, 0,
+			1, stOpeningLineType[1], 1,
+			2, stOpeningLineType[2], 2,
+			3, stOpeningLineType[3], 3
+
+	y = y + dy
+	ui_outfield `Line Type Opposite Side`, x2, y, outfieldLength2, 15, iFlag
+	ui_infield{3}	"gs_opline_type_m_out",		column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 20,
+			8, "", 3, 1, 0, 0, 0, 0,
+			1, stOpeningLineType[1], 1,
+			2, stOpeningLineType[2], 2,
+			3, stOpeningLineType[3], 3
+
+	y = y + dy
+
+	if not(bHideOplineStyle) then
+		ui_outfield `Line Orientation`, x2, y, outfieldLength2, 15, iFlag
+		ui_infield{3}	"gs_opline_style_m",		column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 20,
+				8, "", 2, 1, 0, 0, 0, 0,
+				1, stOpeningLineStyle[1], 1,
+				2, stOpeningLineStyle[2], 2
+	y = y + dy
+	endif
+
+	!! --- Disabled control --- see TT #108762 -----
+	!!ui_separator x2, y, 590, y
+	!!y = y + dy/2
+	!!
+	!!ui_infield{3}	"bShowAddHotspots",		x2,	y,	300,	 18,
+	!!		7, "", 2, 1, 0, 0, 0, 0,
+	!!		1, `Show Additional Hotspots for Doors/Windows`, 0,
+	!!		2, `Show Additional Hotspots for Doors/Windows`, 1
+
+	!y = y + dy
+	!
+	!ui_infield{3}	"AC_bShowAddHotspotsForIS",		x2,	y,	300,	 18,
+	!		7, "", 2, 1, 0, 0, 0, 0,
+	!		1, "Show IS Hotspots for Doors/Windows", 0,
+	!		2, "Show IS Hotspots for Doors/Windows", 1
+	!
+
+
+! =============================================================================
+! NED Fire Rating
+! =============================================================================
+	if bEnableNEDFireRating then
+		ui_separator x2, y, 590, y
+		y = y + dy / 3
+
+		ui_infield{3}	"bShowFireRating",		x2,	y,	600-x2-10,	 20,
+			7, "", 2, 1, 0, 0, 0, 0,
+			1, `Show Fire Rating Symbol for Doors and Windows`, 0,
+			2, `Show Fire Rating Symbol for Doors and Windows`, 1
+
+		y = y + dy + 6
+
+		ui_pict 9, totalWidth - 35 - tabRight - 80, y, 23, 17, 1		! ui_pen.png
+		ui_infield "iFireRatingSymbPen", 		totalWidth - 35 - tabRight - 40,	y, 	30,		20 ui_tooltip `Fire rating Symbol Pen`
+		ui_infield "fireRatingSymbPen", 		totalWidth - 35 - tabRight,	y, 	35,				20 ui_tooltip `Fire rating Symbol Pen`
+	endif
+
+	end
+
+return
+
+
+
+
+! =============================================================================
+"DACH_DWUI":
+! =============================================================================
+
+dy1 = dy - 6
+dy2 = dy - 1
+
+	x1 = x2
+
+	y = y0
+	ui_style 0, 1
+	ui_outfield `Opening Lines in 2D Symbolic Display`, x1, y, outfieldLength1, 18
+	ui_style 0, 0
+
+	y = y + dy1 - 4
+
+	ui_infield{3} "D_showBOpLine2D", x1, y, outfieldLength1, 18,
+			7, "", 1, 1,
+			0, 0, 0, 0,
+			"", `Show for Doors`, 0,
+			"", `Show for Doors`, 1
+
+	y = y + dy1
+
+	ui_outfield `Line Shape`, x1+16, y, outfieldLength2 - 16, 18, 4-4*D_showBOpLine2D
+	ui_infield{3}	"D_iSwingType",	x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	20,
+			8, "", 2, 1,
+			0, 0, 0, 0,
+			1, stSwingType[1], LINE_SHAPE_SWING_CURVED,
+			2, stSwingType[2], LINE_SHAPE_SWING_STRAIGHT
+
+	y = y + dy2
+
+	ui_outfield `Main Leaf`, x1+16, y, outfieldLength2 - 16 - 22, 18, 4-4*D_showBOpLine2D
+	if D_showBOpLine2D then
+		ui_pict 11, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	else
+		ui_pict 12, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	endif
+	ui_infield	"D_swingLineType",	x1 + outfieldLength2 + 2, 	y-6, 	outfieldLength2, 	26 ui_tooltip `Line Type`
+
+	y = y + dy2
+
+	ui_outfield `Secondary Leaf`, x1+16, y, outfieldLength2 - 16 - 22, 18, 4-4*D_showBOpLine2D
+	if D_showBOpLine2D then
+		ui_pict 13, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	else
+		ui_pict 14, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	endif
+	ui_infield	"D_swingLineType2",	x1 + outfieldLength2 + 2, 	y-6, 	outfieldLength2, 	26 ui_tooltip `Line Type`
+
+	y = y + dy1
+
+	ui_infield{3} "W_showBOpLine2D", x1, y, outfieldLength1, 18,
+			7, "", 1, 1,
+			0, 0, 0, 0,
+			"", `Show for Windows`, 0,
+			"", `Show for Windows`, 1
+
+	y = y + dy1
+
+	ui_outfield `Line Shape`, x1+16, y, outfieldLength2 - 16, 18, 4-4*W_showBOpLine2D
+	ui_infield{3}	"W_iSwingType",	x1 + outfieldLength2 + 2, 	y-1, 	outfieldLength2, 	20,
+			8, "", 2, 1,
+			0, 0, 0, 0,
+			1, stSwingType[1], LINE_SHAPE_SWING_CURVED,
+			2, stSwingType[2], LINE_SHAPE_SWING_STRAIGHT
+
+	y = y + dy2
+
+	ui_outfield `Main Sash`, x1+16, y, outfieldLength2 - 16 - 22, 18, 4-4*W_showBOpLine2D
+	if W_showBOpLine2D then
+		ui_pict 11, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	else
+		ui_pict 12, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	endif
+	ui_infield	"W_swingLineType",	x1 + outfieldLength2 + 2, 	y-6, 	outfieldLength2, 	26
+
+	y = y + dy2
+
+	ui_outfield `Secondary Sash`, x1+16, y, outfieldLength2 - 16 - 22, 18, 4-4*W_showBOpLine2D
+	if W_showBOpLine2D then
+		ui_pict 13, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	else
+		ui_pict 14, x1 + outfieldLength2 + 2 - 22, y-3, 20, 20, 1
+	endif
+	ui_infield	"W_swingLineType2",	x1 + outfieldLength2 + 2, 	y-6, 	outfieldLength2, 	26
+
+	y = y + dy1 - 1
+
+	ui_separator x1, y, 595, y
+	y = y + dy / 3
+
+
+	ui_style 0, 1
+	ui_outfield `Opening Lines in 3D Projections`, x2, y, outfieldLength1, 18
+	ui_style 0, 0
+
+	y = y + dy1 - 4
+
+	ui_infield{3} "D_showBOpLine3D", x2, y, outfieldLength2, 18,
+			7, "", 1, 1,
+			0, 0, 0, 0,
+			"", `Show for Doors`, 0,
+			"", `Show for Doors`, 1
+
+	ui_infield{3} "S_showBOpLine3D", column2PosX + tabLeft + outfieldLength2 + 2, y, outfieldLength2, 18,
+			7, "", 1, 1,
+			0, 0, 0, 0,
+			"", `Show for Skylights`, 0,
+			"", `Show for Skylights`, 1
+
+	y = y + dy1
+
+	ui_infield{3} "W_showBOpLine3D", x2, y, outfieldLength2, 18,
+			7, "", 1, 1,
+			0, 0, 0, 0,
+			"", `Show for Windows`, 0,
+			"", `Show for Windows`, 1
+
+	y = y + dy1
+
+	iFlag = 4 * (not(D_showBOpLine3D) and not(W_showBOpLine3D) and not(S_showBOpLine3D))
+	iFlagD = 4 * (not(D_showBOpLine3D))
+	iFlagW = 4 * (not(W_showBOpLine3D))
+
+	ui_style 0, 1
+	ui_outfield `Main Door Leaves and Window Sashes`, x2, y, outfieldLength1, 18
+	ui_style 0, 0
+
+	y = y + dy1
+
+	ui_outfield `Opening Side`, column2PosX + tabLeft, y, outfieldLength2, 15, iFlag
+	ui_infield{3}	"gs_opline_type_m",		column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 18,
+			8, "", 4, 1, 0, 0, 0, 0,
+			1, stOpeningLineType[1], 1,
+			2, stOpeningLineType[2], 2,
+			3, stOpeningLineType[3], 3,
+			4, stOpeningLineType[4], 4
+
+	y = y + dy1
+
+	ui_outfield `Opposite Side`, x2, y, outfieldLength2, 15, iFlag
+	ui_infield{3}	"gs_opline_type_m_out",	column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 18,
+			8, "", 4, 1, 0, 0, 0, 0,
+			1, stOpeningLineType[1], 1,
+			2, stOpeningLineType[2], 2,
+			3, stOpeningLineType[3], 3,
+			4, stOpeningLineType[4], 4
+
+	y = y + dy1
+
+	ui_style 0, 1
+	ui_outfield `Door Secondary Leaves`, x2, y, outfieldLength1, 18
+	ui_style 0, 0
+
+	y = y + dy1
+
+	ui_outfield `Both Sides`, x2, y, outfieldLength2, 15, iFlagD
+	ui_infield{3}	"D_iOpLineType2",	column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 18,
+			8, "", 5, 1, 0, 0, 0, 0,
+			1, stOpeningLineType[1], 1,
+			2, stOpeningLineType[2], 2,
+			3, stOpeningLineType[3], 3,
+			4, stOpeningLineType[4], 4,
+			5, stOpeningLineType[5], 5
+
+	y = y + dy1
+
+	ui_style 0, 1
+	ui_outfield `Window Secondary Sash`, x2, y, outfieldLength1, 18
+	ui_style 0, 0
+
+	y = y + dy1
+
+	ui_outfield `Both Sides`, x2, y, outfieldLength2, 15, iFlagW
+	ui_infield{3}	"W_iOpLineType2",	column2PosX + tabLeft + outfieldLength2 + 2,	y-2,	outfieldLength2,	 18,
+			8, "", 5, 1, 0, 0, 0, 0,
+			1, stOpeningLineType[1], 1,
+			2, stOpeningLineType[2], 2,
+			3, stOpeningLineType[3], 3,
+			4, stOpeningLineType[4], 4,
+			5, stOpeningLineType[5], 5
+
+	y = y + dy1 - 1
+
+	y = y + 7
+
+	ui_outfield `Opening Line Pen for Doors`, x1, y, 185, 15, iFlag
+	ui_pict 9, totalWidth - 35 - tabRight - 65, y, 23, 17, 1		! ui_pen.png
+	ui_infield "D_iOpLinePen", 		totalWidth - 35 - tabRight - 35,	y-3, 	30,		20 ui_tooltip `Opening Line and Swing Pen`
+	ui_infield "D_opLinePen", 		totalWidth - 35 - tabRight,			y-3, 	35,		20 ui_tooltip `Opening Line and Swing Pen`
+
+	y = y + dy1
+
+	ui_outfield `Opening Line Pen for Windows`, x1, y, 185, 15, iFlag
+!!	ui_outfield y, x1, y, 140, 15, iFlag
+	ui_pict 9, totalWidth - 35 - tabRight - 65, y, 23, 17, 1		! ui_pen.png
+	ui_infield "W_iOpLinePen", 		totalWidth - 35 - tabRight - 35,	y-3, 	30,		20 ui_tooltip `Opening Line and Swing Pen`
+	ui_infield "W_opLinePen", 		totalWidth - 35 - tabRight,			y-3, 	35,		20 ui_tooltip `Opening Line and Swing Pen`
+
+return
+
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+![#COMPATIBILITY] - START
+	if W_iSwingType = -1 | D_iSwingType = -1 then
+		W_showBOpLine3D = showBOpLine3D
+		W_iSwingType 	= gs_iSwingType
+		W_swingLineType	= gs_swingLineType
+		W_opLinePen		= gs_opLinePen
+		W_iOpLinePen	= iOplinePen
+		parameters 	W_showBOpLine3D = showBOpLine3D,
+					W_iSwingType 	= gs_iSwingType,
+					W_swingLineType	= gs_swingLineType,
+					W_opLinePen		= gs_opLinePen,
+					W_iOpLinePen	= iOplinePen
+
+		D_showBOpLine3D = showBOpLine3D
+		D_iSwingType 	= gs_iSwingType
+		D_swingLineType	= gs_swingLineType
+		D_opLinePen		= gs_opLinePen
+		D_iOpLinePen	= iOplinePen
+		parameters 	D_showBOpLine3D = showBOpLine3D,
+					D_iSwingType 	= gs_iSwingType,
+					D_swingLineType	= gs_swingLineType,
+					D_opLinePen		= gs_opLinePen,
+					D_iOpLinePen	= iOplinePen
+	else
+		showBOpLine3D 	= D_showBOpLine3D
+		gs_iSwingType 	= D_iSwingType
+		gs_swingLineType= D_swingLineType
+		gs_opLinePen	= D_opLinePen
+		iOpLinePen		= D_iOplinePen
+		parameters	showBOpLine3D = showBOpLine3D,
+					gs_iSwingType = gs_iSwingType,
+					gs_swingLineType = gs_swingLineType,
+					gs_opLinePen = gs_opLinePen,
+					iOpLinePen = iOpLinePen
+	endif
+
+	if not(bInitialized_S_showBOpLine3D) & GLOB_CONTEXT <> 1 then
+		S_showBOpLine3D = showBOpLine3D
+		parameters 	S_showBOpLine3D = showBOpLine3D,
+					bInitialized_S_showBOpLine3D = 1
+	endif
+
+	parameters bShowAddHotspots = 1
+
+![#COMPATIBILITY] - END
+
+values "gs_opline_type_m" 1, 2, 3, 4
+values "gs_opline_type_m_out" 1, 2, 3, 4
+
+values "D_iOpLineType2" 1, 2, 3, 4, 5
+values "W_iOpLineType2" 1, 2, 3, 4, 5
+
+values "gs_opline_style_m" 1, 2
+
+values "gs_iSwingType" 	LINE_SHAPE_SWING_CURVED,
+						LINE_SHAPE_SWING_STRAIGHT
+
+values "W_iSwingType"	LINE_SHAPE_SWING_CURVED,
+						LINE_SHAPE_SWING_STRAIGHT
+
+if bEnableSimpleLine then
+	values "D_iSwingType"	LINE_SHAPE_SWING_CURVED,
+							LINE_SHAPE_SWING_STRAIGHT,
+							LINE_SHAPE_SWING_SIMPLE_LINE
+
+	values "D_iSlidingType" LINE_SHAPE_SLIDING_NONE	,
+							LINE_SHAPE_SLIDING_ARROW,
+							LINE_SHAPE_SLIDING_SIMPLE_LINE
+else
+	values "D_iSwingType"	LINE_SHAPE_SWING_CURVED,
+							LINE_SHAPE_SWING_STRAIGHT
+
+	values "D_iSlidingType" LINE_SHAPE_SLIDING_NONE	,
+							LINE_SHAPE_SLIDING_ARROW
+endif
+
+values "iLSymbol" 1, 2, 3
+
+
+if not(W_showBOpLine3D) and not(D_showBOpLine3D) and not(S_showBOpLine3D) then
+	lock "gs_opline_type_m_out", "gs_opline_type_m", "gs_opline_style_m"
+endif
+
+if not(showBMinSpace) then
+	lock "MSFillType", "MSFillPen", "MSFillBackPen", "MSContLineType", "MSContLinePen", "iMSFillPen",
+			"iMSFillBackPen", "iMSContLinePen"
+endif
+
+if not(W_showBOpLine3D) then
+	lock "W_iOpLineType2"
+endif
+
+if not(D_showBOpLine3D) then
+	lock "D_iOpLineType2"
+endif
+
+!old Ceiling plan/Floor plan option merged and controlled by the new MVO
+
+if GLOB_MODPAR_NAME = "iLSymbol" then
+	original_AC_Ceiling_Plan = AC_Ceiling_Plan
+	if iLSymbol = 3 then
+		AC_Ceiling_Plan = 1
+	else
+		AC_Ceiling_Plan = 0
+	endif
+	if AC_Ceiling_Plan <> original_AC_Ceiling_Plan then
+		parameters AC_Ceiling_Plan = AC_Ceiling_Plan
+	endif
+else
+	original_iLSymbol = ilSymbol
+	if AC_Ceiling_Plan = 1 and iLSymbol <> 3 then
+		iLSymbol = 3
+	endif
+	if AC_Ceiling_Plan = 0 and iLSymbol = 3 then
+		iLSymbol = 1
+	endif
+	if original_iLSymbol <> iLSymbol then
+		parameters iLSymbol = iLSymbol
+	endif
+endif
+
+! --- Connecting integer and pencolor type parameters ---
+
+for i = 1 to 255
+	put i
+next i
+
+values "gs_opLinePen" use(NSP)
+values "W_opLinePen" use(NSP)
+values "D_opLinePen" use(NSP)
+
+values "fireRatingSymbPen" use(NSP)
+
+values "MSContLinePen" use(NSP)
+values "MSFillPen" get(NSP)
+
+if GLOB_MODPAR_NAME = "iMSFillBackPen" then
+	if iMSFillBackPen < -1 | iMSFillBackPen > 255 then
+		iMSFillBackPen = 1
+		parameters iMSFillBackPen = iMSFillBackPen
+	endif
+	parameters MSFillBackPen = iMSFillBackPen
+else
+	parameters iMSFillBackPen = MSFillBackPen
+endif
+
+if GLOB_MODPAR_NAME = "iMSContLinePen" then
+	if iMSContLinePen < 1 | iMSContLinePen > 255 then
+		iMSContLinePen = 1
+		parameters iMSContLinePen = iMSContLinePen
+	endif
+	parameters MSContLinePen= iMSContLinePen
+else
+	parameters iMSContLinePen= MSContLinePen
+endif
+
+if GLOB_MODPAR_NAME = "iMSFillPen" then
+	if iMSFillPen < 1 | iMSFillPen > 255 then
+		iMSFillPen = 1
+		parameters iMSFillPen = iMSFillPen
+	endif
+	parameters MSFillPen= iMSFillPen
+else
+	parameters iMSFillPen= MSFillPen
+endif
+
+if GLOB_MODPAR_NAME = "iOplinePen" then
+	if iOplinePen < 1 | iOplinePen > 255 then
+		iOplinePen = 1
+		parameters iOplinePen = iOplinePen
+	endif
+	parameters gs_opLinePen = iOplinePen
+else
+	parameters iOplinePen = gs_opLinePen
+endif
+
+if GLOB_MODPAR_NAME = "W_iOpLinePen" then
+	if W_iOpLinePen < 1 | W_iOplinePen > 255 then
+		W_iOpLinePen = 1
+		parameters W_iOpLinePen = W_iOpLinePen
+	endif
+	parameters W_opLinePen = W_iOpLinePen
+else
+	parameters W_iOpLinePen = W_opLinePen
+endif
+
+if GLOB_MODPAR_NAME = "D_iOpLinePen" then
+	if D_iOpLinePen < 1 | D_iOpLinePen > 255 then
+		D_iOpLinePen = 1
+		parameters D_iOpLinePen = D_iOpLinePen
+	endif
+	parameters D_opLinePen = D_iOpLinePen
+else
+	parameters D_iOpLinePen = D_opLinePen
+endif
+
+if GLOB_MODPAR_NAME = "iFireRatingSymbPen" then
+	if iFireRatingSymbPen < 1 | iFireRatingSymbPen > 255 then
+		iFireRatingSymbPen = 1
+		parameters iFireRatingSymbPen = iFireRatingSymbPen
+	endif
+	parameters fireRatingSymbPen = iFireRatingSymbPen
+else
+	parameters iFireRatingSymbPen = fireRatingSymbPen
+endif
+
+!DACH UI lock
+if bEnableSecondaryOpLineTypes then
+	if not(D_showBOpLine2D) then
+		lock "D_iSwingType", "D_swingLineType", "D_swingLineType2"
+	endif
+	if not(W_showBOpLine2D) then
+		lock "W_iSwingType", "W_swingLineType", "W_swingLineType2"
+	endif
+endif
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" length_in_bytes="120" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	00140103000000B7478F4E00000006504C5445000000000000A567B9CF000000
+	0174524E530040E6D866000000164944415408D763600082FAFF0FC038814C08
+	D30F04001DB913F97129DC020000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="2" length_in_bytes="120" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	00140103000000B7478F4E00000006504C54450000009D9DA13592F545000000
+	0174524E530040E6D866000000164944415408D763600082FAFF0FC038814C08
+	D30F04001DB913F97129DC020000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="3" length_in_bytes="142" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000001D0000
+	0010020300000097639C4200000009504C5445000000FFFFFF00000073C68371
+	0000000174524E530040E6D866000000294944415408D7636040016AAB181844
+	434303C86468C1189C2BD0195C300643032A234849A101E10000B16918201D39
+	4CE70000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="4" length_in_bytes="142" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000001D0000
+	0010020300000097639C4200000009504C5445000000FFFFFF9D9DA1E333CFFB
+	0000000174524E530040E6D866000000294944415408D7636040016AAB181844
+	434303C86468C1189C2BD0195C300643032A234849A101E10000B16918201D39
+	4CE70000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="5" length_in_bytes="159" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000001D0000
+	00100803000000DDD384E300000009504C5445000000FFFFFF00000073C68371
+	0000000174524E530040E6D8660000003A4944415478DAC5CC410A00200C0341
+	DDFF3F5A7A09D215042FA63D8843331EC2A452AF7DA5C6A8F073336AD6B150CA
+	C9532CCCA7504ADBCC350BFF930106624DF5830000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="6" length_in_bytes="159" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000001D0000
+	00100803000000DDD384E300000009504C5445000000FFFFFF9D9DA1E333CFFB
+	0000000174524E530040E6D8660000003A4944415478DAC5CC410A00200C0341
+	DDFF3F5A7A09D215042FA63D8843331EC2A452AF7DA5C6A8F073336AD6B150CA
+	C9532CCCA7504ADBCC350BFF930106624DF5830000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="7" length_in_bytes="144" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	00140203000000F0E7F59E00000009504C5445000000FFFFFF00000073C68371
+	0000000174524E530040E6D8660000002B4944415408D763600003AD55AB56AD
+	8091D3A64D0392515151190C9A9999994072E9D2A59489239B0F0600BBC729B5
+	52F540B20000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="8" length_in_bytes="144" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	00140203000000F0E7F59E00000009504C5445000000FFFFFF9D9DA1E333CFFB
+	0000000174524E530040E6D8660000002B4944415408D763600003AD55AB56AD
+	8091D3A64D0392515151190C9A9999994072E9D2A59489239B0F0600BBC729B5
+	52F540B20000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="9" length_in_bytes="138" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000170000
+	001102030000004B1DDF2E00000009504C5445000000FFFFFF00000073C68371
+	0000000174524E530040E6D866000000254944415408D763608003A6AC052452
+	ABC014C3AC06646A1584E26040A3B456AD82AA0702006F300EDFB3946F770000
+	000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="10" length_in_bytes="138" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000170000
+	001102030000004B1DDF2E00000009504C5445000000FFFFFF9D9DA1E333CFFB
+	0000000174524E530040E6D866000000254944415408D763608003A6AC052452
+	ABC014C3AC06646A1584E26040A3B456AD82AA0702006F300EDFB3946F770000
+	000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="11" length_in_bytes="150" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	001408060000008D891D0D000000534944415478DAEDD4310A00300803C0FED2
+	FFBF246D070954680A3A1503415C6E707000286D833F822BF012CC4179F040DE
+	4033C30DF30890984F81699008F780293062799098BE9B0689E5C11D54B59F43
+	4D2709F8511EDA5E0C930000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="12" length_in_bytes="145" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	00140103000000B7478F4E00000006504C5445FFFFFF9D9DA1C5379FF4000000
+	0174524E530040E6D8660000002F4944415408D76360C0091E30303003317B02
+	03134F0203AB440203C78604060120564848607000E2FFFF1FA06B0200369B0A
+	0CE8EA32D30000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="13" length_in_bytes="147" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	001408060000008D891D0D000000504944415478DAEDD4310A00300843D1DED2
+	FB9F246D07216021824EC5C05FDF9805A0B5017F04CD0C5E0964E45602194A83
+	6710980619F304A64182080D980023560423F644B3206365D0B196E61C7ADA7F
+	27584D22D8BAB20000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="14" length_in_bytes="146" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000140000
+	00140103000000B7478F4E00000006504C5445FFFFFF9D9DA1C5379FF4000000
+	0174524E530040E6D866000000304944415408D76360C0091E3030302B3030B0
+	283030712830B00B2830F02E506090046283030A0C0940FCFFFF03744D00EA4E
+	085D486A34A20000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>0</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>1</Value>
+		</Length>
+		<Boolean Name="AC_Ceiling_Plan">
+			<Description><![CDATA[""]]></Description>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="iLSymbol">
+			<Description><![CDATA[""]]></Description>
+			<Value>3</Value>
+		</Integer>
+		<Boolean Name="hideBKnobs">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="hideBTaps">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="hideBDoorHandles">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="showMEPConnect">
+			<Description><![CDATA[""]]></Description>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- libraryGlobalsOld: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="libraryGlobalsOld">
+			<Description><![CDATA["Old Library Globals"]]></Description>
+		</Title>
+		<Boolean Name="showBOpLine3D">
+			<Description><![CDATA["Show opening lines in 3D for Doors"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<PenColor Name="gs_opLinePen">
+			<Description><![CDATA["Symbol Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</PenColor>
+		<Integer Name="iOplinePen">
+			<Description><![CDATA[""]]></Description>
+			<Value>3</Value>
+		</Integer>
+		<Integer Name="gs_iSwingType">
+			<Description><![CDATA["Swing Type (1-curved, 2-straight)"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<LineType Name="gs_swingLineType">
+			<Description><![CDATA["Swing Line Type"]]></Description>
+			<Value>1</Value>
+		</LineType>
+
+		<!-- minimal_space_globals: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="minimal_space_globals">
+			<Description><![CDATA["Minimal Space"]]></Description>
+		</Title>
+		<Boolean Name="showBMinSpace">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<FillPattern Name="MSFillType">
+			<Description><![CDATA["Minimal Space Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>28</Value>
+		</FillPattern>
+		<PenColor Name="MSFillPen">
+			<Description><![CDATA["Minimal Space Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<Integer Name="iMSFillPen">
+			<Description><![CDATA[""]]></Description>
+			<Value>4</Value>
+		</Integer>
+		<PenColor Name="MSFillBackPen">
+			<Description><![CDATA["Minimal Space Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<Integer Name="iMSFillBackPen">
+			<Description><![CDATA[""]]></Description>
+			<Value>19</Value>
+		</Integer>
+		<LineType Name="MSContLineType">
+			<Description><![CDATA[""]]></Description>
+			<Value>4</Value>
+		</LineType>
+		<PenColor Name="MSContLinePen">
+			<Description><![CDATA[""]]></Description>
+			<Value>1</Value>
+		</PenColor>
+		<Integer Name="iMSContLinePen">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="bShowAddHotspots">
+			<Description><![CDATA["Show Additional Hotspots for Doors / Windows"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="AC_bShowAddHotspotsForIS">
+			<Description><![CDATA["Show Additional Hotspots for Doors / Windows"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bHideOplineStyle">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- GlobalsForBothDW: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="GlobalsForBothDW">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Integer Name="gs_opline_type_m">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="gs_opline_type_m_out">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="gs_opline_style_m">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+
+		<!-- GlobalsForDoors: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="GlobalsForDoors">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Boolean Name="bEnableSimpleLine">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="bControlForSlidingDoor">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="D_showBOpLine3D">
+			<Description><![CDATA["Show opening lines in 3D for Doors"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="D_iSwingType">
+			<Description><![CDATA["Line Shape (1-curved, 2-straight) Doors"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>-1</Value>
+		</Integer>
+		<Integer Name="D_iSlidingType">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<LineType Name="D_swingLineType">
+			<Description><![CDATA["Line Type for Doors"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</LineType>
+		<PenColor Name="D_opLinePen">
+			<Description><![CDATA["Pen for Doors"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</PenColor>
+		<Integer Name="D_iOpLinePen">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</Integer>
+
+		<!-- GlobalsForWindows: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="GlobalsForWindows">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Boolean Name="W_showBOpLine3D">
+			<Description><![CDATA["Show opening lines in 3D for Windows"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="W_iSwingType">
+			<Description><![CDATA["Line Shape (1-curved, 2-straight) Windows"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>-1</Value>
+		</Integer>
+		<LineType Name="W_swingLineType">
+			<Description><![CDATA["Line Type for Window"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</LineType>
+		<PenColor Name="W_opLinePen">
+			<Description><![CDATA["Pen for Windows"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</PenColor>
+		<Integer Name="W_iOpLinePen">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</Integer>
+
+		<!-- GlobalsForSkylights: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="GlobalsForSkylights">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Boolean Name="S_showBOpLine3D">
+			<Description><![CDATA["Show opening lines in 3D for Skylights"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bInitialized_S_showBOpLine3D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- GlobalsForDACH: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="GlobalsForDACH">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Boolean Name="bEnableSecondaryOpLineTypes">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bEnableWindowHandle">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<LineType Name="D_swingLineType2">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</LineType>
+		<LineType Name="W_swingLineType2">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</LineType>
+		<Integer Name="D_iOpLineType2">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Integer Name="W_iOpLineType2">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Boolean Name="D_showBOpLine2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="W_showBOpLine2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- FireRatingParams: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="FireRatingParams">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Boolean Name="bEnableNEDFireRating">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bShowFireRating">
+			<Description><![CDATA["Show Fire Rating Symbol"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<PenColor Name="fireRatingSymbPen">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<Integer Name="iFireRatingSymbPen">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+	</Parameters>
+</ParamSection>
+</Symbol>
