@@ -4,7 +4,6 @@ packages
 myapp.log
 wsgi_myapp.log
 src/Target2
-src/appconfig.json
 
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
