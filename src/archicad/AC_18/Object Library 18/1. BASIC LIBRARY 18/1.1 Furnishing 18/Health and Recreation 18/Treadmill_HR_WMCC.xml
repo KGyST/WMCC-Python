@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="3483538C-7FD2-41C0-9A51-8AFC1DE53069" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="722DE8A8-F518-4FC4-975C-FB21027AD143" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Drawing Ordering="DrawQueue" SectVersion="32" SectionFlags="0" SubIdent="0">
 	<Hotspot>
 		<DrawIndex>9</DrawIndex>
@@ -2396,11 +2396,11 @@ endif
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["fa_minimalspace_HR_WMCC"]]></MName>
-		<MainGUID>E8C4E32F-A25A-4AFD-B0CF-0A5E23914DED</MainGUID>
+		<MainGUID>97BACFE4-7BF2-482C-B7FB-0AE0D8FA0756</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["FM_types_HR_WMCC"]]></MName>
-		<MainGUID>662F93A3-76B4-4624-81CB-D3300F6C8636</MainGUID>
+		<MainGUID>18EC664C-B7D2-4B94-BE3D-9918E57091F6</MainGUID>
 	</Macro>
 </CalledMacros>
 

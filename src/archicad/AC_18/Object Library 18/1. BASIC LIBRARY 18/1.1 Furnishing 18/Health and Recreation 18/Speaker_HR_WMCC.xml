@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="9C4ECBC4-B703-4837-818E-A8D443924C56" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="E4CC358B-5464-4E4C-BC06-22ED9277B0D0" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
 <Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
@@ -637,7 +637,7 @@ IF gs_detlevel_3D_m = DLEV3D_OFF THEN HIDEPARAMETER "gs_resol", "gs_shadow"
 	</Macro>
 	<Macro>
 		<MName><![CDATA["FM_types_HR_WMCC"]]></MName>
-		<MainGUID>662F93A3-76B4-4624-81CB-D3300F6C8636</MainGUID>
+		<MainGUID>18EC664C-B7D2-4B94-BE3D-9918E57091F6</MainGUID>
 	</Macro>
 </CalledMacros>
 

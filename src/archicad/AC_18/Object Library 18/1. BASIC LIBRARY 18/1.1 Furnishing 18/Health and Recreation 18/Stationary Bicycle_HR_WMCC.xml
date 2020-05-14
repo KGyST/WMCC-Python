@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="09CA23A9-0EB6-437F-8301-392CDE65AAAC" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="2572AEFF-2CAC-41A8-8E0F-429A30505B95" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -748,11 +748,11 @@ endif
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["fa_minimalspace_HR_WMCC"]]></MName>
-		<MainGUID>E8C4E32F-A25A-4AFD-B0CF-0A5E23914DED</MainGUID>
+		<MainGUID>97BACFE4-7BF2-482C-B7FB-0AE0D8FA0756</MainGUID>
 	</Macro>
 	<Macro>
 		<MName><![CDATA["FM_types_HR_WMCC"]]></MName>
-		<MainGUID>662F93A3-76B4-4624-81CB-D3300F6C8636</MainGUID>
+		<MainGUID>18EC664C-B7D2-4B94-BE3D-9918E57091F6</MainGUID>
 	</Macro>
 </CalledMacros>
 

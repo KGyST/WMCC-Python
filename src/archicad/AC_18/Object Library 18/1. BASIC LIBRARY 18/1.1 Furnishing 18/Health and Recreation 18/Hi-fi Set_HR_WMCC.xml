@@ -1,4 +1,4 @@
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="F6E560E3-0FED-4505-82C4-120E463C10D5" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="568FFD11-66DC-427A-B624-119433D935B3" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
 	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
@@ -2420,7 +2420,7 @@ LOCK "zzyzx"
 	</Macro>
 	<Macro>
 		<MName><![CDATA["FM_types_HR_WMCC"]]></MName>
-		<MainGUID>662F93A3-76B4-4624-81CB-D3300F6C8636</MainGUID>
+		<MainGUID>18EC664C-B7D2-4B94-BE3D-9918E57091F6</MainGUID>
 	</Macro>
 </CalledMacros>
 
