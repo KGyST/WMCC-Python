@@ -41,8 +41,8 @@ with open(APP_CONFIG, "r") as ac:
     SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
     ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
     LOGLEVEL                    = appJSON["LOGLEVEL"]
-    JOBDATA_PATH                = os.path.join(_SRC, "Target", appJSON["JOBDATA"])
-    RESULTDATA_PATH             = os.path.join(_SRC, "Target", appJSON["RESULTDATA"])
+    JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
+    RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -1412,7 +1412,9 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     else:
         source_image_dir_name = '"' + source_image_dir_name + '"'
 
-    output = r'"%s" createcontainer "%s" "%s" %s "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName, source_image_dir_name, ADDITIONAL_IMAGE_DIR_NAME)
+    output = r'"%s" createcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName)
+    if source_image_dir_name:
+        output += '"' + source_image_dir_name + '"'
     logging.info("output: %s" % output)
 
     logging.info("createcontainer")
@@ -1510,7 +1512,7 @@ def buildMacroSet(inData, main_version="19"):
         settingsJSON = json.load(categoryData)
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
-        imagePath = subCategory["imagePath"] if "imagePath" in subCategory else ""
+        imagePath = subCategory["image_path"] if "image_path" in subCategory else ""
         subCategory["current_minor_version"] = int(minor_version)
 
     resetAll()
@@ -1943,19 +1945,19 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         logging.debug("ac command:")
         logging.debug(x2lCommand)
 
-        if not CLEANUP:
-            with open(tempdir + "\dict.txt", "w") as d:
-                for k in list(dest_dict.keys()):
-                    if not isinstance(dest_dict[k].sourceFile, StrippedSourceXML):
-                        d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
-
-            with open(tempdir + "\pict_dict.txt", "w") as d:
-                for k in list(pict_dict.keys()):
-                    d.write(pict_dict[k].sourceFile.fullPath + "->" + pict_dict[k].relPath+ "\n")
-
-            with open(tempdir + "\id_dict.txt", "w") as d:
-                for k in list(id_dict.keys()):
-                    d.write(id_dict[k] + "\n")
+        # if not CLEANUP:
+        #     with open(tempdir + "\dict.txt", "w") as d:
+        #         for k in list(dest_dict.keys()):
+        #             if not isinstance(dest_dict[k].sourceFile, StrippedSourceXML):
+        #                 d.write(k + " " + dest_dict[k].sourceFile.name + "->" + dest_dict[k].name + " " + dest_dict[k].sourceFile.guid + " -> " + dest_dict[k].guid + "\n")
+        #
+        #     with open(tempdir + "\pict_dict.txt", "w") as d:
+        #         for k in list(pict_dict.keys()):
+        #             d.write(pict_dict[k].sourceFile.fullPath + "->" + pict_dict[k].relPath+ "\n")
+        #
+        #     with open(tempdir + "\id_dict.txt", "w") as d:
+        #         for k in list(id_dict.keys()):
+        #             d.write(id_dict[k] + "\n")
 
     logging.debug("x2l")
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:

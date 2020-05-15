@@ -2,7 +2,7 @@
     "Appliances": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18",
-            "current_minor_version": 20200513,
+            "current_minor_version": 20200514,
             "macro_folders": [
                 "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18\\macros"
             ]
@@ -11,7 +11,7 @@
     "Bathroom_Accessories": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Bathroom Accessories 18",
-            "current_minor_version": 20200513,
+            "current_minor_version": 20200514,
             "macro_folders": [
                 "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Bathroom Accessories 18\\macros"
             ]
@@ -20,7 +20,7 @@
     "Bathtubs_Showers_Jacuzzis": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Bathtubs, Showers, Jacuzzis 18",
-            "current_minor_version": 20200513,
+            "current_minor_version": 20200514,
             "macro_folders": [
                 "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.6 Mechanical 18\\Plumbing Fixtures 18\\Bathtubs, Showers, Jacuzzis 18\\macros"
             ]
@@ -29,7 +29,7 @@
     "Beds": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Beds 18",
-            "current_minor_version": 20200513,
+            "current_minor_version": 20200514,
             "macro_folders": [
                 "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Beds 18\\macros"
             ]
@@ -38,7 +38,7 @@
     "Cabinets_and_Shelves": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18",
-            "current_minor_version": 20200513,
+            "current_minor_version": 20200514,
             "macro_folders": [
                 "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Cabinets and Shelves 18\\macros"
             ]
@@ -75,10 +75,10 @@
         "19": {
             "path": "DoorWindowTemplate_19\\library",
             "image_path": "DoorWindowTemplate_19\\library_images",
-            "current_minor_version": 20200513,
             "macro_folders": [
                 "DoorWindowTemplate_19\\library\\macros"
-            ]
+            ],
+            "current_minor_version": 20200514
         },
         "19_1": {
             "path": "DoorWindowTemplate_19_1\\library",
@@ -92,7 +92,7 @@
     "Health_and_Recreation": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Health and Recreation 18",
-            "current_minor_version": 20200513,
+            "current_minor_version": 20200514,
             "macro_folders": [
                 "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Health and Recreation 18\\macros"
             ]

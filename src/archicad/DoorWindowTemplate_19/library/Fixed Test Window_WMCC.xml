@@ -601,7 +601,7 @@ http://www.bimobject.com
             <Flags>
                 <ParFlg_Child/>
             </Flags>
-            <Value>-1</Value>
+            <Value>100</Value>
         </Integer>
         <Integer Name="iDetLevelSE">
             <Description><![CDATA[""]]></Description>

@@ -3610,6 +3610,8 @@ return
 
 30006:
 ! Mullion for sliding door fix zones
+	InnerD1 = gs_frame_thk
+	InnerD2 = gs_frame_thk
 	yProf1 = gs_sash_width / 2
 	yProf2 = gs_sash_width / 2
 	zMax = gs_frame_thk / 2

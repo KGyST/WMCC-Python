@@ -19,8 +19,9 @@ with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
     LOGLEVEL                    = appJSON["LOGLEVEL"]
-    JOBDATA_PATH                = os.path.join(_SRC, "Target", appJSON["JOBDATA"])
-    RESULTDATA_PATH             = os.path.join(_SRC, "Target", appJSON["RESULTDATA"])
+    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
+    JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
+    RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,

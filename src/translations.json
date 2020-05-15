@@ -78,6 +78,12 @@
         "Type": "PAR_INT"
       }
     },
+    "rgb": {
+      "ARCHICAD": {
+        "Name": "iDiffuseColorS",
+        "Type": "PAR_INT"
+      }
+    },
     "rAmbient": {
       "ARCHICAD": {
         "Name": "rAmbient",
