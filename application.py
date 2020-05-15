@@ -152,6 +152,14 @@ class ReceiveFile_Test(Resource):
 
 class ResetJobQueue(Resource):
     def post(self):
+        if not os.path.exists(JOBDATA_PATH):
+            jobQueue = {
+                "isJobActive": False,
+                "jobList": []
+            }
+            with open(JOBDATA_PATH, "w") as jobFile:
+                json.dump(jobQueue, jobFile, indent=4)
+
         while not os.access(JOBDATA_PATH, os.R_OK):
             time.sleep(1)
 
@@ -178,6 +186,11 @@ class ResetJobQueue(Resource):
             json.dump(jobQueue, jobFile, indent=4)
 
         resultDict = {}
+
+        if not os.path.exists(RESULTDATA_PATH):
+            resultDict = {}
+            with open(RESULTDATA_PATH, "w") as resultFile:
+                json.dump(resultDict, resultFile, indent=4)
 
         while not os.access(RESULTDATA_PATH, os.W_OK):
             time.sleep(1)
