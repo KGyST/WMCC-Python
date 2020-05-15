@@ -1964,8 +1964,8 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
 
-        if "rror" in _out:
-            logging.error(f"While compiling: {_out}")
+        # if "rror" in _out:
+        #     logging.error(f"While compiling: {_out}")
 
     # cleanup ops
     if CLEANUP:
