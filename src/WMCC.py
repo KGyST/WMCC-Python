@@ -1570,8 +1570,8 @@ def buildMacroSet(inData, main_version="19"):
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
 
-    with open(os.path.join(_SRC, "categoryData.json"), "w") as categoryData:
-        json.dump(settingsJSON, categoryData, indent=4)
+    # with open(os.path.join(_SRC, "categoryData.json"), "w") as categoryData:
+    #     json.dump(settingsJSON, categoryData, indent=4)
 
     return {'LCFName':          _fileNameWithoutExtension + ".json",
             "category":         category,
