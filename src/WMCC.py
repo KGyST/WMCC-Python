@@ -13,11 +13,12 @@ import copy
 import argparse
 
 import json
-import http.client, http.server, urllib.request, urllib.parse, urllib.error, urllib.parse, os, base64
+import http.client, http.server, urllib.request, urllib.parse, urllib.error, os, base64
 import logging
 from PIL import Image
 import io
 from time import sleep
+import hashlib
 
 #------------------ External modules------------------
 
@@ -43,6 +44,7 @@ with open(APP_CONFIG, "r") as ac:
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+    TEST_CATEGORIES             = appJSON["TEST_CATEGORIES"]    # categories' name not for real use but for testing
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -1203,12 +1205,17 @@ class DestXML (XMLFile, DestFile):
         self.warnings               = []
 
         self.sourceFile             = sourceFile
-        self.guid                   = str(uuid.uuid4()).upper()
         self.bPlaceable             = sourceFile.bPlaceable
         self.iVersion               = sourceFile.iVersion
         self.proDatURL              = ''
         self.bOverWrite             = False
         self.bRetainCalledMacros    = False
+
+        if not self.sourceFile.guid.endswith('7E57'):
+            self.guid               = str(uuid.uuid4()).upper()
+        else:
+            # For testing purpoes, un-randomizing dest files. "7E57" ~ "TEST"
+            self.guid               = self.sourceFile.guid
 
         self.parameters             = copy.deepcopy(sourceFile.parameters)
 
@@ -1254,10 +1261,11 @@ class StrippedDestXML:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inName, inGUID, inRelPath, inSourceFile):
+    def __init__(self, inName, inGUID, inRelPath, inMD5, inSourceFile):
         self.name = inName
         self.guid = inGUID
         self.relPath = inRelPath
+        self.md5 = inMD5
         self.sourceFile = inSourceFile
 
 # -------------------/data classes -------------------------------------------------------------------------------------
@@ -1412,7 +1420,8 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     else:
         source_image_dir_name = '"' + source_image_dir_name + '"'
 
-    output = r'"%s" createcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName)
+    targetLCFFullPath = os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf')
+    output = r'"%s" createcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), targetLCFFullPath, tempGDLDirName)
     if source_image_dir_name:
         output += '"' + source_image_dir_name + '"'
     logging.info("output: %s" % output)
@@ -1422,9 +1431,9 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
 
-    # check_output(output, shell=True)
-
     logging.info("*****LCF CREATION FINISHED SUCCESFULLY******")
+
+    return targetLCFFullPath
 
 
 def unitConvert(inParameterName,
@@ -1466,10 +1475,12 @@ def unitConvert(inParameterName,
 
 
 def extractParams(inData):
+    logging.debug("extractParams")
     global projectPath
     projectPath = inData["path"] if "path" in inData else ""
     sf = SourceXML(inData["fileName"])
-    return sf.parameters.returnParamsAsDict()
+    return {"result": "not implemented yet"}
+    # return sf.parameters.returnParamsAsDict()
 
 
 def createMasterGDL(**kwargs):
@@ -1493,7 +1504,7 @@ def createMasterGDL(**kwargs):
     return content
 
 
-def buildMacroSet(inData, main_version="19"):
+def buildMacroSet(inData):
     '''
     :inFolderS: a list of foleder names to go through to build up macros
     :return:
@@ -1551,21 +1562,28 @@ def buildMacroSet(inData, main_version="19"):
 
     _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
+    _ = createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
 
     _stripped_dest_dict = {}
 
     for k, v in dest_dict.items():
-        # dest_dict[k].sourceFile.scripts = None
         _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, v.sourceFile.guid, )
-        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
+        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, v.md5, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
     jsonData = json.dumps(json.loads(jsonpickle.encode({  "minor_version": str(minor_version),
                                     "objects": _stripped_dest_dict}, )), indent=4)
 
+    returnDict = {'LCFName': _fileNameWithoutExtension + ".json",
+                 "category": category,
+                 "main_version": main_version,
+                 "minor_version ": minor_version,}
+
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
+
+    if category in TEST_CATEGORIES:
+        returnDict.update({"md5sums": {dest_dict[key].name.upper(): dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
@@ -1573,11 +1591,7 @@ def buildMacroSet(inData, main_version="19"):
     # with open(os.path.join(_SRC, "categoryData.json"), "w") as categoryData:
     #     json.dump(settingsJSON, categoryData, indent=4)
 
-    return {'LCFName':          _fileNameWithoutExtension + ".json",
-            "category":         category,
-            "main_version":     main_version,
-            "minor_version ":   minor_version,
-    }
+    return returnDict
 
 
 def setParameter(inJSONSection, inDestItem, inTranslationDict):
@@ -1797,21 +1811,28 @@ def createBrandedProduct(inData):
 
     fileName = AC_templateData["category"] + "_" + family_name
 
-    createLCF(tempGDLDirName, fileName)
+    targetLCFFullPath = createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
     _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + minor_version + ".lcf" if minor_version else None
+
+    if category in TEST_CATEGORIES:
+        _macrosetName = None
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
-    return createResponesFiles(_paceableName, _macrosetName,
-                               )
+    returnDict =  createResponeFiles(_paceableName, _macrosetName, )
+
+    if category in TEST_CATEGORIES:
+        returnDict.update({"md5sums": {dest_dict[key].name.upper():dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
+
+    return returnDict
 
 
-def createResponesFiles( inFileName,
-                         inMacrosetName,):
+def createResponeFiles(inFileName,
+                       inMacrosetName, ):
     """
     Creates finished objects
     """
@@ -1906,15 +1927,17 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  "id_dict": id_dict,
                  } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
 
-    ## If single processing is needed for debugging, disable this
+    _results = []
     if MULTIPROCESS:
         logging.debug(f"CPU count: {mp.cpu_count()}")
         _pool = mp.Pool(mp.cpu_count())
-        _pool.map(processOneXML, pool_map)
+        _results = _pool.map(processOneXML, pool_map)
     else:
-    ## ...and enable this
         for _p in pool_map:
-            processOneXML(_p)
+            _results.append(processOneXML(_p))
+
+    for _xml, _res in zip(pool_map, _results):
+        _xml["dest"].md5 = _res
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -2098,7 +2121,14 @@ def processOneXML(inData):
     except WindowsError:
         pass
     with open(destPath, "wb") as file_handle:
-        file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
+        resultXML = etree.tostring(mdp, pretty_print=True, encoding="UTF-8", )
+        file_handle.write(resultXML)
+
+    m = hashlib.md5()
+    m.update(resultXML)
+    macroMD5 = m.hexdigest()
+
+    return macroMD5
 
 
 # ---------------------Job queue--------------------
@@ -2133,7 +2163,7 @@ def enQueueJob(inEndPoint, inData, inPID):
     if not jobQueue["isJobActive"]:
         deQueueJob()
     else:
-        logging.debug("A DeQueue is ACTIVE")
+        logging.debug("A deQueue is ACTIVE")
 
 
 def deQueueJob():

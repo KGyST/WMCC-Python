@@ -3,11 +3,11 @@
   "CLEANUP": false,
   "MULTIPROCESS": false,
   "WMCC_PATH": "D:\\Git\\WMCC Python",
-  "TARGET_GDL_DIR_NAME": ".\\src\\Target",
+  "TARGET_GDL_DIR_NAME": "src\\Target",
   "ARCHICAD_LOCATION": ".\\src\\archicad\\LP_XMLConverter_18",
   "APP_LOG_FILE_LOCATION": ".\\myapp.log",
   "LOGLEVEL": 10,
   "JOBDATA": "jobQueue.json",
-  "RESULTDATA":"resultQueue.json"
-
+  "RESULTDATA":"resultQueue.json",
+  "TEST_CATEGORIES": ["tests"]
 }

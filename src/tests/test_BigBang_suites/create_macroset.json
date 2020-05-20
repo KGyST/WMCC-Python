@@ -1,0 +1,20 @@
+{
+  "description": "createmacroset: tests",
+  "endpoint": "/createmacroset",
+  "request": {
+    "category": "tests",
+    "main_version": "19",
+	"minor_version": "20200518",
+    "folder_names": [
+      "macros"
+    ]
+  },
+  "result": {
+    "LCFName": "macroset_tests_19.json",
+    "category": "tests",
+    "main_version": "19",
+    "minor_version ": "20200518",
+    "md5sums": {"FA_MINIMALSPACE_TEST19": "00c90df38d77677ec502cec91412b237",
+             "LIBRARYGLOBALS13_TEST19": "419ed7d4115fa5b9703e58e30ca4f183"}
+}
+}

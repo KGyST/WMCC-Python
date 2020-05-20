@@ -1,4 +1,13 @@
 {
+    "tests": {
+        "19": {
+            "path": "_tests",
+            "current_minor_version": 20200514,
+            "macro_folders": [
+                "_tests\\macros"
+            ]
+        }
+    },
     "Appliances": {
         "19": {
             "path": "AC_18\\Object Library 18\\1. BASIC LIBRARY 18\\1.1 Furnishing 18\\Appliances 18",
