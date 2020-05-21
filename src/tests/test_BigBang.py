@@ -11,10 +11,35 @@ SERVER_URL  = "localhost"
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
 
+class FileName(str):
+    """
+    Class for sorting test cases represented by filenames
+    """
+    def __gt__(self, other):
+        if self.startswith('resetjobqueue'):
+            return False
+        elif self.startswith("create_macroset") and not other.startswith("create_macroset"):
+            return False
+        elif not self.startswith("create_macroset") and other.startswith("create_macroset"):
+            return True
+        else:
+            return str(self) < str(other)
+
+    def __lt__(self, other):
+        if self.startswith('resetjobqueue'):
+            return True
+        elif self.startswith("create_macroset") and not other.startswith("create_macroset"):
+            return True
+        elif not self.startswith("create_macroset") and other.startswith("create_macroset"):
+            return False
+        else:
+            return str(self) > str(other)
+
 class TestSuite_BigBang(unittest.TestSuite):
     def __init__(self):
         self._tests = []
-        for fileName in os.listdir(FOLDER  + "_suites"):
+        self._fileList = sorted([FileName(f) for f in os.listdir(FOLDER + "_suites")])
+        for fileName in self._fileList:
             if not fileName.startswith('_') and os.path.splitext(fileName)[1] == '.json':
                 testData = json.load(open(os.path.join(FOLDER + "_suites", fileName), "r"))
 
@@ -50,6 +75,12 @@ class TestCase_BigBang(unittest.TestCase):
             req = inTestData["request"]
             conn.request("POST", endp, json.dumps(req), headers)
             response = json.loads(conn.getresponse().read())
+
+            if response == {'message': 'Internal Server Error'}:
+                print("*********Internal Server Error********")
+                conn.request("POST", "/resetjobqueue", "", headers)
+                response = json.loads(conn.getresponse().read())
+
             conn.close()
 
             minor_version = datetime.date.today().strftime("%Y%m%d")
@@ -77,10 +108,14 @@ class TestCase_BigBang(unittest.TestCase):
                 with open(outFileName, "w") as outputFile:
                     json.dump(response, outputFile, indent=4)
 
-                if lcfFile:
-                    shutil.move(lcfFile, os.path.join(inDir + "_errors", inFileName + ".lcf"))
-                if jsonFile:
-                    shutil.move(jsonFile, os.path.join(inDir + "_errors", inFileName + ".json"))
+                try:
+                    if lcfFile:
+                        shutil.move(lcfFile, os.path.join(inDir + "_errors", inFileName + ".lcf"))
+                    if jsonFile:
+                        shutil.copyfile(jsonFile, os.path.join(inDir + "_errors", inFileName + ".json"))
+                except PermissionError:
+                    print(f"**********PermissionError: {inFileName}**********")
                 raise
+
         func.__name__ = "test_" + inFileName[:-5]
         return func

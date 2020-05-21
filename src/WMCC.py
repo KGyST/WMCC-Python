@@ -215,30 +215,27 @@ class ParamSection:
         """
         inserting under a title
         :param inParentParName:
-        :param inEtree:
+        :param inPar:      Param or eTree
         :param inPos:      position, 0 is first, -1 is last #FIXME
         :return:
         """
         base = self.__getIndex(inParentParName)
         if self.__paramList[base].iType == PAR_TITLE:
+            if not isinstance(inPar, Param):
+                inPar = Param(inPar)
             i = 1
-            nP = self.__paramList[base + i]
             try:
+                nP = self.__paramList[base + i]
                 while   nP.iType != PAR_TITLE and \
                         nP.iType != PAR_COMMENT and \
                         PARFLG_CHILD in nP.flags:
                     i += 1
                     nP = self.__paramList[base + i]
-            except IndexError:
-                #FIXME testing inserting right at the end
-                pass
-            if isinstance(inPar, Param):
                 self.__paramList.insert(base + i, inPar)
-                self.__paramDict[inPar.name] = inPar
-            else:
-                #_element
-                self.__paramList.insert(base + i, Param(inPar))
-                self.__paramDict[inPar.attrib['Name']] = Param(inPar)
+            except IndexError:
+                self.__paramList.append(inPar)
+
+            self.__paramDict[inPar.name] = inPar
 
     def remove_param(self, inParName):
         if inParName in self.__paramDict:
@@ -1663,14 +1660,18 @@ def createBrandedProduct(inData):
     os.makedirs(tempGDLDirName)
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
+    minor_version = datetime.date.today().strftime("%Y%m%d")
+
     with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
         settingsJSON = json.load(categoryData)
         AC_templateData = inData["template"]["ARCHICAD_template"]
         main_version = AC_templateData["main_macroset_version"]
-        category  = AC_templateData["category"]
+        category = AC_templateData["category"]
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
         imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
+        if "minor_version" in AC_templateData:
+            minor_version = AC_templateData["minor_version"]
 
     source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
@@ -1733,10 +1734,10 @@ def createBrandedProduct(inData):
 
         try:
             inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
-            minor_version = inputJson["minor_version"]
+            macro_lib_version = inputJson["minor_version"]
             _dest_dict = inputJson["objects"]
         except FileNotFoundError:
-            minor_version = None
+            macro_lib_version = -1
             _dest_dict = {}
 
         dest_dict.update(_dest_dict)
@@ -1754,14 +1755,17 @@ def createBrandedProduct(inData):
 
             if  "sMaterialValS"         in destItem.parameters \
             and "sMaterialS"            in destItem.parameters \
-            and "iVersionNumber"        in destItem.parameters \
-            and "current_minor_version" in subCategory:
-                for _i in range(1, 15):
-                    destItem.parameters["sMaterialValS"][_i]  = availableMaterials
+            and "iVersionNumber"        in destItem.parameters:
+            # and "iMacroLibVersion"      in destItem.parameters \
+                if availableMaterials:
+                    for _i in range(1, 15):
+                        destItem.parameters["sMaterialValS"][_i]  = availableMaterials
 
-                s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
-                destItem.parameters["sMaterialS"] = s_
-                destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
+                    s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+                    destItem.parameters["sMaterialS"] = s_
+
+                destItem.parameters["iVersionNumber"][1]  = [int(minor_version), 0]
+                # destItem.parameters["iMacroLibVersion"]  = int(macro_lib_version)
 
             if "translations" in AC_templateData:
                 translation["parameters"].update(AC_templateData["translations"])
@@ -1792,7 +1796,7 @@ def createBrandedProduct(inData):
                         inChild=True,
                                 )
 
-                    destItem.parameters.insertAsChild("gs_list", par.eTree, )
+                    destItem.parameters.insertAsChild("gs_list", par, )
             if _logo:
                 if "sLogoName" in destItem.parameters and "wCompLogo" in destItem.parameters:
                     destItem.parameters["sLogoName"] = logo_name
@@ -1814,19 +1818,19 @@ def createBrandedProduct(inData):
     targetLCFFullPath = createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + minor_version + ".lcf" if minor_version else None
+    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + macro_lib_version + ".lcf" if int(macro_lib_version) > 0 else None
 
     if category in TEST_CATEGORIES:
         _macrosetName = None
-
-    if CLEANUP:
-        shutil.rmtree(tempGDLDirName)
-        os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
     returnDict =  createResponeFiles(_paceableName, _macrosetName, )
 
     if category in TEST_CATEGORIES:
         returnDict.update({"md5sums": {dest_dict[key].name.upper():dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
+
+    if CLEANUP:
+        shutil.rmtree(tempGDLDirName)
+        os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
     return returnDict
 
@@ -1987,8 +1991,10 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
 
-        # if "rror" in _out:
-        #     logging.error(f"While compiling: {_out}")
+        if "rror" in str(_out):
+            logging.error(f"While compiling: {_out}")
+        else:
+            logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
     # cleanup ops
     if CLEANUP:
@@ -2000,8 +2006,6 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     else:
         logging.debug("tempdir: %s" % tempdir)
         logging.debug("tempPicDir: %s" % tempPicDir)
-
-    logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
 
 def processOneXML(inData):
