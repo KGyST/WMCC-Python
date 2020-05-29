@@ -9,5 +9,4 @@
   "LOGLEVEL": 10,
   "JOBDATA": "jobQueue.json",
   "RESULTDATA":"resultQueue.json",
-  "TEST_CATEGORIES": ["tests"]
 }

@@ -5,11 +5,16 @@ import http.client
 import ssl
 import datetime
 import shutil
+import tempfile
+import base64
+from subprocess import Popen, PIPE, DEVNULL
 
 FOLDER      = "test_BigBang"
-SERVER_URL  = "localhost"
+SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
+SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
+ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
 
 class FileName(str):
     """
@@ -77,29 +82,75 @@ class TestCase_BigBang(unittest.TestCase):
             response = json.loads(conn.getresponse().read())
 
             if response == {'message': 'Internal Server Error'}:
+                #FIXME response codes > 399
                 print("*********Internal Server Error********")
                 conn.request("POST", "/resetjobqueue", "", headers)
                 response = json.loads(conn.getresponse().read())
 
             conn.close()
 
-            minor_version = datetime.date.today().strftime("%Y%m%d")
-            if "minor_version" in req:
-                minor_version = req["minor_version"]
+            # minor_version = datetime.date.today().strftime("%Y%m%d")
+            # if "minor_version" in req:
+            #     minor_version = req["minor_version"]
 
-            lcfFile = None
-            jsonFile = None
+            if inTestData["endpoint"] == "/":
+                tempDir = tempfile.mkdtemp()
+                placeableTempGSMDir = tempfile.mkdtemp()
+                placeableTempXMLDir = tempfile.mkdtemp()
+                tasks = [("extractcontainer", os.path.join(tempDir, response['object_name']), placeableTempGSMDir, ),
+                          ("l2x", placeableTempGSMDir, placeableTempXMLDir,), ]
+                folders = {"placeables": placeableTempXMLDir}
 
-            if inTestData["endpoint"] == "/createmacroset":
-                lcfFile  = os.path.join(TARGET_GDL_DIR_NAME, "_".join(["macroset", req["category"], req["main_version"], minor_version]) + ".lcf")
-                jsonFile = os.path.join(TARGET_GDL_DIR_NAME, "_".join(["macroset", req["category"], req["main_version"]]) + ".json")
-            elif inTestData["endpoint"] == "/":
-                lcfFile  = os.path.join(TARGET_GDL_DIR_NAME, "_".join([req["template"]["ARCHICAD_template"]["category"], req["productName"]]) + ".lcf")
-
-            if 'base64_encoded_object' in response:
+                with open(os.path.join(tempDir, response['object_name']), 'wb') as objectFile:
+                    decode = base64.urlsafe_b64decode(response['base64_encoded_object'])
+                    objectFile.write(decode)
                 del response['base64_encoded_object']
-            if 'test_lcf' in response:
-                del response['test_lcf']
+
+                if "base64_encoded_macroset" in response:
+                    macrosetTempGSMDir = tempfile.mkdtemp()
+                    macrosetTempXMLDir = tempfile.mkdtemp()
+                    tasks += [("extractcontainer", os.path.join(tempDir, response['macroset_name']), macrosetTempGSMDir,),
+                              ("l2x", macrosetTempGSMDir, macrosetTempXMLDir,), ]
+                    folders.update({"macroset": macrosetTempXMLDir})
+
+                    with open(os.path.join(tempDir, response['macroset_name']), 'wb') as objectFile:
+                        decode = base64.urlsafe_b64decode(response['base64_encoded_macroset'])
+                        objectFile.write(decode)
+                    del response['base64_encoded_macroset']
+
+                for _dir in tasks:
+                    with Popen(f'"{os.path.join(ARCHICAD_LOCATION, "LP_XMLConverter.exe")}" {_dir[0]} "{_dir[1]}" "{_dir[2]}"',
+                               stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
+                        _out, _err = proc.communicate()
+
+                assErr = None
+
+                for folder in folders.keys():
+                    path_join = os.path.join(FOLDER + "_suites", inFileName[:-5], folder)
+                    for root, subfolders, files, in os.walk(folders[folder]):
+                        for receivedTestFile in files:
+                            relPath = os.path.relpath(root, folders[folder])
+                            if folder == "macroset":
+                                originalRelPath = os.path.join(*relPath.split(os.sep)[1:])
+                            else:
+                                originalRelPath = relPath
+                            originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
+                            try:
+                                originalTest = open(originalTestFile, "rb")
+                                receivedTest = open(os.path.join(root, receivedTestFile), "rb")
+                                inObj.assertEqual(originalTest.read(), receivedTest.read())
+                                originalTest.close()
+                                receivedTest.close()
+
+                            except (AssertionError, FileNotFoundError) as a:
+                                targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folder, originalRelPath)
+
+                                if not os.path.exists(targetFolderPath):
+                                    os.makedirs(targetFolderPath)
+                                shutil.copyfile(os.path.join(folders[folder], relPath, receivedTestFile), os.path.join(FOLDER + "_errors", inFileName[:-5], folder, originalRelPath, receivedTestFile))
+                                assErr = a
+                if assErr:
+                    raise assErr
 
             try:
                 inObj.assertEqual(inTestData["result"], response)
@@ -107,15 +158,9 @@ class TestCase_BigBang(unittest.TestCase):
                 print(inTestData["description"])
                 with open(outFileName, "w") as outputFile:
                     json.dump(response, outputFile, indent=4)
-
-                try:
-                    if lcfFile:
-                        shutil.move(lcfFile, os.path.join(inDir + "_errors", inFileName + ".lcf"))
-                    if jsonFile:
-                        shutil.copyfile(jsonFile, os.path.join(inDir + "_errors", inFileName + ".json"))
-                except PermissionError:
-                    print(f"**********PermissionError: {inFileName}**********")
                 raise
+
+            #FIXME cleanup
 
         func.__name__ = "test_" + inFileName[:-5]
         return func

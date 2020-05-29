@@ -13,9 +13,6 @@
     "LCFName": "macroset_tests_19.json",
     "category": "tests",
     "main_version": "19",
-    "minor_version ": "20200518",
-    "md5sums": {"BASEMACRO_TEST19": "c40197fa539789486e9efd3784d87b14",
-				"LIBRARYGLOBALS13_TEST19": "25fb8b9524732017286539758c347cca",
-				"LIBRARY_VERSION_19": "a108dc70a693144e003a7d4ec7ee7c84"}
+    "minor_version ": "20200518"
 }
 }

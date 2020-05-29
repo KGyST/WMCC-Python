@@ -44,7 +44,7 @@ with open(APP_CONFIG, "r") as ac:
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
-    TEST_CATEGORIES             = appJSON["TEST_CATEGORIES"]    # categories' name not for real use but for testing
+    # TEST_CATEGORIES             = appJSON["TEST_CATEGORIES"]    # categories' name not for real use but for testing
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -1579,8 +1579,8 @@ def buildMacroSet(inData):
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
 
-    if category in TEST_CATEGORIES:
-        returnDict.update({"md5sums": {dest_dict[key].name.upper(): dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
+    # if category in TEST_CATEGORIES:
+    #     returnDict.update({"md5sums": {dest_dict[key].name.upper(): dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
@@ -1820,13 +1820,13 @@ def createBrandedProduct(inData):
     _paceableName = fileName + ".lcf"
     _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + macro_lib_version + ".lcf" if int(macro_lib_version) > 0 else None
 
-    if category in TEST_CATEGORIES:
-        _macrosetName = None
+    # if category in TEST_CATEGORIES:
+    #     _macrosetName = None
 
     returnDict =  createResponeFiles(_paceableName, _macrosetName, )
 
-    if category in TEST_CATEGORIES:
-        returnDict.update({"md5sums": {dest_dict[key].name.upper():dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
+    # if category in TEST_CATEGORIES:
+    #     returnDict.update({"md5sums": {dest_dict[key].name.upper():dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
