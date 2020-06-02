@@ -83,7 +83,7 @@ class TestCase_BigBang(unittest.TestCase):
             response = conn.getresponse()
 
             if response.code > 399:
-                print(f"********* Internal Server Error: {response.code} {response.reason} ********")
+                print(f"*** Internal Server Error: {response.code} {response.reason} {SERVER_URL} {endp}***")
                 conn.request("POST", "/resetjobqueue", "", headers)
 
             responseJSON = json.loads(response.read())
