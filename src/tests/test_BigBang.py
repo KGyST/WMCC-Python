@@ -80,13 +80,18 @@ class TestCase_BigBang(unittest.TestCase):
             endp = inTestData["endpoint"]
             req = inTestData["request"]
             conn.request("POST", endp, json.dumps(req), headers)
-            response = json.loads(conn.getresponse().read())
+            response = conn.getresponse()
 
-            if response == {'message': 'Internal Server Error'}:
-                #FIXME response codes > 399
+            if response.code > 399:
+                print(f"********* Internal Server Error: {response.code} {response.reason} ********")
+                conn.request("POST", "/resetjobqueue", "", headers)
+
+            responseJSON = json.loads(response.read())
+
+            if responseJSON == {'message': 'Internal Server Error'}:
                 print("*********Internal Server Error********")
                 conn.request("POST", "/resetjobqueue", "", headers)
-                response = json.loads(conn.getresponse().read())
+                responseJSON = json.loads(conn.getresponse().read())
 
             conn.close()
 
@@ -98,26 +103,26 @@ class TestCase_BigBang(unittest.TestCase):
                 tempDir = tempfile.mkdtemp()
                 placeableTempGSMDir = tempfile.mkdtemp()
                 placeableTempXMLDir = tempfile.mkdtemp()
-                tasks = [("extractcontainer", os.path.join(tempDir, response['object_name']), placeableTempGSMDir, ),
+                tasks = [("extractcontainer", os.path.join(tempDir, responseJSON['object_name']), placeableTempGSMDir, ),
                           ("l2x", placeableTempGSMDir, placeableTempXMLDir,), ]
                 folders = {"placeables": placeableTempXMLDir}
 
-                with open(os.path.join(tempDir, response['object_name']), 'wb') as objectFile:
-                    decode = base64.urlsafe_b64decode(response['base64_encoded_object'])
+                with open(os.path.join(tempDir, responseJSON['object_name']), 'wb') as objectFile:
+                    decode = base64.urlsafe_b64decode(responseJSON['base64_encoded_object'])
                     objectFile.write(decode)
-                del response['base64_encoded_object']
+                del responseJSON['base64_encoded_object']
 
-                if "base64_encoded_macroset" in response:
+                if "base64_encoded_macroset" in responseJSON:
                     macrosetTempGSMDir = tempfile.mkdtemp()
                     macrosetTempXMLDir = tempfile.mkdtemp()
-                    tasks += [("extractcontainer", os.path.join(tempDir, response['macroset_name']), macrosetTempGSMDir,),
+                    tasks += [("extractcontainer", os.path.join(tempDir, responseJSON['macroset_name']), macrosetTempGSMDir,),
                               ("l2x", macrosetTempGSMDir, macrosetTempXMLDir,), ]
                     folders.update({"macroset": macrosetTempXMLDir})
 
-                    with open(os.path.join(tempDir, response['macroset_name']), 'wb') as objectFile:
-                        decode = base64.urlsafe_b64decode(response['base64_encoded_macroset'])
+                    with open(os.path.join(tempDir, responseJSON['macroset_name']), 'wb') as objectFile:
+                        decode = base64.urlsafe_b64decode(responseJSON['base64_encoded_macroset'])
                         objectFile.write(decode)
-                    del response['base64_encoded_macroset']
+                    del responseJSON['base64_encoded_macroset']
 
                 for _dir in tasks:
                     with Popen(f'"{os.path.join(ARCHICAD_LOCATION, "LP_XMLConverter.exe")}" {_dir[0]} "{_dir[1]}" "{_dir[2]}"',
@@ -154,11 +159,11 @@ class TestCase_BigBang(unittest.TestCase):
                     raise assErr
 
             try:
-                inObj.assertEqual(inTestData["result"], response)
+                inObj.assertEqual(inTestData["result"], responseJSON)
             except AssertionError:
                 print(inTestData["description"])
                 with open(outFileName, "w") as outputFile:
-                    json.dump(response, outputFile, indent=4)
+                    json.dump(responseJSON, outputFile, indent=4)
                 raise
 
             #FIXME cleanup
