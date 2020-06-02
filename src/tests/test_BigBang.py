@@ -11,6 +11,7 @@ from subprocess import Popen, PIPE, DEVNULL
 
 FOLDER      = "test_BigBang"
 SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
+SERVER_URL  = "10.110.0.9"
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
 SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")

@@ -1,0 +1,31 @@
+{
+  "description": "Placeable: logo",
+  "endpoint": "/",
+  "request": {
+    "productName": "Placeable_LCF_name",
+	"logo": "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAIAAAC0Ujn1AAADh3pUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjarZZrluMoDIX_axWzBCQeEsvBYM6ZHczy54JJXElXupNymxPLFiCu-SQ7tP_3b6d_cIhLQiGqpZySwxFyyFJwYe44yjyzC_N83Oyrjx_9dO8QuDysP24tLf8Ov2C8LH9dcQr88UugvALx9thRViCxtcDy3xbyfCzg2gpUViAva-Vw3G9r5ZRNvz7Cmuf66p_bgB-NU_AqKSbWgHMQp5oyrk1cUOxbi3Oi5DEvbrdAj_d0GyrQJLtn7-ZZDpX--JVpC34Ijt6I6-ATzsdIqCUggwRc57W3a1NfHa_U01f5C_sD1vsVv_Av2nSjkGR1-CdK6W6_9XO8BXrCOtl9WTnZfeUHfzmXODb7hm_8em_W-348XQkJj5zWQ90eZV5h3DZ2a85KaOoSIQkNF6NlNMNSFbnUXHUbWuXMApSdAzcu3HmftnKFxCC7KKxIJfHTaYCRpfoBN4zGXdRn37wBekVKeHjlroXnsnkuV9lcI9cYQ4URDDnx80bvDuyzJpid3fcKumRkHVQ4Bv5hMAxEuK9NjXODb-35GFw9CMa5zYYHLG6jI8QW-UwuP0F7DIywRxGzthUAW4SlI8SwBwGXUDGcoEhFlBkbaQBUIF18kA0EOEZpECnB-wQ4KDOsjTnKc6hEOdx4GfpAKMDkFWyyL4AVQkT-aDDkUIk-hhhjihot5liST6PCUtI03qpFvQaNmlTVSLMW8xYsWjI1s2wlS_Z468aMesyWcy4FixZELphdMKCUTTa_hS1uadPNtkxbqUifGmqsqWq1mmtp0nxDHbfUtFnLrey8I5X2sMc97brbnvfSkWrd99BjT12pW8-93KktrL-0D6jxoiaT1Biod2rwqt5C8HidxMEMxCQwgCuogRgSezBzxiHIIDeYuSyoiigQGQecxoMYCIadJXa-s1vkCLv4V7iR2uQmV8nRQPcmuV-5fUetjc9zncSOMhyb6jyqD_27FbEyvpYvLf12QN_eiTEtvYxhf5z7YOmajtPSNR2npWs6TkvXdJwy6JqOUwZdi3HKoGs6fo__Ax0v8X-q4zv8P9LxhP_nOk5L13ScltzlXHwZ6Gd5Ttfr_ikhr9YbXa_7QwZdr_tDBl2v-_fy6O38out1_87n6IM8p-t1__776K30oOt1_6f30YdpSn_jc_1dHnX8L8n0PyfQ1-VjUw6yAAABhGlDQ1BJQ0MgcHJvZmlsZQAAeJx9kT1Iw0AcxV9TpSJVBztI6ZChOrUgKuIoVSyChdJWaNXB5NIvaGJIUlwcBdeCgx-LVQcXZ10dXAVB8APEydFJ0UVK_F9SaBHjwXE_3t173L0DhGaNqWbPOKBqlpFJJsR8YUUMvEJABIOIISwxU09lF3LwHF_38PH1Ls6zvM_9OQaUoskAn0g8y3TDIl4nnt60dM77xCFWkRTic-KYQRckfuS67PIb57LDAs8MGbnMHHGIWCx3sdzFrGKoxFPEUUXVKF_Iu6xw3uKs1uqsfU_-wmBRW85ynWYESSwihTREyKijihosxGnVSDGRof2Ehz_s-NPkkslVBSPHPDagQnL84H_wu1uzNDnhJgUTQO-LbX-MAoFdoNWw7e9j226dAP5n4Err-DeawMwn6Y2OFj0ChraBi-uOJu8BlzvAyJMuGZIj-WkKpRLwfkbfVACGb4H-Vbe39j5OH4AcdbV0AxwcAmNlyl7zeHdfd2__nmn39wOnInK8lug2egAAAAlwSFlzAAAuIwAALiMBeKU_dgAAAAd0SU1FB-QCHA4uDV4mEOgAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAANUlEQVRIx2NkIAX8__-feMVMDDQDo0aPGj1q9KjRg9RoRpLKSUZGxtGwHjV61OhRo0eNxg0AkhkGOCfyW0MAAAAASUVORK5CYII=",
+    "template": {
+      "materialParameters": [],
+      "materials": [],
+      "ARCHICAD_template": {
+		"minor_version": "20200529",
+        "category": "tests",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable",
+        "parameters": []
+      }
+    },
+    "variationsData": [
+      {
+        "variationName": "test_placeable1",
+        "parameters": [],
+        "materialParameters": [],
+        "dataParameters": []
+      }
+    ]
+  },
+  "result": {
+    "macroset_name": "macroset_tests_19_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+}
+}

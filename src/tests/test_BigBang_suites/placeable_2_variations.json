@@ -1,0 +1,44 @@
+{
+  "description": "2 placeables with generic translations using parameters",
+  "endpoint": "/",
+  "request": {
+    "productName": "Placeable_LCF_name",
+    "template": {
+      "materialParameters": [],
+      "materials": [],
+      "ARCHICAD_template": {
+		"minor_version": "20200529",
+        "category": "tests",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable",
+        "parameters": []
+      }
+    },
+    "variationsData": [
+      {
+        "variationName": "test_placeable1",
+        "parameters": [{
+                    "name": "Height",
+                    "value": "1000.0",
+                    "selectedUnit": "mm"
+                }],
+        "materialParameters": [],
+        "dataParameters": []
+      },
+      {
+        "variationName": "test_placeable2",
+        "parameters": [{
+                    "name": "Height",
+                    "value": "2000.0",
+                    "selectedUnit": "mm"
+                }],
+        "materialParameters": [],
+        "dataParameters": []
+      }
+    ]
+  },
+  "result": {
+	"macroset_name": "macroset_tests_19_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+  }
+}
