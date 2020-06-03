@@ -141,11 +141,9 @@ class TestCase_BigBang(unittest.TestCase):
                                 originalRelPath = relPath
                             originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
                             try:
-                                originalTest = open(originalTestFile, "rb")
-                                receivedTest = open(os.path.join(root, receivedTestFile), "rb")
-                                inObj.assertEqual(originalTest.read(), receivedTest.read())
-                                originalTest.close()
-                                receivedTest.close()
+                                with open(originalTestFile, "r") as originalTest:
+                                    with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
+                                        inObj.assertEqual(originalTest.read(), receivedTest.read())
 
                             except (AssertionError, FileNotFoundError) as a:
                                 targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folder, originalRelPath)
