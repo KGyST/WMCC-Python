@@ -17,7 +17,7 @@ APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
 with open(APP_CONFIG, "r") as ac:
     APP_JSON = json.load(ac)
     CONTENT_DIR_NAME            = APP_JSON["CONTENT_DIR_NAME"]
-    ARCHICAD_LOCATION           = os.path.join(CONTENT_DIR_NAME, "LP_XMLConverter_18")
+    ARCHICAD_LOCATION           = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")
 
 class FileName(str):
     """

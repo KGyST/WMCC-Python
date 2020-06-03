@@ -40,7 +40,7 @@ with open(APP_CONFIG, "r") as ac:
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
-    ARCHICAD_LOCATION           = os.path.join(CONTENT_DIR_NAME, "LP_XMLConverter_18")
+    ARCHICAD_LOCATION           = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
