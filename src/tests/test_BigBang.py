@@ -11,7 +11,7 @@ from subprocess import Popen, PIPE, DEVNULL
 
 FOLDER      = "test_BigBang"
 SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
-print(SERVER_URL)
+print(f"Server URL: {SERVER_URL}")
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
 with open(APP_CONFIG, "r") as ac:
@@ -141,8 +141,8 @@ class TestCase_BigBang(unittest.TestCase):
                                 originalRelPath = relPath
                             originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
                             try:
-                                originalTest = open(originalTestFile, "r")
-                                receivedTest = open(os.path.join(root, receivedTestFile), "r")
+                                originalTest = open(originalTestFile, "rb")
+                                receivedTest = open(os.path.join(root, receivedTestFile), "rb")
                                 inObj.assertEqual(originalTest.read(), receivedTest.read())
                                 originalTest.close()
                                 receivedTest.close()
