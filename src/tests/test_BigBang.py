@@ -141,8 +141,8 @@ class TestCase_BigBang(unittest.TestCase):
                                 originalRelPath = relPath
                             originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
                             try:
-                                originalTest = open(originalTestFile, "rb")
-                                receivedTest = open(os.path.join(root, receivedTestFile), "rb")
+                                originalTest = open(originalTestFile, "r")
+                                receivedTest = open(os.path.join(root, receivedTestFile), "r")
                                 inObj.assertEqual(originalTest.read(), receivedTest.read())
                                 originalTest.close()
                                 receivedTest.close()
