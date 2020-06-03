@@ -39,11 +39,12 @@ with open(APP_CONFIG, "r") as ac:
     MULTIPROCESS                = appJSON["MULTIPROCESS"]
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
-    SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
-    ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
+    CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
+    ARCHICAD_LOCATION           = os.path.join(CONTENT_DIR_NAME, "LP_XMLConverter_18")
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+    CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
     # TEST_CATEGORIES             = appJSON["TEST_CATEGORIES"]    # categories' name not for real use but for testing
 
     if isinstance(LOGLEVEL, str):
@@ -1009,7 +1010,7 @@ class SourceFile(GeneralFile):
     def __init__(self, relPath, **kwargs):
         global projectPath
         super(SourceFile, self).__init__(relPath, **kwargs)
-        self.fullPath = os.path.join(SOURCE_DIR_NAME, projectPath, relPath)
+        self.fullPath = os.path.join(CONTENT_DIR_NAME, projectPath, relPath)
 
 
 class DestFile(GeneralFile):
@@ -1310,7 +1311,7 @@ def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[])
                             #     sI.isEncodedImage = True
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
                             sI.isEncodedImage = library_images
-                elif os.path.relpath(src, SOURCE_DIR_NAME) not in folders_to_skip:
+                elif os.path.relpath(src, CONTENT_DIR_NAME) not in folders_to_skip:
                     scanFolders(src, inRootFolder, library_images=library_images, folders_to_skip=folders_to_skip)
             except KeyError:
                 logging.warning("KeyError %s" % f)
@@ -1411,7 +1412,7 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     '''
     global projectPath
 
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
+    source_image_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath, "library_images")
     if not os.path.exists(source_image_dir_name):
         source_image_dir_name = ""
     else:
@@ -1516,7 +1517,7 @@ def buildMacroSet(inData):
     if "minor_version" in inData:
         minor_version = inData["minor_version"]
 
-    with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
         settingsJSON = json.load(categoryData)
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
@@ -1525,8 +1526,8 @@ def buildMacroSet(inData):
 
     resetAll()
 
-    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath) if imagePath else ""
+    source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
+    source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath) if imagePath else ""
     if source_image_dir_name:
         scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
@@ -1585,7 +1586,7 @@ def buildMacroSet(inData):
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
 
-    # with open(os.path.join(_SRC, "categoryData.json"), "w") as categoryData:
+    # with open(CATEGORY_DATA_JSON, "w") as categoryData:
     #     json.dump(settingsJSON, categoryData, indent=4)
 
     return returnDict
@@ -1662,7 +1663,7 @@ def createBrandedProduct(inData):
 
     minor_version = datetime.date.today().strftime("%Y%m%d")
 
-    with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
         settingsJSON = json.load(categoryData)
         AC_templateData = inData["template"]["ARCHICAD_template"]
         main_version = AC_templateData["main_macroset_version"]
@@ -1673,8 +1674,8 @@ def createBrandedProduct(inData):
         if "minor_version" in AC_templateData:
             minor_version = AC_templateData["minor_version"]
 
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
-    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
+    source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath)
+    source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
 
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'] if 'macro_folders' in subCategory else [])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
@@ -2040,7 +2041,7 @@ def processOneXML(inData):
             m.find(dest.sourceFile.ID).text = d.guid
             _calledMacroSet.add(d.name.upper())
         except KeyError:
-            if not os.path.exists(os.path.join(SOURCE_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")):
+            if not os.path.exists(os.path.join(CONTENT_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")):
                 if not MULTIPROCESS:
                     logging.warning("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
 

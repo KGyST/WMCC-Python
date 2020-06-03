@@ -8,5 +8,6 @@
   "APP_LOG_FILE_LOCATION": ".\\myapp.log",
   "LOGLEVEL": 10,
   "JOBDATA": "jobQueue.json",
-  "RESULTDATA":"resultQueue.json"
+  "RESULTDATA":"resultQueue.json",
+  "CONTENT_DIR_NAME": "D:\\Git\\WMCC ARCHICAD content"
 }

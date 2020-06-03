@@ -14,8 +14,10 @@ SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "local
 print(SERVER_URL)
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
-SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
-ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
+with open(APP_CONFIG, "r") as ac:
+    APP_JSON = json.load(ac)
+    CONTENT_DIR_NAME            = APP_JSON["CONTENT_DIR_NAME"]
+    ARCHICAD_LOCATION           = os.path.join(CONTENT_DIR_NAME, "LP_XMLConverter_18")
 
 class FileName(str):
     """
@@ -69,10 +71,6 @@ class TestCase_BigBang(unittest.TestCase):
     @staticmethod
     def BigBangTestCaseFactory(inTestData, inDir, inFileName):
         def func(inObj):
-            with open(APP_CONFIG, "r") as ac:
-                appJSON = json.load(ac)
-                TARGET_GDL_DIR_NAME = os.path.join("..", "..", appJSON["TARGET_GDL_DIR_NAME"])
-
             outFileName = os.path.join(inDir + "_errors", inFileName)
             s = ssl.SSLContext()
             conn = http.client.HTTPSConnection(SERVER_URL, context=s)
@@ -95,6 +93,7 @@ class TestCase_BigBang(unittest.TestCase):
 
             conn.close()
 
+            # FIXME actual day not tested
             # minor_version = datetime.date.today().strftime("%Y%m%d")
             # if "minor_version" in req:
             #     minor_version = req["minor_version"]
