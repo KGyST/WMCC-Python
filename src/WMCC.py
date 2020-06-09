@@ -1504,7 +1504,7 @@ def createMasterGDL(**kwargs):
 
 def buildMacroSet(inData):
     '''
-    :inFolderS: a list of foleder names to go through to build up macros
+    :inFolderS: a list of folder names to go through to build up macros
     :return:
     '''
     global projectPath, imagePath
@@ -1529,14 +1529,14 @@ def buildMacroSet(inData):
     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
     source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath) if imagePath else ""
     if source_image_dir_name:
-        scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
+        scanFolders(CONTENT_DIR_NAME, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
 
-    for rootFolder in inData['folder_names']:
-        scanFolders(os.path.join(source_xml_dir_name, rootFolder), source_xml_dir_name, library_images=False)
+    for rootFolder in subCategory['macro_folders']:
+        scanFolders(os.path.join(CONTENT_DIR_NAME, rootFolder), source_xml_dir_name, library_images=False)
 
-        for folder, subFolderS, fileS in os.walk(os.path.join(source_xml_dir_name, rootFolder)):
+        for folder, subFolderS, fileS in os.walk(os.path.join(CONTENT_DIR_NAME, rootFolder)):
             for file in fileS:
                 if os.path.splitext(file)[1].upper() == ".XML":
                     if os.path.splitext(file)[0].upper() not in dest_dict:
@@ -1560,7 +1560,10 @@ def buildMacroSet(inData):
 
     _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    _ = createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
+    targetLCFFullPath = createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
+
+    with open(targetLCFFullPath, "rb") as lcfFile:
+        encoded_lcf = base64.urlsafe_b64encode(lcfFile.read()).decode("utf-8")
 
     _stripped_dest_dict = {}
 
@@ -1575,7 +1578,9 @@ def buildMacroSet(inData):
     returnDict = {'LCFName': _fileNameWithoutExtension + ".json",
                  "category": category,
                  "main_version": main_version,
-                 "minor_version ": minor_version,}
+                 "minor_version ": minor_version,
+                 "base64_encoded_macroset": encoded_lcf,
+                 "macroset_name": os.path.splitext(os.path.split(targetLCFFullPath)[1])[0]}
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)

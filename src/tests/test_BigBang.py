@@ -98,18 +98,21 @@ class TestCase_BigBang(unittest.TestCase):
             # if "minor_version" in req:
             #     minor_version = req["minor_version"]
 
-            if inTestData["endpoint"] == "/":
+            if inTestData["endpoint"] in ("/", "/createmacroset"):
+                tasks = []
+                folders = {}
                 tempDir = tempfile.mkdtemp()
-                placeableTempGSMDir = tempfile.mkdtemp()
-                placeableTempXMLDir = tempfile.mkdtemp()
-                tasks = [("extractcontainer", os.path.join(tempDir, responseJSON['object_name']), placeableTempGSMDir, ),
-                          ("l2x", placeableTempGSMDir, placeableTempXMLDir,), ]
-                folders = {"placeables": placeableTempXMLDir}
+                if "base64_encoded_object" in responseJSON:
+                    placeableTempGSMDir = tempfile.mkdtemp()
+                    placeableTempXMLDir = tempfile.mkdtemp()
+                    tasks += [("extractcontainer", os.path.join(tempDir, responseJSON['object_name']), placeableTempGSMDir, ),
+                              ("l2x", placeableTempGSMDir, placeableTempXMLDir,), ]
+                    folders.update({"placeables": placeableTempXMLDir})
 
-                with open(os.path.join(tempDir, responseJSON['object_name']), 'wb') as objectFile:
-                    decode = base64.urlsafe_b64decode(responseJSON['base64_encoded_object'])
-                    objectFile.write(decode)
-                del responseJSON['base64_encoded_object']
+                    with open(os.path.join(tempDir, responseJSON['object_name']), 'wb') as objectFile:
+                        decode = base64.urlsafe_b64decode(responseJSON['base64_encoded_object'])
+                        objectFile.write(decode)
+                    del responseJSON['base64_encoded_object']
 
                 if "base64_encoded_macroset" in responseJSON:
                     macrosetTempGSMDir = tempfile.mkdtemp()
@@ -141,15 +144,15 @@ class TestCase_BigBang(unittest.TestCase):
                                 originalRelPath = relPath
                             originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
                             try:
-                                try:
-                                    with open(originalTestFile, "rb") as originalTest:
-                                        with open(os.path.join(root, receivedTestFile), "rb") as receivedTest:
-                                                inObj.assertEqual(originalTest.read(), receivedTest.read())
-                                except AssertionError:
-                                    "Newlines don't stop us"
-                                    with open(originalTestFile, "r") as originalTest:
-                                        with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
-                                                inObj.assertEqual(originalTest.read(), receivedTest.read())
+                                # try:
+                                with open(originalTestFile, "rb") as originalTest:
+                                    with open(os.path.join(root, receivedTestFile), "rb") as receivedTest:
+                                        inObj.assertEqual(originalTest.read(), receivedTest.read())
+                            # except AssertionError:
+                            #     "Newlines don't stop us"
+                            #     with open(originalTestFile, "r") as originalTest:
+                            #         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
+                            #                 inObj.assertEqual(originalTest.read(), receivedTest.read())
 
                             except (AssertionError, FileNotFoundError) as a:
                                 targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folder, originalRelPath)
