@@ -1,0 +1,3427 @@
+<Symbol IsArchivable="no" IsPlaceable="yes" MainGUID="ED0957DC-7CB4-461B-9C60-016DBB128383" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>C76BC373-89AE-4368-A490-BB2485825242</MainGUID>
+	<MainGUID>8D1653CC-B1FA-4DDD-AADD-7580568596CF</MainGUID>
+	<MainGUID>46085A21-14EF-4EA4-92C3-CD8E33A02699</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["FM_types_OE_WMCC"]]></MName>
+		<MainGUID>16A8E793-F7FC-4F23-86F6-8C73CEBE740F</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+IF gs_shadow=0 THEN SHADOW OFF
+
+IF gs_detlevel_3D_m = 0 THEN END
+
+resol gs_resol * (gs_detlevel_3D_m = 2) + 8 * (gs_detlevel_3D_m = 1)
+PEN gs_cont_pen
+
+!! DEFINE MATERIALS !!
+define empty_fill "emptyFill"
+
+if gs_picture_custom and gs_picture_name <> "" then
+	define texture "custDesktop" gs_picture_name, screenSizeX, screenSizeY, 0, 0
+	define material "custDesktop" 20,
+		0.8, 0.8, 0.8,
+		0.58, 0.85, 0.2, 0,
+		50,
+		0,
+		0.878401, 0.513481, 0.412253,
+		0, 0, 0,
+		0,
+		ind(fill, "emptyFill"), 1,
+		ind(texture, "custDesktop")
+else
+	define texture "macDesktop" "mac_desktop_OE_WMCC", screenSizeX, screenSizeY, 0, 0
+	file_dependence "mac_desktop_OE_WMCC"
+	define material "macDesktop" 20,
+		0.8, 0.8, 0.8,
+		0.58, 0.85, 0.2, 0,
+		50,
+		0,
+		0.878401, 0.513481, 0.412253,
+		0, 0, 0,
+		0,
+		ind(fill, "emptyFill"), 1,
+		ind(texture, "macDesktop")
+endif
+
+
+	! ======================================================================
+	! Mac Screen Frame Surface
+	! ======================================================================
+
+	DIM	tmp_C4D_ChCol_Color[3]
+		tmp_C4D_ChCol_Color[1] = 0.2857142857143
+		tmp_C4D_ChCol_Color[2] = 0.2857142857143
+		tmp_C4D_ChCol_Color[3] = 0.2857142857143
+	DIM	tmp_C4D_ShNoise_Color1_1[3]
+		tmp_C4D_ShNoise_Color1_1[1] =            0
+		tmp_C4D_ShNoise_Color1_1[2] =            0
+		tmp_C4D_ShNoise_Color1_1[3] =            0
+	DIM	tmp_C4D_ShNoise_Color2_1[3]
+		tmp_C4D_ShNoise_Color2_1[1] =            1
+		tmp_C4D_ShNoise_Color2_1[2] =            1
+		tmp_C4D_ShNoise_Color2_1[3] =            1
+	DIM	tmp_C4D_ShNoise_RelativeScale_1[3]
+		tmp_C4D_ShNoise_RelativeScale_1[1] =            1
+		tmp_C4D_ShNoise_RelativeScale_1[2] =            1
+		tmp_C4D_ShNoise_RelativeScale_1[3] =            1
+	DIM	tmp_C4D_ChLum_Color[3]
+		tmp_C4D_ChLum_Color[1] =            1
+		tmp_C4D_ChLum_Color[2] =            1
+		tmp_C4D_ChLum_Color[3] =            1
+	DIM	tmp_C4D_ChTra_Color[3]
+		tmp_C4D_ChTra_Color[1] =            1
+		tmp_C4D_ChTra_Color[2] =            1
+		tmp_C4D_ChTra_Color[3] =            1
+	DIM	tmp_C4D_ChTra_AbsorptionColor[3]
+		tmp_C4D_ChTra_AbsorptionColor[1] =            1
+		tmp_C4D_ChTra_AbsorptionColor[2] =            1
+		tmp_C4D_ChTra_AbsorptionColor[3] =            1
+	DIM	tmp_C4D_ChRef_Color[3]
+		tmp_C4D_ChRef_Color[1] =            1
+		tmp_C4D_ChRef_Color[2] =            1
+		tmp_C4D_ChRef_Color[3] =            1
+	DIM	tmp_C4D_GKRGB_Color_4[3]
+		tmp_C4D_GKRGB_Color_4[1] =            1
+		tmp_C4D_GKRGB_Color_4[2] =            1
+		tmp_C4D_GKRGB_Color_4[3] =            1
+	DIM	tmp_C4D_GKRGB_Color_5[3]
+		tmp_C4D_GKRGB_Color_5[1] = 0.5882353186607
+		tmp_C4D_GKRGB_Color_5[2] = 0.5882353186607
+		tmp_C4D_GKRGB_Color_5[3] = 0.5882353186607
+	DIM	tmp_C4D_ChEnv_Color[3]
+		tmp_C4D_ChEnv_Color[1] =            1
+		tmp_C4D_ChEnv_Color[2] =            1
+		tmp_C4D_ChEnv_Color[3] =            1
+	DIM	tmp_C4D_ChFog_Color[3]
+		tmp_C4D_ChFog_Color[1] =            1
+		tmp_C4D_ChFog_Color[2] =            1
+		tmp_C4D_ChFog_Color[3] =            1
+	DIM	tmp_C4D_ChAlp_Color[3]
+		tmp_C4D_ChAlp_Color[1] =            1
+		tmp_C4D_ChAlp_Color[2] =            1
+		tmp_C4D_ChAlp_Color[3] =            1
+	DIM	tmp_C4D_ChAlp_Delta[3]
+		tmp_C4D_ChAlp_Delta[1] = 0.1000000014901
+		tmp_C4D_ChAlp_Delta[2] = 0.1000000014901
+		tmp_C4D_ChAlp_Delta[3] = 0.1000000014901
+	DIM	tmp_C4D_ChSpe_Color[3]
+		tmp_C4D_ChSpe_Color[1] =            1
+		tmp_C4D_ChSpe_Color[2] =            1
+		tmp_C4D_ChSpe_Color[3] =            1
+	DIM	tmp_C4D_ChGlo_Color[3]
+		tmp_C4D_ChGlo_Color[1] =            1
+		tmp_C4D_ChGlo_Color[2] =            1
+		tmp_C4D_ChGlo_Color[3] =            1
+	DIM	tmp_C4D_GKRGB_Color_8[3]
+		tmp_C4D_GKRGB_Color_8[1] =            0
+		tmp_C4D_GKRGB_Color_8[2] =            0
+		tmp_C4D_GKRGB_Color_8[3] =            0
+	DIM	tmp_C4D_GKRGB_Color_9[3]
+		tmp_C4D_GKRGB_Color_9[1] =            1
+		tmp_C4D_GKRGB_Color_9[2] =            1
+		tmp_C4D_GKRGB_Color_9[3] =            1
+
+	define material	"builtInMatMacScreenFrame" 0,
+	   0.28571,    0.28571,    0.28571,
+	    0,     0,     0.5,     0,  42.92,     0,
+	         1,          1,          1,
+	         0,          0,          0,     0,
+	ADDITIONAL_DATA		C4D_VER_MAIN= 1,
+	C4D_VER_SUB =            0,
+	C4D_ChCol_State =            1,
+	C4D_ChCol_Color = tmp_C4D_ChCol_Color,
+	C4D_ChCol_Brightness =            0,
+	C4D_ChCol_MixMode = "Normal",
+	C4D_ChCol_MixStrength =            1,
+	C4D_ChDif_State =            1,
+	C4D_ChDif_Brightness =         0.23,
+	C4D_ChDif_Luminance =            0,
+	C4D_ChDif_Specular =            1,
+	C4D_ChDif_Reflection =            1,
+	C4D_ChDif_Texture = "1",
+	C4D_ShNoise_BlendMode_1 = "Normal",
+	C4D_ShNoise_BlendStre_1 =            1,
+	C4D_ShNoise_BlurOffset_1 =            0,
+	C4D_ShNoise_BlurScale_1 =            0,
+	C4D_ShNoise_Color1_1 = tmp_C4D_ShNoise_Color1_1,
+	C4D_ShNoise_Color2_1 = tmp_C4D_ShNoise_Color2_1,
+	C4D_ShNoise_Seed_1 =           50,
+	C4D_ShNoise_Noise_1 = "Naki",
+	C4D_ShNoise_Octaves_1 =            7,
+	C4D_ShNoise_Space_1 = "Texture",
+	C4D_ShNoise_GlobalScale_1 =           20,
+	C4D_ShNoise_RelativeScale_1 = tmp_C4D_ShNoise_RelativeScale_1,
+	C4D_ShNoise_Absolute_1 =            0,
+	C4D_ShNoise_Cycles_1 =            0,
+	C4D_ShNoise_LowClip_1 =            0,
+	C4D_ShNoise_HighClip_1 =            1,
+	C4D_ShNoise_Brightness_1 =            0,
+	C4D_ShNoise_Contrast_1 =            0,
+	C4D_ChDif_MixMode = "Normal",
+	C4D_ChDif_MixStrength = 0.1499999910593,
+	C4D_ChLum_State =            0,
+	C4D_ChLum_Color = tmp_C4D_ChLum_Color,
+	C4D_ChLum_Brightness =            1,
+	C4D_ChLum_MixMode = "Normal",
+	C4D_ChLum_MixStrength =            1,
+	C4D_ChTra_State =            0,
+	C4D_ChTra_Color = tmp_C4D_ChTra_Color,
+	C4D_ChTra_Brightness =            1,
+	C4D_ChTra_Refraction =            1,
+	C4D_ChTra_InternalReflections =            1,
+	C4D_ChTra_ExitReflection =            1,
+	C4D_ChTra_FresnelReflectivity =            1,
+	C4D_ChTra_Additive =            0,
+	C4D_ChTra_MixMode = "Normal",
+	C4D_ChTra_MixStrength =            1,
+	C4D_ChTra_AbsorptionColor = tmp_C4D_ChTra_AbsorptionColor,
+	C4D_ChTra_AbsorptionDistance =          100,
+	C4D_ChTra_Blurriness =            0,
+	C4D_ChTra_MinSamples =            5,
+	C4D_ChTra_MaxSamples =          128,
+	C4D_ChTra_Accuracy =          0.5,
+	C4D_ChRef_State =            1,
+	C4D_ChRef_Color = tmp_C4D_ChRef_Color,
+	C4D_ChRef_Brightness =          0.3,
+	C4D_ChRef_Additive =            0,
+	C4D_ChRef_Texture = "2",
+	C4D_ShFresnel_BlendMode_2 = "Normal",
+	C4D_ShFresnel_BlendStre_2 =            1,
+	C4D_ShFresnel_BlurOffset_2 =            0,
+	C4D_ShFresnel_BlurScale_2 =            0,
+	C4D_ShFresnel_UseBump_2 =            1,
+	C4D_ShFresnel_Render_2 = "FrontAndBack",
+	C4D_ShFresnel_Gradient_2 = "3",
+	C4D_GradientRGB_Interpol_3 = "CubicKnot",
+	C4D_GradientRGB_Knots_3 = "4,5",
+	C4D_GKRGB_Color_4 = tmp_C4D_GKRGB_Color_4,
+	C4D_GKRGB_Intensity_4 =            1,
+	C4D_GKRGB_Position_4 =            1,
+	C4D_GKRGB_Bias_4 =          0.5,
+	C4D_GKRGB_Color_5 = tmp_C4D_GKRGB_Color_5,
+	C4D_GKRGB_Intensity_5 =            1,
+	C4D_GKRGB_Position_5 = 0.00359999993816,
+	C4D_GKRGB_Bias_5 =          0.5,
+	C4D_ShFresnel_Physical_2 =            0,
+	C4D_ShFresnel_IOR_2 =          1.6,
+	C4D_ShFresnel_Preset_2 = "Water",
+	C4D_ShFresnel_Invert_2 =            0,
+	C4D_ChRef_MixMode = "Multiply",
+	C4D_ChRef_MixStrength =            1,
+	C4D_ChRef_Blurriness =          0.1,
+	C4D_ChRef_MinSamples =            5,
+	C4D_ChRef_MaxSamples =          128,
+	C4D_ChRef_Accuracy =          0.5,
+	C4D_ChEnv_State =            0,
+	C4D_ChEnv_Color = tmp_C4D_ChEnv_Color,
+	C4D_ChEnv_Brightness =            0,
+	C4D_ChEnv_Texture = "6",
+	C4D_ShImage_BlendMode_6 = "Normal",
+	C4D_ShImage_BlendStre_6 =            1,
+	C4D_ShImage_BlurOffset_6 =            0,
+	C4D_ShImage_BlurScale_6 =            0,
+	C4D_ShImage_File_6 = "Church_HarvestLobby_bw",
+	C4D_ShImage_Sampling_6 = "MIP",
+	C4D_ShImage_Exposure_6 =            0,
+	C4D_ShImage_HDRGamma_6 =            1,
+	C4D_ShImage_BlackPoint_6 =            0,
+	C4D_ShImage_WhitePoint_6 =            1,
+	C4D_ShImage_AlphaOnly_6 =            0,
+	C4D_ShImage_MirrorX_6 =            0,
+	C4D_ShImage_MirrorY_6 =            0,
+	C4D_ChEnv_MixMode = "Normal",
+	C4D_ChEnv_MixStrength =          0.2,
+	C4D_ChEnv_TilesX =            1,
+	C4D_ChEnv_TilesY =            1,
+	C4D_ChEnv_Exclusive =            1,
+	C4D_ChFog_State =            0,
+	C4D_ChFog_Color = tmp_C4D_ChFog_Color,
+	C4D_ChFog_Brightness =            1,
+	C4D_ChFog_Distance =           10,
+	C4D_ChBum_State =            0,
+	C4D_ChBum_Strength = 0.2000000029802,
+	C4D_ChBum_MipFalloff =            1,
+	C4D_ChNor_State =            0,
+	C4D_ChNor_Strength =            1,
+	C4D_ChNor_Method = "Tangent",
+	C4D_ChNor_FlipX =            0,
+	C4D_ChNor_FlipY =            0,
+	C4D_ChNor_FlipZ =            0,
+	C4D_ChNor_SwapYZ =            0,
+	C4D_ChAlp_State =            0,
+	C4D_ChAlp_Color = tmp_C4D_ChAlp_Color,
+	C4D_ChAlp_Delta = tmp_C4D_ChAlp_Delta,
+	C4D_ChAlp_Invert =            0,
+	C4D_ChAlp_Soft =            1,
+	C4D_ChAlp_ImageAlpha =            1,
+	C4D_ChAlp_PreMultiplied =            0,
+	C4D_ChSpe_State =            1,
+	C4D_ChSpe_Color = tmp_C4D_ChSpe_Color,
+	C4D_ChSpe_Brightness =            1,
+	C4D_ChSpe_MixMode = "Normal",
+	C4D_ChSpe_MixStrength =            1,
+	C4D_ChSpe_Mode = "Colored",
+	C4D_ChSpe_Width =         0.25,
+	C4D_ChSpe_Height =            3,
+	C4D_ChSpe_Falloff =            0,
+	C4D_ChSpe_InnerWidth =            0,
+	C4D_ChGlo_State =            0,
+	C4D_ChGlo_Color = tmp_C4D_ChGlo_Color,
+	C4D_ChGlo_Brightness =            1,
+	C4D_ChGlo_InnerStrength =            1,
+	C4D_ChGlo_OuterStrength =            5,
+	C4D_ChGlo_Radius =           10,
+	C4D_ChGlo_Random =            0,
+	C4D_ChGlo_Frequency =            1,
+	C4D_ChGlo_UseMatColor =            1,
+	C4D_ChDis_State =            0,
+	C4D_ChDis_Strength =            1,
+	C4D_ChDis_Height =            5,
+	C4D_ChDis_Type = "IntensityCentered",
+	C4D_ChDis_SubDivision =            0,
+	C4D_ChDis_Level =            4,
+	C4D_ChDis_RoundGeometry =            0,
+	C4D_ChDis_RoundContour =            1,
+	C4D_ChDis_MapRounded =            1,
+	C4D_ChDis_MapResult =            0,
+	C4D_ChDis_KeepEdges =            1,
+	C4D_ChDis_BestDistribution =            1,
+	C4D_ChGra_State =            0,
+	C4D_ChGra_Color = "7",
+	C4D_GradientRGB_Interpol_7 = "SmoothKnot",
+	C4D_GradientRGB_Knots_7 = "8,9",
+	C4D_GKRGB_Color_8 = tmp_C4D_GKRGB_Color_8,
+	C4D_GKRGB_Intensity_8 =            1,
+	C4D_GKRGB_Position_8 =            0,
+	C4D_GKRGB_Bias_8 =          0.5,
+	C4D_GKRGB_Color_9 = tmp_C4D_GKRGB_Color_9,
+	C4D_GKRGB_Intensity_9 =            1,
+	C4D_GKRGB_Position_9 =            1,
+	C4D_GKRGB_Bias_9 =          0.5,
+	C4D_ChGra_MixStrength =          0.5,
+	C4D_ChGra_Density =            1,
+	C4D_ChGra_Length =          0.1,
+	C4D_ChGra_Width =        0.005,
+	C4D_ChGra_Crinkle =          0.1,
+	C4D_ChGra_Bend =          0.6,
+	C4D_ChGra_Wetness =         0.05,
+	C4D_ChIll_GenerateGI =            1,
+	C4D_ChIll_GenGIStrength =            1,
+	C4D_ChIll_GenGISaturat =            1,
+	C4D_ChIll_ReceiveGI =            1,
+	C4D_ChIll_RecGIStrength =            1,
+	C4D_ChIll_RecGISaturat =            1,
+	C4D_ChIll_GIPortal =            0,
+	C4D_ChIll_GILight =            0,
+	C4D_ChIll_GenerateCaustics =            1,
+	C4D_ChIll_GenCausticsStrength =            1,
+	C4D_ChIll_ReceiveCaustics =            1,
+	C4D_ChIll_RecCausticsStrength =            1,
+	C4D_ChIll_Radius =          0.1,
+	C4D_ChIll_CausticsSamples =          100,
+	C4D_ChIll_Model = "Blinn",
+	C4D_ChIll_DiffuseFalloff = -0.2500000298023,
+	C4D_ChIll_DiffuseLevel =            1,
+	C4D_ChIll_Roughness =          0.5
+
+
+
+	! ======================================================================
+	! Mac Silver Surface
+	! ======================================================================
+
+	DIM	tmp_C4D_ChCol_Color[3]
+		tmp_C4D_ChCol_Color[1] = 0.7843137383461
+		tmp_C4D_ChCol_Color[2] = 0.7843137383461
+		tmp_C4D_ChCol_Color[3] = 0.7843137383461
+	DIM	tmp_C4D_ChLum_Color[3]
+		tmp_C4D_ChLum_Color[1] =            1
+		tmp_C4D_ChLum_Color[2] =            1
+		tmp_C4D_ChLum_Color[3] =            1
+	DIM	tmp_C4D_ChTra_Color[3]
+		tmp_C4D_ChTra_Color[1] =            1
+		tmp_C4D_ChTra_Color[2] =            1
+		tmp_C4D_ChTra_Color[3] =            1
+	DIM	tmp_C4D_ChTra_AbsorptionColor[3]
+		tmp_C4D_ChTra_AbsorptionColor[1] =            1
+		tmp_C4D_ChTra_AbsorptionColor[2] =            1
+		tmp_C4D_ChTra_AbsorptionColor[3] =            1
+	DIM	tmp_C4D_ChRef_Color[3]
+		tmp_C4D_ChRef_Color[1] = 0.6470588445663
+		tmp_C4D_ChRef_Color[2] = 0.6470588445663
+		tmp_C4D_ChRef_Color[3] = 0.6470588445663
+	DIM	tmp_C4D_GKRGB_Color_3[3]
+		tmp_C4D_GKRGB_Color_3[1] = 0.6893203883495
+		tmp_C4D_GKRGB_Color_3[2] = 0.6893203883495
+		tmp_C4D_GKRGB_Color_3[3] = 0.6893203883495
+	DIM	tmp_C4D_GKRGB_Color_4[3]
+		tmp_C4D_GKRGB_Color_4[1] = 0.1553398058252
+		tmp_C4D_GKRGB_Color_4[2] = 0.1541166577479
+		tmp_C4D_GKRGB_Color_4[3] = 0.1541166577479
+	DIM	tmp_C4D_ChEnv_Color[3]
+		tmp_C4D_ChEnv_Color[1] = 0.9019607901573
+		tmp_C4D_ChEnv_Color[2] = 0.9019607901573
+		tmp_C4D_ChEnv_Color[3] = 0.9019607901573
+	DIM	tmp_C4D_ChFog_Color[3]
+		tmp_C4D_ChFog_Color[1] =            1
+		tmp_C4D_ChFog_Color[2] =            1
+		tmp_C4D_ChFog_Color[3] =            1
+	DIM	tmp_C4D_ChAlp_Color[3]
+		tmp_C4D_ChAlp_Color[1] =            1
+		tmp_C4D_ChAlp_Color[2] =            1
+		tmp_C4D_ChAlp_Color[3] =            1
+	DIM	tmp_C4D_ChAlp_Delta[3]
+		tmp_C4D_ChAlp_Delta[1] = 0.1000000014901
+		tmp_C4D_ChAlp_Delta[2] = 0.1000000014901
+		tmp_C4D_ChAlp_Delta[3] = 0.1000000014901
+	DIM	tmp_C4D_ChSpe_Color[3]
+		tmp_C4D_ChSpe_Color[1] = 0.9019607901573
+		tmp_C4D_ChSpe_Color[2] = 0.9019607901573
+		tmp_C4D_ChSpe_Color[3] = 0.9019607901573
+	DIM	tmp_C4D_ChGlo_Color[3]
+		tmp_C4D_ChGlo_Color[1] =            1
+		tmp_C4D_ChGlo_Color[2] =            1
+		tmp_C4D_ChGlo_Color[3] =            1
+	DIM	tmp_C4D_GKRGB_Color_7[3]
+		tmp_C4D_GKRGB_Color_7[1] =            0
+		tmp_C4D_GKRGB_Color_7[2] =            0
+		tmp_C4D_GKRGB_Color_7[3] =            0
+	DIM	tmp_C4D_GKRGB_Color_8[3]
+		tmp_C4D_GKRGB_Color_8[1] =            1
+		tmp_C4D_GKRGB_Color_8[2] =            1
+		tmp_C4D_GKRGB_Color_8[3] =            1
+
+	define material	"builtInMatMacSilver" 0,
+	  0.784314,   0.784314,   0.784314,
+	 0.92,  0.92,   0.5,     0,   1.01,     0,
+	  0.901961,   0.901961,   0.901961,
+	         0,          0,          0,     0,
+	ADDITIONAL_DATA		C4D_VER_MAIN= 1,
+	C4D_VER_SUB =            0,
+	C4D_ChCol_State =            1,
+	C4D_ChCol_Color = tmp_C4D_ChCol_Color,
+	C4D_ChCol_Brightness =         0.92,
+	C4D_ChCol_MixMode = "Normal",
+	C4D_ChCol_MixStrength =            1,
+	C4D_ChDif_State =            1,
+	C4D_ChDif_Brightness =            1,
+	C4D_ChDif_Luminance =            0,
+	C4D_ChDif_Specular =            1,
+	C4D_ChDif_Reflection =            1,
+	C4D_ChDif_MixMode = "Normal",
+	C4D_ChDif_MixStrength = 0.1499999910593,
+	C4D_ChLum_State =            0,
+	C4D_ChLum_Color = tmp_C4D_ChLum_Color,
+	C4D_ChLum_Brightness =            1,
+	C4D_ChLum_MixMode = "Normal",
+	C4D_ChLum_MixStrength =            1,
+	C4D_ChTra_State =            0,
+	C4D_ChTra_Color = tmp_C4D_ChTra_Color,
+	C4D_ChTra_Brightness =            1,
+	C4D_ChTra_Refraction =            1,
+	C4D_ChTra_InternalReflections =            1,
+	C4D_ChTra_ExitReflection =            1,
+	C4D_ChTra_FresnelReflectivity =            1,
+	C4D_ChTra_Additive =            0,
+	C4D_ChTra_MixMode = "Normal",
+	C4D_ChTra_MixStrength =            1,
+	C4D_ChTra_AbsorptionColor = tmp_C4D_ChTra_AbsorptionColor,
+	C4D_ChTra_AbsorptionDistance =          100,
+	C4D_ChTra_Blurriness =            0,
+	C4D_ChTra_MinSamples =            5,
+	C4D_ChTra_MaxSamples =          128,
+	C4D_ChTra_Accuracy =          0.5,
+	C4D_ChRef_State =            1,
+	C4D_ChRef_Color = tmp_C4D_ChRef_Color,
+	C4D_ChRef_Brightness =         0.68,
+	C4D_ChRef_Additive =            0,
+	C4D_ChRef_Texture = "1",
+	C4D_ShFresnel_BlendMode_1 = "Normal",
+	C4D_ShFresnel_BlendStre_1 =            1,
+	C4D_ShFresnel_BlurOffset_1 =            0,
+	C4D_ShFresnel_BlurScale_1 =            0,
+	C4D_ShFresnel_UseBump_1 =            1,
+	C4D_ShFresnel_Render_1 = "FrontAndBack",
+	C4D_ShFresnel_Gradient_1 = "2",
+	C4D_GradientRGB_Interpol_2 = "CubicKnot",
+	C4D_GradientRGB_Knots_2 = "3,4",
+	C4D_GKRGB_Color_3 = tmp_C4D_GKRGB_Color_3,
+	C4D_GKRGB_Intensity_3 =            1,
+	C4D_GKRGB_Position_3 =            1,
+	C4D_GKRGB_Bias_3 =          0.5,
+	C4D_GKRGB_Color_4 = tmp_C4D_GKRGB_Color_4,
+	C4D_GKRGB_Intensity_4 =            1,
+	C4D_GKRGB_Position_4 =            0,
+	C4D_GKRGB_Bias_4 =          0.5,
+	C4D_ShFresnel_Physical_1 =            0,
+	C4D_ShFresnel_IOR_1 =          1.6,
+	C4D_ShFresnel_Preset_1 = "Water",
+	C4D_ShFresnel_Invert_1 =            0,
+	C4D_ChRef_MixMode = "Add",
+	C4D_ChRef_MixStrength =            1,
+	C4D_ChRef_Blurriness =          0.8,
+	C4D_ChRef_MinSamples =            5,
+	C4D_ChRef_MaxSamples =          128,
+	C4D_ChRef_Accuracy =          0.5,
+	C4D_ChEnv_State =            1,
+	C4D_ChEnv_Color = tmp_C4D_ChEnv_Color,
+	C4D_ChEnv_Brightness =            0,
+	C4D_ChEnv_Texture = "5",
+	C4D_ShImage_BlendMode_5 = "Normal",
+	C4D_ShImage_BlendStre_5 =            1,
+	C4D_ShImage_BlurOffset_5 =            0,
+	C4D_ShImage_BlurScale_5 =            0,
+	C4D_ShImage_File_5 = "Church_HarvestLobby_bw.hdr",
+	C4D_ShImage_Sampling_5 = "MIP",
+	C4D_ShImage_Exposure_5 =            0,
+	C4D_ShImage_HDRGamma_5 =            1,
+	C4D_ShImage_BlackPoint_5 =            0,
+	C4D_ShImage_WhitePoint_5 =            1,
+	C4D_ShImage_AlphaOnly_5 =            0,
+	C4D_ShImage_MirrorX_5 =            0,
+	C4D_ShImage_MirrorY_5 =            0,
+	C4D_ChEnv_MixMode = "Normal",
+	C4D_ChEnv_MixStrength =         0.02,
+	C4D_ChEnv_TilesX =            1,
+	C4D_ChEnv_TilesY =            1,
+	C4D_ChEnv_Exclusive =            1,
+	C4D_ChFog_State =            0,
+	C4D_ChFog_Color = tmp_C4D_ChFog_Color,
+	C4D_ChFog_Brightness =            1,
+	C4D_ChFog_Distance =           10,
+	C4D_ChBum_State =            0,
+	C4D_ChBum_Strength = 0.2000000029802,
+	C4D_ChBum_MipFalloff =            1,
+	C4D_ChNor_State =            0,
+	C4D_ChNor_Strength =            1,
+	C4D_ChNor_Method = "Tangent",
+	C4D_ChNor_FlipX =            0,
+	C4D_ChNor_FlipY =            0,
+	C4D_ChNor_FlipZ =            0,
+	C4D_ChNor_SwapYZ =            0,
+	C4D_ChAlp_State =            0,
+	C4D_ChAlp_Color = tmp_C4D_ChAlp_Color,
+	C4D_ChAlp_Delta = tmp_C4D_ChAlp_Delta,
+	C4D_ChAlp_Invert =            0,
+	C4D_ChAlp_Soft =            1,
+	C4D_ChAlp_ImageAlpha =            1,
+	C4D_ChAlp_PreMultiplied =            0,
+	C4D_ChSpe_State =            1,
+	C4D_ChSpe_Color = tmp_C4D_ChSpe_Color,
+	C4D_ChSpe_Brightness =            1,
+	C4D_ChSpe_MixMode = "Normal",
+	C4D_ChSpe_MixStrength =            1,
+	C4D_ChSpe_Mode = "Metal",
+	C4D_ChSpe_Width =         0.79,
+	C4D_ChSpe_Height =          3.3,
+	C4D_ChSpe_Falloff =        -0.02,
+	C4D_ChSpe_InnerWidth =            0,
+	C4D_ChGlo_State =            0,
+	C4D_ChGlo_Color = tmp_C4D_ChGlo_Color,
+	C4D_ChGlo_Brightness =            1,
+	C4D_ChGlo_InnerStrength =            1,
+	C4D_ChGlo_OuterStrength =            5,
+	C4D_ChGlo_Radius =           10,
+	C4D_ChGlo_Random =            0,
+	C4D_ChGlo_Frequency =            1,
+	C4D_ChGlo_UseMatColor =            1,
+	C4D_ChDis_State =            0,
+	C4D_ChDis_Strength =            1,
+	C4D_ChDis_Height =            5,
+	C4D_ChDis_Type = "IntensityCentered",
+	C4D_ChDis_SubDivision =            0,
+	C4D_ChDis_Level =            4,
+	C4D_ChDis_RoundGeometry =            0,
+	C4D_ChDis_RoundContour =            1,
+	C4D_ChDis_MapRounded =            1,
+	C4D_ChDis_MapResult =            0,
+	C4D_ChDis_KeepEdges =            1,
+	C4D_ChDis_BestDistribution =            1,
+	C4D_ChGra_State =            0,
+	C4D_ChGra_Color = "6",
+	C4D_GradientRGB_Interpol_6 = "SmoothKnot",
+	C4D_GradientRGB_Knots_6 = "7,8",
+	C4D_GKRGB_Color_7 = tmp_C4D_GKRGB_Color_7,
+	C4D_GKRGB_Intensity_7 =            1,
+	C4D_GKRGB_Position_7 =            0,
+	C4D_GKRGB_Bias_7 =          0.5,
+	C4D_GKRGB_Color_8 = tmp_C4D_GKRGB_Color_8,
+	C4D_GKRGB_Intensity_8 =            1,
+	C4D_GKRGB_Position_8 =            1,
+	C4D_GKRGB_Bias_8 =          0.5,
+	C4D_ChGra_MixStrength =          0.5,
+	C4D_ChGra_Density =            1,
+	C4D_ChGra_Length =          0.1,
+	C4D_ChGra_Width =        0.005,
+	C4D_ChGra_Crinkle =          0.1,
+	C4D_ChGra_Bend =          0.6,
+	C4D_ChGra_Wetness =         0.05,
+	C4D_ChIll_GenerateGI =            1,
+	C4D_ChIll_GenGIStrength =            1,
+	C4D_ChIll_GenGISaturat =            1,
+	C4D_ChIll_ReceiveGI =            1,
+	C4D_ChIll_RecGIStrength =            1,
+	C4D_ChIll_RecGISaturat =            1,
+	C4D_ChIll_GIPortal =            0,
+	C4D_ChIll_GILight =            0,
+	C4D_ChIll_GenerateCaustics =            1,
+	C4D_ChIll_GenCausticsStrength =            1,
+	C4D_ChIll_ReceiveCaustics =            1,
+	C4D_ChIll_RecCausticsStrength =            1,
+	C4D_ChIll_Radius =          0.1,
+	C4D_ChIll_CausticsSamples =          100,
+	C4D_ChIll_Model = "Blinn",
+	C4D_ChIll_DiffuseFalloff = -0.2500000298023,
+	C4D_ChIll_DiffuseLevel =            1,
+	C4D_ChIll_Roughness =          0.5
+
+
+	! ======================================================================
+	! iMac Back Panel Surface
+	! ======================================================================	
+	
+	DIM	tmp_C4D_ChCol_Color[3]
+		tmp_C4D_ChCol_Color[1] =            0
+		tmp_C4D_ChCol_Color[2] =            0
+		tmp_C4D_ChCol_Color[3] =            0
+	DIM	tmp_C4D_GKRGB_Color_4[3]
+		tmp_C4D_GKRGB_Color_4[1] =            1
+		tmp_C4D_GKRGB_Color_4[2] =            1
+		tmp_C4D_GKRGB_Color_4[3] =            1
+	DIM	tmp_C4D_GKRGB_Color_5[3]
+		tmp_C4D_GKRGB_Color_5[1] =            0
+		tmp_C4D_GKRGB_Color_5[2] =            0
+		tmp_C4D_GKRGB_Color_5[3] =            0
+	DIM	tmp_C4D_ChLum_Color[3]
+		tmp_C4D_ChLum_Color[1] =            1
+		tmp_C4D_ChLum_Color[2] = 0.9215686321259
+		tmp_C4D_ChLum_Color[3] = 0.9019607901573
+	DIM	tmp_C4D_ShLumas_DiffColor_6[3]
+		tmp_C4D_ShLumas_DiffColor_6[1] = 0.1176470592618
+		tmp_C4D_ShLumas_DiffColor_6[2] = 0.1176470592618
+		tmp_C4D_ShLumas_DiffColor_6[3] = 0.1176470592618
+	DIM	tmp_C4D_ShLumas_Spec1Color_6[3]
+		tmp_C4D_ShLumas_Spec1Color_6[1] =            1
+		tmp_C4D_ShLumas_Spec1Color_6[2] =            1
+		tmp_C4D_ShLumas_Spec1Color_6[3] =            1
+	DIM	tmp_C4D_ShLumas_Spec2Color_6[3]
+		tmp_C4D_ShLumas_Spec2Color_6[1] = 0.4980392158031
+		tmp_C4D_ShLumas_Spec2Color_6[2] =          0.5
+		tmp_C4D_ShLumas_Spec2Color_6[3] =          0.5
+	DIM	tmp_C4D_ShLumas_Spec3Color_6[3]
+		tmp_C4D_ShLumas_Spec3Color_6[1] = 0.392156869173
+		tmp_C4D_ShLumas_Spec3Color_6[2] = 0.392156869173
+		tmp_C4D_ShLumas_Spec3Color_6[3] = 0.392156869173
+	DIM	tmp_C4D_ChTra_Color[3]
+		tmp_C4D_ChTra_Color[1] =            1
+		tmp_C4D_ChTra_Color[2] =            1
+		tmp_C4D_ChTra_Color[3] =            1
+	DIM	tmp_C4D_ChTra_AbsorptionColor[3]
+		tmp_C4D_ChTra_AbsorptionColor[1] =            1
+		tmp_C4D_ChTra_AbsorptionColor[2] =            1
+		tmp_C4D_ChTra_AbsorptionColor[3] =            1
+	DIM	tmp_C4D_ChRef_Color[3]
+		tmp_C4D_ChRef_Color[1] =            1
+		tmp_C4D_ChRef_Color[2] =            1
+		tmp_C4D_ChRef_Color[3] =            1
+	DIM	tmp_C4D_ChEnv_Color[3]
+		tmp_C4D_ChEnv_Color[1] =            1
+		tmp_C4D_ChEnv_Color[2] =            1
+		tmp_C4D_ChEnv_Color[3] =            1
+	DIM	tmp_C4D_ChFog_Color[3]
+		tmp_C4D_ChFog_Color[1] =            1
+		tmp_C4D_ChFog_Color[2] =            1
+		tmp_C4D_ChFog_Color[3] =            1
+	DIM	tmp_C4D_ChAlp_Color[3]
+		tmp_C4D_ChAlp_Color[1] =            1
+		tmp_C4D_ChAlp_Color[2] =            1
+		tmp_C4D_ChAlp_Color[3] =            1
+	DIM	tmp_C4D_ChAlp_Delta[3]
+		tmp_C4D_ChAlp_Delta[1] = 0.1000000014901
+		tmp_C4D_ChAlp_Delta[2] = 0.1000000014901
+		tmp_C4D_ChAlp_Delta[3] = 0.1000000014901
+	DIM	tmp_C4D_ChSpe_Color[3]
+		tmp_C4D_ChSpe_Color[1] =            1
+		tmp_C4D_ChSpe_Color[2] =            1
+		tmp_C4D_ChSpe_Color[3] =            1
+	DIM	tmp_C4D_ChGlo_Color[3]
+		tmp_C4D_ChGlo_Color[1] =            1
+		tmp_C4D_ChGlo_Color[2] =            1
+		tmp_C4D_ChGlo_Color[3] =            1
+	DIM	tmp_C4D_GKRGB_Color_8[3]
+		tmp_C4D_GKRGB_Color_8[1] =            0
+		tmp_C4D_GKRGB_Color_8[2] =            0
+		tmp_C4D_GKRGB_Color_8[3] =            0
+	DIM	tmp_C4D_GKRGB_Color_9[3]
+		tmp_C4D_GKRGB_Color_9[1] =            1
+		tmp_C4D_GKRGB_Color_9[2] =            1
+		tmp_C4D_GKRGB_Color_9[3] =            1
+
+	define material	"builtInMatiMacBackPanel" 0,
+			 0,          0,          0,
+		1,     1,     0.5,     0,  28.18,     0,
+			 1,          1,          1,
+			 0,          0,          0,		 0,
+	ADDITIONAL_DATA		C4D_VER_MAIN= 1,
+	C4D_VER_SUB =            0,
+	C4D_ChCol_State =            1,
+	C4D_ChCol_Color = tmp_C4D_ChCol_Color,
+	C4D_ChCol_Brightness =            1,
+	C4D_ChCol_MixMode = "Multiply",
+	C4D_ChCol_MixStrength =            1,
+	C4D_ChDif_State =            1,
+	C4D_ChDif_Brightness =            1,
+	C4D_ChDif_Luminance =            0,
+	C4D_ChDif_Specular =            1,
+	C4D_ChDif_Reflection =            1,
+	C4D_ChDif_Texture = "1",
+	C4D_ShLayer_BlendMode_1 = "Normal",
+	C4D_ShLayer_BlendStre_1 =            1,
+	C4D_ShLayer_BlurOffset_1 =            0,
+	C4D_ShLayer_BlurScale_1 =            0,
+	C4D_ShLayer_Shaders_1 = "2",
+	C4D_ShFresnel_BlendMode_2 = "Normal",
+	C4D_ShFresnel_BlendStre_2 =            1,
+	C4D_ShFresnel_BlurOffset_2 =            0,
+	C4D_ShFresnel_BlurScale_2 =            0,
+	C4D_ShFresnel_UseBump_2 =            0,
+	C4D_ShFresnel_Render_2 = "FrontAndBack",
+	C4D_ShFresnel_Gradient_2 = "3",
+	C4D_GradientRGB_Interpol_3 = "CubicKnot",
+	C4D_GradientRGB_Knots_3 = "4,5",
+	C4D_GKRGB_Color_4 = tmp_C4D_GKRGB_Color_4,
+	C4D_GKRGB_Intensity_4 =            1,
+	C4D_GKRGB_Position_4 =            0,
+	C4D_GKRGB_Bias_4 =          0.5,
+	C4D_GKRGB_Color_5 = tmp_C4D_GKRGB_Color_5,
+	C4D_GKRGB_Intensity_5 =            1,
+	C4D_GKRGB_Position_5 = 0.3009999990463,
+	C4D_GKRGB_Bias_5 =          0.5,
+	C4D_ShFresnel_Physical_2 =            0,
+	C4D_ShFresnel_IOR_2 =          1.6,
+	C4D_ShFresnel_Preset_2 = "Water",
+	C4D_ShFresnel_Invert_2 =            0,
+	C4D_ChDif_MixMode = "Normal",
+	C4D_ChDif_MixStrength = 0.1499999910593,
+	C4D_ChLum_State =            0,
+	C4D_ChLum_Color = tmp_C4D_ChLum_Color,
+	C4D_ChLum_Brightness =            1,
+	C4D_ChLum_Texture = "6",
+	C4D_ShLumas_BlendMode_6 = "Normal",
+	C4D_ShLumas_BlendStre_6 =            1,
+	C4D_ShLumas_BlurOffset_6 =            0,
+	C4D_ShLumas_BlurScale_6 =            0,
+	C4D_ShLumas_DiffActive_6 =            1,
+	C4D_ShLumas_DiffColor_6 = tmp_C4D_ShLumas_DiffColor_6,
+	C4D_ShLumas_DiffAlgorithm_6 = "Internal",
+	C4D_ShLumas_DiffRoughness_6 =            1,
+	C4D_ShLumas_DiffIllum_6 = 0.6000000238419,
+	C4D_ShLumas_DiffContrast_6 =            0,
+	C4D_ShLumas_Spec1Active_6 =            0,
+	C4D_ShLumas_Spec1Color_6 = tmp_C4D_ShLumas_Spec1Color_6,
+	C4D_ShLumas_Spec1Intensity_6 =            0,
+	C4D_ShLumas_Spec1Size_6 = 0.004999999888241,
+	C4D_ShLumas_Spec1Contrast_6 =            0,
+	C4D_ShLumas_Spec1Glare_6 =            2,
+	C4D_ShLumas_Spec1Falloff_6 =            1,
+	C4D_ShLumas_Spec2Active_6 =            1,
+	C4D_ShLumas_Spec2Color_6 = tmp_C4D_ShLumas_Spec2Color_6,
+	C4D_ShLumas_Spec2Intensity_6 = 0.1000000014901,
+	C4D_ShLumas_Spec2Size_6 = 0.1000000014901,
+	C4D_ShLumas_Spec2Contrast_6 =            0,
+	C4D_ShLumas_Spec2Glare_6 = 0.3000000119209,
+	C4D_ShLumas_Spec2Falloff_6 =          0.5,
+	C4D_ShLumas_Spec3Active_6 =            1,
+	C4D_ShLumas_Spec3Color_6 = tmp_C4D_ShLumas_Spec3Color_6,
+	C4D_ShLumas_Spec3Intensity_6 = 0.1000000014901,
+	C4D_ShLumas_Spec3Size_6 = 0.6000000238419,
+	C4D_ShLumas_Spec3Contrast_6 =            0,
+	C4D_ShLumas_Spec3Glare_6 = 0.1500000059605,
+	C4D_ShLumas_Spec3Falloff_6 =          0.5,
+	C4D_ShLumas_Anisotropy_6 =            1,
+	C4D_ShLumas_Projection_6 = "Planar",
+	C4D_ShLumas_ProjScale_6 =            1,
+	C4D_ShLumas_RoughnessX_6 =            6,
+	C4D_ShLumas_RoughnessY_6 =            3,
+	C4D_ShLumas_RoughSpecular1_6 =            0,
+	C4D_ShLumas_RoughSpecular2_6 =            1,
+	C4D_ShLumas_RoughSpecular3_6 =            1,
+	C4D_ShLumas_Amplitude_6 =            0,
+	C4D_ShLumas_Scale_6 =          0.5,
+	C4D_ShLumas_Length_6 =            5,
+	C4D_ShLumas_Attenuation_6 =            1,
+	C4D_ShLumas_AttenSpecular1_6 =            1,
+	C4D_ShLumas_AttenSpecular2_6 =            1,
+	C4D_ShLumas_AttenSpecular3_6 =            1,
+	C4D_ChLum_MixMode = "Normal",
+	C4D_ChLum_MixStrength =            1,
+	C4D_ChTra_State =            0,
+	C4D_ChTra_Color = tmp_C4D_ChTra_Color,
+	C4D_ChTra_Brightness =            1,
+	C4D_ChTra_Refraction =            1,
+	C4D_ChTra_InternalReflections =            1,
+	C4D_ChTra_ExitReflection =            1,
+	C4D_ChTra_FresnelReflectivity =            1,
+	C4D_ChTra_Additive =            0,
+	C4D_ChTra_MixMode = "Normal",
+	C4D_ChTra_MixStrength =            1,
+	C4D_ChTra_AbsorptionColor = tmp_C4D_ChTra_AbsorptionColor,
+	C4D_ChTra_AbsorptionDistance =          100,
+	C4D_ChTra_Blurriness =            0,
+	C4D_ChTra_MinSamples =            5,
+	C4D_ChTra_MaxSamples =          128,
+	C4D_ChTra_Accuracy =          0.5,
+	C4D_ChRef_State =            1,
+	C4D_ChRef_Color = tmp_C4D_ChRef_Color,
+	C4D_ChRef_Brightness =          0.1,
+	C4D_ChRef_Additive =            0,
+	C4D_ChRef_MixMode = "Normal",
+	C4D_ChRef_MixStrength =            1,
+	C4D_ChRef_Blurriness =         0.25,
+	C4D_ChRef_MinSamples =           10,
+	C4D_ChRef_MaxSamples =           80,
+	C4D_ChRef_Accuracy =          0.5,
+	C4D_ChEnv_State =            0,
+	C4D_ChEnv_Color = tmp_C4D_ChEnv_Color,
+	C4D_ChEnv_Brightness =            1,
+	C4D_ChEnv_MixMode = "Multiply",
+	C4D_ChEnv_MixStrength =            1,
+	C4D_ChEnv_TilesX =            1,
+	C4D_ChEnv_TilesY =            1,
+	C4D_ChEnv_Exclusive =            1,
+	C4D_ChFog_State =            0,
+	C4D_ChFog_Color = tmp_C4D_ChFog_Color,
+	C4D_ChFog_Brightness =            1,
+	C4D_ChFog_Distance =           10,
+	C4D_ChBum_State =            0,
+	C4D_ChBum_Strength = 0.2000000029802,
+	C4D_ChBum_MipFalloff =            1,
+	C4D_ChNor_State =            0,
+	C4D_ChNor_Strength =            1,
+	C4D_ChNor_Method = "Tangent",
+	C4D_ChNor_FlipX =            0,
+	C4D_ChNor_FlipY =            0,
+	C4D_ChNor_FlipZ =            0,
+	C4D_ChNor_SwapYZ =            0,
+	C4D_ChAlp_State =            0,
+	C4D_ChAlp_Color = tmp_C4D_ChAlp_Color,
+	C4D_ChAlp_Delta = tmp_C4D_ChAlp_Delta,
+	C4D_ChAlp_Invert =            0,
+	C4D_ChAlp_Soft =            1,
+	C4D_ChAlp_ImageAlpha =            1,
+	C4D_ChAlp_PreMultiplied =            0,
+	C4D_ChSpe_State =            1,
+	C4D_ChSpe_Color = tmp_C4D_ChSpe_Color,
+	C4D_ChSpe_Brightness =            1,
+	C4D_ChSpe_MixMode = "Normal",
+	C4D_ChSpe_MixStrength =            1,
+	C4D_ChSpe_Mode = "Colored",
+	C4D_ChSpe_Width = 0.3500000238419,
+	C4D_ChSpe_Height =            2,
+	C4D_ChSpe_Falloff =            0,
+	C4D_ChSpe_InnerWidth =            0,
+	C4D_ChGlo_State =            0,
+	C4D_ChGlo_Color = tmp_C4D_ChGlo_Color,
+	C4D_ChGlo_Brightness =            1,
+	C4D_ChGlo_InnerStrength =            1,
+	C4D_ChGlo_OuterStrength =            5,
+	C4D_ChGlo_Radius =           10,
+	C4D_ChGlo_Random =            0,
+	C4D_ChGlo_Frequency =            1,
+	C4D_ChGlo_UseMatColor =            1,
+	C4D_ChDis_State =            0,
+	C4D_ChDis_Strength =            1,
+	C4D_ChDis_Height =            5,
+	C4D_ChDis_Type = "IntensityCentered",
+	C4D_ChDis_SubDivision =            0,
+	C4D_ChDis_Level =            4,
+	C4D_ChDis_RoundGeometry =            0,
+	C4D_ChDis_RoundContour =            1,
+	C4D_ChDis_MapRounded =            1,
+	C4D_ChDis_MapResult =            0,
+	C4D_ChDis_KeepEdges =            1,
+	C4D_ChDis_BestDistribution =            1,
+	C4D_ChGra_State =            0,
+	C4D_ChGra_Color = "7",
+	C4D_GradientRGB_Interpol_7 = "SmoothKnot",
+	C4D_GradientRGB_Knots_7 = "8,9",
+	C4D_GKRGB_Color_8 = tmp_C4D_GKRGB_Color_8,
+	C4D_GKRGB_Intensity_8 =            1,
+	C4D_GKRGB_Position_8 =            0,
+	C4D_GKRGB_Bias_8 =          0.5,
+	C4D_GKRGB_Color_9 = tmp_C4D_GKRGB_Color_9,
+	C4D_GKRGB_Intensity_9 =            1,
+	C4D_GKRGB_Position_9 =            1,
+	C4D_GKRGB_Bias_9 =          0.5,
+	C4D_ChGra_MixStrength =          0.5,
+	C4D_ChGra_Density =            1,
+	C4D_ChGra_Length =          0.1,
+	C4D_ChGra_Width =        0.005,
+	C4D_ChGra_Crinkle =          0.1,
+	C4D_ChGra_Bend =          0.6,
+	C4D_ChGra_Wetness =         0.05,
+	C4D_ChIll_GenerateGI =            1,
+	C4D_ChIll_GenGIStrength =            1,
+	C4D_ChIll_GenGISaturat =            1,
+	C4D_ChIll_ReceiveGI =            1,
+	C4D_ChIll_RecGIStrength =            1,
+	C4D_ChIll_RecGISaturat =            1,
+	C4D_ChIll_GIPortal =            0,
+	C4D_ChIll_GILight =            0,
+	C4D_ChIll_GenerateCaustics =            1,
+	C4D_ChIll_GenCausticsStrength =            1,
+	C4D_ChIll_ReceiveCaustics =            1,
+	C4D_ChIll_RecCausticsStrength =            1,
+	C4D_ChIll_Radius =          0.1,
+	C4D_ChIll_CausticsSamples =          100,
+	C4D_ChIll_Model = "Blinn",
+	C4D_ChIll_DiffuseFalloff = -0.2000000029802,
+	C4D_ChIll_DiffuseLevel =            1,
+	C4D_ChIll_Roughness =          0.5
+
+
+if useFactoryMats then
+	frMat="builtInMatMacSilver"
+	stMat="builtInMatMacSilver"
+	if iScreenSize = 1 or iScreenSize = 2 then
+		lMat="builtInMatMacScreenFrame"
+	else
+		lMat="builtInMatMacScreenFrame"
+	endif
+else
+	frMat=frameMat
+	stMat=standMat
+	lMat=logoMat
+endif
+!! END OF DEFINE MATERIALS !!
+
+
+
+!!! Screen Points !!!
+if iScreenSize = 1 or iScreenSize = 2 then			!!20, 24 inch
+	put	-a/2+displayFrameWidthSide, bodyRad+displayFrameWidthBottom-displayFrameWidthSide, 79,
+		0, -1, 800,
+		-a/2+bodyRad, displayFrameWidthBottom, 1079,
+		a/2-bodyRad, displayFrameWidthBottom, 79,
+		1, 0, 800,
+		a/2-displayFrameWidthSide, bodyRad+displayFrameWidthBottom-displayFrameWidthSide, 1079,
+		a/2-displayFrameWidthSide, displayHeight-bodyRad, 79,
+		0, 1, 800,
+		a/2-bodyRad, displayHeight-displayFrameWidthSide, 1079,
+		-a/2+bodyRad, displayHeight-displayFrameWidthSide, 79,
+		-1, 0, 800,
+		-a/2+displayFrameWidthSide, displayHeight-bodyRad, 1079,
+		-a/2+displayFrameWidthSide, bodyRad+displayFrameWidthBottom-displayFrameWidthSide, -1
+
+else												!!21.5, 27 inch
+	put	-a/2, displayFrameWidthBottom, 79,
+		a/2, displayFrameWidthBottom, 79,
+		a/2, displayHeight-bodyRad, 79,
+		0, 1, 800,
+		a/2-bodyRad, displayHeight, 1079,
+		-a/2+bodyRad, displayHeight, 79,
+		-1, 0, 800,
+		-a/2, displayHeight-bodyRad, 1079,
+		-a/2, displayFrameWidthBottom, -1
+
+endif
+
+put	 -screenSizeX/2, screenYpos, 15,
+	screenSizeX/2, screenYpos, 15,
+	screenSizeX/2, screenSizeY+screenYpos, 15,
+	-screenSizeX/2, screenSizeY+screenYpos, 15,
+	-screenSizeX/2, screenYpos, -1
+
+!!! End Of Screen Points !!!
+
+
+
+rotx atn(zzyzx/b*2)
+add 0, sqr(zzyzx**2+(b/2)**2)-displayHeight, -displayThk
+
+!!! Screen Frame
+add 0, 0, displayThk-glassThk
+material "builtInMatMacScreenFrame"
+prism_ nsp/3, glassThk-(GLOB_CONTEXT=5)*0.01,
+	use(nsp)
+del 1
+
+
+
+!!! Frame
+add 0, 0, displayThk-glassThk
+cutform 9+4*(iScreenSize = 1 or iScreenSize = 2), 1, 1+16,
+	0, 0, -1, 0,
+	get(27+12*(iScreenSize = 1 or iScreenSize = 2))
+del 1
+
+add 0, displayFrameWidthBottom/2, displayThk-logoThk
+mul frontLogoWidth/0.373", frontLogoWidth/0.373", 1
+gosub 100	! Cutting for Apple Logo
+del 2
+
+add 0, 0, 0
+material frMat
+prism_ 12, displayThk-(GLOB_CONTEXT=5)*0.01,
+	-a/2, bodyRad, 79,
+	0, -1, 800,
+	-a/2+bodyRad, 0, 1079,
+	a/2-bodyRad, 0, 79,
+	1, 0, 800,
+	a/2, bodyRad, 1079,
+	a/2, displayHeight-bodyRad, 79,
+	0, 1, 800,
+	a/2-bodyRad, displayHeight, 1079,
+	-a/2+bodyRad, displayHeight, 79,
+	-1, 0, 800,
+	-a/2, displayHeight-bodyRad, 1079
+del 1
+
+cutend
+cutend
+
+add 0, displayFrameWidthBottom/2, displayThk-logoThk
+mul frontLogoWidth/0.373", frontLogoWidth/0.373", 1
+gosub 200	! Apple Logo
+del 2
+
+cutend
+!!! End Of Frame
+
+base
+vert 0, 0, 0
+vert 1, 0, 0
+vert 0, 1, 0
+vert 0, 0, 1
+coor 2+256, -1, -2, -3, -4
+body 1
+
+base
+
+!!! Screen
+add -screenSizeX/2, screenYpos, displayThk
+if pic then
+	if gs_picture_custom and gs_picture_name <> "" then
+		material "custDesktop"
+	else
+		material "macDesktop"
+	endif
+else
+	material screenMat
+endif
+
+vert	0, 0, 0				! 1
+vert	screenSizeX, 0, 0	! 4
+vert	screenSizeX, screenSizeY, 0	! 3
+vert	0, screenSizeY, 0			! 2
+
+edge 1, 2, 0, 0, 0
+edge 2, 3, 0, 0, 0
+edge 3, 4, 0, 0, 0
+edge 4, 1, 0, 0, 0
+
+pgon{2} 4, 0, 0, 6+256,
+	0, 0, 0,
+	screenSizeX, 0, 0,
+	0, screenSizeY, 0,
+	0, 0, 1,
+	1, 2, 3, 4
+
+!empty nsp
+for i = 1 to nsp
+	h = get(1)
+next i
+del 1
+
+body 1
+
+!!! Back
+add 0, displayHeight-(backThk/tan(backAngle))/2, -backThk/4
+rotx backAngle
+mul -backLogoWidth/0.373", backLogoWidth/0.373", -1
+gosub 100	! Cutting for Apple Logo
+del 3
+
+put	12, backThk, backAngle, backThk,
+	-a/2, bodyRad, 79,
+	0, -1, 800,
+	-a/2+bodyRad, 0, 1079,
+	a/2-bodyRad, 0, 79,
+	1, 0, 800,
+	a/2, bodyRad, 1079,
+	a/2, displayHeight-bodyRad, 79,
+	0, 1, 800,
+	a/2-bodyRad, displayHeight, 1079,
+	-a/2+bodyRad, displayHeight, 79,
+	-1, 0, 800,
+	-a/2, displayHeight-bodyRad, 1079
+
+mulz -1
+if useFactoryMats then
+	if iScreenSize = 1 or iScreenSize = 2 then
+		fprism_ "builtInMatiMacBackPanel", "builtInMatiMacBackPanel", "builtInMatiMacBackPanel", "builtInMatiMacBackPanel",
+			use(nsp)
+	else
+		fprism_ "builtInMatMacSilver", "builtInMatMacSilver", "builtInMatMacSilver", "builtInMatMacSilver",
+			use(nsp)
+	endif
+else
+	fprism_ backMat, backMat, backMat, backMat,
+		get(nsp)
+endif
+del 1
+
+cutend
+cutend
+
+if iScreenSize = 3 or iScreenSize = 4 then
+	add 0, displayHeight-(backThk/tan(backAngle))/2, -backThk/2!displayThk-logoThk
+	rotx backAngle
+	mul -backLogoWidth/0.373", backLogoWidth/0.373", 1
+	gosub 200	! Apple Logo
+	del 3
+endif
+!!! End Of Back
+
+del 2
+
+
+
+!!! StandCut
+cutpolya 10, 1, 0,
+	-1, standCutRad, 15,
+	-1, -1, 15,
+	1, -1, 15,
+	1, standCutRad, 15,
+	standWidth/2, standCutRad, 79,
+	0, -1, 800,
+	standWidth/2-standCutRad, 0, 1079,
+	-standWidth/2+standCutRad, 0, 79,
+	-1, 0, 800,
+	-standWidth/2, standCutRad, 1079
+
+for stcut=1 to 2
+	add standWidth/2, standCutRad, 0.2"
+	roty 82
+	rotx -3
+		cutplane
+	del 3
+mulx -1
+next stcut
+del 2
+!!! End Of StandCut
+
+!!! StandHole
+rotx -68
+add 0, -3", 0
+cutpolya 2, 1, 0,
+	0, 0, 979,
+	standHoleRad, 360, 4079
+del 2
+!!! End Of StandHole
+
+!!! Stand
+add -standWidth/2, 0, 0
+rotz 90
+rotx 90
+material stMat
+if iScreenSize = 1 then
+	prism_ 18, standWidth,
+		0'-7.3272", 0'-1.3746",      79,
+		0'-3.9000", 0'-9.8572",      79,
+		0'-2.9728", 0'-9.4826",    900,
+		0'-0.0000", 111'-9.3831",   4079,
+		0'-3.5310", 0'-10.3123",      79,
+		0'-3.4875", 0'-10.0950",      79,
+		0'-2.9728", 0'-9.4826",    900,
+		0'-0.0000", -91'-8.6156",   4079,
+		0'-3.7146", 0'-9.7823",      79,
+		0'-7.1417", 0'-1.2997",      79,
+		0'-6.4000", 0'-1.0000",    900,
+		0'-0.0000", -367'-5.4488",   4079,
+		0'-6.4000", 0'-0.2000",      79,
+		0'-0.0000", 0'-0.2000",      15,
+		0'-0.0000", 0'-0.0000",      79,
+		0'-6.4000", 0'-0.0000",      79,
+		0'-6.4000", 0'-1.0000",    900,
+		0'-0.0000", 367'-5.4488",   4079
+endif
+if iScreenSize = 2 then
+	prism_ 18, standWidth,
+		0'-3.9488", 0'-11.0100",      79,
+		0'-3.9058", 0'-10.7924",      79,
+		0'-3.3911", 0'-10.1799",    900,
+		0'-0.0000", -91'-8.6156",   4079,
+		0'-4.1328", 0'-10.4796",      79,
+		0'-7.8417", 0'-1.2997",      79,
+		0'-7.1000", 0'-1.0000",    900,
+		0'-0.0000", -367'-5.4488",   4079,
+		0'-7.1000", 0'-0.2000",      79,
+		0'-0.0000", 0'-0.2000",      15,
+		0'-0.0000", 0'-0.0000",      79,
+		0'-7.1000", 0'-0.0000",      79,
+		0'-7.1000", 0'-1.0000",    900,
+		0'-0.0000", 367'-5.4488",   4079,
+		0'-8.0272", 0'-1.3746",      79,
+		0'-4.3183", 0'-10.5545",      79,
+		0'-3.3911", 0'-10.1799",    900,
+		0'-0.0000", 111'-10.6548",   4079
+endif
+if iScreenSize = 3 then
+	prism_ 18, standWidth,
+		0'-7.3472", 0'-1.3746",      79,
+		0'-4.1554", 0'-9.2745",      79,
+		0'-3.2283", 0'-8.8998",    900,
+		0'-0.0000", 165'-4.4344",   4079,
+		0'-3.5305", 0'-9.8531",      79,
+		0'-3.4894", 0'-9.6560",      79,
+		0'-3.2283", 0'-8.8998",    900,
+		0'-0.0000", -160'-7.1746",   4079,
+		0'-3.9700", 0'-9.1995",      79,
+		0'-7.1617", 0'-1.2997",      79,
+		0'-6.4200", 0'-1.0000",    900,
+		0'-0.0000", -367'-5.4488",   4079,
+		0'-6.4200", 0'-0.2000",      79,
+		0'-0.0000", 0'-0.2000",      15,
+		0'-0.0000", 0'-0.0000",      79,
+		0'-6.4200", 0'-0.0000",      79,
+		0'-6.4200", 0'-1.0000",    900,
+		0'-0.0000", 367'-5.4488",   4079
+endif
+if iScreenSize = 4 then
+	prism_ 18, standWidth,
+		0'-3.9393", 0'-10.8379",      79,
+		0'-3.4217", 0'-10.2279",    900,
+		0'-0.0000", -90'-9.8982",   4079,
+		0'-4.1634", 0'-10.5276",      79,
+		0'-7.8917", 0'-1.2997",      79,
+		0'-7.1500", 0'-1.0000",    900,
+		0'-0.0000", -367'-5.4488",   4079,
+		0'-7.1500", 0'-0.2000",      79,
+		0'-0.0000", 0'-0.2000",      15,
+		0'-0.0000", 0'-0.0000",      79,
+		0'-7.1500", 0'-0.0000",      79,
+		0'-7.1500", 0'-1.0000",    900,
+		0'-0.0000", 367'-5.4488",   4079,
+		0'-8.0772", 0'-1.3746",      79,
+		0'-4.3489", 0'-10.6025",      79,
+		0'-3.4217", 0'-10.2279",    900,
+		0'-0.0000", 111'-1.3711",   4079,
+		0'-3.9828", 0'-11.0556",      79
+endif
+del 3
+!!! End Of Stand
+
+cutend
+
+cutend
+cutend
+cutend
+
+end
+
+
+
+
+100:
+cutform 79, 1, 1+16,
+	0, 0, -1, 0,
+	-0'-0.1872", -0'-0.0680",      1+2+4+8+16+64,
+	-0'-0.1592", -0'-0.1239",      1+2+4+8+16+64,
+	-0'-0.1219", -0'-0.1739",      1+2+4+8+16+64,
+	-0'-0.0903", -0'-0.2026",      1+2+4+8+16+64,
+	-0'-0.0822", -0'-0.2059",      1+2+4+8+16+64,
+	-0'-0.0737", -0'-0.2078",      1+2+4+8+16+64,
+	-0'-0.0649", -0'-0.2082",      1+2+4+8+16+64,
+	-0'-0.0562", -0'-0.2071",      1+2+4+8+16+64,
+	-0'-0.0479", -0'-0.2045",      1+2+4+8+16+64,
+	-0'-0.0401", -0'-0.2005",      1+2+4+8+16+64,
+	-0'-0.0331", -0'-0.1951",      1+2+4+8+16+64,
+	-0'-0.0259", -0'-0.1866",      1+2+4+8+16+64,
+	-0'-0.0196", -0'-0.1801",      1+2+4+8+16+64,
+	-0'-0.0157", -0'-0.1778",      1+2+4+8+16+64,
+	-0'-0.0114", -0'-0.1762",      1+2+4+8+16+64,
+	-0'-0.0069", -0'-0.1754",      1+2+4+8+16+64,
+	0'-0.0000", -0'-0.1757",      1+2+4+8+16+64,
+	0'-0.0044", -0'-0.1752",      1+2+4+8+16+64,
+	0'-0.0090", -0'-0.1756",      1+2+4+8+16+64,
+	0'-0.0134", -0'-0.1769",      1+2+4+8+16+64,
+	0'-0.0213", -0'-0.1815",      1+2+4+8+16+64,
+	0'-0.0246", -0'-0.1847",      1+2+4+8+16+64,
+	0'-0.0284", -0'-0.1902",      1+2+4+8+16+64,
+	0'-0.0346", -0'-0.1964",      1+2+4+8+16+64,
+	0'-0.0417", -0'-0.2015",      1+2+4+8+16+64,
+	0'-0.0496", -0'-0.2052",      1+2+4+8+16+64,
+	0'-0.0581", -0'-0.2075",      1+2+4+8+16+64,
+	0'-0.0668", -0'-0.2083",      1+2+4+8+16+64,
+	0'-0.0756", -0'-0.2076",      1+2+4+8+16+64,
+	0'-0.0840", -0'-0.2053",      1+2+4+8+16+64,
+	0'-0.0940", -0'-0.2002",      1+2+4+8+16+64,
+	0'-0.1064", -0'-0.1923",      1+2+4+8+16+64,
+	0'-0.1281", -0'-0.1724",      1+2+4+8+16+64,
+	0'-0.1460", -0'-0.1489",      1+2+4+8+16+64,
+	0'-0.1595", -0'-0.1228",      1+2+4+8+16+64,
+	0'-0.1683", -0'-0.0947",      1+2+4+8+16+64,
+	0'-0.1699", -0'-0.0826",      1+2+4+8+16+64,
+	0'-0.1565", -0'-0.0767",      1+2+4+8+16+64,
+	0'-0.1421", -0'-0.0667",      1+2+4+8+16+64,
+	0'-0.1297", -0'-0.0544",      1+2+4+8+16+64,
+	0'-0.1196", -0'-0.0402",      1+2+4+8+16+64,
+	0'-0.1121", -0'-0.0243",      1+2+4+8+16+64,
+	0'-0.1075", -0'-0.0075",      1+2+4+8+16+64,
+	0'-0.1059", 0'-0.0099",      1+2+4+8+16+64,
+	0'-0.1073", 0'-0.0274",      1+2+4+8+16+64,
+	0'-0.1117", 0'-0.0443",      1+2+4+8+16+64,
+	0'-0.1190", 0'-0.0602",      1+2+4+8+16+64,
+	0'-0.1290", 0'-0.0746",      1+2+4+8+16+64,
+	0'-0.1413", 0'-0.0870",      1+2+4+8+16+64,
+	0'-0.1556", 0'-0.0971",      1+2+4+8+16+64,
+	0'-0.1635", 0'-0.1009",      1+2+4+8+16+64,
+	0'-0.1556", 0'-0.1095",      1+2+4+8+16+64,
+	0'-0.1370", 0'-0.1238",      1+2+4+8+16+64,
+	0'-0.1163", 0'-0.1346",      1+2+4+8+16+64,
+	0'-0.0939", 0'-0.1417",      1+2+4+8+16+64,
+	0'-0.0707", 0'-0.1448",      1+2+4+8+16+64,
+	0'-0.0473", 0'-0.1439",      1+2+4+8+16+64,
+	0'-0.0244", 0'-0.1388",      1+2+4+8+16+64,
+	-0'-0.0009", 0'-0.1273",      1+2+4+8+16+64,
+	-0'-0.0071", 0'-0.1256",      1+2+4+8+16+64,
+	-0'-0.0143", 0'-0.1248",      1+2+4+8+16+64,
+	-0'-0.0215", 0'-0.1254",      1+2+4+8+16+64,
+	-0'-0.0285", 0'-0.1272",      1+2+4+8+16+64,
+	-0'-0.0352", 0'-0.1302",      1+2+4+8+16+64,
+	-0'-0.0446", 0'-0.1365",      1+2+4+8+16+64,
+	-0'-0.0587", 0'-0.1429",      1+2+4+8+16+64,
+	-0'-0.0737", 0'-0.1468",      1+2+4+8+16+64,
+	-0'-0.0891", 0'-0.1479",      1+2+4+8+16+64,
+	-0'-0.1045", 0'-0.1464",      1+2+4+8+16+64,
+	-0'-0.1194", 0'-0.1422",      1+2+4+8+16+64,
+	-0'-0.1334", 0'-0.1355",      1+2+4+8+16+64,
+	-0'-0.1515", 0'-0.1224",      1+2+4+8+16+64,
+	-0'-0.1708", 0'-0.1013",      1+2+4+8+16+64,
+	-0'-0.1855", 0'-0.0785",      1+2+4+8+16+64,
+	-0'-0.1959", 0'-0.0535",      1+2+4+8+16+64,
+	-0'-0.2019", 0'-0.0270",      1+2+4+8+16+64,
+	-0'-0.2031", 0'-0.0000",      1+2+4+8+16+64,
+	-0'-0.1997", -0'-0.0269",      1+2+4+8+16+64,
+	-0'-0.1868", -0'-0.0680",      1+2+4+8+16+64
+
+cutform 26, 1, 1+16,
+	0, 0, -1, 0,
+	-0'-0.0213", 0'-0.2114",      1+2+4+8+16+64,
+	-0'-0.0257", 0'-0.1964",      1+2+4+8+16+64,
+	-0'-0.0275", 0'-0.1809",      1+2+4+8+16+64,
+	-0'-0.0266", 0'-0.1654",      1+2+4+8+16+64,
+	-0'-0.0230", 0'-0.1502",      1+2+4+8+16+64,
+	-0'-0.0204", 0'-0.1444",      1+2+4+8+16,
+	-0'-0.0127", 0'-0.1435",      1+2+4+8+16+64,
+	0'-0.0029", 0'-0.1445",      1+2+4+8+16+64,
+	0'-0.0181", 0'-0.1481",      1+2+4+8+16+64,
+	0'-0.0324", 0'-0.1543",      1+2+4+8+16+64,
+	0'-0.0454", 0'-0.1629",      1+2+4+8+16+64,
+	0'-0.0567", 0'-0.1737",      1+2+4+8+16+64,
+	0'-0.0660", 0'-0.1862",      1+2+4+8+16+64,
+	0'-0.0730", 0'-0.2001",      1+2+4+8+16+64,
+	0'-0.0774", 0'-0.2151",      1+2+4+8+16+64,
+	0'-0.0793", 0'-0.2306",      1+2+4+8+16+64,
+	0'-0.0783", 0'-0.2462",      1+2+4+8+16+64,
+	0'-0.0747", 0'-0.2613",      1+2+4+8+16+64,
+	0'-0.0722", 0'-0.2670",      1+2+4+8+16,
+	0'-0.0644", 0'-0.2680",      1+2+4+8+16+64,
+	0'-0.0489", 0'-0.2670",      1+2+4+8+16+64,
+	0'-0.0337", 0'-0.2634",      1+2+4+8+16+64,
+	0'-0.0194", 0'-0.2572",      1+2+4+8+16+64,
+	0'-0.0063", 0'-0.2486",      1+2+4+8+16+64,
+	-0'-0.0050", 0'-0.2379",      1+2+4+8+16+64,
+	-0'-0.0143", 0'-0.2253",      1+2+4+8+16+64
+
+return
+
+
+
+200:
+material lMat
+prism_ 79, logoThk,
+	-0'-0.1872", -0'-0.0680",      15+64,
+	-0'-0.1592", -0'-0.1239",      15+64,
+	-0'-0.1219", -0'-0.1739",      15+64,
+	-0'-0.0903", -0'-0.2026",      15+64,
+	-0'-0.0822", -0'-0.2059",      15+64,
+	-0'-0.0737", -0'-0.2078",      15+64,
+	-0'-0.0649", -0'-0.2082",      15+64,
+	-0'-0.0562", -0'-0.2071",      15+64,
+	-0'-0.0479", -0'-0.2045",      15+64,
+	-0'-0.0401", -0'-0.2005",      15+64,
+	-0'-0.0331", -0'-0.1951",      15+64,
+	-0'-0.0259", -0'-0.1866",      15+64,
+	-0'-0.0196", -0'-0.1801",      15+64,
+	-0'-0.0157", -0'-0.1778",      15+64,
+	-0'-0.0114", -0'-0.1762",      15+64,
+	-0'-0.0069", -0'-0.1754",      15+64,
+	0'-0.0000", -0'-0.1757",      15+64,
+	0'-0.0044", -0'-0.1752",      15+64,
+	0'-0.0090", -0'-0.1756",      15+64,
+	0'-0.0134", -0'-0.1769",      15+64,
+	0'-0.0213", -0'-0.1815",      15+64,
+	0'-0.0246", -0'-0.1847",      15+64,
+	0'-0.0284", -0'-0.1902",      15+64,
+	0'-0.0346", -0'-0.1964",      15+64,
+	0'-0.0417", -0'-0.2015",      15+64,
+	0'-0.0496", -0'-0.2052",      15+64,
+	0'-0.0581", -0'-0.2075",      15+64,
+	0'-0.0668", -0'-0.2083",      15+64,
+	0'-0.0756", -0'-0.2076",      15+64,
+	0'-0.0840", -0'-0.2053",      15+64,
+	0'-0.0940", -0'-0.2002",      15+64,
+	0'-0.1064", -0'-0.1923",      15+64,
+	0'-0.1281", -0'-0.1724",      15+64,
+	0'-0.1460", -0'-0.1489",      15+64,
+	0'-0.1595", -0'-0.1228",      15+64,
+	0'-0.1683", -0'-0.0947",      15+64,
+	0'-0.1699", -0'-0.0826",      15+64,
+	0'-0.1565", -0'-0.0767",      15+64,
+	0'-0.1421", -0'-0.0667",      15+64,
+	0'-0.1297", -0'-0.0544",      15+64,
+	0'-0.1196", -0'-0.0402",      15+64,
+	0'-0.1121", -0'-0.0243",      15+64,
+	0'-0.1075", -0'-0.0075",      15+64,
+	0'-0.1059", 0'-0.0099",      15+64,
+	0'-0.1073", 0'-0.0274",      15+64,
+	0'-0.1117", 0'-0.0443",      15+64,
+	0'-0.1190", 0'-0.0602",      15+64,
+	0'-0.1290", 0'-0.0746",      15+64,
+	0'-0.1413", 0'-0.0870",      15+64,
+	0'-0.1556", 0'-0.0971",      15+64,
+	0'-0.1635", 0'-0.1009",      15+64,
+	0'-0.1556", 0'-0.1095",      15+64,
+	0'-0.1370", 0'-0.1238",      15+64,
+	0'-0.1163", 0'-0.1346",      15+64,
+	0'-0.0939", 0'-0.1417",      15+64,
+	0'-0.0707", 0'-0.1448",      15+64,
+	0'-0.0473", 0'-0.1439",      15+64,
+	0'-0.0244", 0'-0.1388",      15+64,
+	-0'-0.0009", 0'-0.1273",      15+64,
+	-0'-0.0071", 0'-0.1256",      15+64,
+	-0'-0.0143", 0'-0.1248",      15+64,
+	-0'-0.0215", 0'-0.1254",      15+64,
+	-0'-0.0285", 0'-0.1272",      15+64,
+	-0'-0.0352", 0'-0.1302",      15+64,
+	-0'-0.0446", 0'-0.1365",      15+64,
+	-0'-0.0587", 0'-0.1429",      15+64,
+	-0'-0.0737", 0'-0.1468",      15+64,
+	-0'-0.0891", 0'-0.1479",      15+64,
+	-0'-0.1045", 0'-0.1464",      15+64,
+	-0'-0.1194", 0'-0.1422",      15+64,
+	-0'-0.1334", 0'-0.1355",      15+64,
+	-0'-0.1515", 0'-0.1224",      15+64,
+	-0'-0.1708", 0'-0.1013",      15+64,
+	-0'-0.1855", 0'-0.0785",      15+64,
+	-0'-0.1959", 0'-0.0535",      15+64,
+	-0'-0.2019", 0'-0.0270",      15+64,
+	-0'-0.2031", 0'-0.0000",      15+64,
+	-0'-0.1997", -0'-0.0269",      15+64,
+	-0'-0.1868", -0'-0.0680",      15+64
+
+prism_ 26, logoThk,
+	-0'-0.0213", 0'-0.2114",      15+64,
+	-0'-0.0257", 0'-0.1964",      15+64,
+	-0'-0.0275", 0'-0.1809",      15+64,
+	-0'-0.0266", 0'-0.1654",      15+64,
+	-0'-0.0230", 0'-0.1502",      15+64,
+	-0'-0.0204", 0'-0.1444",      15,
+	-0'-0.0127", 0'-0.1435",      15+64,
+	0'-0.0029", 0'-0.1445",      15+64,
+	0'-0.0181", 0'-0.1481",      15+64,
+	0'-0.0324", 0'-0.1543",      15+64,
+	0'-0.0454", 0'-0.1629",      15+64,
+	0'-0.0567", 0'-0.1737",      15+64,
+	0'-0.0660", 0'-0.1862",      15+64,
+	0'-0.0730", 0'-0.2001",      15+64,
+	0'-0.0774", 0'-0.2151",      15+64,
+	0'-0.0793", 0'-0.2306",      15+64,
+	0'-0.0783", 0'-0.2462",      15+64,
+	0'-0.0747", 0'-0.2613",      15+64,
+	0'-0.0722", 0'-0.2670",      15,
+	0'-0.0644", 0'-0.2680",      15+64,
+	0'-0.0489", 0'-0.2670",      15+64,
+	0'-0.0337", 0'-0.2634",      15+64,
+	0'-0.0194", 0'-0.2572",      15+64,
+	0'-0.0063", 0'-0.2486",      15+64,
+	-0'-0.0050", 0'-0.2379",      15+64,
+	-0'-0.0143", 0'-0.2253",      15+64
+
+return
+
+
+
+
+
+
+
+
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+if iScreenSize = 1 then
+	ySize = .103
+endif
+if iScreenSize = 2 then
+	ySize = .120
+endif
+if iScreenSize = 3 then
+	ySize = .104
+endif
+if iScreenSize = 4 then
+	ySize = .122
+endif
+
+pen gs_cont_pen
+fill gs_fill_type
+
+! --- Base ---------------------------------------------------------------------
+POLY2_B       9,      1+2+4,      gs_fill_pen,     gs_back_pen,
+		-0.0635,           0,      1,
+		 0.0635,           0,      1,
+		 0.06325131680728, 0.01292050955559,    900,
+		  0, 93.34694606493,   4001,
+		 0.0761352694266,  0.013923093921,      1,
+		-0.0761352694266,  0.013923093921,      1,
+		-0.06350343234383, 0.01269171358905,    900,
+		  0, 95.5832266475,   4001,
+		-0.0635,           0,      -1
+
+add2 0, ySize+0.014
+POLY2_B       17,      1+2+4,      gs_fill_pen,     gs_back_pen,
+		 0.0637031814779, 0.070428511948,      1,
+		-0.0637031814779, 0.070428511948,      1,
+		-0.0647092571148, 0.070181772687,      1,
+		-0.0657698715758, 0.06799702451,      1,
+		-0.0668028520506, 0.064043534293,      1,
+		-0.0677281667164, 0.058627605047,      1,
+		-0.0684741253322, 0.052168844596,      1,
+		-0.0689829335550, 0.045167655787,      1,
+		-0.0713733332962, 0,      1,
+		 0.0713733332962, 0,      1,
+		 0.0689829335550, 0.045167655787,      1,
+		 0.0684741253322, 0.052168844596,      1,
+		 0.0677281667164, 0.058627605047,      1,
+		 0.0668028520506, 0.064043534293,      1,
+		 0.0657698715758, 0.06799702451,      1,
+		 0.0647092571148, 0.070181772687,      1,
+		 0.0637031814779, 0.070428511948,      1
+mul2 2.65, 1
+circle2  0, 0.026183421784, 0.009515024506
+del 2
+
+
+! --- Screen -------------------------------------------------------------------
+
+add2 -A/2, 0.014
+POLY2_B       16,      1+2+4,      gs_fill_pen,     gs_back_pen,
+		0, ySize-.005627100991914,      1,
+		0, 0.005627100991914,      1,
+		0.0254-0.02138562837821, 0.00672889241967,    900,
+		   0, 59.88557223594,   4001,
+		0.0254-0.02244667609119, 0.002703559934161,      1,
+		0.0254-0.000838207075461, 0.08757575011313,    900,
+		   0, 14.83241067228,   4001,
+		0.0254,            0,      1,
+		A-0.0254, 0,      0,
+		A-0.0254, ySize,      1,
+		0.0254,            ySize,      1,
+		0.0254-0.002439036279798, ySize-.103+0.029,    900,
+		   0, 17.49677101139,   4001,
+		0.0254-0.02138562837821, ySize-.103+0.0963,    900,
+		   0, 59.88557223596,   4001,
+		0, ySize-.005627100991914,      -1
+POLY2_B       14,      1+2+4,      gs_fill_pen,     gs_back_pen,
+		A,                  ySize-.005627100991914,      1,
+		A,                  0.005627100991914,      1,
+		A-0.00401437162179, 0.00672889241967,    900,
+			0, -59.88557223594,  4001,
+		A-0.00295332390881, 0.002703559934161,      1,
+		A-0.0229609637202,  0.07428464671533,    900,
+			0, -17.4967710114,   4001,
+		A-0.0254,           0,      0,
+		A-0.0254,           ySize,      1,
+		A-0.0229609637202,  ySize-.103+0.029,    900,
+			0, -17.49677101139,  4001,
+		A-0.00401437162179, ySize-.103+0.0963,    900,
+			0, -59.88557223596,  4001,
+		A,                  ySize-.005627100991914,      1
+
+rect2 .03, .02, A - .03, ySize*.7
+
+del 1
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+eps = 0.0001
+
+DIM stScreenSize[4]
+	stScreenSize[1]=`20 inch`
+	stScreenSize[2]=`24 inch`
+	stScreenSize[3]=`21.5 inch`
+	stScreenSize[4]=`27 inch`
+
+if iScreenSize = 1 then			!!20 inch
+	a					= 19.1"
+	b 					= 7.4"
+	zzyzx				= 18.5"
+	displayThk			= 0.94"
+	displayFrameWidthBottom	= 3.5"
+	screenSizeX			= 16.96"
+	screenSizeY			= 10.6"
+endif
+if iScreenSize = 2 then			!!24 inch
+	a					= 22.4"
+	b 					= 8.1"
+	zzyzx				= 20.5"
+	displayThk			= 1.24"
+	displayFrameWidthBottom	= 3.5"
+	screenSizeX			= 20.352"
+	screenSizeY			= 12.72"
+endif
+if iScreenSize = 3 then			!!21.5 inch
+	a					= 20.8"
+	b 					= 7.42"
+	zzyzx				= 17.75"
+	displayThk			= 0.94"
+	displayFrameWidthBottom	= 2"
+	screenSizeX			= 18.436"
+	screenSizeY			= 11.062"
+endif
+if iScreenSize = 4 then			!!27 inch
+	a					= 25.6"
+	b 					= 8.15"
+	zzyzx				= 20.4"
+	displayThk			= 1.24"
+	displayFrameWidthBottom	= 2"
+	screenSizeX			= 23.152"
+	screenSizeY			= 13.891"
+endif
+
+parameters a		= a
+parameters b		= b
+parameters zzyzx	= zzyzx
+
+displayFrameWidthSide	= 0.2"*(iScreenSize = 1 or iScreenSize = 2)
+screenYpos			= displayFrameWidthBottom+(a-screenSizeX)/2-displayFrameWidthSide
+displayHeight		= screenYpos+screenSizeY+(a-screenSizeX)/2
+
+bodyRad					= 1"
+glassThk				= 0.2"
+
+frontLogoWidth		= 1"
+backLogoWidth		= 2 1/2"
+logoThk				= 0.2"
+
+standWidth			= 6"
+standHoleRad		= 1"
+standCutRad			= 0.5"
+
+backThk				= 0.5"
+backAngle			= 4
+
+
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+call "FM_types_OE_WMCC" parameters all
+
+values "gs_resol" range [3,)
+
+values "gs_detlevel_3D" `Detailed`, `Simple`, `Off`
+values "gs_detlevel_3D_m" 2, 1, 0
+if GLOB_MODPAR_NAME = "gs_detlevel_3D" then
+	if gs_detlevel_3D = `Detailed`	then gs_detlevel_3D_m = 2
+	if gs_detlevel_3D = `Simple`	then gs_detlevel_3D_m = 1
+	if gs_detlevel_3D = `Off`		then gs_detlevel_3D_m = 0
+	parameters gs_detlevel_3D_m = gs_detlevel_3D_m
+else
+	if gs_detlevel_3D_m = 2 then	gs_detlevel_3D = `Detailed`
+	if gs_detlevel_3D_m = 1 then	gs_detlevel_3D = `Simple`
+	if gs_detlevel_3D_m = 0 then	gs_detlevel_3D = `Off`
+	parameters gs_detlevel_3D = gs_detlevel_3D
+endif
+
+if gs_detlevel_3D_m = 1 then hideparameter "gs_resol"
+if gs_detlevel_3D_m = 0 then hideparameter "gs_resol", "gs_shadow"
+
+values "screenSize" stScreenSize[1], stScreenSize[3], stScreenSize[2], stScreenSize[4]
+values "iScreenSize" 1, 2, 3, 4
+if GLOB_MODPAR_NAME = "screenSize" then
+	if screenSize = stScreenSize[1]	then iScreenSize = 1
+	if screenSize = stScreenSize[2]	then iScreenSize = 2
+	if screenSize = stScreenSize[3]	then iScreenSize = 3
+	if screenSize = stScreenSize[4]	then iScreenSize = 4
+	parameters iScreenSize = iScreenSize
+else
+	if iScreenSize = 1 then	screenSize = stScreenSize[1]
+	if iScreenSize = 2 then	screenSize = stScreenSize[2]
+	if iScreenSize = 3 then	screenSize = stScreenSize[3]
+	if iScreenSize = 4 then	screenSize = stScreenSize[4]
+	parameters screenSize = screenSize
+endif
+
+if useFactoryMats then
+	lock "frameMat", "backMat", "standMat", "logoMat"
+	hideparameter "frameMat", "backMat", "standMat", "logoMat"
+endif
+
+lock "a", "b", "zzyzx"
+
+if pic then
+	lock "screenMat"
+	hideparameter "screenMat"
+else
+	lock "gs_picture_custom", "gs_picture_name"
+	hideparameter "gs_picture_custom", "gs_picture_name"
+endif
+if not(gs_picture_custom) then
+	lock "gs_picture_name"
+	hideparameter "gs_picture_name"
+endif
+
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[iMac with different sizes and custom picture on screen.]]>
+</Comment>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Keywords>
+
+<Picture MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="0" length_in_bytes="19035" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000800000
+	008008020000004C5CF69C000000097048597300002E2300002E230178A53F76
+	0000000467414D410000B18E7CFB5193000000206348524D00007A2500008083
+	0000F9FF000080E9000075300000EA6000003A980000176F925FC546000049C7
+	4944415478DA62FCFFFF3FC32818380010404CA34130B0002080462360800140
+	008D46C0000380001A8D8001060001341A01030C000268340206180004100B91
+	EA264E9C3071E2242083938B534D5555434353050494151595E4E4E446C3916C
+	0010408CC4F403ECEDED1F3F7ECCC8C00054CAC808A41920BA80ECFFFFFF0129
+	4E4E4E7535756084A8AB6BA8AAAA282B2B494BCB8C062E310020800847C08A15
+	2BAAABAB41CAC0618FA4FE3F2323AC044336051C5140A52C2CAC9A5A5AAAAAAA
+	9A1A1AC04CA3A8048C15E9D11047030001443802B4B5B57FFCF88116C8C05006
+	42A008224380F8C03881D20CFF51558245808A393838B4B4B4949495D5D58040
+	554949594A4A6A2447004000118E0025252548E183A48991011CF408BDB0F880
+	9452D0D20914E8B05C02CE40D068809A065509045C9C9CAAC0D85055D3D4D400
+	D2CA2A2A12E212232402000288A80880172DF0D06780257C680E800729AC6842
+	C91C4831875C88C1A3101263682EE1E2E2D2D000D628C0A8510316620A4A8AC3
+	325600028840047CF9F2454F4F8F1116E882E28A52CA861FDFBDFAF2EEE5FB97
+	B75073052C626026A257D7F0286440A93860FAA011092FC9903422B89C9C1C9A
+	5ADA6AC0EA1E5CB5008B327171F1211D01000144A019FAEEDD5B065000FD0307
+	1483908C86896BD8BFDF7F7EFEFCF6F7D7CFAF5F3E7DFBF2E1CB87371F5E3FFD
+	F2F9DDA7974FBF7F7E06AE829918C0E18512BB481C680105CB048C28CDAAFFD0
+	C615035206628496783F7EFC3C7FEEDCB9B36719A1310DCA6DBCBCBCAAE0EA44
+	13946340913384620520800844C0DBB7EFC049125AC0B0B2B201B98C4C8C1C5C
+	BC0C9CBCBC42620CB022FDF7AF9FBF7E7EFFFBFBE7B7AF1FBE7FF9F0EED53350
+	2E79F7F2CB8B7B7FFEFC4034A290EA6744E843DBB78C90CAFC3F34272114C1B5
+	01230654A940730DA8B4032AFEF4E9D3E58B972E5EB8B8016406548A9D9D1D58
+	7A29036B7B6041A60662884B0CC6120C208008E68077B0D21C54A3B273F33240
+	8BFC7FC098F8F7EF2FB4EC01C60D3B3B07272723139308AB2C0B0B3350081821
+	C05CF2E7F78F1F5FBF7EFBFC0E18279FDE3CFFF0F6D5E7974F3EBE7D082D55C0
+	C105C931E0E40CAF151861F5CA3F70D441D4C16A2268258450FFEBF76FA45A06
+	AAE43218C0C5FFFDFB07CC2B8A8A0ACA2AAA1AEAC05618B0C3A232E0B1021040
+	0422E0C3870F304F82FCCCC1C903AA2DA15D3260E0303031835B4040E6BF7F4C
+	8C8C7FFFFC6166626266064A33B13033B3F3F231310930880295A902C5FF0213
+	F0EF9FBF7EFDFAF1FDEBB74F1F3EBD07965DCF81C5D78757AFDE3DBE0ECC28B0
+	3A9C112932906A7B3005CD0AA0C40FC60CF04C080B78788711A9D0035A0A24DF
+	BF7F0FACD52E5FBE82D465F9CFCDCD03AC4B8000142BC0224C55459C8EB53D40
+	0011880060EEFE0FCBEC406FB1B273820B0D709833426B56700A6682460A1308
+	420201C8FAF7F72F30AF00831E988EFF31FC07C60C2BB0D3CCCDC32F22C2C020
+	0F8C2960C4FD05D6283F7EFCFAF1EDCBA78FC0A2EBD3DB97EFDF3C07E69577CF
+	9E7C7875171EFA88428A1116DE90BC87D21A666466616682E427445B8B01A926
+	FAFFE7F76F1656568811403540C51F3F7E3C7FF6ECE54B97405C264688626E6E
+	6E256525608B18D808D3D050575652129790A44504000420B58C79100681289C
+	146822494D5C8CEEFEFF9F62A7EEAEEA20B5111339A8EFEED074733069AED094
+	C0F1E0BBF753805199A34EB15D79352515C80A8745070DBE0A33726CC08E9239
+	43D9AAA64203E0422C85999009D138E3DBCEAFBBCD762F079E65A3FC8A637C4C
+	F73841952B2A4A405109E7CB69A0F4FC58DEAF87AD87DE392BA49C17C8E27712
+	40C9F2582D22B2D6268E065DB4F1053FF0B4B9D6FF106EFDB1C783F14846E7F1
+	AACA815D180A0B2ECDEE6F55DE02505E6D2908C340D08DAD1552285E22F5FEF7
+	B007F0570C6A941A28D6D262DD4752F227E62B90CD92646676333F0070EEBEDC
+	0F8F420A10D6B102569F58B8834244D3B1112AA5C421833011E945BF19E61DA4
+	7F53AAF3B423B46A58238FB7BA2ACA6A47B58CC326C464E887FE855279776DF7
+	BC3C6ED65FCFCE9E5A7BCCB23C0A12E685FE108E9EF373A7C6052101CAACE658
+	B210035965E788A86C247EE221F3D1FBE6D0102A492A5D6A636A6C276859F6B5
+	2117F94F5FF90A4088B52B2108034138082DF045F229F8D956363A8E3CD49197
+	92206E2E0983165ADE2429B29BDBDDDC1F02AAAA5A277D11461A68F64562C1B1
+	0A00D080B6B5031E73139EBC76EA55EAB1FE6A68206686D1F20CCA1E2332E9FA
+	C5379FA126589B58E8292088759CC6A1084414E23CE40D943C86E1D9B7CDED7A
+	AFCBCBF9D014A7B238D6FB9D52EDBC7403A1398454D24D4D7CD33DA31C353D50
+	24CB3C7DCCB47C4F49B5B8FA77AA7665D7765030938CDD86394952FC9FB679BE
+	C9B2DF08BF0510810878FCF831329799951D9C5AC1E106AD01A039E01F6CAC01
+	E88D7FFF407983051807CCA0B60738F13381CA227084812B0C4648E70A1AEC0C
+	B0140B6E9582E8DF5063E1434C40D358D941251B2333D0F03F0CA02A9F918D83
+	0B582A32090B4BC82980AA997FFFFFFEF9FDF3C777602DFFE5E387CF1FDE010B
+	AE772F9F7D78FDE2DD93FB6F9EDD62656365644054CE7F8051C2C8F81B180D0C
+	B0762D2CA9814A2D4644AD8E3CE2C200EFBEFF87E73144CF06A20ED878397418
+	04DCDCDC3A3A3AF8F9F9718530400042AC60058110889A630BB1B4D025FAC8EA
+	EBFC173B769288DAA83D2CB8EDDAD3D1F550D04D5014DF9B7933F3FE10608C29
+	84433263A6E3A714BBF380174991ED9E20DF1EB1CF03B618C31A85385B0E1150
+	62588B6504B6525EC40B5249997CB893B748C9654554E17162B54A0594F50E38
+	C6868CA5512AB5AA9B7ADD6CB6BBA86AE23D4E68855D1F72E5D5DEBBF60A4A9E
+	37FBB8587B3EF9A103B973C83B372CBE4C9179A467338B153635CAF9B02FFC25
+	278619D55A236A8E873D86929F087F0420C48A5610866160D6CD4D44041F0441
+	BF61D2DF9F1FE2ABA02296E1102B03D16A2EEDACB2074B5F1BDABBE49ADC1F02
+	3E43298CCCF13CCD320EDC493931FA0E50414E002E94473E3A17BC4FBE2A9095
+	40E882E4662A890BAF525FE39830FA7AA26C484A87412F868334F7CC380AC453
+	577C4C1543AF625F80939CDA89271545412A2F46BC27539A2D963E6D1F68BDDA
+	7B8BD6EB7A3937E6D898BDAD4FE6B0AD771B9F51FC3993A850F4B5C238143DC7
+	DF519F7A560BA46F5D55ABB2B4F6A6B5EE23FC1680306B596110068224292212
+	0B3D98FEFFC7D46FF0D0A3908B0A52A13D68D67D05A9144A2E81401EB3CCEEEC
+	E44F0020DB99786EE9AFAA0141AF41EFB647270B9CDF191197BD1D2CA876DB48
+	F348FA2150B2044FA268E55D4049CC31210843664C51BA02D1BF585E34AA8713
+	5516A34616C12C1B265DD2EF083D9E25007200B9B8D2356CE25E1A47E57D55D7
+	B726806806164BEFE58575659EC6057B94218EB19F87D83FBBF5337D436C4E6E
+	E3C112312239FE32C1CEE3D1B621DC7F06601780302B5A411886815BEB2A537C
+	193E89FFFF4B3E3A10D91CB6A874500666A649DA093EF8016DD23477CD5DFF7D
+	49964B807AB3AD2A837B820490B9432CB44C98A403C8CA99A5E840D4340B7295
+	E2DE2F329699FC15310B9112767A51D77AB5D67428F6852216391719BDB0DC4A
+	73DF67AD9CEC0D60114D770B659AA45175A0F840011F110C6F765912F32BC4F7
+	AE6930BBFDE1886BE9118629F82904EF5FE3C3B9A1B3B7CB73881AC55E4FDFFE
+	55AAC1E24466541863DAF6ECECBDEFBBDFB1F523005FD6B2C320080491185BE3
+	B5F1FFBFAC97A6C678F0D1032D3681CE0EEB2B263D131066186767F9478018D1
+	E64CA6B856B8CF4B2AB66C45D0600F35A5463320C03B8BD3CB12E9E5CC5A1550
+	B6E554E2B8941F0C0732A3AC90D97263097A48DDBDC0DC45E56554841E51AB82
+	64016C16C9C6C00D3569C2CA93EC4315A0796EF77A415664F8AB43F2C3C397A0
+	FB0B2CE5562BC331CEB3F7CEC1E75FD3E046E0FA18DA678FD2ABB9BFC72EE113
+	E3A1E18EF4F7F11E067306F9270021668C83300C04419F63407448840A9E9E27
+	F0021A7ABEC03BB0A0B0CDEE9E0D050545A4C8B29CE494BB9DDDF437870843F0
+	2CAD613487E678E9D9FE9401D39D8DF4581959E3174DEC08CC90C2F260A79CAA
+	9A5E7AE112C2C32024D257ACA66D9C56A27F084630E64DA1EAEA4FD094FB1230
+	932967FF46366ADD0D54F96102AE75D6C511E88058EB075AFC8770B18F9EFA8E
+	498237270097D227412462705F024BED3616F7F3F1C45EC76A2DAFFC80A83C73
+	BE9E97FBED62C38237A520A0527891793EFC16F92D005FD696032008C384F9C2
+	07F73FA42730115C5750121313FE4C0896AE6B47FF3B0A3D5E21EAF230CC6AF6
+	3510391A9ACE9771B02704D0DB2B01FB24262910DC2CAC1043134C2443921DCF
+	B8AF941711F609115D82A85C050535842993B72662D0633B5FC99BE988EC775D
+	6BD6992EC886E48A69E1A4A1799B2811BFDA9967C8A5EBE295973C97D9B14CD5
+	50FC8AC3591FBFC19E69DDC21EF5F3388736A7B30C628CDA8D97257C41BE05E0
+	D38C75188461204A3240FAFF1FD90101AA50479F6BFB6CC450B1657088133BB9
+	1787A7FF82F66DBB90D7C67C1946284F81F28A418E81A2D8930E6BDC03785C68
+	5DBF28A1EDF674CF04EC2556C6F8F39843611B02F9BC9404A54418E283AC9910
+	CACC85A6986BED06DB6CA8EF23929AA69EBE5E9A2A9245F4172138B9413E0941
+	987031215CD043BB1E5111B7E998B266EEAE19B909BEE7E758DF6DBACFD35B16
+	80658CBF8BFC13802F2BC801108461424CB8EAFFFFE6C93B7A2571D3B59B6862
+	E4C609185BD7767F1550B7FDD9F40BFE962E44E74838C17AEC00C6DFCB3AAC4B
+	729BAC4CA28C6A76381DF842FBDDF1A2F96514C70DBAA04903E2C3AFA6057B5B
+	3D8853B2C01DDED22DCC401F0149CDC427519261D1D07AB7F043E62797917E72
+	D018DEEC3582352103B012248862035642CC6AADAE8BCBC7E483A62BF7E76936
+	52FBB54E010835831500611886B6131164FFFF95DE067A9AB34DBA7A12AF826C
+	8E2C7929FE64C0CC2978DFB6770849F344C2EF35270E0BE89C2F40922547FA12
+	77476F7E9AFB3544E4AE6A3DCB9BB251479FA68B989111AC954547A7165FC3A1
+	EB8F404C8DE152496A02F20A378D95059E34A2D22771339FD36EE21C0D96ECA1
+	BBA5EB1F61E3A45CF8574EACA1ECF6676B573B08D68443F19BBDD65ABFCAF023
+	005FD6B203100C04BB82A4FCFF7F4AC449BB7466A79C384B368BE9BC3AFE77D1
+	4F1647EE9F33479ACCA94913DBF983B07289E25812B004795C30258E4E0ED590
+	C730AC1A45502582F0F5A7262E0987F82C54DB40ACF1B54DA57FE78150DDA708
+	0483C53A574DCA28B456D53484CF42733D52223D55BF0C4A3D3088AB74A5AA94
+	D1D9954C0FAAA1FE0FF25F1E7110799F1A78EC9BD0F3CEB586FD65CD5F3FE016
+	804F6B5702108461E5A138C9FF7FA483E7A88025A99EDE796E0E0E259026A1C4
+	FF71D8F3F40DE3442D63A6EDF5794FB3C9A995A91F10E9BF15510946B30D7629
+	0A8E7B90135E5F14FA9806565A7674206E542D467B00EDE4F1F682899ACD90EB
+	B6110D358D109A5B329ED4CB20037E61B070D7DC9A5BDDE48E355DC47ABCB7EB
+	1DA8836ACBC186830A3D58C5D6D02ABF5AD8D6E5F5C2C339B5407AFCD398729E
+	3F413E0520D4DA75000461A03424CECAFF7FA08993AB8A72772D3A98B83290D0
+	F41EBD927FF791AF4165243ABD2A20F7F01FC42CE10F27ED9F182803ADD98D42
+	5931D09E9E968A3DDB49CEA67639106DEEBA094716F1D1F3D5855E576F650535
+	AF25AA29B59C0A3C84AF7912333981A4F83C98AB0ABED05E505252C88B002A96
+	D3954D2007E48956750072D273AD135B1A48E0DAD6A51BAC2EC3A514C8C0347F
+	16F916802F6B5901188461EEE95DF0FF7F4FD861B0EBD04E93DA6D3076F320A8
+	A92949FA578094D26BEBE21B0E80A26B32BE1A91A64D6B690368D69D667615AB
+	B1683C3C3592B4986E59E77A6F951E67EEFF923ECE2CB6A39C15EBA9DAA044FA
+	5AD5CFEDCD54C408C4BBDD92FCE2041BE3A1867E8175003D87CC6C1196AC9692
+	8E06A78E80BCA084990AFFD1BE84542C2E1FFB6642D82A1142F0DEC7183F41BE
+	04E0D38C72208441200A6D57EF7F3DBD82F1CB9F5D0B0A6588C926BB376880CE
+	30AFFDD780755D9E576FF792D795BE561941D786A41664CA6098578E8D1DCC64
+	BDFA96C98D19E86240E3DAA859F55B81C458BC3C050584C90754198C883AA530
+	47B915BD74E4249E12E879DD0F0FD61CF8A1D6AAD8F04BFEE0D3E01370988171
+	D9328AA511C45D4EED235C39714A986B9148078BC191BD4BFDF33EF6EDEB6F40
+	ECA0D334FF2AF22D005F569004210CC2A4785E0FFEFF89DE3BE3C04A02E8499F
+	004D1392AC9F6DCC211D33FCB63D1CADF3013076094D22863C446A0F3BA5D005
+	703434D6C12543254D027B49785E625F5A58E3F8313B99CC7479266D6E5547AA
+	0556C1DFD1145E6A449A1BC43F80EA75E2566015B259A9ECCD3B7F4BBC5779A9
+	83228F28024837F75E3B2F584CC26C364F5C8AB55749C194C4A5B135E70C13F0
+	0468559D2F6183555FFDD62500E3568C042008C39053061CFCFFD3FC80931F50
+	914A53823A78E7CEC0B5A149DAF2EB7F808AD93879DF93054DD46B40B198E26F
+	C65314194EA8E7A08404DEAA876D56EC0FBE0E1AF1A28E3DF1D90AD15F2932C3
+	4F64D0B913F6D7DA701EE135172D4871493B7789ACD4BC5691603B2C8D9D3218
+	E3D85484954D5A71EB3B6A012CB74D6716F7B03084B8CD534B9ED2B6ADCB7C37
+	4D71268450E8378EE3576C2F01F8346325004118868256BC83FFFF52171DB092
+	B4A02E6C8E5E8EB6695E650E03C677DA0B429B30EEDD5CA27797FF045BFC2D18
+	FA28D6E315CE9302A5B670A575610BAB14ABB98B5601BE78DD1ED01851A00CEC
+	D1C03B561E36066E833F9ED2F70316131205D7AF80AB861FAAC29327F5A589E3
+	9BF65843FBFE11C7650B8D84199D4AF7A9EE827D04520284578A0129D77904E3
+	687D0480F86F92739910B147003ECD6409401086A16C0E23FFFFA91E6458B44D
+	E372C2A337DB10FA1AD35AF86F41732E2126C6551402B1579D53058D495FF408
+	318141BD7B16F972C069FBD2002505D727C7A17A76F976AE5971BA060465F725
+	061572E9B425F480BF03261021781BCD10F5C05758CA078FC9749A5A4BF58D3F
+	94D92EA2AFB5D6736B627FD9389B787E979AFA5EF40C181202568B37428CFA66
+	4BAD1D5F840A54A8B5167DF645036E01F836771C00412088F2F1FE1735365A19
+	049D0F101BED0C3114606667DF8E9F1770A80B9BE9C184321233631BEA083D9E
+	1BBC2FCA071AA11B7C452F902DE36B2383138258444FAD01D25448FF75569E42
+	33E2E81A7FA7E96BEEF95B4EB7FDA33DA89ACD151DD2E0655295E48485BA14ED
+	C1C0006DAFD779B2C5F073908ED0BA82365688A0DC4C775DD81C65027E99CFD9
+	C1CC09793C82E29BA81DFBB6BE6764B6D1902034623F17F008C0A715A4300CC3
+	30E33683B227E4FF7F2BF4B0DD462971664B71765A8FBD84A22492226BFD1F04
+	BD72110441DB734C510838D05691ECCCD1BA1B19C1F10CFB2FB02C41356D2965
+	7D9450BC9C61F337CFCF65F65BAA730BD4691D0FD9315F9BD28337AF8E5C886E
+	78D424013833006B9D934E272A573FD71B49F745A66C10559B79259454D0B3D4
+	C4D6F52E6E4C1CF0C8AE6CFADDB8813DAB364C2A38DB96F7B1F39CCC5E8C7FD5
+	5A7D0F6E0A905F01E8B4961D066118D656429CF6FF3F394D488803AA48563F28
+	978D3F2069ECC4F6DF06BC91087A2CB7657D39511293D0540B97E662CA8AF818
+	F6D30304CCE1C0CD65F59A1D64815A3F4EA07FD562174511200B37CD476E7920
+	9C5031D0C3F755E454AD357C693DA1385C84D38F8F62F05195B89C5A722ADB71
+	4B1129FF79000B56381841706EB0E082E1310E04B4C87613B0FF5E41045E6F57
+	EFFBF651D875A68CAD838E0E30DAF5F3FB0A40B715E4200CC3B02EE91093B8F4
+	FF3F44DA05090D184D5962B717B4FEA04DE2D84E7A1A80153E442FA8EB72B38A
+	42050391218698D16D98860EBE1A6ACC6FD92CCF73B83DD2D9638B2D52DB9EEF
+	FA7544CFE866D47713C54E4CA9D84D8C4DDED9ADA3DC982A4F9DEC401978040F
+	71A717C5FA91412F58A219CB6086E3119C5F626BC8F5A07ACAAB0801C912492C
+	1111A494260B60B0C62B0391F6CFEBB1DED3DF4F93524A3E7FFDE3FC04E0DB4A
+	9200046118DAD1196FFCFF979CC44B356D4AF1A22F604B6916F83C80D6DAFB43
+	92ECC7248AF958DC31ABEC0925FD4E9635D6642197695E604AD2C45642EA32F8
+	6B7A296EEB9B3F6AC22ADE49D06E645C5522B674713B66C1DA33A268BC08E36C
+	CB6A0A43C2FF8F4B67D548472789535A689E4E730BC5F7D851EFF02EEC56C175
+	749AD8B74702A11A3119F445145BEF27AEA03264284B13D2B5D68A02F8398047
+	00BECD2589411886A12DA699C9A2DCFF6A5D73802E3AE537D421920C65051708
+	E463AC27A5BD60D1E7BB12091CE2482BEFC66E292B66DAE4E5A169D38F8F7CB4
+	EE5F94818428D55E598C50D89669FE7E9640FDB76862E8DE6308AD810B5D7366
+	39F2CA9C114B81446E638E56F75E5FA22ABB941F965A7A2CFE57BF10803FDA6A
+	424B2E29C847A716890117D6E7C79ECEBDC45FA17317B7ABB0FF9BF0380382B2
+	E2CFE3F0EE5F4752BB0407B59C73D73D2F166013807073C901108481282204BF
+	F73FA7312E4CA4483B83EEF40684B6B4F33AFC4C41CD81E47C9A940164DBDEFA
+	EECD88A2AE4AB02CA410BD4056B3BD82FE00A1E66857D206BB6FA7717F888942
+	6B0A0102C7D3F254F325CDCC02D8661CBB2A235D8EEA633DCC298E0130A78604
+	CA1C652A4226D819325151EED1548AC9378FDC8E88B1F06E99796C2CC2130AF6
+	31B0229938C83C54BD91637F87C6E7CB6208715D96AA843F02700BC0B719EB30
+	08C34034C1A51652FBFF7FD94A280342E0D4F639165D18B29201ECF3F91E771A
+	9028921E7A30C61D4FD211F545DA9BCA84F48F2CF596C95C6FB55E5CAF2CB3AA
+	626DEBB6EFA7C7E5564025E0E9E24B1E31936653692EB0C15785B197BCCB1FC7
+	CBBCBCD9A65BB5D387A0C9A0F900B04048EA5C649A35F731A1A4F641D1856E3B
+	FB80DDA44F83FE8B72EAE31F12D45F8D3CD80DB3B4EFA7FF7B60B59744AF27B3
+	EAF0CD0BF809C0B719EC00040341942AE1EEFF3FD0C5A522529499D96A5C7A45
+	24AA9DDDBE99FA4A2CB79C5781B4C237C78C922B9A93E8D629497358A330B5B9
+	676E072F0BC91EE678EEFBB985433289175ACC8450984BED245CE31619FE1AD0
+	D39DEE7C0E59BE3F486ADF8DEFD74D5EF53FC6CB0C6253FFA4AE563E90C16D52
+	1D0D5FA1ECAD75AE769DF5563100E15947DEEDB241FA857BC503A9A86FDD4A61
+	5D9A5F261EF701A21186982B3FE011806F33D64118868168EAB84A9058F3FFBF
+	961926100BA212F8EC7398606A862A8B15FB7C7EFE1980392739485C67956DDF
+	72FABE462BF1245DABB0C885098094A35554645B80022EB2A6F7717F22277B57
+	B9C8384777B2E504799BC02F47FF853ADF5578556DBDB67353A02B726418996D
+	C25F8D6456393A0D73DBFE14A7BEB885E0875D611FBD531C0B1517BC875CFA2C
+	A431B853E55AAD102BC2E77558A9BB5D2FE9E37E2335C6E8A76E75F84F003E02
+	106E463B0C8230144D51D1C5F0B8FFFF2FF70DC66CF1C139284A6F4B7C59FC04
+	5252DA730F7F0BF09AA64AC77C78E6324B3028BB33F246EA072815AAFFE4CB20
+	7876FF86145B8A18BAED717D6F1C13D2D9A40613B65D2C091680897AA5A5A90C
+	B9D4837DDF0DA31F1E1D3A5F926272043945582BB7B8852E5CDE73702404EC68
+	25A4E21ECCA4B30DC29C94BF1B7264776542B9069DB6B465851F0E134AE2F8FD
+	7D96D9FC235B448842086D73833B0F01F8B6921C004118288221E1A8FF7FA307
+	13A33150E94CA93779000904A69DA5E9478AF3BD522E3144FCEB168657EA421D
+	0F3D1CD0D0E94FCC8ACB3098663624BD85398FEBB9EB6CBCD1BCBF0A771B4F6E
+	72855DC487356C3A4390E8EA889FCB9278B99677D0CB457C44F11C55C62A5363
+	6F4B58FF52020C70985C1C07D56FC0A64FDF64CC949D05FE1439392511E30800
+	C6AA23409306B28EDD87032C4D2BB26E9BD2BADFF50AC0B7D5B4300CC250AD62
+	07D6FEFFFFB7436FBD0DB6B1E992F7A21D83EE26045434C9CBC7CBA9B8FB1FDD
+	74BE2C70D96FA232EDB281533570D2E8535A1E4B530A0C122264A2A6F79BCE4C
+	8E31607660F146BE7EA50FFE977968B626DE463C7E12200A9E874C507EC0AD63
+	8658C78C14B83D5017C2122286BE920785CABB1850F0A9D671365E90A15B7307
+	F2F6B99F66FD6A42B4C67E6C03C6F87A3EF6EDEA8E3AB85E25E7BC96B22EE5FF
+	077C04E0DB8C75000461200A82048289FFFF87AE4E32A0D85E0BBAA813890B09
+	D0DEB5AFFE9BCAB563B837CC7122596334B3A98230E01DD8A05310409A324C61
+	BA1844AE603796E7580EF28975D2DE8AD51BD4386F9FD275C1F9093184C10258
+	6578318A122905529988F8BD2404AF3CAA2E10362F881F2F526BA89DEC1549AA
+	84C133746546075B2127941C94FF7D307801339AB42638ACE14F6D97035F518E
+	52F66D00B9B2F0DE2F39AFBF0980BE5B003EAE208761108629830DAAAAFFFFE6
+	A409ED064D6C93D3B41E38B5072001DB71FA7B03F87B14CB546D0DD47B0288AF
+	4C563F7CB72A2838FC6C2F2B450E2870B1EF08C13FBEF691081598135A8AD0F7
+	A4B88FC07D288A63E67EF11FA753C002C5971A0EFC12AA79050EA7D92D7BB997
+	8C6E5AEB9947F846947CA756DB7497955FB136C4B4B17A4C9688E4A269CE2732
+	73854DBD70B1DFE3F35E59AE50F12D7AFF5AEFD75F0CEACF2D001D6790432108
+	C450258144FFC6FB5F52E3C298F84199B6832E94134080D2290FDE2760260FE1
+	95454C03BD0AF332E7504430348B6EA54E4CD6A37F1F701573EC874D128801CA
+	14543833046886C4A1CC962A9BE6568B5915DF523CAA9EF0742B44324B246468
+	148A22E8A88309C5B229A221602BA52938D2FDBD831ED3F6375F5D4796E5254E
+	87DAB1D50B0846FD6C61D1102241A115216CEBF20021742BF51BC714E3F41D44
+	B35D021072E52A00C23034062FC455F1FFFF4F71701135B5CD4B6D05C1B54397
+	A439DED1EF002C018B4ECC7E5DF7AA1A77509C0999CE89238D0514B96A1B0265
+	CADA15F7034D42831318634C1AE188AF074F2634129BB8956D28B9ED4A243EB9
+	9713D8DF73621ED57C941816715192ADDD495D1E02031A566E79007E82A0C3E4
+	72F09703792DD2531273F1FBD1F5945C506FA210128E1C91AF98DB3A67BE49AB
+	5AC338FA2D6CFAFB0DE91680902B4702108481E00CC7FFDFE951584A88249B88
+	8D6347430121D7EE860F0FD8F630D9C7904B5DD895AAFD3586A07D8EA481114D
+	4A1DCF1E6A6665B71BABFC848D6D1153919F43BCC267C254DD2DF53A61A6238F
+	DB4F3A8B2688B4D53C16E8AD0369DE755B56EA01F99611A0E01140CE75F530BD
+	A0696C8743F6842202682A5B46A68BC4380A9B46D773B10BE583024726E18AED
+	3CD649793A7A26305C4ABF9F22DE02F071F63A00823010961F75E4FD9F92C145
+	5301E95D511775703286D4B45C7B1F7E6440CEAF83E94E9938151D857865313C
+	563313FE56BFC5B82C743514C09772B794C670FB09B351F8D710F91A73701EFC
+	3C345BC3DAB56668A41A9525B2C37730BF3CFB82DA9EBF79548C8CADEAB42135
+	0B5C209BAD36ABF1F7EC9CFBA93319169077EC1819F9FEC293908095285707D5
+	E8A11A824AB08AE56818E4907DCB6FFFBC3F292229A5F97710CDEB1280902BC8
+	011006619BB8E8FF1FAA891E34664381827A3126C69B17D90A94968F1B303FE3
+	30B38A8FC9BD5BC1855B5DD7193BAC3ABE3274DE1287E059A3724BD08DB86717
+	C1314809FDF30E2BC0011A7B2A821827113C184C27FC650944A9651DCFCF897D
+	B6D2A2F5691E050341387C2AC7AA34F03FBA34A1792516EDA3E17FC551970FE4
+	41C678767EE4786152AA32B91CD27729ED8E7D5B97E93D86842057022010F41B
+	804B003ECE1D07401886A1A565E0FE676461465D4A4948EDA462407000900ACA
+	C7F6E3FB05D45AA9BFFB141433684495995180346B05D98A0F7149B84FE4870B
+	88179AAA8B7F77128EAA6A8A590AB7B327AD5B1955E8BAA15766A8F5D82DC882
+	670A324543034128581C09497EE672EB4C76A98FA1E165A2F7801DCC1A3D38D3
+	79EEDD6A7D1FD13C8930884C1C878899C85400D597758A85B610B4761EBB53F6
+	DE09C67F7D7E12D1EFEB1180916B4B01100482AE19615FDDFF9E45912B35B3AB
+	D147D00144711FEA3C4C5F92AC26060884B4125A109785C6D07C1924BB07CA02
+	84546C701A455C2C66571AF391592ADEC3EFD7943E7F9A44ECF8C80D4642A1E0
+	B5281B1D4FF348F752416C55A846218480CAB0CC45EE1B3EEB8AE6DE70DC8AE3
+	5C75484E44C76E6DD2A3E859C0CA994F2DB8156430C8BA360442BAA4B53AB06E
+	803C273AF64D747D7DE90211C934E7BCFC08C02500215790032008C3D8D070E2
+	FFEFF4660CA8D052C2C5F805185BDBB56C5F1BF9674965A6B443E1AA36EA1AF0
+	22C65B513D87202608D0A15935C9FD38027650AE180B9C075868D059D2136438
+	011B51EFE0AD1EFB53F1DE9EC93FE901B9F5AF9064B73001A866002000C77A50
+	14865DC8699F6825DF807229E705DA417B96CD7C198DF28BBB0DBB1A01DF91B0
+	AA2EB1A091FC6370269BB62892809473FEBD80570042AE5D0940108629089B8B
+	FCFFEFE1ACE7C64B9A96C7E09D0B135BAF697A49FA5D80D3FBEE453066872A91
+	085C6362E39ADE8CA01DA6406D60C03458B66A4E1EA4E4D1054AF80AA634EBAE
+	3C4734542D4E72AC108D09FB45EB264E144394331F439492C053695BEB10484B
+	37AC805E213409BEAC64F28750519E8C3029B3AB387192839C77B20F43A56E4B
+	30FBE6E17BCAF3D58B45727EF5F3735FA54C07DAB0B21CCE596BEBFB5B805700
+	46CE5E87611006C2FCA452D5397DFFF7E219BA74A8540507CADD19D4A1437732
+	40009FEDFBF8FD034A298BB3DCAE370A1DD306C879EB49EF0B589455CB4C4620
+	28CD9CAC4D948526685ECDE6387C52C51F89D898F190135CFD59B68FA86DC1EA
+	6B746EE9BD157A189798C2310A0ABDCC76B9D0A768F2E62DAC3EC16504CD04E4
+	0FB471B5E37D8C0B47835CDBB8930983CFD0C3B232C66F368FF97F731A41ED9D
+	EEDF6267BC9E0FA64A975A6D356BEFFB3EC2C03F31E0230023D7B2032008C370
+	E84DFFFF338D170F22206D376F26F205243CDA6D6D3F41181922CAACE8E8438C
+	8F92377106BD430BD314C101C5479622840750C3274C242BA96AD895513A82C0
+	99068A0B65C954E24847E1E03E00C0DC79C3B09B4E917EF2DF69F022315795DE
+	2D1A6928025CF8905E2B07B7D5901471D7EBC25D15AA197D99F2E85838C226EF
+	4C38B9E03B974A23BB165209319A58860910009ECE6317AF785D607729EBB6FE
+	E1A0633D023072063B0082300C15E2C5440FFAFFFFE8CD18D4E1DA0E6E26FE80
+	18484A59DF367E41894213FC313ACD8B9B7CFF3A7DD70D47823DF27F1C1FF236
+	F13C1C88D15B0B8445259B4069A96A62DA05E606C709FD496A09452A9565FB71
+	3140CADC6B33C1E5F48FAC941FAB520D5A161BD77804D45C0D764DC0F67D0DE5
+	126F4E2E88450C0BD34A7AD16D2E80EE287C4A005B752847DF277C5EEDA303AB
+	85D2F796292BE7B1D756348D0144296DEBF6F3005E011839A31C8041108646FC
+	73F73FEBA299385AAA5FFBD80E6066C452F0E9F702847E1D2422CC2C64077390
+	2D4398872FA23628DE1771D7497304D0B3BA5ED2C03FA600AB0F50C9357052D3
+	CABEE445E5617B5552CB01D84642E319ACDC4A4AD9C22E6641244BEB89CA93A0
+	36E046A8A4FA30DDD1E006C459984CAD6FA13E54442EB00E5A19CCC6ADC0C493
+	A480AE7A88C866DECF4DF9F47BA00828DB18EA39AEABB53F1938BE570042CE5E
+	07401006C2F23718DFFF0D1D5D4C8C83C122BD6B198C89CC4C1028BDFBB88F0D
+	E8CBD35F518889D2135ACAACF786826F71847D5AFA40332F3E2530B36E3DEA64
+	F7D447C027833BE86A18FB0C7548009E01EF0DD491E1B252560C7710AFED1105
+	40F8776FE27B9369042C9ADA4555D5FE600E544F46502D08AC240939D6738B56
+	638C8B38C6129AF977F424307BFCD285562A6C2974D7C1085FE77E6CEBEBF2C8
+	392DBD09F8D341391E011839831D006110860A17A307FFFF27355E8C31C629F0
+	987AF0E02F8CB5EBA0E5A300F334DA15D620083BCAB6ED9016B4024C7D520593
+	4481B850776C3011C21344674B8DD1E57CEEC44ED194E7C844339348C2C27908
+	294540CE479B69708B66B0E6064B2C43ACCC716EB35B778445455E9D3BC542EA
+	BDCCA3A689EB885D8209A54997A7E22EE43D3A13BB18A3BD06E1A1C34ABAC777
+	3253B18E916D5DC4E54292F6BDA0BC37040CBF107009C0C719E40008C2405020
+	1138F8FF77AA89F1529476B7E8C1E80BD4022DDDD97E0460DDB61E00A4B298E6
+	5A1743B98313AFFDAC9E51188B767E0296D28B96E0CB40E6A3383B256B66C073
+	1A69D44ABC102B506E1553032201BF1FCCA63EE5A67FB8203DC7482BA31A6BAC
+	594F29050D38163FE681C7A927E1C18D1C7C733A487FB3A8B6123870A1B97E66
+	A2106F96C80162C316B8F950FA9FC7CE780F93E87495524BCEFF38D0786E0118
+	B9621C00412026A85F90FFFFD09868A2514EAEEDE9E2E06C5884706D693B7C36
+	148CEEA6338CCA741EEBBE2F7DF6BE30E51E942C17FBA7244AA1C1E490A84C73
+	18693384DDE00C10E2582C01C09E2163B4DBE554E81187574E2C87AB5854F936
+	5FC5455DB779296A982293CCFDD6409BB0B94F88E759BDC6E631CACAE3CF9C53
+	47A09C93D4BAF6E1C20803BEA56F20B2054FE7659FB6650E477464C7AD2BA5B4
+	7F35FD2B1FBD0560E40C5A10866128DCB876B239464198FFFF5779D0BF2063EA
+	D1569BF79283E04128F41E48D2A4EF7BBF4AD0B6A59814A9D8AB9FE3633D5FD6
+	6B1C96713E4DF3324EC7D41FBAD88BFF0C15730310C4D1DDBA8A7DB29440512E
+	5FE814A3B90B00E405150B7E3412B1F812BD421D513485C8B0260AD1CCCA20D3
+	A38132661B715DC662DDF7DD86EE4A790F52BA55B8972191C1EA142803880768
+	F6246E6C60AE2058B663394861138F4380E179BF7D23917AE79C5B1FDEC95FAE
+	891F0118399B1D046120086F52F909690C1E8C89EFFF726A3859120E506C6766
+	A3070F3C025066BBBBF3CD9F0F90520ACD29000DAAB74F36FBEB739E1EEF5729
+	965D1B6FDD703D5FEE7D3F36ED50CA85D57E07D2934519910DC8EC2151DF0095
+	404F6593E2AB80FAE2EF0179B82B8BE2FBA0E6A36465201A87CDEEC4CB9EA8EB
+	0E225080A42BEB1D74433120D1A6F41A99FDB1CEC37A4B9B7C9324398BC353BF
+	1BE77DC1AD59590BB96A6E5C97F4132D2B7D883196BEEC606CE5470046CE1D87
+	411808A211921D13D3385294DCFF4A5C221448144424056CF0CCEE5614343E80
+	D79FD9F1F31C14E033CFD710182F82BE69D5DDBC6DECCEE4372CDFF732F615FE
+	CCCF941F6DF7BA75F718737DBB17471129AEABCEC3426C56F83F04D80878E8B9
+	AF4D8478A083287C23763DC27D871A641F64D968463E8AFF50E38D82A9E50B10
+	6D586A55239DB40670B7C42C4C90DE9E1322E42F30384BE065E6D7FE5D044D9E
+	0C04A7F5129A504A49A93D5980BF008C9C5B0A833010456DC6361AA1504ADDFF
+	9ADC8550917E28A6253E3AF766BEFAD1EC202464269733A7FCC9458B3A659140
+	4901C664B5081967C39DC77E89FDFCEC46F16575BF84B60A0FDFDCBC6FC49D71
+	EBE87946AE6B62CA15E600FD1A25CDDC58C0D3463A11FCB7EA4895BDFAEA9F12
+	D91576E6792478CB3E52740AF8A5BA3C87E30A8BCB5C56FC9C4CB38FDA29FA78
+	2AAF47151BF946E6896414502BB0F5775CA6D7600C894E097CEA501F2DD0F5BF
+	16E858BB008C5C490E83300C0C5B21AA8AD4437B22FCFF6945224784AA94B8D8
+	E3901E7AE00951623BE359FE5C80736E1C86D97B68234A31FE728C923283549B
+	23374B15EBA23789619DC2FA5A3C9FA1B68FBD4DD9EBB3B3F74BBB5746A3AD44
+	E672448C9F29625AEE33B966E0CFE239B121582C677C8AF7519A94C1C791F2B3
+	2F0EFC920822CA491C2A305123330C9B02A264ED9A5832F00A49670CBCABBE65
+	A21F85A52E21783034E516DE9F654259A1B3F1EEB26214D6DFFA9317F0154058
+	22405F5F4F5E56F6CBD72FAF5FBF7DF8E8C1E3878F9EBE780139BE177E5CCF3F
+	E86A837FB00E33645335784F0F6481F8AF37BF7EBFFDFEEE2A489E4D88834B8C
+	9B579C935B880574E40A307F41C6B3FEC1F699FF6382ED71878E35C2A6C119FE
+	43778F829A33B09DF44CFFA17BDC1961675740978380375D406BC8FF7FFFC376
+	5F40B620FC83853574FA12B2F802BA2B0A362EFD0FBA1906BA6088117A6301FC
+	A21506F80D07FF18409D0046A45373C01E60E7001DE3CF47C4301C04000460EC
+	0A76108461A81338304E768B7F20FFFF379E450E0B461322246B84C9D676E1E2
+	C19D972CD9D2E6B57DEFEDC703A0C708436D6D01A06D2FE8FD7B9E1FC370EBBA
+	7BDF3BE768944A615166A71021F825A628A9C289B5B0AEDCAD0BCB0BC7278ED7
+	98C6CADA34FA5C69AB1B53A512AF10960B73F61905B17D5EF864AEA212166606
+	3F6197C8CA844570158B07535F69394A8221EF7645EA7E494A54812744946D06
+	0E5F8E1B9622E54B17D9B612A988302538F1F179384DBB473BFD611077C30922
+	72317F34A2796D0230722D3908C240D4B102B24341CFD0FB1FA989C486103426
+	45A38C76FA06E2C285DD916E4A269DCCEBFBFC28C04B6EBAA0CBA45896B7A066
+	5B1CEADA5A7B1FC710C2D97BE7DCA96D7DD791D92811CF2C549781476F711EC6
+	7D99A358A8731697EA73B80D3D5DA88F9F45934B258E6559C562D01A669A2439
+	D0FC599E2306A02C9C54266D08C6B099194D93A43648C1AFA414CC1B1A202017
+	34120C39D34A20A4C68AC86FD22241C490834B92A0623A0F587C0D2E86FC8E1F
+	E1FA15EEA9ADB0DAEDF32CFBF32128AE8F007C5C3B128230104D0201194AC543
+	E4FE97B1A6B340C542982C1377DF2643A10347C80EFBF2F23E7F06B045E25353
+	229E4A3713AA144CDB31C2F4C3750821ACEB32CFEF3B0F631C79181AE8907FDA
+	FB4D7D39D2D02981F9BAF170CE26844F2D3416EC647A2CAFE9F3BCC9FDEA746E
+	1936FA4B07CCB05593449DAF09E14B742742EA32C59C6DC4DBE2E4799AC97245
+	141D4E0BE8E28A9A65E123CC177828D6BABBE01D2A4B8B017E7FDD52FA91BB46
+	767695233C684E2995A756ED4068D7953E4A264F314686DF836A8EDFEF2B0023
+	6790C2300805514D1392B4DD9440F00EDEFF38DD26253BB1C445D3D8CC7C952E
+	BAA86B410415FFFC9957FFB2E5520196C09708697B41E2A19DA7E8C968DB6E1C
+	7B638CB5760DC17BFF5896E3664CF3EC9C7B6F30839297754A38E56C40D67C97
+	72C860176A62159F2F70E9EF0ECAFA0D0F54375CAE43DD9CB56E980B49C85228
+	D2D4A653C393C6964AA03DEC3933ACAFBE57945D251026351F4C16053766D86E
+	2C080E85BF34495FAA043473E82A150938605B581D30F8391B2CEBC08DF27711
+	708C8F008C5DBB0EC2300C5463AC042ABA74CB3754FCFFFF4033D35695224823
+	FC6A5918C8E431921DCB3ADF5D7E2440D758ECF5CB225E030805F0ACC74EAE1A
+	C979538D55DB32FA1A63BC0D03B5A9699E534A8F71A46408C38575644EF0710E
+	0402D66A75803B18C9CD5A4884AC627AAD4BC9F7FCA4F1F0EA431FCE7D839DF7
+	17C07002568781B33A75E675A2FAD60AE620678396112815F8D92D4B9AE38B03
+	5B089981BEC05C7A3179FADB9782A443879201B85A1888CEEB32213B1414140E
+	FABB50801D3D81BFFB0F9D8F00945D410E82400C04598817D107E02BFCFF5F24
+	C21D026E30D9453BD3D693177FB049A1B39DCECCFE28009E4A3A6005C6066A26
+	4DCBAE73232C3350D1E53337EC3B3020E92C2373A09CE0DA75B79C65A69BE659
+	70FBDEF78F615CD7458E08A70A1BA9FCB3AA54A4401AED25943544419A156A54
+	704CDB33BE065CC3AA53682ECD51D0FB0C3AC48D9B6080F55AF576DBDFEE8156
+	16B8416F9D72DCBE052B54E193BE4F9555C4FF5C381DAD705D5AD81D69286840
+	E8540445B6A50867B6EE4EB4AEA10EF22DB6FF14E0230023D78EC33008432144
+	21488525953A3687E0FE7769D32C0CA9D434E92F84621B94A5436F80B1659E9F
+	1FEF47029A7DE39C834816965775013B49EA470C679664758BAC2F4FCF253AF4
+	8424558805A3633918D31E5B6BED789F86EBD04720D55FBAEE3C3F9E1E09F7B2
+	20F926CB374EA83F2F0432BD1C81D9EAE7CF7C7B4D27583E08AD54A3F4A1103B
+	59EB35487AB4573A2109979381100F9BF7083A2632BF9908C104B090A1745908
+	8C163748C883D0677832E02494E911DC72680F6FBE8C480D00FEA940A5106425
+	55AD8C31FF27E02B00656793C2300844E1A4C64A281A023D41E8FDCF2481D495
+	9B26815012D3F9B3B8E8A65BC1D5A0CECC7BF3F93300F7104283749F82DC497E
+	A0C2304A158AE8AA8928B982F35195C0F1A47549CD0CD8E9ECADB3F6310CF03C
+	BCE639C638422CA6C97BCF4506FA8BB2DE846396F4C14B89FF62D1E620B35C4A
+	EBBE6DCBFB092BAB76FADA2BDD99B6C737E362D80FC6FAE577FAB1E1B93B8640
+	E56F9FF066524C53ABF6F350B5B81FC40921DCF73AD7F2A451629C20055A148A
+	C0E8DFD544F587E4C718031987757F9C808F00949D4D0EC220108581D6563766
+	5CE80DD8B5F73F87ED014C37BAB1AB921881A2F303BA7123176842E8CCBC07F3
+	CDEF2BC9AEEFC7E1ACC944AC72C02CEC36F22CB91FB848E1959381A8436D0A17
+	DB986F5EE21E3C9D5F1D471296007000B0D686E017E7E6FB7C99A62B2FE93A66
+	D8107D5D7D58D51C94C48C22129A2A5C683A028F178A527FF34BD2355650FB76
+	87610AEA0DEA8C26F335C9184AC2A616F32D838CC46ECECD7749B84551058C35
+	6BE492186B6BCC5B4697C139FCF763C47F3ADC6E1ADB55C9DD382DCC82DBA63D
+	9EFE98E3F71680B16BD9411804825536462FD5D88FE0A4FEFFEF546B30A587DA
+	183581E2BE8493895C396E06766798E1A743E6703CDD9C1B061F632030734F29
+	F27A498D541E7C994578D5A466151A4DFE5C3895A055F2B55581FCC0887A009C
+	5C9A7D63ADC5BE76BA4FBDF7EDB9ED2EDDD53999CB44DBC2D6024B8C60878AEC
+	6A1A60A0698A12E06C985C7D57B17F8DEE497B1B83E0C062AC76786700AC49E0
+	1043655170620EBF0779CB9D78A099858DFD26D526A59E16FCA09108C9C7C817
+	34CEA2812AC1A7685D6F0904CC7DFFB93E02F075054908C240CC1647E122E309
+	7E20FFFF1157EAA95E14D19A645DC60B323C00DAD9EC26BB4DFF1D21EBFADE7C
+	56904BC18451CF986A5FF6463EBFEAAFC583C4AC9D0D31D806453738B711CC9F
+	AB08A2D35F4EB173EE517C15D90CE88777182E282D72CE1336631C413252A215
+	0F200261FEAE6C55449B3D73184645E9862CA8341510C35C5ED7E72D3D7896AE
+	4102074C1DEA73C57E4613A414D2D54B9D7AFA92AB77EF4A839AAFAB19872B17
+	0BE0B460D5C37CCFF860319B23FF5181D2B6A72D8BE2ADE723006557B483200C
+	03710A2142303EED95FFFF2A50130534911732340CBBBBEE1D933D2E59966E6D
+	AFE95D37ED2ECA5256CDB6D1BE138FE19CA383169C1C6720C55FA1227E1A3F42
+	8F7808B62090B14F0B7763339A47E4A4EE22611AF0A7A1CEA3B556F3DA71EC86
+	FE72BDB54D33BC9E2A0617CB14914ACCC78D6376D0A75001040FF2FE6771773F
+	3FA6F757DC94819B3AE4E7342D92EC08DA2C2B798C3A213B20B3838C6143B1C1
+	9580230CCEDCFB590CA07A7EF8F762F653550952FDCB003F0128B9621C846118
+	0851194A178608CADAEEEDFF5F0313501828439414DA8AF33981B99EA3288A2D
+	DBB9736E99BB60767FB0CC71F0C1A3EBFAFEF51E02497CB1F84D99E826C390E2
+	0552E5D27475D4BC22B0904828125BE6F7C78A832FF2DAC256B7EBC5FB505755
+	792C9BA675CE8933D0D79E4F787FA392ABDBA2FE6882C4949893809D24CBE91A
+	398FE025D93CF9D51C86CFDD3DC7513A97DD26B779614DB645D95873F6C1FC35
+	5B05DC50557565270CB5EB7101284809A58F1ACD08D3453D28EC2B80488E0038
+	E0E0E09095979795874E21BC7BF30658684046719941E7C630C10FCD01DF4D01
+	DD79023960EBDF9FBFE0360F6C7B311374E90AFC407E60BBFECB97AFC0F0DAB5
+	6B8F9CBC9CB2B2D2CF9FBF5858411721F2F270CBC8C8181818FCF8F9E3FDBBF7
+	CF5EBE7C70F7EE9367C0EEF707E87A787011CC0C5ED608E9588292F39F3F9092
+	1FD2CA848F15B201DBDA7F5EFFFEF4FAE747A0343BA89FC129C2C629C4CCCA03
+	B40D766E2174FB0623FCE0DEBFBF19FF822200BC52123A4D0234908B8B8B8794
+	3628100004E0EC0C72100681289A50DB62534D3D80E1108DA7B577638971810D
+	940A49250E33545DE8C639016112C2FF3FF3E6FF067C568745B9CDF5A28CB1DE
+	DF490A6C126D6D552A99B497A363B6C2B509744B083CF4DA98B166380F7A1CE1
+	AE41125A3B41BF13FA2C6D9058C82369B64D7B6C8510A7BE9FDDA4A1194A4929
+	4169F810707E07F3488A4373B69AEDA9178C906CC4F7E6BD787B38ED2C1CA266
+	655770F84A1D2ABE67254FE8D68291271A9750D52CE2FF33225D8DC622E151DA
+	FD26547EADA700A24E04C001D08992D2D292D2E0036F3E7FFEF0EE1D305BFC06
+	B72C41B36CA083E4FEC33A5CE02585E01127F02D26FF605761800ED90336822E
+	5FBD0AAC095EBD7A7DF1E2253535555959596848C1AEA181D4C3905DBBC0EE1E
+	B005A2A8A8646E66F6EDDBB777EFDF833A7B8F1F3F7C04ECF141930203F4DE1F
+	60AD0B6C50FD630135DE19A02BB7604B9B21F101DA96005A6EFA8EE1FBFBDF5F
+	EFFE66646364E56361176261176464E56665E6FEFFF717A82803B91A680E33F8
+	50F57FC0F207984AF01FCD8109000288CA11800C78C1007602DD2B60B600B6A6
+	4025110BE4307806D8967EC8F1F0E09D32E08A13584071B073C017E73A3B39CA
+	C8CA817A73FF619793FD031FF20CDF4404EE318177A5810A1E1E5ED0D6144545
+	C5DFBF7E7FFDF615D86478F4E4F143D06CC6A35F3F7F42EF276062821F2F065A
+	17F3171AAF90E5B02CF091707081061A09FEFFF1DFD7F73FBE82FB732C7CC022
+	08AC0C3613059E58E5E6E6666561E525B108020840DBB9E40008C24014A362FC
+	2CC1350BBDFF91E4087EA20B51B1B4C5C4A50B134E00493BCDBC0E3F3EC0AB75
+	EB160EB56E90B3F3349F8713C85421ED7D32F1E6A97F0AAD943166186C9E6750
+	58B67529CB2A86F871786182391864F3FA08E770884820B6024E02B20426BEAE
+	EFDCCE139F05616B2D485BE738B031984B19AD9E315489D529BD9EEF5BC89344
+	A1890CC718AC63293D8E09B4140FCFD0D4B52CE4D79BB90510952300BAAA1276
+	FE23D24C2DA2EA96040320FB13B041F3E1C397AFDFFEFDF90DDAD80D4EBF9031
+	351E6E2E1767E76D5BB77DFAF4F1F2E5CB1F3E7EE4E2E6012A035F4805DDBB09
+	E97F82DB3F8C8CFFE1678B32C0163133431790FF0135A8985998454480D12AA2
+	AEA10E4C045FBF7C7DF5FAE5E387C02EDFE3A74F9FFD015FAE0A1AA56062839D
+	D6083E3C169C3EFEC28EC602EFD8878C15027B6DA01531A065CBFFA01B227878
+	78481A8886008000945D310E80200C447FC30BF0FF0F7116078DB12614062CB4
+	D4C8626460EA4487D2EBF5AEF74DFCFDE2A61147C426C1A8DA06DF0DA3637CF1
+	B1C6D49832048DE9D8373821A5C83871F155A2AF3BA2F76B8C68ADE53A318CBA
+	3C2BD2113C6FC8422D14A5920737E08D1D6676516415D72973B79AEDA2F51602
+	5CE0173FD7EA4D1D1F229AB70D92EE058A1D483B922AE676E44CCDFCE4DCA77D
+	6A776E0158BB621C00411888123F63A20B2BFEFF191A75C051189840A1D7B29B
+	B83130B549698FEBDD3F09686771EBA221A0EE6E683496E961282FCBDF863090
+	B3D07ABA814C0FC37D9788948A413D0CB01E0DA17252E04D900B064E4017D89F
+	9271599694CF30CCED654E23042DF11BC2FC5FAC6DCB168E5231C6E0BDBBDCBA
+	EDE7799464D43225B69C00E69A83214CEC8050A114CDD368ED628CF914C05700
+	CEAE68854118066223CCB5EF63FEFF7F395FACA06F0A4E2AD225D754F4D17D41
+	A12DB95C7297947F879AE3230B1931A6B82AF1767D03602391C9034B80783ADB
+	39820FC76C010D103E3C98499AA2E354725D9DB5A2D1CBD36C629206A1C5ACBE
+	6D285375CF0A0A0949200443875AB910B5CF4BC005588F264DC279618244D5B3
+	E2135FEF9A19DF7759A679F6BDFF346DD7FB7118C476785ACEA19974CA654B0A
+	61639472CEDEBDC99F009C9D3B1280200C444770B4D0C212AFE1FDCFA2366A05
+	9E0034C9265A6B090D33A448B2F9BC9F0670C6CF86C0F81C85800615456E188D
+	9AD1C5A9EDBA59C7712B30E16C754DD13D088532008AE5634CD0DB6AEF39BBA1
+	10AFEFDAB691C121484C60721A03206B6385776F815CE420ADF7A2B8A5AC894B
+	1B292ADBB305F28A2B504CD934E472E8CD10C669E22483BCD5BE1DF3BA90F73E
+	5362FCF6331109E9C917D9113D7CFDC95B00CEAE1C09401088798C52E98CFA17
+	9EC2EFB5840F5808851AB2E0512A35153B84DD6593FC87A017CAE7A8C47E163F
+	37CAE2A91A2F08B06709186950A7DC5F6626104320BE730E401C4248F434FA59
+	6279BF612F92CBAEEBA771404854DB446CA2E8BA3067A8B19A8470B339399907
+	E2365CD5B7DF29758D8A4482CC6F064B671257D9268C45D72196BDD76C0CAECA
+	CA3F3E6BED3C2F8029E4D671469F58A4B536C628A53E1DE3290029D7AE032008
+	03838BCCF00F7C11BF0F3B93CC8A89577A35C6CDC842C258D25E1F77FDF1018F
+	E8FF7A99C398D3D0F71E761B3B5C5BBCE41E93B302EB97525A6BDA4D9CA826F2
+	3A295B6531330E52955DAE31BC5F4388310494DF700D9442D697555907C7121C
+	E4B28F669444A7DA0DA51B2A9833AAC87E37428B6D4593D044D45D34E57214CD
+	8E63C033B6DE51EED55A915BA79472CE5FCD780940DA95E40008C240910768A2
+	DFE2F77A913770D3835B75E8424C3C197BE556326D29D3E9DF24FC4E0C051682
+	03B240A92ACE44C600245633835B9171D738C57959A45F7632B90E96092CD525
+	4E271EAE961E0E0C28614205E10EFAAE4385D9360D9E6F3ECB200AD3CD553A98
+	2DF828D203A657E9EB32362FB184DBE8CE843B74D7AD7B124C7567B29DF3AF13
+	0A8D63DB877148298510BE3AED1680B56BD901108461C9047CFDFFFF49229F20
+	B781DD26E8454F7221811323E9BAC0DA3FEB0081A0F2A098C007D6D625CD0406
+	598D8C9ABEA18432E723ED093C1D1513CB8520CE38112616C9507BAF778EF4E3
+	1738E21046123186EB8F0572358ADC2D46AC80E603A0701BEB327B1F889A0FA5
+	366108ECD4EE3F5A4D14980B779F9C4B1459D3556B7DBF25109B23AB89759917
+	9F363F28B3C0EEF4E216F93D4E0158BBA2150041185816461125D4FFFF5AF507
+	42BE0416DD765ACF41FAB267CFCD6D7AE76F0030C7A7BA0F60A071E543B8D0EC
+	2769D7EB450AEF3443D871DEB65DC7171F18D8EF40C5020799112B2E4EAFBF7A
+	62B11A2AE4C3505A991049B26C3500F5DE23142CEB263D9969766E70A3B3B641
+	C812B46304CC4C5B4F152E45DD8B0446ABF1EAE51898441A20C530113434A0D5
+	4F3832E65553294A71E1E3E83FB6E1386E0158BB821C00411886665CF4CE1FE4
+	FFCF02F58AB0E0D806DC8D0F802C25B4CBC6CA6F07B0CC5FA43BFA7C7541BB02
+	EAC6239F276041C2E2BECE941E8A5B12A4563146B41684F985F82D0032F9F0B8
+	75ABE4300B31FC2433ABE9CE58A31FC4226C6A8C21C4409C46D24DABF66DF7FE
+	68011454CB4F91689900606F09350ED277C163CF9E334BDD549D8BCCECC7D5DA
+	483467E7DC07DC5E0168BB921C004120A698E8D977C8FFDFA484446F0E88413A
+	8B0F30F1C41D86364C3BE5CF5E900C1F560550C9EB70FC4468151A63E0189049
+	ECEF08698070029447E537208085A88C2C7C171C08D85796CC6D1C3EA5DB34A9
+	CE705F8D6EA2E043ABD88F2DAC7EF19468E6F9E992B15F098D39760B744E6369
+	8CABAB29DD4EADF0F259457D59B3B72C4666ECE124BABEDE804700DAAE5D0740
+	1088A9D109FFC138E8C6FFFF933A4354626C7B67DC4DDC5860E8E51E703DFAA3
+	019AEA7D8710878E011DD802F46D5DE0016CBC7096AA36910BF57A49D52AED29
+	789110F8675BB185D232A093A8F861F453658AA266CBE5FAEA9E433DAC0368DC
+	6C638CF33C85D05BBDD8718E3498B6574A1996D873B26284AD243FC774D139A9
+	FCCC6F3BF1CBB8A7FE4F85DC1A01089B8771FC80D22D006BD7AE83300C034542
+	4B33E1FE432391FFFFA012B1D309181A9AFA7C111B0B62F5684BE73B3FFF1980
+	6FC4D4568CBC9DB602DDCCF3554609D66FA2BF1C55F1D66469674D448045777C
+	93880285D66A1BE46A1F4228C5B234EEB71465A72DA1B3305F3965AE4AA2DC72
+	BEA414E3A432158F14ACF76000C21A48ED4F3D1E5D8FC260BC9E0FF02B0C583B
+	06C1B76A8A739F0FC7EDB620B725006ACB7D11391F7E72DA2E006B5790C32008
+	040DDA400DC567E82BF0FF5F68A20FF06A3C9050EACC6EA33D1BE107CB30BB03
+	C3D2DC0FF9FF056027F55A051A20FF491911B7CE2E18C6B4D6862E78FFFA7D5E
+	62B4613A298012AB34C2D8C03EDDE8A024DD16AA1C727E48D00BE8D7B9AFCA05
+	4C7AEB852A00EBF73CF50346EF3DCD0A145A3CBC3CBE4551FFFDA9255BBE2E7A
+	2A6EB67545999F50074BCAE565929CE21D8D73980DB8378B2C5815E3782D68BB
+	00A2663F8098B123600E005659C09EFD8FEFDF811EFAFAE5EB3FF0641E1F1F1F
+	6873213B3B03FC345CF04268F8FE40F080CD3F4830431A3DA0A8F9FF1FDC39F8
+	0739BC1E7CC523A8BF0A0CFD0B172FCAC9CBEB6A6B71F3F0B0737082AFF46182
+	CEC3C036398327E3408374A02155F0EE3E468C4B078131FBE9E3C7EFDFBFFF01
+	0DCCFD636661814403B4E1C5C8C8C7CBCBC5CBCFC24466C8000410CD23E00FA4
+	F98F541CFD858C3100EB52D050F057F030C33F706F0BD460E5E4E4E0E3E3E7E0
+	E004B5D5A1F394FF61A3F0FF204314FF6177C4400A28F008D35FC82A41608802
+	CBFD23478E484A4AE9E868090808026B5D66C82D6090D337C03D29C88D42A0E5
+	6FBF7F33B3B042523DE33F680F8009D6AA46DBEB0B8CD72FC09CF1ED1B649803
+	587CE1BA23957800104074CC01D07D719023542087C4FC03B7797E030B946FDF
+	BF01BB54A040FDF3F7EBB76FE0ABD8D9F8F878B9B9B9E14B9D20F1019921F9FB
+	0F7A91E73FE8893410C34059E1C0BEFDE0D55D1AC04E32272727646410B25B98
+	11D18007D74BE0612B06C831228C88A12B261C551A2D004000D12902D0C6EFA0
+	FBE0FEC2A3013C67F007B417F507B01EFCFA0D982D80F9FCDBF71F7F408B2F99
+	B979B8794153DE5CD07D48903910F0F8FE7F588716D2123D70E000B08DA3A6AA
+	2A2C2C0C2C7940233FA0454B90F6247831DCDF3F0CB058009FC8C5FC0F520441
+	46B721F1023D1F135A62D1341A000288AE1180D64082F70FFE819BF7E025244C
+	904B77207D4B20F8015AD3001A0EFA053A05F43F3B2B2BB8DEE6838421E4CC75
+	F8D5E7870E1E043240699F9F1F58F443063199C1E3A0FFA1B3C7D0F91348E883
+	CF86850CB23133C01204A4D540B77C001040031601F068806C4B017A1E327604
+	19C5838C09FCFDFD0BDCF6074507B08002B63798410BB6BEFC05F7D278794105
+	143B78FDC4F7EF5F4F9F390B34445959594848988B9B0B58E982678B999860E3
+	DE90080095F88C0CF04921F0643B3364FC073CD1CF0C9F286582CDF1313122B2
+	2FD50140000D700430A04D673230201708FFA0C7C2417BBBC0080056183FC000
+	5800FD02DDC20D1A2302C6CFA7CF9F812A24404012D8CC65056D32849E6AC304
+	199765828EFB33400707A15375D0C922C8CA46D830DC7FC4781CCADC352D0040
+	000D9608C01A25FFC1D90218E84CF0710070710F2A8F7EFFFAFEE33B78690974
+	C012D847037629E0A76480C6D7C00707416F20066D3800DFEC0DDE8D0C2AFBC1
+	B3D6D0A166301B12F10C8C88035391EE69A1551C0004D0E08D0006944360A055
+	057815F85FE8F43AB8A10ADACA02BAFC94054D0F341BC14D802767584A879D90
+	859005EF6A856DAD47CC2621EE57A145850C1040833A02B017538CD0988004F7
+	7FD8E1629010472C7E81851764961439F8E0277733C03A28B0ED91B0E21EB623
+	EB3FEC980378AC30C1B4532B3F0004D0508A00F4894FA40065801D5C005F9EC4
+	88314F8775C00A5723E71F3C3F31D0B002000280001A7A1180A78741D2402191
+	5D16E498438E576A0180001A261140FFFC472D0010404CA3613AB0E1051040A3
+	1130C00020C000D8D97AA5B73CD9C30000000049454E44AE426082
+	]]>
+</Picture>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+actualGUID = FROM_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+	_startID	= "A0FCE363-98BF-4BB5-8AB5-0DEE6E32362B"
+	_endID		= "0249D9D3-58CD-41D0-959D-63E8576C08D8"
+gosub "fmtypes_fwm"
+
+! ==============================================================================
+! Set Migration GUID
+! ==============================================================================
+
+setmigrationguid actualGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_fwm":
+	if actualGuid = _startID then
+
+		bHas = DELETED_PAR_VALUE ("FM_Type", FM_Type)
+
+	!INT
+		iFMType = 999
+		if FM_Type = `Default Objects` then iFMType = 1
+		if FM_Type = `Default Lamps` then iFMType = 2
+		if FM_Type = `People` then iFMType = 3
+		if FM_Type = `Elevators` then iFMType = 4
+		if FM_Type = `Security and Escapes` then iFMType = 5
+		if FM_Type = `Stairs` then iFMType = 6
+		if FM_Type = `Work Spaces` then iFMType = 7
+		if FM_Type = `Electric Facilities` then iFMType = 8
+		if FM_Type = `Distribution Panels` then iFMType = 9
+		if FM_Type = `Measuring Places` then iFMType = 10
+		if FM_Type = `Lamps` then iFMType = 11
+		if FM_Type = `HVAC Equipment` then iFMType = 12
+		if FM_Type = `Sanitation` then iFMType = 13
+		if FM_Type = `Locks` then iFMType = 14
+		if FM_Type = `Built-in Wardrobes` then iFMType = 15
+		if FM_Type = `Furniture` then iFMType = 16
+		if FM_Type = `Ceilings` then iFMType = 17
+		if FM_Type = `Floors` then iFMType = 18
+		if FM_Type = `Outdoor Objects` then iFMType = 19
+		if FM_Type = `Computers` then iFMType = 20
+		if FM_Type = `Monitors` then iFMType = 21
+		if FM_Type = `Software` then iFMType = 22
+		if FM_Type = `Phones` then iFMType = 23
+		if FM_Type = `Containers` then iFMType = 24
+		if FM_Type = `Others` then iFMType = 25
+
+	!AUT
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaugarderoben" then iFMType = 15
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!BRA
+		if FM_Type = "Objetos padrão" then iFMType = 1
+		if FM_Type = "Lâmpadas padrão" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos elétricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechamentos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tetos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objetos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!CHE
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Fussböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!CHI
+		if FM_Type = "默认对象" then iFMType = 1
+		if FM_Type = "默认灯" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "电梯" then iFMType = 4
+		if FM_Type = "保安与逃生" then iFMType = 5
+		if FM_Type = "楼梯" then iFMType = 6
+		if FM_Type = "工作空间" then iFMType = 7
+		if FM_Type = "电气设备" then iFMType = 8
+		if FM_Type = "分布面板" then iFMType = 9
+		if FM_Type = "测量地点" then iFMType = 10
+		if FM_Type = "灯" then iFMType = 11
+		if FM_Type = "HVAC设备" then iFMType = 12
+		if FM_Type = "卫生设施" then iFMType = 13
+		if FM_Type = "锁" then iFMType = 14
+		if FM_Type = "内置衣橱" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外对象" then iFMType = 19
+		if FM_Type = "计算机" then iFMType = 20
+		if FM_Type = "监视器" then iFMType = 21
+		if FM_Type = "软件" then iFMType = 22
+		if FM_Type = "电话" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!CZE
+		if FM_Type = "Výchozí objekty" then iFMType = 1
+		if FM_Type = "výchozí lampy" then iFMType = 2
+		if FM_Type = "lidé" then iFMType = 3
+		if FM_Type = "výtahy" then iFMType = 4
+		if FM_Type = "bezpečnost a úniky" then iFMType = 5
+		if FM_Type = "schodiště" then iFMType = 6
+		if FM_Type = "pracovní prostory" then iFMType = 7
+		if FM_Type = "Elektrická zařízení" then iFMType = 8
+		if FM_Type = "rozvaděče" then iFMType = 9
+		if FM_Type = "měřiče" then iFMType = 10
+		if FM_Type = "Svítidla" then iFMType = 11
+		if FM_Type = "lampy" then iFMType = 11
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "TZB vybavení" then iFMType = 12
+		if FM_Type = "Sanitární vybavení" then iFMType = 13
+		if FM_Type = "zámky" then iFMType = 14
+		if FM_Type = "zabudované skříně" then iFMType = 15
+		if FM_Type = "Nábytek" then iFMType = 16
+		if FM_Type = "stropy" then iFMType = 17
+		if FM_Type = "podlahy" then iFMType = 18
+		if FM_Type = "Venkovní objekty" then iFMType = 19
+		if FM_Type = "počítače" then iFMType = 20
+		if FM_Type = "monitory" then iFMType = 21
+		if FM_Type = "software" then iFMType = 22
+		if FM_Type = "telefony" then iFMType = 23
+		if FM_Type = "obaly" then iFMType = 24
+		if FM_Type = "jiné" then iFMType = 25
+		if FM_Type = "Jiné" then iFMType = 25
+
+	!FIN
+		if FM_Type = "Oletusobjektit" then iFMType = 1
+		if FM_Type = "Oletuslamput" then iFMType = 2
+		if FM_Type = "Ihminen" then iFMType = 3
+		if FM_Type = "Hissit" then iFMType = 4
+		if FM_Type = "Turvallisuus ja poistumistiet" then iFMType = 5
+		if FM_Type = "Portaat" then iFMType = 6
+		if FM_Type = "Työtilat" then iFMType = 7
+		if FM_Type = "Sähkölaitteet" then iFMType = 8
+		if FM_Type = "Jakelutaulut" then iFMType = 9
+		if FM_Type = "Mittauspaikat" then iFMType = 10
+		if FM_Type = "Lamput" then iFMType = 11
+		if FM_Type = "LVI-laite" then iFMType = 12
+		if FM_Type = "Saniteettikalusteet" then iFMType = 13
+		if FM_Type = "Viemäröinti" then iFMType = 13
+		if FM_Type = "Lukot" then iFMType = 14
+		if FM_Type = "Kiinteät komerot" then iFMType = 15
+		if FM_Type = "Kalustus" then iFMType = 16
+		if FM_Type = "Sisäkattopinnat" then iFMType = 17
+		if FM_Type = "Lattiat" then iFMType = 18
+		if FM_Type = "Ulkotilan objektit" then iFMType = 19
+		if FM_Type = "Ulkotilojen objektit" then iFMType = 19
+		if FM_Type = "Tietokoneet" then iFMType = 20
+		if FM_Type = "Näytöt" then iFMType = 21
+		if FM_Type = "Ohjelmat" then iFMType = 22
+		if FM_Type = "Puhelimet" then iFMType = 23
+		if FM_Type = "Säilytys" then iFMType = 24
+		if FM_Type = "Muut" then iFMType = 25
+
+	!FLA
+
+	!FRA
+		if FM_Type = "Objets par défaut" then iFMType = 1
+		if FM_Type = "Lampes par défaut" then iFMType = 2
+		if FM_Type = "Personnages" then iFMType = 3
+		if FM_Type = "Ascenseurs" then iFMType = 4
+		if FM_Type = "Sécurité et sorties de secours" then iFMType = 5
+		if FM_Type = "Escaliers" then iFMType = 6
+		if FM_Type = "Espaces de travail" then iFMType = 7
+		if FM_Type = "Services électriques" then iFMType = 8
+		if FM_Type = "Panneaux de distribution" then iFMType = 9
+		if FM_Type = "Armoires de contrôle" then iFMType = 10
+		if FM_Type = "Lampes" then iFMType = 11
+		if FM_Type = "Equipement CVCA" then iFMType = 12
+		if FM_Type = "Sanitaires" then iFMType = 13
+		if FM_Type = "Serrurerie" then iFMType = 14
+		if FM_Type = "Penderies Encastrées" then iFMType = 15
+		if FM_Type = "Ameublement" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Planchers" then iFMType = 18
+		if FM_Type = "Objets extérieurs" then iFMType = 19
+		if FM_Type = "Ordinateurs" then iFMType = 20
+		if FM_Type = "Ecrans" then iFMType = 21
+		if FM_Type = "Logiciels" then iFMType = 22
+		if FM_Type = "Téléphones" then iFMType = 23
+		if FM_Type = "Conteneurs" then iFMType = 24
+		if FM_Type = "Autres" then iFMType = 25
+
+	!GER
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!GRE
+		if FM_Type = "Αρχικά Αντικείμενα" then iFMType = 1
+		if FM_Type = "Αρχικά Φωτιστικά" then iFMType = 2
+		if FM_Type = "Άνθρωποι" then iFMType = 3
+		if FM_Type = "Ανελκυστήρες" then iFMType = 4
+		if FM_Type = "Ασφάλεια και Διαφυγή" then iFMType = 5
+		if FM_Type = "Σκάλες" then iFMType = 6
+		if FM_Type = "Χώροι Εργασίας" then iFMType = 7
+		if FM_Type = "Ηλεκτρολ. Εγκαταστάσεις" then iFMType = 8
+		if FM_Type = "Πίνακες Διανομής" then iFMType = 9
+		if FM_Type = "Θέσεις Μετρήσεων" then iFMType = 10
+		if FM_Type = "Φωτιστικά" then iFMType = 11
+		if FM_Type = "Λάμπα" then iFMType = 11
+		if FM_Type = "Εξαρτήματα HVAC" then iFMType = 12
+		if FM_Type = "Υγιεινή" then iFMType = 13
+		if FM_Type = "Κλειδαριές" then iFMType = 14
+		if FM_Type = "Εντοιχισμένες Ντουλάπες" then iFMType = 15
+		if FM_Type = "Εντοιχισμένη Ντουλάπα" then iFMType = 15
+		if FM_Type = "Επίπλωση" then iFMType = 16
+		if FM_Type = "Οροφές" then iFMType = 17
+		if FM_Type = "Δάπεδα" then iFMType = 18
+		if FM_Type = "Υπαίθρια Αντικείμενα" then iFMType = 19
+		if FM_Type = "Υπολογιστές" then iFMType = 20
+		if FM_Type = "Οθόνες" then iFMType = 21
+		if FM_Type = "Λογισμικό" then iFMType = 22
+		if FM_Type = "Τηλέφωνα" then iFMType = 23
+		if FM_Type = "Κιβώτια" then iFMType = 24
+		if FM_Type = "Άλλα" then iFMType = 25
+
+	!HUN
+		if FM_Type = "Alapértelmezett tárgy" then iFMType = 1
+		if FM_Type = "Alapértelmezett lámpa" then iFMType = 2
+		if FM_Type = "Személy" then iFMType = 3
+		if FM_Type = "Felvonó" then iFMType = 4
+		if FM_Type = "Biztonság- és menekülésjelző" then iFMType = 5
+		if FM_Type = "Lépcsők" then iFMType = 6
+		if FM_Type = "Lépcső" then iFMType = 6
+		if FM_Type = "Lépcsö" then iFMType = 6
+		if FM_Type = "Munkaterület" then iFMType = 7
+		if FM_Type = "Elektromos berendezés" then iFMType = 8
+		if FM_Type = "Elosztó" then iFMType = 9
+		if FM_Type = "Mérőhely" then iFMType = 10
+		if FM_Type = "Lámpa" then iFMType = 11
+		if FM_Type = "Légtechnikai berendezés" then iFMType = 12
+		if FM_Type = "Szaniter berendezés" then iFMType = 13
+		if FM_Type = "Zár" then iFMType = 14
+		if FM_Type = "Beépített szekrény" then iFMType = 15
+		if FM_Type = "Bútor" then iFMType = 16
+		if FM_Type = "Mennyezet" then iFMType = 17
+		if FM_Type = "Padló" then iFMType = 18
+		if FM_Type = "Kültéri tárgy" then iFMType = 19
+		if FM_Type = "Számítógép" then iFMType = 20
+		if FM_Type = "Monitor" then iFMType = 21
+		if FM_Type = "Szoftver" then iFMType = 22
+		if FM_Type = "Telefon" then iFMType = 23
+		if FM_Type = "Konténer" then iFMType = 24
+		if FM_Type = "Egyéb" then iFMType = 25
+
+	!ITA
+		if FM_Type = "Oggetti predefiniti" then iFMType = 1
+		if FM_Type = "Lampade predefinite" then iFMType = 2
+		if FM_Type = "Persone" then iFMType = 3
+		if FM_Type = "Ascensori" then iFMType = 4
+		if FM_Type = "Sicurezza e Fughe" then iFMType = 5
+		if FM_Type = "Scale" then iFMType = 6
+		if FM_Type = "Spazi di Lavoro" then iFMType = 7
+		if FM_Type = "Funzioni Elettriche" then iFMType = 8
+		if FM_Type = "Pannelli di Distribuzione" then iFMType = 9
+		if FM_Type = "Posti di Misurazione" then iFMType = 10
+		if FM_Type = "Lampade" then iFMType = 11
+		if FM_Type = "Apparecchiatura HVAC" then iFMType = 12
+		if FM_Type = "Risanamento" then iFMType = 13
+		if FM_Type = "Serrature" then iFMType = 14
+		if FM_Type = "Armadi a muro" then iFMType = 15
+		if FM_Type = "Armadi Incassati" then iFMType = 15
+		if FM_Type = "Armadi Incorporati" then iFMType = 15
+		if FM_Type = "Arredo" then iFMType = 16
+		if FM_Type = "Soffitti" then iFMType = 17
+		if FM_Type = "Pavimenti" then iFMType = 18
+		if FM_Type = "Oggetti Esterni" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitors" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoni" then iFMType = 23
+		if FM_Type = "Contenitori" then iFMType = 24
+		if FM_Type = "Altri" then iFMType = 25
+
+	!JPN
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ " then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ" then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄﾗﾝﾌﾟ" then iFMType = 2
+		if FM_Type = "人物" then iFMType = 3
+		if FM_Type = "ｴﾚﾍﾞｰﾀ" then iFMType = 4
+		if FM_Type = "防犯と非常用" then iFMType = 5
+		if FM_Type = "階段" then iFMType = 6
+		if FM_Type = "ﾜｰｸｽﾍﾟｰｽ" then iFMType = 7
+		if FM_Type = "電気設備" then iFMType = 8
+		if FM_Type = "配電盤" then iFMType = 9
+		if FM_Type = "測定場所" then iFMType = 10
+		if FM_Type = "ﾗﾝﾌﾟ" then iFMType = 11
+		if FM_Type = "設備機器" then iFMType = 12
+		if FM_Type = "HVAC機器" then iFMType = 12
+		if FM_Type = "排水設備" then iFMType = 13
+		if FM_Type = "下水設備" then iFMType = 13
+		if FM_Type = "ﾛｯｸ" then iFMType = 14
+		if FM_Type = "造り付けﾜｰﾄﾞﾛｰﾌﾞ" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天井" then iFMType = 17
+		if FM_Type = "ﾌﾛｱ" then iFMType = 18
+		if FM_Type = "屋外ｵﾌﾞｼﾞｪｸﾄ" then iFMType = 19
+		if FM_Type = "ｺﾝﾋﾟｭｰﾀ" then iFMType = 20
+		if FM_Type = "ﾓﾆﾀ" then iFMType = 21
+		if FM_Type = "ｿﾌﾄｳｪｱ" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "ｺﾝﾃﾅ" then iFMType = 24
+		if FM_Type = "その他" then iFMType = 25
+
+	!KOR
+		if FM_Type = "기본 객체" then iFMType = 1
+		if FM_Type = "기본값 객체" then iFMType = 1
+		if FM_Type = "기본 조명" then iFMType = 2
+		if FM_Type = "사람들" then iFMType = 3
+		if FM_Type = "엘리베이터" then iFMType = 4
+		if FM_Type = "보안과 피난" then iFMType = 5
+		if FM_Type = "계단" then iFMType = 6
+		if FM_Type = "작업 공간" then iFMType = 7
+		if FM_Type = "전기 설비" then iFMType = 8
+		if FM_Type = "분배 패널" then iFMType = 9
+		if FM_Type = "측정 장소" then iFMType = 10
+		if FM_Type = "조명" then iFMType = 11
+		if FM_Type = "공조설비" then iFMType = 12
+		if FM_Type = "위생설비" then iFMType = 13
+		if FM_Type = "잠금장치" then iFMType = 14
+		if FM_Type = "붙박이 장" then iFMType = 15
+		if FM_Type = "가구" then iFMType = 16
+		if FM_Type = "천장" then iFMType = 17
+		if FM_Type = "바닥" then iFMType = 18
+		if FM_Type = "실외 객체" then iFMType = 19
+		if FM_Type = "컴퓨터" then iFMType = 20
+		if FM_Type = "모니터" then iFMType = 21
+		if FM_Type = "소프트웨어" then iFMType = 22
+		if FM_Type = "전화기" then iFMType = 23
+		if FM_Type = "콘테이너" then iFMType = 24
+		if FM_Type = "기타" then iFMType = 25
+
+	!NED
+		if FM_Type = "Standaardobjecten" then iFMType = 1
+		if FM_Type = "Standaardlampen" then iFMType = 2
+		if FM_Type = "Mensen" then iFMType = 3
+		if FM_Type = "Liften" then iFMType = 4
+		if FM_Type = "Beveiliging en vluchtwegen" then iFMType = 5
+		if FM_Type = "Trappen" then iFMType = 6
+		if FM_Type = "Werkplekken" then iFMType = 7
+		if FM_Type = "ET installatie" then iFMType = 8
+		if FM_Type = "Schakelkasten" then iFMType = 9
+		if FM_Type = "Meetgebieden" then iFMType = 10
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "W-installatie" then iFMType = 12
+		if FM_Type = "Afvalverwerking" then iFMType = 13
+		if FM_Type = "Sloten" then iFMType = 14
+		if FM_Type = "Inbouwkasten" then iFMType = 15
+		if FM_Type = "Meubilair" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Vloeren" then iFMType = 18
+		if FM_Type = "Buitenobjecten" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitoren" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoon" then iFMType = 23
+		if FM_Type = "Containers" then iFMType = 24
+		if FM_Type = "Anders" then iFMType = 25
+		if FM_Type = "Overig" then iFMType = 25
+
+	!NOR
+		if FM_Type = "Standard objekter" then iFMType = 1
+		if FM_Type = "Andre" then iFMType = 25
+
+	!POL
+		if FM_Type = "Obiekty domyślne" then iFMType = 1
+		if FM_Type = "Domyślne lampy" then iFMType = 2
+		if FM_Type = "Ludzie" then iFMType = 3
+		if FM_Type = "Windy" then iFMType = 4
+		if FM_Type = "Bezpieczeństwo i ewakuacja" then iFMType = 5
+		if FM_Type = "Schody" then iFMType = 6
+		if FM_Type = "Przestrzenie robocze" then iFMType = 7
+		if FM_Type = "Urządzenia elektryczne" then iFMType = 8
+		if FM_Type = "Panele rozdzielające" then iFMType = 9
+		if FM_Type = "Stanowiska pomiarowe" then iFMType = 10
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "Wyposażenie grzewczo-klimatyzac." then iFMType = 12
+		if FM_Type = "Sanitarne" then iFMType = 13
+		if FM_Type = "Zamki" then iFMType = 14
+		if FM_Type = "Garderoby" then iFMType = 15
+		if FM_Type = "Umeblowanie" then iFMType = 16
+		if FM_Type = "Sufity" then iFMType = 17
+		if FM_Type = "Podłogi" then iFMType = 18
+		if FM_Type = "Obiekty zewnętrzne" then iFMType = 19
+		if FM_Type = "Komputery" then iFMType = 20
+		if FM_Type = "Monitory" then iFMType = 21
+		if FM_Type = "Oprogramowanie" then iFMType = 22
+		if FM_Type = "Telefony" then iFMType = 23
+		if FM_Type = "Pojemniki" then iFMType = 24
+		if FM_Type = "Inne" then iFMType = 25
+
+	!POR
+		if FM_Type = "Objectos por defeito" then iFMType = 1
+		if FM_Type = "Lâmpadas por defeito" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos eléctricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tectos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objectos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!RUS
+		if FM_Type = "Объекты по умолчанию" then iFMType = 1
+		if FM_Type = "Ист.света по умолчанию" then iFMType = 2
+		if FM_Type = "Люди" then iFMType = 3
+		if FM_Type = "Лифты" then iFMType = 4
+		if FM_Type = "Безопасность и эвакуация" then iFMType = 5
+		if FM_Type = "Лестницы" then iFMType = 6
+		if FM_Type = "Рабочее пространство" then iFMType = 7
+		if FM_Type = "Электрические устройства" then iFMType = 8
+		if FM_Type = "Распределительные щиты" then iFMType = 9
+		if FM_Type = "Измеряемые места" then iFMType = 10
+		if FM_Type = "Лампы" then iFMType = 11
+		if FM_Type = "Источники света" then iFMType = 11
+		if FM_Type = "Механическое оборудование" then iFMType = 12
+		if FM_Type = "Санитария" then iFMType = 13
+		if FM_Type = "Замки" then iFMType = 14
+		if FM_Type = "Встроенные гардеробы" then iFMType = 15
+		if FM_Type = "Гардеробы встроенные" then iFMType = 15
+		if FM_Type = "Мебель" then iFMType = 16
+		if FM_Type = "Потолки" then iFMType = 17
+		if FM_Type = "Полы" then iFMType = 18
+		if FM_Type = "Объекты снаружи" then iFMType = 19
+		if FM_Type = "Компьютеры" then iFMType = 20
+		if FM_Type = "Мониторы" then iFMType = 21
+		if FM_Type = "Программное обеспечение" then iFMType = 22
+		if FM_Type = "Телефоны" then iFMType = 23
+		if FM_Type = "Контейнеры" then iFMType = 24
+		if FM_Type = "Другой" then iFMType = 25
+		if FM_Type = "Другие" then iFMType = 25
+
+	!SPA
+		if FM_Type = "Objetos por Defecto" then iFMType = 1
+		if FM_Type = "Lámparas por Defecto" then iFMType = 2
+		if FM_Type = "Personas" then iFMType = 3
+		if FM_Type = "Ascensores" then iFMType = 4
+		if FM_Type = "Seguridad y Evacuaciones" then iFMType = 5
+		if FM_Type = "Escaleras" then iFMType = 6
+		if FM_Type = "Espacios de Trabajo" then iFMType = 7
+		if FM_Type = "Cuartos Eléctricos" then iFMType = 8
+		if FM_Type = "Paneles de División" then iFMType = 9
+		if FM_Type = "Lugares de Medidas" then iFMType = 10
+		if FM_Type = "Lámparas" then iFMType = 11
+		if FM_Type = "Control de Atmósfera" then iFMType = 12
+		if FM_Type = "Saneamiento" then iFMType = 13
+		if FM_Type = "Cerraduras" then iFMType = 14
+		if FM_Type = "Armarios Empotrados" then iFMType = 15
+		if FM_Type = "Mobiliario" then iFMType = 16
+		if FM_Type = "Falsos Techos" then iFMType = 17
+		if FM_Type = "Suelos" then iFMType = 18
+		if FM_Type = "Objetos de Exterior" then iFMType = 19
+		if FM_Type = "Ordenadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Teléfonos" then iFMType = 23
+		if FM_Type = "Contenedores" then iFMType = 24
+		if FM_Type = "Otros" then iFMType = 25
+
+	!SWE
+		if FM_Type = "Standardelement" then iFMType = 1
+		if FM_Type = "Standardarmatur" then iFMType = 2
+		if FM_Type = "Människor" then iFMType = 3
+		if FM_Type = "Hissar" then iFMType = 4
+		if FM_Type = "Säkerhet & Utrymning" then iFMType = 5
+		if FM_Type = "Trappor" then iFMType = 6
+		if FM_Type = "Arbetsutrymmen" then iFMType = 7
+		if FM_Type = "Elektrisk Utrustning" then iFMType = 8
+		if FM_Type = "Distributionspaneler" then iFMType = 9
+		if FM_Type = "Måttenhetsuppgifter" then iFMType = 10
+		if FM_Type = "Armatur" then iFMType = 11
+		if FM_Type = "VVS-utrustning" then iFMType = 12
+		if FM_Type = "Sanitärt" then iFMType = 13
+		if FM_Type = "Lås" then iFMType = 14
+		if FM_Type = "Inbyggda Utrymmen" then iFMType = 15
+		if FM_Type = "Möbler" then iFMType = 16
+		if FM_Type = "Innertak" then iFMType = 17
+		if FM_Type = "Golv" then iFMType = 18
+		if FM_Type = "Element för Utomhusbruk" then iFMType = 19
+		if FM_Type = "Datorer" then iFMType = 20
+		if FM_Type = "Bildskärmar" then iFMType = 21
+		if FM_Type = "Mjukvaror" then iFMType = 22
+		if FM_Type = "Telefoner" then iFMType = 23
+		if FM_Type = "Behållare" then iFMType = 24
+		if FM_Type = "Annat" then iFMType = 25
+
+	!TAI
+		if FM_Type = "默認對象" then iFMType = 1
+		if FM_Type = "默認燈" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "電梯" then iFMType = 4
+		if FM_Type = "保安與逃生" then iFMType = 5
+		if FM_Type = "樓梯" then iFMType = 6
+		if FM_Type = "工作空間" then iFMType = 7
+		if FM_Type = "電氣設備" then iFMType = 8
+		if FM_Type = "分佈面板" then iFMType = 9
+		if FM_Type = "測量地點" then iFMType = 10
+		if FM_Type = "燈" then iFMType = 11
+		if FM_Type = "HVAC設備" then iFMType = 12
+		if FM_Type = "衛生設施" then iFMType = 13
+		if FM_Type = "鎖" then iFMType = 14
+		if FM_Type = "內置衣櫥" then iFMType = 15
+		if FM_Type = "傢具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外對象" then iFMType = 19
+		if FM_Type = "計算機" then iFMType = 20
+		if FM_Type = "監視器" then iFMType = 21
+		if FM_Type = "軟件" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!TUR
+		if FM_Type = "Geçerli Objeler" then iFMType = 1
+		if FM_Type = "Geçerli Aydınlatma Elemanları" then iFMType = 2
+		if FM_Type = "İnsanlar" then iFMType = 3
+		if FM_Type = "Asansörler" then iFMType = 4
+		if FM_Type = "Güvenlik ve Çıkışlar" then iFMType = 5
+		if FM_Type = "Merdivenler" then iFMType = 6
+		if FM_Type = "Çalışma Alanları" then iFMType = 7
+		if FM_Type = "Elektrik Hizmetleri" then iFMType = 8
+		if FM_Type = "Dağıtım Levhalleri" then iFMType = 9
+		if FM_Type = "Dağıtım Panelleri" then iFMType = 9
+		if FM_Type = "Mekan Ölçme" then iFMType = 10
+		if FM_Type = "Aydınlatma Elemanları" then iFMType = 11
+		if FM_Type = "HVAC Ekipmanı" then iFMType = 12
+		if FM_Type = "Banyo-Wc" then iFMType = 13
+		if FM_Type = "Kilitler" then iFMType = 14
+		if FM_Type = "Ankastre Dolaplar" then iFMType = 15
+		if FM_Type = "Mobilya" then iFMType = 16
+		if FM_Type = "Tavanlar" then iFMType = 17
+		if FM_Type = "Zeminler" then iFMType = 18
+		if FM_Type = "Dış Mekan Objeleri" then iFMType = 19
+		if FM_Type = "Bilgisayarlar" then iFMType = 20
+		if FM_Type = "Monitörler" then iFMType = 21
+		if FM_Type = "Yazılım" then iFMType = 22
+		if FM_Type = "Telefonlar" then iFMType = 23
+		if FM_Type = "Konteynerler" then iFMType = 24
+		if FM_Type = "Diğerleri" then iFMType = 25
+		if FM_Type = "Diğer" then iFMType = 25
+
+		parameters iFMType = iFMType
+
+		actualGuid = _endID
+	endif
+return
+
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+targetGUID = TO_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+gosub "fmtypes_bwm"
+
+! ==============================================================================
+! Set Migration GUID
+! ==============================================================================
+
+setmigrationguid targetGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_bwm":
+	if targetGUID # "" then
+
+		if iFMType = 1 then FM_Type = `Default Objects`
+		if iFMType = 2 then FM_Type = `Default Lamps`
+		if iFMType = 3 then FM_Type = `People`
+		if iFMType = 4 then FM_Type = `Elevators`
+		if iFMType = 5 then FM_Type = `Security and Escapes`
+		if iFMType = 6 then FM_Type = `Stairs`
+		if iFMType = 7 then FM_Type = `Work Spaces`
+		if iFMType = 8 then FM_Type = `Electric Facilities`
+		if iFMType = 9 then FM_Type = `Distribution Panels`
+		if iFMType = 10 then FM_Type = `Measuring Places`
+		if iFMType = 11 then FM_Type = `Lamps`
+		if iFMType = 12 then FM_Type = `HVAC Equipment`
+		if iFMType = 13 then FM_Type = `Sanitation`
+		if iFMType = 14 then FM_Type = `Locks`
+		if iFMType = 15 then FM_Type = `Built-in Wardrobes`
+		if iFMType = 16 then FM_Type = `Furniture`
+		if iFMType = 17 then FM_Type = `Ceilings`
+		if iFMType = 18 then FM_Type = `Floors`
+		if iFMType = 19 then FM_Type = `Outdoor Objects`
+		if iFMType = 20 then FM_Type = `Computers`
+		if iFMType = 21 then FM_Type = `Monitors`
+		if iFMType = 22 then FM_Type = `Software`
+		if iFMType = 23 then FM_Type = `Phones`
+		if iFMType = 24 then FM_Type = `Containers`
+		if iFMType = 25 then FM_Type = `Others`
+		parameters FM_Type = FM_Type
+
+	endif
+return
+
+
+]]></Script_BWM>
+
+<MigrationTable SectVersion="1" SectionFlags="0" SubIdent="0">
+	<MigrationTableElement>
+		<MainGUID>A0FCE363-98BF-4BB5-8AB5-0DEE6E32362B</MainGUID>
+		<Version>17</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+</MigrationTable>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>0.48514</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>0.18796</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>0.4699</Value>
+		</Length>
+		<String Name="gs_detlevel_3D">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="gs_detlevel_3D_m">
+			<Description><![CDATA["3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<String Name="screenSize">
+			<Description><![CDATA["Size"]]></Description>
+			<Value><![CDATA["20 inch"]]></Value>
+		</String>
+		<Integer Name="iScreenSize">
+			<Description><![CDATA["Size"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+
+		<!-- gs_picture: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_picture">
+			<Description><![CDATA["Picture"]]></Description>
+		</Title>
+		<Boolean Name="pic">
+			<Description><![CDATA["Picture Map"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="gs_picture_custom">
+			<Description><![CDATA["Use Custom Picture"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<String Name="gs_picture_name">
+			<Description><![CDATA["Custom Picture Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D Representation"]]></Description>
+		</Title>
+		<PenColor Name="gs_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_fill_pen">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="gs_back_pen">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+
+		<!-- gs_3D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_3D_representation">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Boolean Name="gs_shadow">
+			<Description><![CDATA["Shadow Casting"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="gs_resol">
+			<Description><![CDATA["Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>24</Value>
+		</Integer>
+
+		<!-- gs_material: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_material">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Boolean Name="useFactoryMats">
+			<Description><![CDATA["Use Factory Appearance"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Material Name="screenMat">
+			<Description><![CDATA["Screen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>29</Value>
+		</Material>
+		<Material Name="frameMat">
+			<Description><![CDATA["Frame"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</Material>
+		<Material Name="backMat">
+			<Description><![CDATA["Back"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>49</Value>
+		</Material>
+		<Material Name="standMat">
+			<Description><![CDATA["Stand"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</Material>
+		<Material Name="logoMat">
+			<Description><![CDATA["Logo"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+		<RealNum Name="gs_list_cost">
+			<Description><![CDATA["Cost"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_manufacturer">
+			<Description><![CDATA["Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_note">
+			<Description><![CDATA["Note/Remarks"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_location">
+			<Description><![CDATA["Location"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_accessories">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="gs_list_volts">
+			<Description><![CDATA["Volts"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_Type">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Electric Facilities"]]></Value>
+		</String>
+		<Integer Name="iFMType">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>8</Value>
+		</Integer>
+		<String Name="FM_InventoryNumber">
+			<Description><![CDATA["Inventory Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_SerialNumber">
+			<Description><![CDATA["Serial Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductionYear">
+			<Description><![CDATA["Production Year"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="FM_ObjectWeight">
+			<Description><![CDATA["Object Weight"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_ObjectWeightUnit">
+			<Description><![CDATA["Object Weight Unit"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["kg"]]></Value>
+		</String>
+		<RealNum Name="FM_PowerConsumption">
+			<Description><![CDATA["Wattage"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<RealNum Name="FM_Egress">
+			<Description><![CDATA["Egress"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_custom1">
+			<Description><![CDATA["User Defined 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom2">
+			<Description><![CDATA["User Defined 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom3">
+			<Description><![CDATA["User Defined 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom4">
+			<Description><![CDATA["User Defined 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom5">
+			<Description><![CDATA["User Defined 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+	</Parameters>
+</ParamSection>
+</Symbol>

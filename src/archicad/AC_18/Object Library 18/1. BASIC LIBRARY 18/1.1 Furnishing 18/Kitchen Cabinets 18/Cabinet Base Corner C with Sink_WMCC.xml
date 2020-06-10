@@ -1,0 +1,4584 @@
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="31FCA495-6B6B-49D7-92A8-BE5BF90539D8" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>9BCE6139-F733-4E13-B439-AAF1AF232B89</MainGUID>
+	<MainGUID>30E58E66-1DA9-4D20-9341-700170100E12</MainGUID>
+	<MainGUID>D39DF9D9-2191-4C4D-B004-2E8C1B298D7C</MainGUID>
+	<MainGUID>0D6515ED-B372-41C6-8291-C527CE94BA43</MainGUID>
+</Ancestry>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+if gs_detlevel_3D_m=0 then end
+if not(gs_shadow) then SHADOW OFF
+
+! start of modifying to Shaft
+
+! CONNECTIONS
+
+! Show MEP Connections -------------------------------------------------------------[
+
+isavailable = 0
+isInArchiCAD = APPLICATION_QUERY ("MEPMODELER", "IsAvailable()", isavailable)
+isMEPEnabled = (isavailable OR isInArchiCAD = 0)
+if isMEPEnabled then
+	bShowMEP = 1
+	reqBMep = 0
+	success = LIBRARYGLOBAL ("LibraryGlobals13_WMCC", "showMepConnect", reqBMep)
+	if success > 0 then
+		bShowMEP = reqBMep
+	endif
+else
+	bShowMEP = 0
+endif
+
+! Show MEP Connections -------------------------------------------------------------]
+
+IF bShowMEP THEN
+
+	if useSysMat then
+		toe_mat			= sMat
+		count_mat		= sMat
+		bs_mat			= sMat
+		gs_cabinet_mat	= sMat
+		doorglas_mat	= sMat
+		doorframe_mat	= sMat
+		doorframe_mat_end	= sMat
+		gs_sink_mat		= sMat
+		gs_tap_mat		= sMat
+		gs_knob_mat		= sMat
+		gs_ShelfMat		= sMat
+		DrawerMat		= sMat
+		gs_con_mat		= sMat
+	endif
+
+	CALL "MEP_m_ConnectionsACL_4_WMCC" parameters SetProgram = SetProgram,
+		ui_current_con = ui_current_con,
+		MEP_NumberConnections = MEP_NumberConnections,
+		MEP_NumConnectionData = gs_Connections,
+		gs_AddConnections = gs_AddConnections,
+		cShow3D = 1,
+		gs_ConMat = gs_con_mat,
+		MEP_InsShow = 0,
+		MEP_cline_show_3D = 0,
+		gs_cont_pen = gs_cont_pen,
+		ConPosX_1=ConPosX_1, ConPosY_1=ConPosY_1, ConPosZ_1=ConPosZ_1, ConLength_1=ConLength_1, ConEdit_1 = 16,
+		ConPosX_2=ConPosX_2, ConPosY_2=ConPosY_2, ConPosZ_2=ConPosZ_2, ConLength_2=ConLength_2, ConEdit_2 = 16,
+		ConPosX_3=ConPosX_3, ConPosY_3=ConPosY_3, ConPosZ_3=ConPosZ_3, ConLength_3=ConLength_3, ConEdit_3 = 16
+endif
+
+! end of modifying to Shaft
+
+if gs_detlevel_3D_m=1 then gs_resol = 4
+RESOL gs_resol
+
+PEN gs_cont_pen
+
+if cab_size then
+	depth_cabl=depth_cab+front_cab+lrear_cab
+	depth_cabr=depth_cab+front_cab+rrear_cab
+else
+	depth_cabl=depth_cab
+	depth_cabr=depth_cab
+endif
+
+ADD a/2-(lrear_cab)*cab_size, b/2-(left_cab)*cab_size, 0
+
+! 3D HOTSPOTS
+! at base
+
+unID=1
+
+if gs_toe_type_m = 0 then
+	HOTSPOT -a/2+lrear_cab, -b/2+left_cab, 0, unID : unID=unID+1
+	HOTSPOT -a/2+depth_cabl-front_cab-fr_th1, -b/2+left_cab, 0, unID : unID=unID+1
+	HOTSPOT  a/2-right_cab, b/2-depth_cabr+front_cab+fr_th1, 0, unID : unID=unID+1
+	HOTSPOT  a/2-right_cab, b/2-rrear_cab, 0, unID : unID=unID+1
+	HOTSPOT -a/2+lrear_cab, b/2-rrear_cab, 0, unID : unID=unID+1
+endif
+
+! cabinet height
+unID=10
+
+hotspot -a/2, -b/2, 0, unID, zzyzx, 1+128 : unID=unID+1
+hotspot -a/2, -b/2, -1, unID, zzyzx, 3 : unID=unID+1
+hotspot -a/2, -b/2, zzyzx, unID, zzyzx, 2 : unID=unID+1
+
+hotspot -a/2+depth_cabl, -b/2, 0, unID, zzyzx, 1+128 : unID=unID+1
+hotspot -a/2+depth_cabl, -b/2, -1, unID, zzyzx, 3 : unID=unID+1
+hotspot -a/2+depth_cabl, -b/2, zzyzx, unID, zzyzx, 2 : unID=unID+1
+
+hotspot a/2, b/2-depth_cabr, 0, unID, zzyzx, 1+128 : unID=unID+1
+hotspot a/2, b/2-depth_cabr, -1, unID, zzyzx, 3 : unID=unID+1
+hotspot a/2, b/2-depth_cabr, zzyzx, unID, zzyzx, 2 : unID=unID+1
+
+hotspot a/2, b/2, 0, unID, zzyzx, 1+128 : unID=unID+1
+hotspot a/2, b/2, -1, unID, zzyzx, 3 : unID=unID+1
+hotspot a/2, b/2, zzyzx, unID, zzyzx, 2 : unID=unID+1
+
+hotspot -a/2, b/2, 0, unID, zzyzx, 1+128 : unID=unID+1
+hotspot -a/2, b/2, -1, unID, zzyzx, 3 : unID=unID+1
+hotspot -a/2, b/2, zzyzx, unID, zzyzx, 2 : unID=unID+1
+! End of 3D hotspots
+
+! Handling overhangs in case of end panels
+!lrear_cab = 0	! no overhang
+!rrear_cab = 0
+!left_cab = 0
+!right_cab = 0
+if dob_face then lrear_cab = lrear_cab
+if lrear_panel then lrear_cab = lrear_cab + 0.02
+if rrear_panel then rrear_cab = rrear_cab + 0.02
+if left_panel then left_cab = left_cab +0.02
+if right_panel then right_cab = right_cab +0.02
+
+a=a-lrear_cab-right_cab
+b=b-rrear_cab-left_cab
+
+ADD -a/2+lrear_cab/2-right_cab/2, -b/2-rrear_cab/2+left_cab/2, 0
+
+! CABINET
+if ABS(a-depth_cab)<EPS then a=depth_cab+0.001
+
+unID=100
+corncab_unID=unID
+
+CALL "fa_gen_corncabinet_WMCC" parameters a=a, b=b, zzyzx=zzyzx,
+		gs_detlevel_3D_m=gs_detlevel_3D_m,
+		dob_face=dob_face, gs_shadow=gs_shadow, ldepth_cab=depth_cabl-lrear_cab-front_cab,
+		rdepth_cab=depth_cabr-rrear_cab-front_cab, count_th=count_th,
+		front_cab=front_cab, right_cab=right_cab, left_cab=left_cab, lrear_cab=lrear_cab,
+		rrear_cab=rrear_cab, toe_h=toe_h,
+		bs_h=bs_h, gs_sink_type_m=gs_sink_type_m, gs_tap_type_m=gs_tap_type_m, gs_resol = gs_resol,
+		side_vis_m=side_vis_m+1,fr_th1=fr_th1,
+		gs_cont_pen=gs_cont_pen,
+		toe_mat=toe_mat, gs_cabinet_mat=gs_cabinet_mat, count_mat=count_mat, bs_mat=bs_mat,
+		gs_sink_mat=gs_sink_mat, gs_tap_mat=gs_tap_mat,
+		gs_toe_type_m=gs_toe_type_m,gs_count_type_m=gs_count_type_m,toe_d = (toe_d*sin(45)),
+		corncab_unID=corncab_unID, sunder=sunder,
+		tapOffset=tapOffset,
+		returned_parameters corncab_unID
+
+unID = corncab_unID
+
+if bDrawer AND zzyzx-count_th-toe_h<0.31 then END
+if not(bDrawer) AND zzyzx-count_th-toe_h<0.18 then END
+
+aa=SQR((a-(depth_cabl-lrear_cab)+front_cab+fr_th1-0.02)^2+(b-(depth_cabr-rrear_cab)+front_cab+fr_th1-0.02)^2): accessno=1
+alpha2=ATN((b-(depth_cabr-rrear_cab)+front_cab+fr_th1)/(a-(depth_cabl-lrear_cab)+front_cab+fr_th1))
+
+if gs_detlevel_3D_m=2 then
+	! SHELVES
+	material gs_cabinet_mat
+
+	if bDrawer then
+		ADDZ zzyzx-count_th-drawer_h-0.01
+		if dob_face=0 then aa=0.02
+		if dob_face=1 then aa=0
+		if gs_sink_type_m=0 then
+
+		PRISM_ 6,0.02,
+			   aa+(fr_th1*dob_face), 0.02, 15,
+			   depth_cabl-lrear_cab+0.02/TAN(alpha2)-front_cab-fr_th1, 0.02, 15,
+			   a-0.02, b-depth_cabr-0.02/TAN(90-alpha2)+front_cab+rrear_cab+fr_th1, 15,
+			   a-0.02, b-0.02, 15,
+			   aa+(fr_th1*dob_face), b-0.02, 15,
+			   aa+(fr_th1*dob_face), 0.02, -1
+		endif
+		del 1
+	endif
+
+	if shelf_num>0 AND A>0.04 then
+		for ii=1 to shelf_num
+			ADDZ toe_h+((zzyzx-count_th-toe_h-0.02-drawer_h+bDrawer*0.01)/(shelf_num+1))*(ii)
+				if dob_face=0 then aa=0.02
+				if dob_face=1 then aa=0
+
+				material gs_ShelfMat
+				PRISM_ 6,0.02,
+				   aa+(fr_th1*dob_face), 0.02, 15,
+				   depth_cabl-lrear_cab+0.02/TAN(alpha2)-front_cab-fr_th1, 0.02, 15,
+				   a-0.02, b-depth_cabr-0.02/TAN(90-alpha2)+front_cab+rrear_cab+fr_th1, 15,
+				   a-0.02, b-0.02, 15,
+				   aa+(fr_th1*dob_face), b-0.02, 15,
+				   aa+(fr_th1*dob_face), 0.02, -1
+
+			del 1
+		next ii
+	endif
+endif
+
+! END PANELS
+
+cc=zzyzx-count_th-toe_h
+ADDZ toe_h
+
+accessno=2
+! on rear panel there is no glas and grilles and knobs!!
+
+if iEndPanelType = 1 	then gs_door_type_mr=1
+if iEndPanelType = 2 	then gs_door_type_mr=2
+if iEndPanelType = 4 	then gs_door_type_mr=11
+if iEndPanelType = 7 	then gs_door_type_mr=4
+if iEndPanelType = 9 	then gs_door_type_mr=6
+if iEndPanelType = 99 then gs_door_type_mr=10
+
+if lrear_panel=1 then
+	ADD 0, b, 0
+	ROTZ -90
+
+	cabdoortyp_unID=unID
+	CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,gs_full_edit=0,
+			door_w=b, door_h=cc, gs_door_type_m=gs_door_type_mr, gs_shadow=gs_shadow,
+			doorframe_w=doorframe_w_end, gs_cont_pen=gs_cont_pen,
+			doorframe_mat=doorframe_mat_end, gs_knob_mat=gs_knob_mat,
+			doorglas_mat=doorframe_mat_end,gs_bevel=gs_bevel,
+			gs_knob_type_m=0, gs_resol=gs_resol,
+			gs_cust_p=gs_cust_p_end,fr_th1=0.02,
+			cabdoortyp_unID=cabdoortyp_unID,
+	returned_parameters cabdoortyp_unID
+
+	unID = cabdoortyp_unID
+
+	del 2
+endif
+
+if rrear_panel=1 then
+	ADD a, b, 0
+	ROTZ 180
+
+	cabdoortyp_unID=unID
+	CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,gs_full_edit=0,
+			door_w=a-(fr_th1*dob_face), door_h=cc, gs_door_type_m=gs_door_type_mr, gs_shadow=gs_shadow,
+			doorframe_w=doorframe_w_end, gs_cont_pen=gs_cont_pen,
+			doorframe_mat=doorframe_mat_end, gs_knob_mat=gs_knob_mat,
+			doorglas_mat=doorframe_mat_end,gs_bevel=gs_bevel,
+			gs_knob_type_m=0, gs_resol=gs_resol,
+			gs_cust_p=gs_cust_p_end,fr_th1=0.02,
+			cabdoortyp_unID=cabdoortyp_unID,
+	returned_parameters cabdoortyp_unID
+
+	unID = cabdoortyp_unID
+
+	del 2
+endif
+
+if left_panel=1 then
+
+	ADDX (fr_th1*dob_face)
+	cabdoortyp_unID=unID
+	CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,gs_full_edit=0,
+		door_w=depth_cabl-front_cab-lrear_cab-fr_th1-(fr_th1*dob_face), door_h=cc, gs_door_type_m=gs_door_type_mr, gs_shadow=gs_shadow,
+		doorframe_w=doorframe_w_end, gs_cont_pen=gs_cont_pen,
+		doorframe_mat=doorframe_mat_end, gs_knob_mat=gs_knob_mat,
+		doorglas_mat=doorframe_mat_end,gs_bevel=gs_bevel,
+		gs_knob_type_m=0, gs_resol=gs_resol,
+		gs_cust_p=gs_cust_p_end,fr_th1=0.02,
+		cabdoortyp_unID=cabdoortyp_unID,
+		returned_parameters cabdoortyp_unID
+
+	unID = cabdoortyp_unID
+	del 1
+endif
+
+if right_panel=1 then
+	ADD a, b-depth_cabr+front_cab+rrear_cab+fr_th1, 0
+	ROTZ 90
+
+	cabdoortyp_unID=unID
+	CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,gs_full_edit=0,
+			door_w=depth_cabr-front_cab-rrear_cab-fr_th1, door_h=cc, gs_door_type_m=gs_door_type_mr, gs_shadow=gs_shadow,
+			doorframe_w=doorframe_w_end, gs_cont_pen=gs_cont_pen,
+			doorframe_mat=doorframe_mat_end, gs_knob_mat=gs_knob_mat,
+			doorglas_mat=doorframe_mat_end,gs_bevel=gs_bevel,
+			gs_knob_type_m=0, gs_resol=gs_resol,
+			gs_cust_p=gs_cust_p_end,fr_th1=0.02,
+			cabdoortyp_unID=cabdoortyp_unID,
+	returned_parameters cabdoortyp_unID
+
+	unID = cabdoortyp_unID
+
+	del 2
+endif
+del 1
+
+! DOOR/DRAWER
+aa=SQR((a-(depth_cabl-lrear_cab)+front_cab+fr_th1-0.02)^2+(b-(depth_cabr-rrear_cab)+front_cab+fr_th1-0.02)^2): accessno=1
+
+if bDrawer then
+
+	cc=zzyzx-count_th-toe_h-drawer_h
+
+	ADD depth_cabl-front_cab-fr_th1-lrear_cab,0,zzyzx-count_th-drawer_h
+	ROTZ alpha2
+	ADDx 0.02*SQR(2)/2
+
+	cabdoortyp_unID=unID
+	CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,gs_full_edit=0,
+			door_w=aa, door_h=drawer_h, gs_door_type_m = _iDrawerType,gs_shadow=gs_shadow,
+			doorframe_w=doorframe_w, gs_cont_pen=gs_cont_pen,
+			doorglas_mat=doorglas_mat, vert_gnum=0, hor_gnum=0, fr_th1=fr_th1,
+			doorframe_mat=DrawerMat, gs_knob_type_m=0, gs_resol=gs_resol,
+			cabdoortyp_unID=cabdoortyp_unID, gs_bevel=gs_bevel,
+			returned_parameters cabdoortyp_unID
+
+	unID = cabdoortyp_unID
+
+	if gs_knob_type_m<>0 then
+		ADD aa/2, -0.02, drawer_h/2
+		ROTY 90
+		gosub "knobs"
+		del 2
+	endif
+	DEl 3
+endif
+
+! DOOR
+
+
+if gs_door_type_m > 0 then
+	ADD depth_cabl-front_cab-fr_th1-lrear_cab,0,toe_h
+	ROTZ alpha2
+	ADDx 0.02*SQR(2)/2
+
+	cabdoortyp_unID=unID
+	CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,
+			gs_full_edit=gs_full_edit, door_ang=door_ang,
+			door_w=aa, door_h=cc, gs_door_type_m=gs_door_type_m, gs_shadow=gs_shadow,
+			doorframe_w=doorframe_w, gs_cont_pen=gs_cont_pen,
+			vert_gnum=vert_gnum, hor_gnum=hor_gnum,
+			doorframe_mat=doorframe_mat, gs_knob_mat=gs_knob_mat,
+			doorglas_mat=doorglas_mat,fr_th1=fr_th1,
+			gs_knob_type_m=gs_knob_type_m, gs_resol=gs_resol,
+			gs_cust_p=gs_cust_p,gs_knob_p_m=gs_knob_p_m,knob_size=knob_size,
+			knob_pl_x=knob_pl_x,knob_pl_y=knob_pl_y,
+			cabdoortyp_unID=cabdoortyp_unID,gs_bevel=gs_bevel,
+			gs_cust_knob = gs_cust_knob, gs_customHandleLength = gs_customHandleLength,
+			gs_customHandleHeight = gs_customHandleHeight, gs_customHandleDepth = gs_customHandleDepth,
+			returned_parameters cabdoortyp_unID
+
+	unID = cabdoortyp_unID
+	del 3
+endif
+
+
+if dob_face=1 then
+
+	aa=b-0.01
+
+	if bDrawer then
+		cc=zzyzx-count_th-toe_h-drawer_h
+		ADD (fr_th1*dob_face), b, zzyzx-count_th-drawer_h
+		ROTZ -90
+		ADDX 0.005
+
+		cabdoortyp_unID=unID
+		CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m, gs_full_edit=0,
+				door_w=aa, door_h=drawer_h, gs_door_type_m=1,gs_shadow=gs_shadow,
+				doorframe_w=doorframe_w, gs_cont_pen=gs_cont_pen,
+				doorglas_mat=DrawerMat,fr_th1=fr_th1,
+				doorframe_mat=DrawerMat, gs_knob_type_m=0, gs_resol=gs_resol,
+				cabdoortyp_unID=cabdoortyp_unID, gs_bevel=gs_bevel,
+				returned_parameters cabdoortyp_unID
+
+		unID = cabdoortyp_unID
+
+		if gs_knob_type_m<>0 then
+			ADD aa/2, -fr_th1, drawer_h/2
+			ROTY 90
+			gosub "knobs"
+			del 2
+		endif
+		del 3
+	endif
+
+	if gs_door_type_m > 0 then
+		ADD (fr_th1*dob_face), b, toe_h
+		ROTZ -90
+		ADDX 0.005
+
+		cabdoortyp_unID=unID
+		CALL "fa_cabdoortyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,
+				gs_full_edit=gs_full_edit, door_ang=door_ang,
+				door_w=aa, door_h=cc, gs_door_type_m=gs_door_type_m, gs_shadow=gs_shadow,
+				doorframe_w=doorframe_w, gs_cont_pen=gs_cont_pen,
+				vert_gnum=vert_gnum, hor_gnum=hor_gnum,fr_th1=fr_th1,
+				doorframe_mat=doorframe_mat, gs_knob_mat=gs_knob_mat,
+				doorglas_mat=doorglas_mat,gs_knob_p_m=gs_knob_p_m,
+				gs_knob_type_m=gs_knob_type_m, gs_resol=gs_resol,
+				gs_cust_p=gs_cust_p,knob_size=knob_size,knob_pl_x=knob_pl_x,knob_pl_y=knob_pl_y,
+				cabdoortyp_unID=cabdoortyp_unID,gs_bevel=gs_bevel,
+				gs_cust_knob = gs_cust_knob, gs_customHandleLength = gs_customHandleLength,
+				gs_customHandleHeight = gs_customHandleHeight, gs_customHandleDepth = gs_customHandleDepth,
+				returned_parameters cabdoortyp_unID
+
+		unID = cabdoortyp_unID
+		del 3
+	endif
+endif
+
+END
+
+
+"knobs":
+	if gs_detlevel_3D_m=2 then
+		if gs_knob_type_m = 9 then
+			reqBKnobs = 0
+			success = LIBRARYGLOBAL ("LibraryGlobals13_WMCC", "hideBKnobs", reqBKnobs)
+			if (success = 0 or not(reqBKnobs)) and gs_cust_knob<>"" then
+				ADDz -(left_cab+right_cab)/2
+				rotx 90
+				rotz 90
+				addx -gs_customHandleLength / 2
+				addy -gs_customHandleHeight / 2
+				call "Knob_Collection_WMCC" PARAMETERS gs_ptype	= gs_cust_knob,
+													a		= gs_customHandleLength,
+													b		= gs_customHandleHeight,
+													zzyzx	= gs_customHandleDepth
+				del 5
+			endif
+		else
+			if gs_knob_type_m=1 or gs_knob_type_m=2 or gs_knob_type_m=3 or gs_knob_type_m=0 then
+				ADDz 0
+				addy -fr_th1+0.02
+				! knob on top drawer
+				CALL "fa_knobtyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,
+						gs_knob_type_m=gs_knob_type_m,gs_resol=gs_resol,
+						gs_shadow=gs_shadow,gs_cont_pen=gs_cont_pen,
+						gs_knob_mat=gs_knob_mat
+				del 2
+			else
+				if gs_knob_type_m=8 then
+					roty 180
+					Addz knob_size/2
+					addy -fr_th1+0.02
+					gosub "knobmacro"
+					del 3
+				else
+					Addz knob_size/2
+					addy -fr_th1+0.02
+					gosub "knobmacro"
+					del 2
+				endif
+			endif
+		endif
+	endif
+return
+
+"knobmacro":
+	CALL "fa_knobtyp_WMCC" parameters gs_detlevel_3D_m=gs_detlevel_3D_m,
+			gs_knob_type_m=gs_knob_type_m,gs_resol=gs_resol,
+			gs_shadow=gs_shadow,gs_cont_pen=gs_cont_pen,
+			gs_knob_mat=gs_knob_mat,knob_size=knob_size
+return
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+DrawingNum = 1
+if DrawingNum = 1 then	! Top
+	! Handling overhungs in case of end panels !!!
+
+	pen gs_cont_pen
+
+	! 2D Hotspot
+	if cab_size=1 then
+		a=a-(lrear_cab+right_cab)
+		b=b-(left_cab+rrear_cab)
+	endif
+
+	unID=1
+
+	HOTSPOT2 0, B, unID, A, 1+256	:	unID=unID+1
+	HOTSPOT2 -0.001, B, unID, A, 3+128	:	unID=unID+1
+	HOTSPOT2 A, B, unID, A, 2	:	unID=unID+1
+
+	HOTSPOT2 0, 0, unID, A, 1+256	:	unID=unID+1
+	HOTSPOT2 -0.001, 0, unID, A, 3	:	unID=unID+1
+	HOTSPOT2 A, 0, unID, A, 2+128	:	unID=unID+1
+
+	HOTSPOT2 0, 0, unID, B, 1+256	:	unID=unID+1
+	HOTSPOT2 0, -0.001, unID, B, 3+128	:	unID=unID+1
+	HOTSPOT2 0, B, unID, B, 2	:	unID=unID+1
+
+	HOTSPOT2 A, 0, unID, B, 1+128	:	unID=unID+1
+	HOTSPOT2 A, -0.001, unID, B, 3	:	unID=unID+1
+	HOTSPOT2 A, B, unID, B, 2	:	unID=unID+1
+
+	HOTSPOT2 0, 0, unID, depth_cab, 1+128	:	unID=unID+1
+	HOTSPOT2 -0.001, 0, unID, depth_cab, 3	:	unID=unID+1
+	HOTSPOT2 depth_cab, 0, unID, depth_cab, 2	:	unID=unID+1
+
+	HOTSPOT2 A, b, unID, depth_cab, 1+128	:	unID=unID+1
+	HOTSPOT2 A, b+1, unID, depth_cab, 3	:	unID=unID+1
+	HOTSPOT2 A, b-depth_cab, unID, depth_cab, 2	:	unID=unID+1
+
+	if cab_size=0 then
+		unID=100
+		HOTSPOT2 depth_cab-front_cab, left_cab,unID: unID=unID+1
+		HOTSPOT2 a-right_cab, b-depth_cab+front_cab,unID: unID=unID+1
+		HOTSPOT2 lrear_cab, b-rrear_cab,unID: unID=unID+1
+		HOTSPOT2 a-right_cab, b-rrear_cab,unID: unID=unID+1
+		HOTSPOT2 lrear_cab, left_cab,unID: unID=unID+1
+	else
+		unID=200
+		HOTSPOT2 -lrear_cab, -left_cab,unID: unID=unID+1
+		HOTSPOT2 depth_cab+front_cab, -left_cab,unID: unID=unID+1
+		HOTSPOT2 A+right_cab, B-depth_cab-front_cab,unID: unID=unID+1
+		HOTSPOT2 A+right_cab, B+rrear_cab,unID: unID=unID+1
+		HOTSPOT2 -lrear_cab, B+rrear_cab,unID: unID=unID+1
+	endif
+
+	if cab_size=1 then
+		a=a+(lrear_cab+right_cab)
+		b=b+(left_cab+rrear_cab)
+	endif
+	! END of 2D Hotspot
+
+	PEN gs_cont_pen
+	LINE_TYPE gs_line_type
+
+	a=a-lrear_cab-right_cab
+	b=b-rrear_cab-left_cab
+	if cab_size then
+		depth_cabl=depth_cab+front_cab+lrear_cab
+		depth_cabr=depth_cab+front_cab+rrear_cab
+	else
+		depth_cabl=depth_cab
+		depth_cabr=depth_cab
+	endif
+
+	alfa=ATN((b+rrear_cab-depth_cabr+front_cab)/(a+lrear_cab-depth_cabl+front_cab))
+
+	ADD2 lrear_cab*(1-cab_size), left_cab*(1-cab_size)
+
+	LINE2 -lrear_cab, -left_cab,   -lrear_cab, b+rrear_cab
+	LINE2 -lrear_cab, b+rrear_cab,   a+right_cab, b+rrear_cab
+
+	if left_cab>0 AND right_cab>0 then
+		LINE2 depth_cabl-lrear_cab, -left_cab,   depth_cabl-lrear_cab, -front_cab*(TAN(45-alfa/2))
+		LINE2 depth_cabl-lrear_cab, -front_cab*(TAN(45-alfa/2)), a+front_cab*(TAN(alfa/2)), b-depth_cabr+rrear_cab
+		LINE2 a+right_cab, b-depth_cabr+rrear_cab, a+front_cab*(TAN(alfa/2)), b-depth_cabr+rrear_cab
+		lx=depth_cabl-lrear_cab
+		ly=-front_cab*(TAN(45-alfa/2))
+		rx=a+front_cab*(TAN(alfa/2))
+		ry=b-depth_cabr+rrear_cab
+	endif
+
+	if ABS(left_cab)<EPS AND right_cab>0 then
+		LINE2 depth_cabl-lrear_cab, 0, a+front_cab*(1-1/(TAN(alfa))), b-depth_cabr+rrear_cab
+		LINE2 a+right_cab, b-depth_cabr+rrear_cab, a+front_cab*(1-1/(TAN(alfa))), b-depth_cabr+rrear_cab
+		lx=depth_cabl-lrear_cab
+		ly=0
+		rx=a+front_cab*(1-1/(TAN(alfa)))
+		ry=b-depth_cabr+rrear_cab
+	endif
+
+	if left_cab>0 AND ABS(right_cab)<EPS then
+		LINE2 depth_cabl-lrear_cab, -left_cab,   depth_cabl-lrear_cab, -front_cab*(1-1/(TAN(90-alfa)))
+		LINE2 depth_cabl-lrear_cab, -front_cab*(1-1/(TAN(90-alfa))), a, b-depth_cabr+rrear_cab
+		lx=depth_cabl-lrear_cab
+		ly=-front_cab*(1-1/(TAN(90-alfa)))
+		rx=a
+		ry=b-depth_cabr+rrear_cab
+	endif
+
+	if ABS(left_cab)<EPS AND ABS(right_cab)<EPS then
+		LINE2 depth_cabl-lrear_cab, 0, a, b-depth_cabr+rrear_cab
+		lx=depth_cabl-lrear_cab
+		ly=0
+		rx=a
+		ry=b-depth_cabr+rrear_cab
+	endif
+
+	DRAWINDEX 10
+	FILL gs_fill_type
+
+	POLY2_B 8, 2, gs_fill_pen, gs_back_pen,
+			-lrear_cab, b+rrear_cab, 1,
+			a+right_cab, b+rrear_cab, 1,
+			a+right_cab, b-depth_cabr+rrear_cab, 1,
+			rx, ry, 1,
+			lx, ly, 1,
+			depth_cabl-lrear_cab, -left_cab, 1,
+			-lrear_cab, -left_cab, 1,
+			-lrear_cab, b+rrear_cab, -1
+
+	HOTLINE2 -lrear_cab, b+rrear_cab,a+right_cab, b+rrear_cab
+	HOTLINE2 a+right_cab, b+rrear_cab,a+right_cab, b-depth_cabr+rrear_cab
+	HOTLINE2 a+right_cab, b-depth_cabr+rrear_cab,rx, ry
+	HOTLINE2 rx, ry,lx, ly
+	HOTLINE2 lx, ly,depth_cabl-lrear_cab, -left_cab
+	HOTLINE2 depth_cabl-lrear_cab, -left_cab,-lrear_cab, -left_cab
+	HOTLINE2 -lrear_cab, -left_cab,-lrear_cab, b+rrear_cab
+
+	ADD2 depth_cabl-lrear_cab+(rx-lx)/2, ly+(ry-ly)/2
+	ROT2 ATN((ry-ly)/(rx-lx))
+	if gs_sink_type_m=1 then			!!SINK 1
+		sink_a=0.4
+		sink_b=0.4
+		sink_z=0.2
+	endif
+	if gs_sink_type_m=2 then			!!SINK 2
+		sink_a=0.55
+		sink_b=0.55
+		sink_z=0.2
+	endif
+	ADD2 -sink_a/2, front_cab+3"
+
+	call "fa_sinktyp_WMCC" parameters all	a				= sink_a,
+										b				= sink_b,
+										zzyzx			= sink_z,
+										bEnableTapEdit	= 1,
+										bMovableDrain	= 0
+
+	if gs_sink_type_m = 1 then
+		HOTARC2 sink_a/2,sink_b/2,sink_a/2,0,180
+		HOTARC2 sink_a/2,sink_b/2,sink_a/2,180,360
+	endif
+	if gs_sink_type_m = 2 then
+		HOTLINE2 0,0,sink_a,0
+		HOTLINE2 sink_a,0,sink_a,sink_b
+		HOTLINE2 sink_a,sink_b,0,sink_b
+		HOTLINE2 0,0,0,sink_b
+	endif
+	del 1
+	del 2
+	side_vis2D_m = side_vis2D_m +1
+	if side_vis2D_m=1 then 15
+	if side_vis2D_m=2 then 10
+	LINE2 a+right_cab, b+rrear_cab,   a+right_cab, b-depth_cabr+rrear_cab
+
+	10:
+		if side_vis2D_m=3 then 15
+		LINE2 -lrear_cab, -left_cab,  depth_cabl-lrear_cab, -left_cab
+
+	15:
+		if NOT(bs_h<=0) AND dob_face=1 AND ABS(rrear_cab)<EPS then
+				LINE2 -lrear_cab, b-0.02,   a+right_cab, b-0.02
+		endif
+
+		if NOT(bs_h<=0) AND dob_face=0 AND ABS(rrear_cab)<EPS AND ABS(lrear_cab)<EPS then
+			LINE2 0.02, b-0.02,   a+right_cab, b-0.02
+			LINE2 0.02, b-0.02,   0.02, -left_cab
+		endif
+
+		reqBMinSpace = 0
+
+		call "fa_minimalspace_WMCC" parameters all MSType = 0, unID = 3000,
+								returned_parameters reqBMinSpace,
+													MSFillType,
+													MSFillPen,
+													MSFillBackPen,
+													MSContLineType,
+													MSContLinePen
+
+		if reqBMinSpace <> 0 then
+
+			FILL MSFillType
+			pen MSContLinePen
+			line_type MSContLineType
+
+			alpha=atn((ry-ly)/(rx-lx))
+			lcab_side=sin(alpha)*left_cab
+			rcab_side=cos(alpha)*right_cab
+
+			POLY2_B 8, 1+2+4,MSFillPen,MSFillBackPen,
+				a+right_cab, b-depth_cabr+rrear_cab,1,
+				rx, ry,1,
+				lx, ly,1,
+				depth_cabl-lrear_cab, -left_cab,1,
+
+				depth_cabl-lrear_cab-MSSide2/cos(alpha), -left_cab,1,
+				lx+sin(alpha)*MSFront-cos(alpha)*lcab_side-cos(alpha)*MSSide2, ly-cos(alpha)*MSFront-sin(alpha)*lcab_side-sin(alpha)*MSSide2,1,
+
+				rx+sin(alpha)*MSFront+cos(alpha)*rcab_side+cos(alpha)*MSSide, ry-cos(alpha)*MSFront+sin(alpha)*rcab_side+sin(alpha)*MSSide,1,
+				a+right_cab, b-depth_cabr+rrear_cab+MSSide/sin(alpha),1
+
+			HOTSPOT2 depth_cabl-lrear_cab-MSSide2/cos(alpha), -left_cab,		unID: unID=unID+1
+			HOTSPOT2 lx+sin(alpha)*MSFront-cos(alpha)*lcab_side-cos(alpha)*MSSide2, ly-cos(alpha)*MSFront-sin(alpha)*lcab_side-sin(alpha)*MSSide2,	unID: unID=unID+1
+			HOTSPOT2 rx+sin(alpha)*MSFront+cos(alpha)*rcab_side+cos(alpha)*MSSide, ry-cos(alpha)*MSFront+sin(alpha)*rcab_side+sin(alpha)*MSSide,		unID: unID=unID+1
+			HOTSPOT2 a+right_cab, b-depth_cabr+rrear_cab+MSSide/sin(alpha),		unID: unID=unID+1
+
+			if dob_face=1 AND lrear_cab<0.90 then
+			   POLY2_B 5, 1+2+4,MSFillPen,MSFillBackPen,
+						-lrear_cab, -left_cab,1,
+						-lrear_cab, b+rrear_cab,1,
+						-MSFront, b+rrear_cab,1,
+						-MSFront, -left_cab,1,
+						-lrear_cab, -left_cab,-1
+			   HOTSPOT2 -MSFront,b+rrear_cab,unID: unID=unID+1
+			   HOTSPOT2 -MSFront, -left_cab,unID: unID=unID+1
+			endif
+
+		endif
+
+	del 1
+	PEN gs_cont_pen
+	LINE_TYPE gs_line_type
+
+	ADD2 lrear_cab*(1-cab_size), left_cab*(1-cab_size)
+	if iCabSymbolType2D <> 1 then
+		if iCabSymbolType2D = 2 OR iCabSymbolType2D = 4 then
+				LINE2 	rx, ry+0.025,	lx-0.025, ly
+				LINE2 	lx-0.025, -left_cab,	lx-0.025, ly
+				LINE2 	rx, ry+0.025,	a+right_cab, ry+0.025
+		endif
+		if iCabSymbolType2D = 3 OR iCabSymbolType2D = 4 then
+				poly2_ 4,1+4,
+					rx,ry,1,
+					lx,ly,901,
+					0,-15,4001,
+					lx,ly,1
+		endif
+		if dob_face = 1 then
+			if iCabSymbolType2D = 2 OR iCabSymbolType2D = 4 then
+				LINE2 -lrear_cab+0.025, -left_cab,   -lrear_cab+0.025, b+rrear_cab
+			endif
+			if iCabSymbolType2D = 3 OR iCabSymbolType2D = 4 then
+				ADD2 -lrear_cab, b+rrear_cab
+				MUL2 1,-1
+					LINE2 0, 0,-sin(15)*(b+rrear_cab+left_cab),cos(15)*(b+rrear_cab+left_cab)
+					ARC2 0, 0,b+rrear_cab+left_cab,90,105
+				del 2
+			endif
+		endif
+	endif
+	del 1
+endif
+
+
+! Show MEP Connections -------------------------------------------------------------[
+
+isavailable = 0
+isInArchiCAD = APPLICATION_QUERY ("MEPMODELER", "IsAvailable()", isavailable)
+isMEPEnabled = (isavailable OR isInArchiCAD = 0)
+if isMEPEnabled then
+	bShowMEP = 1
+	reqBMep = 0
+	success = LIBRARYGLOBAL ("LibraryGlobals13_WMCC", "showMepConnect", reqBMep)
+	if success > 0 then
+		bShowMEP = reqBMep
+	endif
+else
+	bShowMEP = 0
+endif
+
+! Show MEP Connections -------------------------------------------------------------]
+
+! start of modifying to Shaft
+
+IF bShowMEP THEN
+
+	PEN gs_cont_pen
+
+	! OTHER VIEWS
+
+	ROT2 -SYMB_ROTANGLE * (DrawingNum > 1 AND NOT(SYMB_MIRRORED))+SYMB_ROTANGLE * (DrawingNum > 1 AND SYMB_MIRRORED)
+
+	if DrawingNum = 2 then PROJECT2 -3, 90, 2	! Bottom
+	if DrawingNum = 3 then PROJECT2 4, 270, 2	! Front
+	if DrawingNum = 4 then PROJECT2 4, 90, 2	! Back
+	if DrawingNum = 5 then PROJECT2 4, 180*(SYMB_MIRRORED), 2		! Right
+	if DrawingNum = 6 then PROJECT2 4, 180*NOT(SYMB_MIRRORED), 2	! Left
+
+	! CONNECTIONS
+
+	CALL "MEP_m_ConnectionsACL_4_WMCC" parameters SetProgram = SetProgram,
+		ui_current_con = ui_current_con,
+		MEP_NumberConnections = MEP_NumberConnections,
+		MEP_NumConnectionData = gs_Connections,
+		gs_AddConnections = gs_AddConnections,
+		DrawingNum = DrawingNum,
+		MEP_InsShow = 0,
+		MEP_cline_show = 0,
+		gs_cont_pen = gs_cont_pen,
+		gs_fill_type=gs_fill_type,
+		gs_fill_pen=gs_fill_pen,
+		gs_back_pen=gs_back_pen,
+		ConPosX_1=ConPosX_1, ConPosY_1=ConPosY_1, ConLength_1=ConLength_1, ConEdit_1 = 12,
+		ConPosX_2=ConPosX_2, ConPosY_2=ConPosY_2, ConLength_2=ConLength_2, ConEdit_2 = 12,
+		ConPosX_3=ConPosX_3, ConPosY_3=ConPosY_3, ConLength_3=ConLength_3, ConEdit_3 = 12
+	del 1
+endif
+
+! end of modifying to Shaft
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+EPS=0.0001
+
+dim pageIds[7]
+	pageIds[1] = 1
+	pageIds[2] = 0
+	pageIds[3] = 3
+	pageIds[4] = 4
+	pageIds[5] = 5
+	pageIds[6] = 0
+	pageIds[7] = 7
+
+DIM st_knobtypes[9]
+	st_knobtypes[1]=`None`
+	st_knobtypes[2]=`Style 1`
+	st_knobtypes[3]=`Style 2`
+	st_knobtypes[4]=`Style 3`
+	st_knobtypes[5]=`Style 4`
+	st_knobtypes[6]=`Style 5`
+	st_knobtypes[7]=`Style 6`
+	st_knobtypes[8]=`Style 7`
+	st_knobtypes[9]=`Style 8`
+
+! if no door, than the cabinet size is A, B
+if not(bDrawer) and gs_door_type_m = 0  then fr_th1=0
+
+if gs_count_type_m = 0 then count_th = 0
+
+if cab_size=1 then
+	a=a+lrear_cab+right_cab
+	b=b+left_cab+rrear_cab
+endif
+
+! --- Drawer and Door Panel
+if bDrawer then
+	drawer_h = drawerHeight
+else
+	drawer_h = 0
+endif
+
+if bUseDoorFront then
+	_iDrawerType = gs_door_type_m
+else
+	_iDrawerType = 1
+endif
+
+if A<0.15+depth_cab then parameters A=0.15+depth_cab
+if B<0.15+depth_cab then parameters A=0.15+depth_cab
+
+if zzyzx-count_th-toe_h<0 then parameters zzyzx=count_th+toe_h
+
+if ABS(count_th)<EPS then parameters gs_sink_type_m = 0
+if depth_cab<0.10 then parameters depth_cab=0.10
+
+if GLOB_MODPAR_NAME="A" OR GLOB_MODPAR_NAME="B" then
+	if GLOB_MODPAR_NAME="B" AND front_cab>a-depth_cab AND count_th>0 then parameters front_cab=a-depth_cab
+	if GLOB_MODPAR_NAME="A" AND front_cab>b-depth_cab AND count_th>0 then parameters front_cab=b-depth_cab
+else
+	if front_cab>a-depth_cab AND count_th>0 then parameters front_cab=a-depth_cab
+	if front_cab>b-depth_cab AND count_th>0 then parameters front_cab=b-depth_cab
+endif
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+dim pageNames[7]
+	pageNames[1] = ""
+	pageNames[2] = `Counter`
+	pageNames[3] = ""
+	pageNames[4] = ""
+	pageNames[5] = ""
+	pageNames[6] = `Minimal Space`
+	pageNames[7] = ""
+
+DIM pageIcos[7]
+	pageIcos[1] = ""
+	pageIcos[2] = "ui_tab_furniture_counter(1)"
+	pageIcos[3] = ""
+	pageIcos[4] = ""
+	pageIcos[5] = ""
+	pageIcos[6] = "ui_tab_minimalspace(1)"
+	pageIcos[7] = ""
+
+
+CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
+									pageIds = pageIds,
+									pageNames = pageNames,
+									pageIcos = pageIcos,
+									CornCabType = 1,
+									bEdgeBevel = 1,
+									CabinetType = 0,
+									bCounterOverhang = 1,
+									bMirror = 1,
+
+									CornerEdgeSizes = 3,
+									bToe = 1,
+									bShelf = 1,
+									bMaterialsInRow = 0,
+
+									bMoreDoorPanels = 1,
+									bPossibleDrawer = 1,
+									bPossibleDrawerNum = 0,
+									nDoors = 1,
+
+									bDoubleFacadeEdit = 1,
+									bOneRearPanelEdit = 0,
+									bHorKnobPosition = 1,
+									bVerKnobPosition =1,
+									bPositionType = 1,
+
+									bCabSymbol = 1,
+									bPossibleSinknTap = 1,
+									bApplianceEdit = 0,
+									bSymbLineEdit = 0,
+									bMinSpaceEdit = 1,
+									bShadowEdit = 1,
+									bHotspotEdit = 1,
+									bDrainSymb = 0
+
+
+! === Page 2 ====================================================================================
+ui_page  2
+
+XX=58+12
+YY=66+6
+PX=105
+CX=50
+
+ui_style 0,1
+ui_outfield	`Countertop Edge Type:`, 5,	40,	140,13,1
+ui_style 0,0
+
+call "Kitchen Cabinets UI macro_WMCC" parameters bCounterInfieldOnly = 1,
+											counterInfieldXPos	= 150,
+											counterInfieldYPos	= 36
+if SYMB_MIRRORED then
+	ui_pict	"ui_CabTopViewCornMirror(13)",	XX,	YY,	PX,	PX,1
+
+	ui_infield	"lrear_cab_mirror",	XX-CX-2,	YY,			CX,	18 UI_TOOLTIP `Overhang to Left-Rear of Cabinet`
+	ui_infield	"right_cab_mirror",	XX-CX-2,	YY+PX-18-8,	CX,	18 UI_TOOLTIP `Overhang to Right of Cabinet`
+
+	ui_infield	"left_cab_mirror",		XX-20,		YY+PX+3,	CX,	18 UI_TOOLTIP `Overhang to Left of Cabinet`
+	ui_infield	"front_cab",			XX+32,		YY+PX+3,	CX,	18 UI_TOOLTIP `Overhang to Front of Cabinet`
+	ui_infield	"rrear_cab_mirror",		XX+PX-20,	YY+PX+3,	CX,	18 UI_TOOLTIP `Overhang to Right-Rear of Cabinet`
+else
+	ui_pict	"ui_CabTopViewCorn(13)",	XX,	YY,	PX,	PX,1
+
+	ui_infield	"rrear_cab",		XX-CX-2,	YY,			CX,	18 UI_TOOLTIP `Overhang to Right-Rear of Cabinet`
+	ui_infield	"left_cab",			XX-CX-2,	YY+PX-18-8,	CX,	18 UI_TOOLTIP `Overhang to Left of Cabinet`
+
+	ui_infield	"lrear_cab",		XX-CX/2-15,		YY+PX+3,	CX,	18 UI_TOOLTIP `Overhang to Left-Rear of Cabinet`
+	ui_infield	"front_cab",		XX+20,		YY+PX+3,	CX,	18 UI_TOOLTIP `Overhang to Front of Cabinet`
+	ui_infield	"right_cab",		XX+PX-20,	YY+PX+3,	CX,	18 UI_TOOLTIP `Overhang to Right of Cabinet`
+endif
+
+ui_outfield	`Counter`, 		12,		216,	86,	13
+ui_infield	"count_mat",	100,	216-4,	90,	22
+
+ui_outfield	`Backsplash`, 	12,		216+24,		86,	13
+ui_infield	"bs_mat",		100,	216+24-4,	90,	22
+
+
+xStart = 207
+x1 = 8 + xStart
+y1 = 40
+x2 = 100
+y = 60
+yRow = 18
+hRow = 22
+
+ui_separator xStart, 43, xStart, 258
+
+ui_style 0,1
+ui_outfield	`Sink`,	x1,	y1,	x2,	yRow-5
+ui_style 0,0
+
+ui_infield{3} "gs_sink_type_m", x1, y,	100, 60,
+		2,"ui_sinktyp(13)",15,3,
+		80, 50, 80, 50,
+		15,"", 0,
+		1, "", 1,
+		2, "", 2,
+		3, "", 3,
+		4, "", 4,
+		5, "", 5,
+		6, "", 6,
+		7, "", 7,
+		8, "", 8,
+		9, "",9,
+		10,"",10,
+		11,"",11,
+		12,"",12,
+		13,"",13,
+		14,"",14
+y = y + 65
+
+ui_infield{3}	"sunder",	x1, y, x2, 21,
+			7, "", 2, 1, 0, 0, 0, 0,
+			1, `Undermounted`, 0,
+			2, `Undermounted`, 1
+
+y = 218
+ui_outfield	`Surface`,	x1,	y,	x2,	yRow-5
+y = y + 18
+ui_infield	"gs_sink_mat",	x1,	y,	90,	hRow
+
+
+xStart = 320
+x1 = 8 + xStart
+x2 = 100
+y = 60
+
+ui_separator xStart, 43, xStart, 258
+
+ui_style 0,1
+ui_outfield	`Tap`, x1,	y1,	105,	yRow-5
+ui_style 0,0
+
+ui_infield{3} "gs_tap_type", x1, y, 110, 115 * 0.8,
+	2, "ui_taptypes_2(4)", 35, 7,
+	60, 90, 60, 90,
+	7, `Style 1`, `Style 1`,
+	2, `Style 2`, `Style 2`,
+	3, `Style 3`, `Style 3`,
+	4, `Style 4`, `Style 4`,
+	5, `Style 5`, `Style 5`,
+	9, `Style 6`, `Style 6`,
+	12, `Style 7`, `Style 7`,
+	32, `Simple`, `Simple`,
+	0, `None`, `None`
+
+y = 218
+ui_outfield	`Surface`,	x1,	y,	x2,	yRow-5, 4 * (gs_tap_type_m = 0)
+y = y + 18
+ui_infield	"gs_tap_mat",	x1,	y,	90,	hRow
+
+
+! === Page 6 ================================================================================
+! --- Minimal Space -------------------------------------------------------------------------
+
+ui_page  6
+
+xPict = 140
+yPict = 60
+PX = 191
+PY = 197
+dist = 10
+wGap = 50
+hGap = 18
+
+ui_pict	1,	xPict,	  yPict,    148, 127,1
+ui_pict	2,	xPict+65, yPict+98, 126, 99,1
+
+ui_infield	"A",    	xPict+PX/2-dist*4, yPict-dist*2,    wGap,	hGap ui_tooltip `Width`
+ui_infield	"B",    	xPict-dist-wGap,   yPict+PY/4,	    wGap,	hGap ui_tooltip `Depth`
+ui_infield	"depth_cab",xPict+3*PX/4+dist, yPict+PY/5,	    wGap,	hGap ui_tooltip `Depth of Connected Cabinet`
+ui_infield	"MSFront",	xPict+dist, 	   yPict+PY-35,			wGap,	hGap ui_tooltip `Minimal Space in Front`
+ui_infield	"MSSide2",	xPict+PX+dist, 	   242,         		wGap,	hGap ui_tooltip `Minimal Space on Side 2`
+ui_infield	"MSSide",	xPict+PX+dist, 	   195,         		wGap,	hGap ui_tooltip `Minimal Space on Side 1`
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+call "FM_types_WMCC" parameters all
+
+values "A" range [0.75, )
+values "B" range [0.75, )
+
+values "door_ang" range [0,90+45]
+
+values "gs_resol" range [4,)
+
+! --- Minimal Space ---
+minspace_max=(a-depth_cab)/sin(45)/2
+values "MSSide" range (-minspace_max,]
+values "MSSide2" range(-minspace_max,]
+
+if ABS(count_th)<EPS then
+	parameters front_cab=0, lrear_cab=0, rrear_cab=0, left_cab=0, right_cab=0
+	lock "front_cab", "lrear_cab", "rrear_cab", "left_cab", "right_cab"
+endif
+
+if GLOB_MODPAR_NAME="dob_face" AND lrear_cab>=0.05 AND dob_face=0 then
+	parameters lrear_cab=0
+endif
+
+if dob_face=1 then
+	if SYMB_MIRRORED then
+		lock "lrear_panel_mirror"
+		parameters lrear_panel_mirror = 0
+else
+		lock "lrear_panel"
+		parameters lrear_panel = 0
+endif
+endif
+
+if count_th>0 then
+	if dob_face=0 then
+		if lrear_cab>0 AND NOT(GLOB_MODPAR_NAME="dob_face") then lock "bs_h", "bsmat"
+		if rrear_cab>0 then lock "bs_h", "bsmat"
+else
+		if rrear_cab>0 then lock "bs_h", "bsmat"
+endif
+endif
+
+
+! Same A,B Size
+if GLOB_MODPAR_NAME = "B" 		then
+	A=B
+	parameters A=A
+else
+	B=A
+	parameters B=B
+endif
+
+MEP_NumberConnections = 3
+PARAMETERS MEP_NumberConnections = MEP_NumberConnections
+
+dim DimConName[3]
+	DimConName[1] = `Hot Water Connection`
+	DimConName[2] = `Cold Water Connection`
+	DimConName[3] = `Waste Water Connection`
+
+! --- Drawer ---
+values "drawerHeight" range (0, )
+
+if not(bDrawer) then
+	hideparameter "bUseDoorFront", "drawerHeight"
+	lock "bUseDoorFront", "drawerHeight"
+endif
+
+CALL "Kitchen Cabinets UI macro_WMCC" parameters all \
+									pageIds = pageIds,
+									DimConName = DimConName,
+									CornCabType = 1,
+									bEdgeBevel = 1,
+									CabinetType = 0,
+									bMirror = 1,
+									bCounterOverhang = 1,
+
+									CornerEdgeSizes = 3,
+									bToe = 1,
+									bShelf = 1,
+									bMaterialsInRow = 0,
+
+									bPossibleUndermounted = 1,
+									possibleSinkTypes = 3,
+									bSidePanels = 0,
+
+									bMoreDoorPanels = 1,
+									bPossibleDrawer = 1,
+									bPossibleDrawerNum = 0,
+									nDoors = 1,
+
+									bDoubleFacadeEdit = 1,
+									bOneRearPanelEdit = 0,
+									bHorKnobPosition = 1,
+									bVerKnobPosition =1,
+									bPositionType = 1,
+
+									bCabSymbol = 1,
+									bPossibleSinknTap = 1,
+									bApplianceEdit = 0,
+									bSymbLineEdit = 0,
+									bMinSpaceEdit = 1,
+									bShadowEdit = 1,
+									bHotspotEdit = 1,
+									bDrainSymb = 0,
+
+									bKnobParams = 1
+
+
+if gs_sink_type_m=1 then sink_a=0.40			!!SINK 1
+if gs_sink_type_m=2 then sink_a=0.55			!!SINK 2
+tapMinDist=0.03
+bigTap = 0
+if gs_tap_type_m > 3 then bigTap = 1
+if gs_tap_type_m=0  then HIDEPARAMETER "tapOffset"
+if gs_sink_type_m=1  then VALUES "tapOffset" RANGE[0, 0]																!!(Sink Round)
+if gs_sink_type_m=2  then VALUES "tapOffset" RANGE[-sink_a/2+tapMinDist+bigTap*0.1, sink_a/2-tapMinDist-bigTap*0.1]		!!(Sink 1 Bowl)
+
+
+]]></Script_VL>
+
+<Picture MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="0" length_in_bytes="17892" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000800000
+	008008020000004C5CF69C000000097048597300002E2300002E230178A53F76
+	00000A396943435050686F746F73686F70204943432070726F66696C65000078
+	DA9D96775454D71687CFBD777AA1CD30025286DEBBC000D27B935E4561981960
+	28030E3334B121A2021145449A224850C480D150245644B1101454B007240828
+	311845542C6F46D68BAEACBCF7F2F2FBE3AC6FEDB3F7B9FBECBDCF5A170092A7
+	2F9797064B0190CA13F0833C9CE911915174EC0080011E608029004C5646BA5F
+	B07B0810C9CBCD859E2172025F0401F07A58BC0270D3D033804E07FF9FA459E9
+	7C81E89800119BB339192C11178838254B902EB6CF8A981A972C66182566BE28
+	4111CB893961910D3EFB2CB2A398D9A93CB688C539A7B353D962EE15F1B64C21
+	47C488AF880B33B99C2C11DF12B1468A30952BE237E2D8540E33030014496C17
+	70588922361131891F12E422E2E500E048095F71DC572CE0640BC49772494BCF
+	E173131205741D962EDDD4DA9A41F7E464A5700402C300262B99C967D35DD252
+	D399BC1C0016EFFC5932E2DAD24545B634B5B6B434343332FDAA50FF75F36F4A
+	DCDB457A19F8B96710ADFF8BEDAFFCD21A0060CC896AB3F38B2DAE0A80CE2D00
+	C8DDFB62D3380080A4A86F1DD7BFBA0F4D3C2F890241BA8DB1715656961197C3
+	321217F40FFD4F87BFA1AFBE67243EEE8FF2D05D39F14C618A802EAE1B2B2D25
+	4DC8A767A433591CBAE19F87F81F07FE751E06419C780E9FC313458489A68CCB
+	4B10B59BC7E60AB8693C3A97F79F9AF80FC3FEA4C5B91689D2F81150638C80D4
+	752A407EED07280A1120D1FBC55DFFA36FBEF830207E79E12A938B73FFEF37FD
+	67C1A5E225839BF039CE252884CE12F23317F7C4CF12A0010148022A9007CA40
+	1DE800436006AC802D70046EC01BF8831010095603164804A9800FB2401ED804
+	0A4131D809F6806A50071A41336805C741273805CE834BE01AB8016E83FB6014
+	4C80676016BC060B10046121324481E421154813D287CC2006640FB941BE5010
+	1409C54209100F124279D066A8182A83AAA17AA819FA1E3A099D87AE4083D05D
+	680C9A867E87DEC1084C82A9B012AC051BC30CD809F68143E0557002BC06CE85
+	0BE01D7025DC001F853BE0F3F035F8363C0A3F83E7108010111AA28A18220CC4
+	05F147A29078848FAC478A900AA4016945BA913EE426328ACC206F5118140545
+	4719A26C519EA850140BB506B51E5582AA461D4675A07A51375163A859D44734
+	19AD88D647DBA0BDD011E8047416BA105D816E42B7A32FA26FA327D0AF31180C
+	0DA38DB1C2786222314998B59812CC3E4C1BE61C6610338E99C362B1F2587DAC
+	1DD61FCBC40AB085D82AEC51EC59EC107602FB0647C4A9E0CC70EEB8281C0F97
+	8FABC01DC19DC10DE126710B7829BC26DE06EF8F67E373F0A5F8467C37FE3A7E
+	02BF4090266813EC08218424C2264225A1957091F080F0924824AA11AD898144
+	2E7123B192788C789938467C4B9221E9915C48D124216907E910E91CE92EE925
+	994CD6223B92A3C802F20E7233F902F911F98D0445C248C24B822DB141A246A2
+	436248E2B9245E5253D24972B564AE6485E409C9EB92335278292D291729A6D4
+	7AA91AA99352235273D2146953697FE954E912E923D257A4A764B0325A326E32
+	6C99029983321764C62908459DE242615136531A29172913540C559BEA454DA2
+	1653BFA30E506765656497C986C966CBD6C89E961DA521342D9A172D85564A3B
+	4E1BA6BD5BA2B4C4690967C9F625AD4B8696CCCB2D957394E3C815C9B5C9DD96
+	7B274F9777934F96DF25DF29FF5001A5A0A710A890A5B05FE1A2C2CC52EA52DB
+	A5ACA5454B8F2FBDA7082BEA290629AE553CA8D8AF38A7A4ACE4A194AE54A574
+	41694699A6ECA89CA45CAE7C46795A85A262AFC255295739ABF2942E4B77A2A7
+	D02BE9BDF4595545554F55A16ABDEA80EA829AB65AA85ABE5A9BDA4375823A43
+	3D5EBD5CBD477D564345C34F234FA345E39E265E93A199A8B957B34F735E4B5B
+	2B5C6BAB56A7D694B69CB69776AE768BF6031DB28E83CE1A9D069D5BBA185D86
+	6EB2EE3EDD1B7AB09E855EA25E8DDE757D58DF529FABBF4F7FD0006D606DC033
+	6830183124193A19661AB6188E19D18C7C8DF28D3A8D9E1B6B184719EF32EE33
+	FE6862619262D26872DF54C6D4DB34DFB4DBF477333D3396598DD92D73B2B9BB
+	F906F32EF317CBF4977196ED5F76C78262E167B1D5A2C7E283A59525DFB2D572
+	DA4AC32AD6AAD66A84416504304A1897ADD1D6CED61BAC4F59BFB5B1B411D81C
+	B7F9CDD6D036D9F688EDD472EDE59CE58DCBC7EDD4EC9876F576A3F674FB58FB
+	03F6A30EAA0E4C870687C78EEA8E6CC726C749275DA724A7A34ECF9D4D9CF9CE
+	EDCEF32E362EEB5CCEB922AE1EAE45AE036E326EA16ED56E8FDCD5DC13DC5BDC
+	673D2C3CD67A9CF3447BFA78EEF21CF152F26279357BCD7A5B79AFF3EEF521F9
+	04FB54FB3CF6D5F3E5FB76FBC17EDE7EBBFD1EACD05CC15BD1E90FFCBDFC77FB
+	3F0CD00E5813F06320263020B026F0499069505E505F30253826F848F0EB10E7
+	90D290FBA13AA1C2D09E30C9B0E8B0E6B0F970D7F0B2F0D108E3887511D72215
+	22B9915D51D8A8B0A8A6A8B9956E2BF7AC9C88B6882E8C1E5EA5BD2A7BD595D5
+	0AAB53569F8E918C61C69C8845C786C71E897DCFF4673630E7E2BCE26AE36659
+	2EACBDAC676C4776397B9A63C729E34CC6DBC597C54F25D825EC4E984E7448AC
+	489CE1BA70ABB92F923C93EA92E693FD930F257F4A094F694BC5A5C6A69EE4C9
+	F09279BD69CA69D96983E9FAE985E9A36B6CD6EC5933CBF7E137654019AB32BA
+	0454D1CF54BF5047B8453896699F5993F9262B2CEB44B674362FBB3F472F677B
+	CE64AE7BEEB76B516B596B7BF254F336E58DAD735A57BF1E5A1FB7BE6783FA86
+	820D131B3D361EDE44D894BCE9A77C93FCB2FC579BC337771728156C2C18DFE2
+	B1A5A550A2905F38B2D5766BDD36D436EEB681EDE6DBABB67F2C62175D2D3629
+	AE287E5FC22AB9FA8DE93795DF7CDA11BF63A0D4B274FF4ECC4EDECEE15D0EBB
+	0E974997E5968DEFF6DBDD514E2F2F2A7FB52766CF958A6515757B097B857B47
+	2B7D2BBBAA34AA7656BDAF4EACBE5DE35CD356AB58BBBD767E1F7BDFD07EC7FD
+	AD754A75C575EF0E700FDCA9F7A8EF68D06AA83888399879F049635863DFB78C
+	6F9B9B149A8A9B3E1CE21D1A3D1C74B8B7D9AAB9F988E291D216B845D8327D34
+	FAE88DEF5CBFEB6A356CAD6FA3B5151F03C784C79E7E1FFBFDF0719FE33D2718
+	275A7FD0FCA1B69DD25ED40175E474CC7626768E7645760D9EF43ED9D36DDBDD
+	FEA3D18F874EA99EAA392D7BBAF40CE14CC1994F6773CFCE9D4B3F37733EE1FC
+	784F4CCFFD0B11176EF506F60E5CF4B978F992FBA50B7D4E7D672FDB5D3E75C5
+	E6CAC9AB8CAB9DD72CAF75F45BF4B7FF64F153FB80E540C775ABEB5D37AC6F74
+	0F2E1F3C33E43074FEA6EBCD4BB7BC6E5DBBBDE2F6E070E8F09D91E891D13BEC
+	3B537753EEBEB897796FE1FEC607E807450FA51E563C527CD4F0B3EECF6DA396
+	A3A7C75CC7FA1F073FBE3FCE1A7FF64BC62FEF270A9E909F544CAA4C364F994D
+	9D9A769FBEF174E5D38967E9CF16660A7F95FEB5F6B9CEF31F7E73FCAD7F3662
+	76E205FFC5A7DF4B5ECABF3CF46AD9AB9EB980B947AF535F2FCC17BD917F73F8
+	2DE36DDFBBF077930B59EFB1EF2B3FE87EE8FEE8F3F1C1A7D44F9FFE050398F3
+	FC91C05ADB0000000467414D410000B18E7CFB5193000000206348524D00007A
+	25000080830000F9FF000080E9000075300000EA6000003A980000176F925FC5
+	4600003B0B4944415478DA62FCFFFF3FC32818380010404CA34130B000208098
+	4673C0C00280006262646404529068F80F061089D188A10F00082026485803A3
+	0112E290F88030066D64FCFBF7EFC78F1FC3239500041023B21FD0E2002B80C4
+	D600BAF8D7AF5F4B962CB975EB162727A79B9B9BA5A5E5908E00800062FA0F03
+	C8418F56162173D1620B2D19D221499E3F7FFED5ABD7929292ACACAC4B972E7D
+	F5EAD5908E0080006281D701C41438686AE0D1863F5B60CA52928DBE7DFBCAC4
+	F0EBFDBBCF7FFFFDE3E3E6F8FBF7CF908E00800062410E56E49A00122568C104
+	1747AB24482DB290B31AD642EFCDEBD7070F1DFCFBF7AF9CAC9CB8B8B8B08808
+	373737333333504A5656EEC4B1C32CCC0CDFBE7C9190929694941AD211001040
+	2C68A18FB512460E4AE41C831C1F6899032D2E91DB5A686CB412ECD2A58B5BB7
+	6C99317332C454A012888CBEBEBEBABAB69C9C022B0BCBDD3B0F9494E5D839D8
+	7FFEFAFBECD9B33B77EE7CFDFA55474747565676C8450040003122072572D0A0
+	A57AAC22980C4C657033D1D4A0D9F5FEDDBB7DFBF7AD5DBBF2C891C340613606
+	4616D6FF7F181959C191F00754F74254B22B2ACA292B2AABA92901DB422F5FBD
+	7EFAECA5B8B884B5B535D0401515153535355E5E5E485E191200208058D08A08
+	B4448AB508C25A9E60461ED69C81599D5CB97C79DBF66D53A6F44384B9D81841
+	A91EA6F63703032B98C1C6C6082C2E7FFFFFF9E9D35B7131531E6EAE078F9E31
+	3131B13031FCFCF91DD82A05D6C9AB57AF5EB162052BC34F47570F7905254909
+	491959596960312525252828C8C2C23208230020801881E9084FEAC65FD063CD
+	1C68E18B199710A9F7EFDF1D397268F5EA55070EEC05AA6205A67A3694BC8296
+	754031C1C808CC0A3C1C3C45C5252F5EBEB87EF33EC3BFBF5FBE7D7DF5F49990
+	B8848C94CCEEBD6B7EFF06451A231B0703033CE2816E60FBFFFF97A9B1293083
+	484BCB001110002B0F51515160B40D6C040004102372FB073940D1FC8F2685B5
+	BC4256894622ABBC76F52A30C94F9AD403B18493051442BF41B2202E44191B23
+	E32F6CB5F7FF5FFF79F979D333326F5CBFFDE1D397172F5F32FEFF73E7DE75B8
+	5DACACEC105DBFBEFEF80DAA3FFE23B98E1DD3B56ACA8AC666265252B2A05891
+	06E616296081C6C1C141B708000820165CAD78E4A2035EC8C04B15AC3903591C
+	B3FC79F7EEDDD12387D7AD5FBD77EF1EA079C084C7CA0692FAC3C088D903FF8D
+	A375FB9B95815740ECFF3FC60F1F3E3E7DF1929F97FBEAF5EBBFC0DA209A7FFF
+	FE05340F1CF08C1A6AEA121222FC0242020202A2C2A2BCBCDC424282FCFCFCCC
+	4C4CFF80EE79FFFEE1C327DB776E59BE7C29B88863075B0732464080DFD2D25A
+	4E56494A5A1A588601090909711E1E5E5A4400400031A275B230AB4A62923FAE
+	820BC2B87EFDDACE1D3BFBFA3B204D1A2E56A8AE3F60438049E0CF6FC65F0CFF
+	19D91811C9159274C1C5072874181089D7D8D03830D0E7C285F3BF7FFD919094
+	6266661416160606191F0F2F1F1FB002E6E501D60FDC5CAC2CAC6C20C0CAC8CA
+	0532003738B0776B6C4222D0A97C5CE0386060F8FE8711E239348FD8DADAAAA8
+	684A4B4901330BB076919090141212A23002000208BD0EC02CD0B1460FC1BA01
+	48BE7BFBF6D8F163EB56AFDEBD6F27D0185658A043F5B1A294F2D262129292D2
+	A222C2FC7C82C070E4E6E1E6E5E6161404862B3F0F2848B9B9B83839383939D8
+	396EDCBCF5F8D1E3478F1EFEFCF15D4E5E2928C89F4740006C22B0E5C30443A4
+	81674F6E27A424DEBDFD888303E4B83F7F401914923E9881E903984AC0827F10
+	490292424081606260ACAEA5032CBB40B1222307ECA28B8989015B07445A0D10
+	408C68E310983D23CCB48F354FC019C018BD71E3C6EEDDBBA64FEFF8F6ED3FB4
+	01F3FFFF37B082A8C048350D556929097E0101607A0526564E2E50B0022B4316
+	600B9F958581891DEC5FB476E47F7083E8F7BF5FBFCF9DBF78FDC6AD3F7F7E7D
+	FFF683878FD7DACA424A52828D95151C242077FCFBFB9791910998FE812EF9F3
+	E7F78FEF3F7FFDFAF1FD0790FCF9E73728548111C9C7C727202CCAC0C08964C5
+	CFC6BAFA854B967202AB6516606DFF0BC5A77F90931734DC60B182C8AE70A028
+	27A76768262F2F2F2525290DCA2DB2C0EE243B3B3B660400041023B0B789DC94
+	C49FDEF1E789B76FDF1E3F7E7CF3A6F5DBB66F8124102E2E06506EFECD002CA6
+	CDF4CCA64CEA919455253185020BA75F7F80A1F7EB17B07C07822F5FBFBD7CF9
+	F2D7AF3FFFFEFD65636501E60AA05DFFFEFDFF0BCCCAFFFEFFF9FBFB2F90F5EF
+	2F5039D0694036C4D54091BF7FFE81BA914C403E130B08308B89896BE9992347
+	F6A60D2B0A8B4B19406D2DD63F281E64FC0B6C2800CB4906F4F8C0527A836305
+	23E13270B030985A3AABA828393BBB585A5A416401028805B3A90ECC3E68691C
+	AD7C479B42F8F3E7CFAD5BB7F6ECDE3D7FCEE4779FBE0045B8B919C1DD2670DB
+	F13F3B380333FCFCFD0D9C73B186FEAFFFBFBFFDF8F91312CAC046FD2F708803
+	05808683C20E1890A070FDFBE7EF5FA0F9CCA00CFE1F1892C06AE0D7CFEF5087
+	00CDFEF79F1158C1820B55881A4616A6FFFFC0ED2B66A0E3FF8294FDFB0F8C28
+	A0178129E4FDBBB7E74E1ED0D33760E11086B8C32F20424B53332C28F0E38FDF
+	BC9C6CBFFF234A541668870494CFFEB0FC46296FFFA00CA631B282FB8F480D1A
+	6003FAF7AFFFDF7F33BC7AF5CAD6D60639AF00041023D08798AD78AC5CCC66FE
+	DBB76F4E9D3AB579F3C6AD5B378204D818B85818C025261B66350EECCA868785
+	B6B7D433B0F023B76B6E5C3DF7E6D5EBAFDFBE01838C8909643EB08902C9D3A0
+	B40AB41144828B5D682E65848503B8D90AA945C0390E1CD6FF41DAA163182001
+	707D0A2C9780C511A8650B84C0B864059650ACAC1C1C4002D8E2655051551712
+	5384BBE9EFCF0FC5A5159BB76EE3E46465062577B44607B4CC6184D667C04A02
+	161F7FB00FB701831E6840725286A99919B08DCBCDCD6D646404091680006201
+	A617ACAD4CE4D60E5A6E00A6CD3B776EEFDBBB77C1C2D9AF5EBD6600F7A1FEB3
+	FC670415376C2C58F2264817B0905EB57A8D829C6C7A562192E4DF17CF9E7FF9
+	FA05640DB0590A0A707010239AA590C1204698CF81AD0648EE042A01C5133879
+	034B98FFE098FB07510E76EC3F48E4FC83CCE00073EADF7F205F80187F4191CA
+	C4F8F70FA877CCCCCC74E7CE2DF14F9FE455F4217632B30B4C9834C3C8686663
+	732B500B2F27EB1FA430412D8A414E02670E70B5C1CAF8FF37D879CCFF816516
+	A802FFC3F0FD3F83B5B59DAFAF1FB0D50499CF00368BE1E1091040C086F36F48
+	F68154DC703B90EB717834BC7EF5EAF499339B366DD8B66D23386B01933C5031
+	3B7A390869376024841F7F40F960DEEC49AE1E8170F1AFEF9F1E38B8EFF71F60
+	81CEC604CA05CCF0F087D80AE1C0E38389113A8F0DCD2690D21258E6024B1E58
+	9040421EE4AB7F600A9CA7803530B020033299C1E6B1B2B1826A7F4E4E90BDA0
+	52F71F37378F266A9570E1ECD1E0B0085095C0C98652D5829DF71751CEC0B308
+	241B802BF0DFA0B12C8EFFFF1353F20C0C0D8109FF2FB8FC0492C09692969616
+	C4F10001C4F8F3E74FB4E2059EF6412502187CFFFEFDDEDDBB7BF7ED59B57CF1
+	C3274F18D91858588081CF082F6AFEE01E9F00670B86FFA07882C40183AAB2CA
+	A4093D6A5AC670350FEE5C3A71FC18171717330B0802AD05AA6602052B388141
+	921E032256E05D04489903918514C3404160283382320A2867036B5E50F9030C
+	DD3FC0FAE30F38FCFFB37370FCFEFD075881B373B2031BB8C0CE023330E73133
+	014D606266D6D1D1636647B4EE3FBD7F9A95937FECF8496095004E57FF21CD1E
+	164870C13BF0608741EA0CA09A1FE09E849D8DA3879797A8A828F28827300280
+	AD236565658877000288F1DBB76FF0C40E8F03503A646606FAE1CD9B3767CF9E
+	DDB66DCBC66D6B200A7859D8FE60246DB046E8D03124F4FF604606A877CB006C
+	6702BB39EEAEAEDD5D2DDC7C9270432E9E3B7CEBC64D0E2E0E6648C433333132
+	30C24612404518282740AA084648DFE53FB43E00A76FB045D06208521B42AAE2
+	FFA0F20A580E80EA71605E07D6E36CEC40C8068C001666260E4E0E60FF02D41E
+	6266867819D28A55545216145544F6E3A409DD13274F02DA082C8E7EFF47EE2F
+	82BB348CF0FE01300E40C58E100F6F647C92B6B60E3076FF829AC58890017255
+	5555E123E70001048A00E44206E80A267092BF7FFFDEFE7DFB96AF58F6F4D543
+	50090E6C33B3B2E34AE940DDCCB0B6190B8E1E3592BB197EFF66C8CA482D29AB
+	422EAA8E1ED8FAF4D93376763666B01B18105501A8ED08AB0EFE43C41920A346
+	D03A0052D243C77D2011F11F220F4EF3C00614B0710524810518A8CBC1C2FC07
+	9429FE71B0B3837A216CECCCA0286081D6F78CA0381016159353D2438E8383FB
+	B72726A70119C038F80B6B9B32C2829E196CF70F7010383BBAB8797802FBE7D0
+	4480DAA40446808E8E0EB0B306E1020410E3D7AF5F911B97C0247FF1E2C55DDB
+	B7AFDFB106920081A53CA88EFFCD0EECA060D64270111678EF103C6689365C01
+	6E8882A498C1E2C05601B032E8ED6A0E8B4C40EE0AEDD9BEE5CBD7CFC02409CA
+	06C0BC006C55824A0650DD0C2F91E0D334FF2151C2086AD8C2DA3D20DB80C91C
+	D422FDF7F73FB820FA072E7981491E980380A601039A0594D241450130B281DD
+	6B0E0E76A08D208BA0E603DBB70CBF7FFD9491959751D041E9303FBE95939D77
+	F1EA5560C581540903FB6D0C7F7E833ACCE2826291F171EAEA1AC07E25A48385
+	D91A043AC3D4D414D81384840F4000317EFAF40954EF3333BF7FFFFEE0C1830B
+	16CCBE7BF72EF2480C30EC804D85BFA8A3CAB8868FA043920CD0761924C4312B
+	09A02030B18889094FEAEF37B5704434987FBFDFB56B37B0E0062649260670A8
+	C3EA606858437304A8A481843CB8C001B1FF839B3D503EA841F41F9CF6FF0085
+	81A53FB07F01044009501CB0300373C37F5004B083463880AD5136360E0E4E66
+	561636165003958B93534858849D5B0CB34D79E9DCB1C0D0080E0E1678070D56
+	E233787B793B38BA405A38906207B90D090F3760BBDFD6D6166823441C208018
+	3F7FFE0C5104647CF8F001D8F9F9FCE50BB0ABF9F8F1C3C78F1EDDB97BF7D2A5
+	F30C48A53C78C817142B7F718CC761CD1FC8EE6081A59CEF7F182CCCCCFBFB3A
+	C52495E13EFCF2E1C9D1A34780F2A01611BCD407F5A418C0FD50E8880350065C
+	FEC05ACE9026CF3F683303A8EE2FB0DB05CA0DFF21050B30D8815AC001CDC1C5
+	C50D2C7980695F40809F978F9F8199075E9AE399DBFEFDE3C3850B9756AF59B3
+	62D5465E5E5670B1F3FFEF1F4660529391918D8C8C51525202E624F8D81A5A68
+	20DADD7FFF3A3B3BC30B1280007C5ADD0A8230189D98511241AF53D03BE49DD0
+	B37411BD5D75D195171599AC5D04399D7342DACF998AE88D637C8CB1AB6FE73B
+	DF39638694B25A65E54029345983624587C894E211678CDD7D9F3E98E79D28A5
+	84345CA40BC51E7628BEDFBE59AD371670D1DA75B7BB0D3126CDF9F0793B1EF6
+	79813E69223360878AE18D5FED136A01FAD512DE1C58D8036C2129C12F003594
+	A5AD27C29858A3B64AEE79F0F8BC9510328AA338161258449452A5A948E05292
+	57C88320385F2F9CABD914B640CBFEBC44E4CA7116F32528A54A7DFF7F03CDCF
+	45D1BE80BF007459BD0E8230102E3F83E24B30E01B31389BB8B9BB99F86E4EC6
+	97A01D5CAA20052C94043F7A41C1489B6E6DDAFB7AF7DDF56B9F84090EA08F7C
+	E0DAA7FC7819D548544869AD31ADC081A4E442089EF0445C2FE7F6ABDC31ABF5
+	3B9EDFB5331F359FF391985535EC743C6C77FB292246DE84BCCBBAD67D75D8FB
+	AF03B20E066C17C10A7C04EA65BE6753CC721E5CD39917983605B64037CF310A
+	5556304451578F14C19F612FDDD42AB3883F4B921127AE83FC0DCE81692D9E59
+	2C8AD671BC09C3F0EF0FA03B88223FD7308E00B4B70002853B4403B043002C85
+	70CDBD2057D470E380F5DAF71F3F8051F8E9E3C7172F5F3E7C74FFE993A7376F
+	DEBC73E726DAF01127787004E86E488780155E9732327EFB052AD3664F9F6DE7
+	E441F268FA9F4FAFDFBCFAFC0908BFFC6300E6E6AF9F3F7DFA0C4CB35F818EFA
+	0AE47CFC0CCABE1FDF7DFCFEF3EB9F5F7F3F7FFFFA1928F8FAD32F50E03220F5
+	AB18918B0D6049F5FFD77FA02B39406D3446607505696842D4406690C223A22D
+	2D2CB9B9B9B1367590D3193CDCE0E9D8C1C101AE0C208018218B2C812C200398
+	403007A2B196F2C8790AD97460A9052CB28001F0FEDDBB274F9F3C0156238F1F
+	9F3B7706E86D46841F4011C0C20AEDC141864A1415E5A223224D4D4DE4E5E5F8
+	7879208D7D60030618B2C0540B4C19E080058734B050FC028440A12F5F3E7D7A
+	F3F63D28E1FEF9012A2E3E7D7BFBE1DDEFDF2077B2B1212A2DF88C19BC1B0B4A
+	06C09A8C053410046CE4FD61F88F68403340E685FE032B39D0B03833A2EBFB07
+	A4924157573F3030485A5A8611DA234149F59881863669082CE4EDECECE06A00
+	0208D11306861D301B625620E07194FFF02152E488851456682D22E4FE2A30BB
+	FD0067116008BE7EF5EAF193C7CF9E3EBE77FFDEF9F3E75087D7210E60D0D656
+	14139600D691C0360950D78F1F3F7F7CFBFE03342EFAF9E3C7AFEFDE7EFEF6EB
+	17B828408CF1C2673520110CCC649CC02202C8FEC5C0CA05EA70409BEABFA136
+	019B39A03A9C8D11D471F903EAD2237545A093D27FC0FD58601F1EEC356065F4
+	0B18551FBEFE0272ED6C6D935352787979416D2ADC6B70D044E06C608801B397
+	B5B5353CC7000460D36A56188461B082142C3D4CE8B36CEFFF1063831E1CAE22
+	DB6578B1870A318918A2AEA7B697D27C5FFE53491A2CB3345AB882F001D8837E
+	ECBAC15C1893B7D1135A6BBDF718245CE1462A925049A671FC0DC3A7EBDAF88E
+	8FE7BDEF23DA84105E21B4DA2C28E7410859430C65EF0765969C60630645C030
+	F37D698A3C1106D4DEAA4D55E306783005E6B4B29EAD22CA3117285CF9574A5F
+	0E0CFFAF4BD338E77413E53CA8792EEA68A6CA1CC67A5C04100BF2C027726D89
+	969BD0162BA20DD8C1ED807747D14A3D78CC01A319987C806D060909097575CD
+	FFFFED21153B308BBC7BF7165885006BF6C70F1E1E3F768C810D947E21B53A90
+	0416165CACD0F217DAEF071732A06A119A6C9116D2014BA15FC046EBAF3FDF40
+	4DD50F5F7EC11CF3EDF5EB2F944CE1B2C1820F579F14EB903E3C6C41499E8505
+	39BD0204100B3CC620436F980B0E2100923FA0DA60AB06419D4C1C13F168918F
+	966F9027A2D9C100D87F91939333303004262E487B0C1825E0EEC80360E6B87D
+	E3D6B59BB77F038B1756D00C3E740C9AE1279001AC3F208528D8E4EF14862F41
+	C0CEC101F214B06BFDEB172BB6C8C064A02DA8456EE803190001C4021F85860C
+	48414A7CB41A1C1E0D68610DA9AC209DA0BFA84900D77239CC9A1C9E3DE1F104
+	6C5A00B3B9B8B8B8B232B0836605ACA580D5EC9BB76F7B7B7BB76FDF3EB0EBA8
+	D8B9B97F7CFAF4E8EC59113D3D3636365C73E698EB0D215CA0672139002E0E10
+	402C68ED7DACF90BB93081376F61C514B8430A1E2EFB8754D42047245A0E43AB
+	CF11F53CCC5270571636B206CEB36C7C7CC0AE16B0ECC2152EBCB0762DD5D3BF
+	12B0DCE7E505F632382143F4376F5EBF7001D8DF653534C49AB0D01647A135DC
+	21750072F00204104A0B006D4E066D220CEB0A678423E0D326186BDC212A21D3
+	11C86522C43A2618E33FACBC47B4A3902C056A87B60891421C0E80B52631E309
+	58C3578887075810037BCC6CFFFF7302BB2C1C1CACE0810F7660C1CBCE0E1A1E
+	07366A41FD6946764606B61327FE007BDD66668CE032199E9ED04A5AACCB4AE0
+	452E724601082094892B484040CCC25C388ED647C3BA7814D2F0C6D5176744AD
+	03E00A2073C14CC0C291013CE80F0B7466C8D00AA224440F74648035ED2B3230
+	88F0F202830A3222C1010C624E50A71034C2C8CE8EBC8A8809B662003A17049E
+	380352CCC02006EA050F61B1FD078DA330FFFAC5C4CAFA1F5C128054025D88DA
+	19C2BFF7049203E0F10410804E6B5B011804A15442BB3DF4FF7F197B6B50B3B3
+	6CCD580F1254509AA29EA30D3083C07386DBEDF4CBE592F86386FB9586616545
+	AAC818E07DA6E61AC6D49E608CACFE23843D044EDE2DD1358085E757BF1B8A3B
+	96CBBA12E6AE42BBDE00AF77506E3B5CABDCE49E4749358EDEAA34B67AF10659
+	C4B3095C798B9DD6FB57CBD3C757914799646407F1D22D80D02300EBA00DD67D
+	2F58D7B563E9FE619463C83903514CC1AB2970131BD8F97978F3E68779F35844
+	44FE4B49F1C8C8F0484888BF7D1B212ACA05E9A08203179A60815C704101EAA1
+	FD012D1101317EFF8624ED7FB0191D686908EC28839D02AAB4200D58E8143E03
+	24D5FC87B01919FF82C767800106340D58BE497CFD0A0C77705C020B2C0E26A4
+	C503FF718C3A605600A00951581104110108C0B6B5E30008C2501543207162F0
+	FE67E1147A07073707057CF802D1CA42C24049FAFA83D77E005025AE891918D1
+	14449B6D4E73086FF8F7BE0B08DF7F78B5B2E245A8316C08D7BA1ECBB2E7CABE
+	9F5382BD436220E9086967666123F1CBFCF31529A46839D6C4FE9066DCF2017D
+	3EFA05DA88E9ECBB4B5A476BB1C24B0663462403AD95C994CDE49CD9B6CE7BBE
+	FB148EB4A64B856D357522FAE36E01E8B6B61C004118E66B86108DF73F0B57F1
+	029EC00FF1D1AD9220EA1F26184999635D4BF907685E7B1282A2962F9AAE9F65
+	C0FDEE9345FF2904676EB7642A485A3CB0D03E678CADF9A537B5C955D49918BC
+	FC006396C7CF9EC6A46507200658A242AEEE1CC0750EECBC16E9BC078EEA9113
+	41D9EBC77198A6DE1403D4C1CE6B371B60894D40D25F97650E0171A12B330640
+	ACCCE1D2BC6F59E7AD503E327517F7442E01D8B6761D004118088A436DA28BFF
+	FF930E188CE871A80174E33140CB5D296DA93BCE95246A224DBF41D73CF4E60B
+	AB775CA6E7E7AB857DEC6F2C8FAA64C0E35D74642B84EBDFE2506336E6828068
+	1C460C013A3D68A9D32C640384A162427810E97879E0F5B4CCB34E93A8A68C0C
+	402D32AA629C35A943161C5E005AC9BDA1D3756F8F415F2CB4AFABF1DEA612A8
+	D312C55F2BFDFB5DA509E43444B90460D34A52008461206A54D08237FFFF3DBD
+	5970A9B6E298B8C4054A2FA5874C9399667953907E43198CF85585DB9735099E
+	8CFF1D5E3FB22DE5148FF838D5EF48B3854F2410994C8875B2ABEBC67B0708F0
+	3040163290514259C24D44C835B2245396E9DE682C0A6372C63A67378FD91E12
+	0325F3B8C41F70EF23914B98A680DD393F8E73DF0371AC60ED3A0C11A06FDBB4
+	AAE48314D15D43FB163E5F05380DB7BE25479B00749B4B0A80201086B5A432E8
+	226DA2FBDFA755B45183D41E33530C9109AEC4D5A7FEF3FEB101223F069C7EB4
+	F44A72E9872F683A2DE92DBFBD58C1533252BE551642FFBAEFC761C0B67FACA6
+	6B90E6AAC10A98221CC0B7A064270A027962D4524A88C196781F418E6085007C
+	C3BA06E780F2B62CBB73D15A5CC61CF3BC4FD3696DD97505C586EA36F2A750AD
+	7E6A089C8F4D38E44A818C91232DDEBC04100B9E2C83167BF06005FA0B73FD3B
+	BC1C6440ED10418A1A4444C2B8E8B5027CBA00DE39808DCE435705FDFFCFFFF6
+	AD818909307983565F81D74043563C80CA7A6002FEFE1D949081410C0CEB1F3F
+	8001FAFBCB979FC054FCF1E31F7070FFFBF8F1EFA7CF7F5FBEF8FBE103C4854C
+	E0C4C008B1858B13E80160E7804140008820235F90D28F115CC642F225846402
+	AF86C79CE9C3B51F1D91DE31360A0204A0DB5A56000481A0F6380841FFFF831E
+	1222ED149835590E4BE5511105775C67F6D1FD52CC1A8AA560AE2D78D9FC10F6
+	63164C9114920E491BDCDBE2942B5AFFBC953EC7A3176BE1A971BF1B5C04201C
+	42048ABD8797D8D7356238CFC9B9344D7A189A42E11F896E4C9BF5971A47C5C9
+	9204D0ACF229CD1E04504358506C66E24421A6C5272CC3C9DFC6F76F4FE02980
+	58F0E41AAC3181367686563AC1566A422B649CC370702958710FAF6CE07D22D0
+	12316058C3420A58F2FCBD7FFFC18409BFDFBEFDFDFA35BCF90A5FBBCB086CDB
+	FC676063670335546464E079191EBEFFC0299A11BE9A07698F0A13D2282F23AC
+	6F81988484650278DF8D099C90A1C102338B096338086D400152ADA205384000
+	B1602D49E06D26E46109AC5BE9D1BA7CF0397D942123487D8BB4639101B6BE19
+	12DC68ED54485F0CD2B884CB828200D8557EF810B4EF0B6975313CDF30C1D4C3
+	42109C0C919AB6C8E10B770C5C8A1189FB1F2967A0A98122606309613BCCFD48
+	0359587BAC588B208000C21201F01D03F8C67C30765DA3443ED2DA98FFB034F8
+	1F96B491DDC48894AC903B658CF0994658E28216BEE0BCCF009B81FC071BC981
+	84290BA4DF0B11846D2462C4562D31A01638E8CD36249548018D702723EA983E
+	DCAB98B52E5A530533020002B06D2E280080200C6D74FF2B57A029737A83D097
+	9F31E71F2098F782331E640B95A59A85D7EEF0BECE6963F4925697E7AC6FC3C5
+	061BF9C3FFBF366D0FDF3AC7BC0369DE2CE027D761ABCED75E0E3AB525D4F34D
+	D46146E2C032B060DA13F0041096C60C664B142E8875CE0057FE407304A8F883
+	751AE1B3948CC8E3593012D2030095662CD0D37498508B6C4804C2C72FA18811
+	422255BCA0121FAAEC3FACF447D94B0716440E5CA876A4C97EE4911D78FA6044
+	1AB5844AC244900785307B066C6CE81B660102D06D05290080202C83CEFEFFB5
+	059AB366DD3C44079D43277B4F9324DCFFF43804B433D7A5213FA193595810F2
+	80878DC18A908CE114E439B2C4B96ED561E570209F4C0DE2C7330BE44434508C
+	215892B85AF812A68DC51B0DAA32C604A9DEFD4197706A885A802580D023003E
+	F78B9984F17431F0A8473BCF06397A20CB39117D34482B0B65071BE37FA41280
+	11AD8D0B0B77607DCB02092094A047E40F78A1CF8851DFA2B52F51523D7CF719
+	6CC405AA809717D29D6602EFB86740723C0346B0A0ED02C6DCA90A1040D82300
+	73A718D6D10C3CCD21CC2D37D014815AC7608E8C22CA6244258954EB40923F52
+	7841B602FC83954B0CB062848901756B1972DD0B8F39F8261CF890356C29F07F
+	242BE0334410A7FF676787B482A01EC1B10C02735504D6080008C0C715D80000
+	8220F5FFA3DB440D2BEB80D6964384E8BC0074898F8D7E109E870B3A3467EB28
+	19C7821776E5DF804E3E88455C123BB3B26A5CF5A45B94AC6F3B46E3AC37F958
+	AB1BD14A5E87699320C6917BA5D7E1E26A870CDFB5B1D9F77763B09600C21201
+	68B30A98050EBC3F0CEF3D615D018036FC09CDCEA83304F0940F2F1F1001048E
+	00463433911B93C8AD4670E9CF80548522EF9982D60668AD67F8FE3A78FB18B5
+	0D86DC51F80F8B542062E6E262421DB5440E6EE47975B4830F915765C1014000
+	612982901734600EB4A18DB8214F4FC2AB7E2CDD63E4B1361C8D25449102DEE2
+	02CA1CC8231348D30628E187A491091E19F04A0269D88311395660E71A200C81
+	6E7C6540B585E13F72C70C92D4C0CD39AC87C2601D17420E0DCC31348000745C
+	810D0020080AFFBFB9DAB288523B411D0443ADF2825A763D8BCDF06C5E2AC746
+	AA448A7B5AD0997DD11FE4BD03B5DA278E398442BB9807314BA9D5DF069C20BE
+	BDDF7F5DCA740CBCC265ED162B4B83D182E0CAC4A0FFF7A60062C273E601F220
+	1A5A71060F32B4EC8273591146ED8DDC48F887BCA8143E3983BC5D1B5C34C19A
+	348C8C68B337489368F0611906D4E21BC242166782EFE9FE0FDB5A8CDA5343C9
+	B8F0B2113482CC821C94907E19DAF1AB588F3FC47A921D40003EAE6507000886
+	85C4FFFFB121D6AA59383B6EEB43A7FE59A622676811C5F7F08E960425359CAE
+	930D2D6FA431F017D79C6DADA348BD544B79D33FB2557F99629BE4742ABE90C8
+	C39DF3411D0D5A0C3E137948EF7622A9CB17D95E51C695C61552193CCF1040F8
+	7200038E33571930CE8043EB36A3CD0F23969362E4A1FFC88D6EE40207D60980
+	8C0241107CBE8C01CD1C7008C373C33FA4EE2B3CC9FF472EC9D1BCC308DB0C88
+	D1A5628457BFB0362B48105891021B20E075B1C8AB0EFE617483D0B858230020
+	001BE7920200080251F2FE67B61699BE495B471093389F6A008095C2B2FA286D
+	BF2A41484CC5BA9C2045BBE35FD39810283DEF31ECA24C79D4DED32982FA731A
+	3EB55A6CC4220BDAE94B9BB674BB3FCA21629417441363FCF2488E238058B0E6
+	00ACA91E57158DB5E0431F1FC576DC102352339401A9FC452C3085A66546785B
+	04799F304A9CA19C12F11FAD50428B64E4728F09A98D045D6601DD2483380502
+	79413828E6206D79F0B906B8D6A3634E06609D8D01028000C29E03307B1358A7
+	1E719D968B5649A0146818899D11A9FD83D293041D7BC58AD1D4C4E268F4B508
+	0C8CFF517725208F4020674446D8F0358A0390DAB8C81A11750C2B2B13D25294
+	FF6813AEE06314B00E8862AD840102884011846BA92972939F01C7AD03580DF9
+	879481FE419A3DA8DE83362A208B76C1BB99B18F98228D31C0C61EA00508B49D
+	04E7A21E5DC984D10744EED32106E0909B5848FBAEC09B405991BA21889E3F64
+	8D107CAC8F0963C81A6B1D0010808D2BC801008660B339F8FF87ED6274F428D9
+	412CA9523054529D22CCFCED4640E9A27673310BB7056750EACD3F9C92320EBD
+	924F340929CA18F93A88562FEC1D702C5A0C2FBE7B090231EEA48487AAC70C27
+	B17C7440D144124F21E80AC0C719E50010C140B4ACFB1FD80FBB335AA58B6F09
+	115ABC999693A47093A878441C83DDADD41FE71A0D65EBE5DA24BD5F7FBC84C7
+	1A41E509CF173CBBB50E4E493E438B04EA4A53ADE661CB4C2A4674952EF05CA0
+	A4936497DB7D721665C549F95263FC812EF1E14EFAC390B2167FB371E35FF4DB
+	BA0062C15504A11D0F87D97CC45AEE638EC1A1640B5870A3345790C7D760D50F
+	0378900E34350D5984030F1ED87A10F82831B85DC8063E1E8E055A97FEF9034C
+	6C8C48F3594CA8139FF05066861738F0B10AE4C90024C5FF6173F1E0B3165890
+	D752E21AFDC52C8DB19E9A081080902B41010004612181FF7FB1A5892C19F586
+	A9B843270DB08FE78B503AA0BED748860F5EBA2E6628C2D41229AA1211A8E44D
+	C50C8E69C1942589198DD581FA336185772367C5EDF5268CF102151D4D0700E2
+	363DBB060265038602B004E0E30C9600804028A871F2FFFF5B4C8DA747E3ECA6
+	914D9BDF0978B37FE9DD5DA3037437C052E1F0AC6D02665D906EBB18F65F78BA
+	8C110AB48409F290A891C02319609431D42A24452900F050545BDC0D3EED527F
+	8E96947FF27C55ABDCAC582A03300560E38AB200804018EE7F654213691DC087
+	E7B5D66CE50FC08A348FC129058E0B2B3098509443FEBF7BF12A34CB15461EE0
+	07191AA3DE601516F240BBD63430201EF9E17AED43EB20DC0CBD1F80521FAE57
+	E8B095A5D8B0F67801E893DEB95959C496F67B18183FD2263C0510BE23F58939
+	191D73CC0F4BA1846D8106DA2A5DE4B53AF09161506D8C94F021F983093A4BC3
+	C0086B26A09475E0F201329003AF5D21676D31C23582DB8BFF919A5E880D3C48
+	0B23FFA3AED2406CCB875881B41219B304C69A46B136430102888560D0E3B993
+	01D7A2547C87AC634C15A08DA6C1DB5A4C9020FE8F180A46E939C34EF2FB8FD4
+	4BF887BCA608BEC80E79F136BCE1080F9AFFD8F653C0B67E229A0CF0D60E6C98
+	9601BE5E04BEFE05EF1E315C61051040F84643B1EE17C31CAB80B776D1572661
+	1DB0842D74C01C28FD8F347300F11533B0D044EE01C107859063026312141119
+	B0329011A95D8FD12E40F41950C21FD2A1425D55F71F92C320E33FE8BD39ECD3
+	90F01202D771DE0001C4843F09E36957A16D06475BDB020F4A465CD908ED2C1D
+	A4A5D10CE0221EC54BF0448F34820D99B46182B3910FB5449E9884D7A538D655
+	2277BB1043DFF081206441A0164E4EC87C2413D29219CC9B8CD07AA990FDD958
+	831A208070E6005CE51AAE4E07CE1E009206D42DF6282BA8FFA355CEF0FE11D2
+	DAA9FF484B0419D1D6AD207788FEC3D79130FCC7D64B471BE84729CA50930213
+	66AB0958C303BB577FFF227C877B532A72EB0ED7BD420001843D029891EA375C
+	F301C45FC6F61FF77215B4D93194CC8E348E8DB29D8F81115EECFE874D7E21AF
+	2C8225594646B4656EF0754148E73331428FD5FD8F3A1B833A3F81B4660B341B
+	C3CCCC88341287363886B52582AB0606028000221001F0E92D5C8BEE18706C0A
+	C49C97C7BA761579689A1169A08D113E0E813C4300AD0061D50664DE186D6F01
+	6ABFEF3FFA3C186A5F17E9705EB43128E495C20CF0BA173CF881368F0D0F8EFF
+	78276470E5008000C21701589BA19028C19CF266C071431BF27A29CC4CF01FB5
+	E84719B943AA09A0BD33D45D34FF51DA2DFF19B0158ED0CD35F09C041B8EFD8F
+	3CA2072BE851A653E05502DA3900C0086066FA87EC0C58EE414B9A68CBA57045
+	004000E1A89A510F33C635E5826B3337E67E60E4A912ACF736FD836DAC44EED9
+	42CF2940DAC482326EF11F11AC98F30DC8C181B25811750A1AD1078493686902
+	79950A787404742021B6A53A984BFCFE23015CAD208000C29903307720610EC9
+	A1A5684863146DD32CDA2C1D961E066AF5C8005F24819AC0E1339C0C884EC37F
+	94053BF0C0426B3B30A0DE31803427813C06F51FD92F180B0EE16A209D3826B4
+	5597D88EA7442B72B10E8502014000E16B05E19ADD67C076DD1AF23C01FA5012
+	7C4D15B6B31390D7DAFF830D1D435522350DA1BBB1719C88F01F69AC9F116D96
+	1C75E01E25A922B7D050578522AFD163405E5701EE07206FEA67C27636183C10
+	E021832B02000208670EC0DCEB8B3C0987993930AF7D801CE88FDC58C45CEF8E
+	D67C4434ABC1FBDF9821BB419157E6C02A40E46E175A0BF21F5AA30836638CEC
+	48F86419236A331EBDEE452B5D8176814E9966469E50FA87716621D6295B5C11
+	0010808E33400100046160FEFFCF5109D1B9D9136268A75BF5023833096F49EA
+	8401459AC6C36666ED42E94A4EA0674810E8C2E229153C48D226864D64545DDF
+	22C11909A631EDB9721551897DD2FC27C5B97974F3308BFE27C01240049AA158
+	8A548CC616F22A2EB4239C907325FA9A6A8C1842CCDF42922ADC7BD0D4003E6D
+	03A3CD8AC879684507DA0C12EA6804B6F11FC4D2079465486853CAE02165FC17
+	29A3CDD742B8B8FA010001843307E0D9EB846B010BF25834D6F344D136E6C133
+	0103F211430C8803B5FEA30E01A135A1E04D55E4CE30B4B5CAC0C0845A613021
+	EEFE416DDA2117FDC8AD0630F51F758809BA3014E30461CCA96B78E8C14F43C2
+	756B28400031E11F8BC6AC8DB18ECD31A0EE93415B518AE94446A4CB00E07B95
+	90B3F37FD8DC13B4EA030F8B32214F6DC25542A66E90C208B215E01F5AC9003B
+	D586016DEA1CBE9B0C754B217C513B03AA754C1C1C8C18351FDA143CE6F42D9E
+	1C001080B02B4101000461D8FF9F2C18349A57924F305AB34D5D5F3DA07BE208
+	3538DEC876A745C4D30DF247B27458222F28C4C43784184DC1643B479CB2AC7C
+	D9EB07582A654D3E17B75274F13282E4A52712FA00A4A13F0393F254B5D7B688
+	2D8058F0873E66E6C25A8062760BF05CB08DB290187EC60AA4DB813C3506EF64
+	816EC5F8CB803A00075D5305BAA1E71F23DA441B6AF6C41C1A4139AB16A95CFA
+	8F7A25215AFB07DE13461F70446E86616E82839C7C033E3904B3660502800062
+	C23F92875C9C212F49C75CF4F00FE99C38068C7DB35896AB20D79CF0BE3752AA
+	84EF2B6602AFC6019513A8E3048CA853C9C87D5044EF1779A139B2F3D056C921
+	55B9C86D3094F15170E384095C0760DD8B883C2F8B0C7E8101F84A4094D202A2
+	1E208058080EA5620E32C3E3037E6C0AAECBCFB156E0F049E0FFA84D49C4B92A
+	18ED57A04DFF6117E9FD431D66018D5A038B853F7FFE23257948F9FD0F734900
+	6AFBF83FEAEC34CA561C6C33ECD0294FCC4C8F31200F096BC8D54DDFBF7F0746
+	00E4D275B44DA84006400011A803B09E830F8F0994263FB60562281B1960C9F0
+	1FACD060443DB61F3E2306BB790D74341B23781538CAC245A4B917681E02863E
+	D2719988BE17DA100DBCFD0E1FA7C336108256A523471B683D00786112725B13
+	799B1B03D209A9401212EE9F3F7F161414FCF6EDDBCF9F3F2152C84104104038
+	238019DCBC436BCCA25D56803C3E8A362681B9BB0679610872290B0F1494F92F
+	D4EEC27F26E8002430B143EC66422E1C900632D1769CC1933923D2C95EF0D9AE
+	7FA8FB70D0261518D08E2D802458D83A2594348AD424414EFB902B1980A1AFA0
+	A0000C4FA020A420422E090002086704201F71CC807B5B00FE130AB05400A855
+	168A5761451313728042C6DCC02313A02205BCA204BE0BE33F6A5CFE471A4260
+	C4283F91C78590173480EF5CFA8FFD3A77449D04D9CA0A5B2780B1EC03D9FB90
+	B40F39129E979757595959404000726D125AFD0C040001C444B09385AC07F350
+	7AAC1D10CCB91A2CE7DBC106B3300FA5405D8D0EBD33F51F121F5A8243C673E0
+	E3D8488714FC473A009701791A1969E52EE2904646F44576285BDBA0D5036442
+	8201321D064D7CF0FC0D2B18E0B52EB0B4F9F4E9130707878A8A0A3007B0B3B3
+	C3EFEB430B61800022500431A08E6161AE7F46EB5EFD854F96628CD530625BAF
+	C888BA05153E5F0F1587B49D61E9990129CE208C7F4863352807A8C2F7E9C10B
+	37E4B306E07D5DCCE917E4CD3948A3CD886C0A0C16781902DF1E033EC60D9EF6
+	810098F681495E555555484808745832F86046F88275E414091040F872005A1A
+	C733F78275E318BCD7FA0F690922D6154BF07842EC32833814765C3772D9C504
+	3B84E63FDA51A3480D1BE49D4C8CF0092F6CEB06199086C1D16A66F80C25BC36
+	02D6400CF01D7018B91F98F67F832FFD06A67DA01A60E88B888870717141421F
+	745722380E9850CF270108207C2BE3E0E766A1A57782CBB6D04A3A5CEB871950
+	E740FE211FAE88911CE0C3F7F0230019FFA30C6D22AF4F412BD119912775D156
+	2EA19E9AF31FF52015E4CE01C85FF06BADE03310E0E405297920A10FB9180F18
+	FAA2A2A21CE0734921AD4FE4D541C89528400061DFA80DBF69031E1398F70160
+	AD87B1F687B12EA266C4580682184D8397AD68CB5520D744C0265BE0E75BC20F
+	07FF8F71EF3A4A518E315DFC1F234F30A28E47218F5D80480E0ED0FA46C8C5C5
+	B0995448E0009B37C072FFCB972F4006B0D6959090001DBF0BBE24117E552B3C
+	ED23D78B0001C4827F55217C7409D74D2468FD64CCB20BCB792BA8A539F2DC00
+	B46C816F0381546EE0D5B88CF05B93D14E12432DFA90A71B51CA77E4CE04F22E
+	4106D49D39C8E248A3D3505F70704077502135AFE1A10F69E92B2929494A4A02
+	4B1E60D0C3CB1CE4D0474B1C0001F83AB714804210885E6FBB10DCFF0AFBB6C7
+	803528B5021B21183DE65F7A2874DA50C4F8AAA9E08C3EE41D8A0F78ABC4BCE4
+	06115092C3380694BD5D15B72125B907228B9CD9420F4F2DB1F6D63900E75F80
+	4E600B8968E1BFA0CF547FBE3C7DEF8E33335585FA4840DB27031371EB218058
+	B04EE540DC04341A79C539665700D7681DDA1811DA02F4FF5817D3C1D648236F
+	D466025FBD08B97C8A11DEB3C51C70453D92FA3FDA9C3BF812CAFF686D2D7835
+	0EBB430079870C03D2EA3946A4DE162364591CD2F027A4D903BEB6EFAB0C1800
+	1BFE68250FE6C250E4640710402C58EB5248DC42EE2A835E3482B45005D7CE58
+	ACA3D08CC83B1730B20ED63936C43A03A41E1303DA1C0872871CB5826142DE9F
+	8D6B6932BC098B5C3DFC019F52CA0C3EA505D8E3032F67473E948201D20900AB
+	85746BC1F70B81061B80853E30F9F3F1F1412A5E48B823EFB4C0BC0812020002
+	B07505390083204C93DDF902FFFFA371956E0410CFC61825B402C5E7CEA539A6
+	636986DB38780D4502DF6A7146D7F475B71D8BA352ECE776337B1B0F8D8E0436
+	33267412F58A62F952F6EB3B5FEB1439DB577A9F8BB7D33FB23D3682B1868D9B
+	9170CC311C2215E173C7830D209DA09BAA2A22A0FC05756FF32D96F00AC0D615
+	A4000CC2308703C5E1FF3F3A0FBDD8454A25B8FA802AA2691B13BC4380C644D6
+	CB212287DB178ACBD323B7B8CB2AF35FEA81128B6D33FF272A664BB6F2C03520
+	3384233ACB7A2853816328E1B11EA3927C673791E7D4704E660D4BCB8EE9ECDE
+	A5225ACA6C4D6A7DC7787A37DC37B2018D2E12AFED3E3ADEA3DE0FB5B03C3E01
+	F8BAA21D802118688B8746CA3FF8FF7FF30363566E44659978F572AD924B7B67
+	3F8761C09A0A822925DB57D3ABED376B06F61CE292469BCFAC1A97EB8F0888EF
+	9E044B3F043A24CCA07ADE5A4C54B4BEEB2602A5287EC95348AEADE877A02BAC
+	B11036E4F8F4C4C6C412CEE67C116566D9B7F72584EA9C40DF74E260AB313835
+	541E668E314A0CF0F04E7C0EBD7E06341E01F8BAB6150041185A9106B2AF30FF
+	FFE37A2A226B9EC54185DA936FC299EEC676367F0D21A93E534A7A87EA798360
+	718433FF6E7AE66F205D119D7637EBCAB622323D65F219B7E4F675A74D6E0B03
+	7DE31B0FB0D72FE278D143356A6919EC88E07DDA8F62648075D9ACACDA15B914
+	E81014EB02B4C8ED5CC6CA0C8EC432FD36D2BE13A51E4566F17E8DD18A0D0C3A
+	6BEBFF833BE51180AE33D601108481E82013098BFE82FCFFEF9118D107172AA0
+	323181F4E84169CDB9CF1A50BD86323408033508030394C7AC1CF7841B7208F9
+	846635E47B0514537D3318949BCE959DE417D7F49FCC5893F24E700FFD56FB25
+	BB3F3EA1D0C1AE3A2965F6750819737B7F60E5DA615F177E2F12EDAE2F725E94
+	22959C694B7FB296B37E79AAE4CC42F618D76D23E0B2B7B69EF7FF64C5A6760B
+	C0D715AD0008C240A342CC271FECFFFF53ADCE53C78A4A4444C487B99D9BE26D
+	316F8C274DD9B150031FD8576201D2613FD0A9E9BE99A47655451F155F66D8C7
+	3147825B3E98B6F34D28A69BEE17D6596C627C8B7C041A13DDE59E2D35E7C3DA
+	1442A188ABD0D13A5731848236838DD768A2D08178E23EF57B597EF13C557090
+	E17732093CE0618F71F35EC059D4DFDC8922FE8DE01280ADB35B011006C12885
+	37BBD9FB3FEC8A4E1D12D9D6C528E867E9E7B7A1A2B14D26CDE45C310B6FF019
+	4634C18801AA094E6CBC8932EC0FA4E34938647FCABA835A0BA9788FC0375E61
+	52F4AB7E480090DA5F4C8C7F549EA67045C0D44359F73E985E6BB74FC181BCB9
+	84DA95E6E152C49524F9CB778EB1942271560DD214F85F268CF47536543FF3B4
+	E739771552D7E31180B26BD901108461892686841FE1FF7F4D0E8A46EDD615B9
+	7870E10A840D52D6ECF149C6F5F98C69A167401D61D75342EE7B73595D188444
+	B49825DD18D4FE98811396F61D172FC3C0D618409EBD35BB92B55A7A704A47CE
+	D6660A1AC71036E2465F58DF5D2402CCD4BD8431764838FFF21364CE554BF656
+	E1CB2033D4CF3280CD13573101AFBF94027717DAE731A381CAF0EBFF159BF308
+	2046FC230768CB7D917BE11000E931403A84909800323E7EFC086400A307B9AA
+	80440072130D71912B7CE32E4C10E8AD9B376F3EB87BF7EF8307C052E52FA46E
+	04F68C80DAC191C484BAFA9E01B23C0B757DD13F780D019F28471B01846D4180
+	1E4D0139850C9CF9FE82CFADFBF7E70FD0C540C770B0B37370720A090AEAE8EA
+	8A8A8941FC855CEBA2B50389DFBF051080B16B4B011884612083F931BD81F73F
+	E1FED6B99058E93618EBAF28D262FA942C9F735337A08854AAC228096EA39288
+	7213B90A18039680ABD829D8881BEBC1463348CE50269CD097A8326B6D6652C9
+	C956B1D6C932356AB40268F6FACD3F741CD3613881530F0D160D06E841184F50
+	474500BAE68C901EF1FE4662DD522BC290E259EEC3DFBEB3A2FFDA875C028805
+	FF9A144C8320A50764AA00DEC0871C86038906C8222420031813020202903C01
+	B9A019D87880AC1386D416C87E404E471000294F182033FEB00D33207150D831
+	416C05853878BA18543DC2EE8E401EF980D628105F00A520D52CD89D90529219
+	9CBA817529E4EA7560C1C2C5C90929DCC1976071B062B47090C7D7D0FA40A486
+	3E10000410E11C8075D72AF28425245B4044809E82DE6F048B0CB4AA02D2AB00
+	56DA908A1D5263C3B3337243161491B0910C6841014ED7A06880B45F6163FA7F
+	D15688C027C721A9E3EF5F16B045ACE0ABBB81250937F8963C4870836F1A6307
+	4AB1C1DC010C60A05358C1039FCCB0BE0E1A8906D05A160CA40080006221521D
+	E6DD00C8390E79613A9C0D890C48BD0DF4267CCE08D8BD80B465815505641C11
+	E8533670B10AB9058C1972E40AA4BF86D81106AA79400774801A447F201D75F8
+	A81CE43E2B60F400F53283C3910D9CAE81610D0D6C200D0A6A6048B3B1424A70
+	48A286DC1684D46063824CDE22958A4C186C5C0B93C9000001C442926A3C7BC4
+	D0260920D506245BB080AF05068617D0DB909880E409485B16328D07AC2D3E7E
+	FF0ED9CA035206AE4E20A9FA1F6CBEFB3F6CFE0F52FF839AC8C0340A2E49B8A0
+	81CC054CE01036644C18641AAC008150905A9E09568C409A2FD0762752698E96
+	A2F18C68921DF4100010408CF8F71A1003302F184026FF212DD9808FB6C2A732
+	20F5366405196852095C557CFBFE1D18101FDEBF7FF7EE1DB026812883B44680
+	00523403133728450319905B37C1E99A053C408228AFC1ED2B48B7101A76F0C4
+	0C39600FC8830C2F431A42D8365BA32D24A156B8C3014000B1506E04E6981FD6
+	DB1EE01764C16B6CE4BE052451FF82839F3F9FB1B101C30E7463213B3B64A091
+	035C31B2C23A7B9090451BA6859E77090B6BC41204F8D57CE0248F6BC119D680
+	C6DC62CE403D00104054C801F8B305E6BC3CF2526A78B6405BDA87BC90183925
+	625683C86534CAF038644E0DE3EE46FC618D6B130AED004000D12A02B0CE0F63
+	6E344366209FFA8DB9EC0EE5AE4A6CD34C582F2EC2DA3CC7D558A47558630500
+	0144DB08C0131FF8679219B01DCC8867EF02666D89BFF98039853750002080E8
+	1A01B82A6DCC45BEF8971BE14FB958772A0C92E0C6040001340011807F1517AE
+	38C0752618D6C01D9C618D1500041800B7A29D6A88F4824A0000000049454E44
+	AE426082
+	]]>
+</Picture>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" length_in_bytes="864" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000940000
+	007F08030000003E611BA70000002A504C5445000000F0F0F0F0F0F0F0F0F0F0
+	F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0000000FFFFFFF0F0F01EA389
+	9C0000000B74524E53003F1F0F030802070418016A00137C000002D049444154
+	78DAEDDBD14EE2501485E1165047FFF2FEAF3B09849C31EB6225F3C3A1175D4D
+	B0D9AD3D9F9BB2C5A8CBC8F7CA32352C3D1FCC46F1A79FF38654D43ABF53E77E
+	CEF3EF29BFE0BA4C4F5F92F9A85D76EA7C744ADE535F2B8FED0D39F1C58995F3
+	9D70DBFF5C96137007B34D0FD93BE0B200B01FD483C3B2EC0675E71CA80375A0
+	0ED4813A5007EA40BD1805C0BE50303EEC0545ECBD13951276804A073B40A582
+	1DA0A895F9286A6D3E8A5A9D8FA2D6E7A3A847E6A3A8C7E6A32847E7A0FA1C07
+	A2E650DA74130D161351D91B7E974235011580610AD51C549A60639442350395
+	8B32DA55551ED54D0F0EA394AA19A87CA2C254541AD5A722842954AF47D14AA9
+	F2286F4A954019535779545F069A29541ED517A198522550658931C829A65039
+	549F99638E0B9541E55519A3DCA83C8A6D4BD52654169557C4AB3C2A0F0A9540
+	3593537914F97301A25702D5DEFB0A954085693C22EE2B87CACBC170089542E5
+	1C1FB3DCA8348A04A0278340A509C2A4547454334549A804AA988C4AA1B2E254
+	02554C11FEA3551E9585FCE50CD0553C1B455D8EB9A86E1A8F13516C1695F714
+	3FE2D5F764D4381B3FA7F43D457C09A889CED602DD949318F3BD8F4D8772B717
+	54511953EE20DE4FF164D3D8A3A0BCAA9BB24643F5CB7953160BEA352ACAE8A3
+	FCF169B9A4376579A856E052504AD53F9D7FB7130B17CEFDE9EB2A6B1AE1E3EE
+	E8A8AE32A6DFE1B3A0BCAA9BA24841795537656828AFEAA6EC55417955376508
+	94502913A12A28A5EAA60C81122A63CA5E0D945009538482EA4B79535603A554
+	BE4F89322A6FA2A0844AF629514EE54D149450A93E25CAABBAE95A2E1B28ADF2
+	7D4A9457791381F22ADFA7447995371128A7F2A6EC94567953A28C8ADB833179
+	542E076CC2245165416FF2A80D6DF2A80CDAE45119B4C9A33268934765282683
+	F2FF6194268F522C201BE85136C22451DED4510018943725EA0A5C15CA9B1275
+	E5B13D359B41D9F0824EFD052DCAB0BDFC2CEE760000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="2" length_in_bytes="1084" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D494844520000007E0000
+	006308030000006AB544FF00000054504C5445000000FFFFFFF0F0F0F0F0F0F0
+	F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0
+	F0F0F0000000F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0000000F0F0F00000
+	00FFFFFFF0F0F08886CB690000001974524E530000010203040C063F05080F07
+	0B0A12EF09601F190E18DF4E7B2389F4000003744944415478DABD990D93DA38
+	10449B19C906F623C92577496FFEFFFFBC2BDBD0117B5E2156A3A60A0C6578BC
+	19796C76F1B617BEDB289FEEBF4AC7DD69A7D7436BC0B7D3EBFEB901DFCD5D61
+	03BE179D0FF003DC5BF88DF4DF9DFDD9D95DE1F91E7BB6D2BBFAEB1D9DDCDBF8
+	FAE4767A87F9A77774736FE1EBD31BE8FDFABFEDC5E5AE46EFDFFFEB6E82D7E9
+	EDFEA93A762AF4187F36D003FAFFC640F73A5F800A3DC65F3B06B98B6F95B153
+	A147F8EBB05F1EFABAD7F93AEC59598421FE95F746FB57E8D1FE43DC75FECB0D
+	D7F921FE56E0F9FF798B09116A5FF77F2AF1ACB163FDBF70B43F8059FCC411EE
+	FBF5F7F1FECF65FDC7B88B714491F1FE6538CC5D7F7D18EF2FF71B7FE338F78D
+	88F1FEA28390BBF8D1E104C0851EEC0F4C90BFD843FC451CEFAF35EFB6D078BB
+	0E38CCDD812339D29F72CDCB635A2A71754FE2C7F7DDB50A47F897EB9CDF69DB
+	76D902E30877F27CF82FCB9603400EF5A741B1C5F9823742CD8F59FF9CF12E1B
+	5EC79D05F86BD2C237BB3360C2BFE3CFBDFD99AE55F79D79B7BEEEDB77987AFA
+	7393CED9B193F4EEFCDFB5EFF57013EFDD7F1AEA31CC5CAB9FC40F3FC795F55E
+	DBF0574F7FAAA4D5ACFC673D1FE32EDE3F97F93775F127DAF2F3D7CD7A18E80E
+	BBD4DFCD7DD9387EC69F931ADFD0FF791990FEEA0948FCCCAC6BCF449C7E2C5B
+	F9EFFC99FE13406AE71B2FD3FF749A007CE3A3B3CE263C126E75405A3BF7B5C5
+	5FF4C9331EE5E7E2F9435717AEE2B7AE7F830AF7C0F98F8E856DFEA0FFF133E7
+	3F427998EF1776AAACFFFE743C7F85E2E2C7BB6BFD25DFF0D6E04FF409B539DD
+	EF4FC3DC8DFFDAFAFB8709DE06D9BF11E502E0BD7DCFE8116BB9FED7596636F4
+	495AF92F10BFEA9E0CDD32B32CA67DE44FEDDA2BA6FE7FD3FCDD71EF9E09933E
+	F52CFE2EDD7BFBE3C6EA3777E88E98D0B4FC5F76FA4FC018C5CFF8B303991FF6
+	3D1FEE4F156D9870ACD59F459F3AE19544B989BF33E7BBE34DEBEF45FEA24361
+	843DC49F91C4173D87D82B59BFFFBDE0137F569E64045EFD37E0B49461E5DF5C
+	959E43F0AABFAD7727C0B8BADBDA0E9CE030A620BC8EFF391B60C091D7FF0E18
+	7CB9630282F0AAFFE5023E17C763BED42708EFD0F92795CBDD349D2393E8E56F
+	71EA3B2C748BE51BB52DF22B328C09860CF3B0735F86F87AD45CA4116DB7B6CC
+	E26B15E85B682A45D99F507C6F5BC87CA25DB113A2FB4F94210DC00138E080E8
+	50F872D2A3F9F62F6A9EB9CEDCAD07130000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["fa_sinktyp_WMCC"]]></MName>
+		<MainGUID>FCF24A15-5B8D-4B6B-9DBD-F3D2FCED15A6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_minimalspace_WMCC"]]></MName>
+		<MainGUID>2F8FA50F-951D-4497-A1EB-0C86CE41071D</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["LibraryGlobals13_WMCC"]]></MName>
+		<MainGUID>300E284E-55E0-49E3-93E9-0D14F298D049</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["MEP_m_ConnectionsACL_4_WMCC"]]></MName>
+		<MainGUID>143F1F51-8963-4A3F-9280-1B13D77B948E</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["LibraryGlobals13_WMCC"]]></MName>
+		<MainGUID>300E284E-55E0-49E3-93E9-0D14F298D049</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["MEP_m_ConnectionsACL_4_WMCC"]]></MName>
+		<MainGUID>143F1F51-8963-4A3F-9280-1B13D77B948E</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_gen_corncabinet_WMCC"]]></MName>
+		<MainGUID>35DC91DD-8695-47BD-8B2E-7C26236C02C6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_cabdoortyp_WMCC"]]></MName>
+		<MainGUID>0FFA6B6B-721E-433B-8B8B-A837C5F57022</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Knob_Collection_WMCC"]]></MName>
+		<MainGUID>5AD493B1-412C-41CB-82D2-27D9243F0977</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_knobtyp_WMCC"]]></MName>
+		<MainGUID>51ACDCF2-789E-40B3-8B4D-3BC476EFE5D4</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Kitchen Cabinets UI macro_WMCC"]]></MName>
+		<MainGUID>5F315F42-3B88-468E-9395-E84C8A9F5789</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["FM_types_WMCC"]]></MName>
+		<MainGUID>FDE85812-F9A8-4766-99D5-13A994097F30</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Kitchen Cabinets UI macro_WMCC"]]></MName>
+		<MainGUID>5F315F42-3B88-468E-9395-E84C8A9F5789</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[Kitchen cabinet base corner unit with door and optional sink.]]>
+</Comment>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[Tap, under-mount sink, door styles, toe types, drawer, knob, end panel, 2D symbols, minimal space]]>
+</Keywords>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+actualGUID = FROM_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+	_autoID		= "A52DCC2C-F5F3-4E0E-9625-5BBD6346FD4C"
+	_startID	= "CB38D189-2B6D-4359-A87A-ABE792EE7E61"
+	_endID		= "BC6E1C3F-6CD0-4365-B064-CDD57A439BEE"
+gosub "CustomizeDrawerPanel_FWM"
+
+	_startID	= "BC6E1C3F-6CD0-4365-B064-CDD57A439BEE"
+	_endID		= "F725B6A1-3651-4E19-B166-347FA30FAE28"
+gosub "DrawerHeight_FWM"
+
+	_startID	= "F725B6A1-3651-4E19-B166-347FA30FAE28"
+	_endID		= "3667B011-0B66-4451-8481-C2D478B3ECD5"
+gosub "fmtypes_fwm"
+
+! ==============================================================================
+! Set migration GUID
+! ==============================================================================
+
+setmigrationguid actualGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+
+! ==============================================================================
+! Drawer Height
+! ==============================================================================
+"DrawerHeight_FWM":
+	if actualGuid = _startID then
+		drawerHeight = 0.13
+		parameters drawerHeight = drawerHeight
+	
+		actualGuid = _endID
+	endif
+return
+
+
+! ==============================================================================
+! CustomizeDrawerPanel
+! ==============================================================================
+"CustomizeDrawerPanel_FWM":
+	if actualGuid = _startID | actualGuid = _autoID then
+		bUseDoorFront = 0
+		parameters bUseDoorFront = bUseDoorFront
+	
+		actualGuid = _endID
+	endif
+return
+
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_fwm":
+	if actualGuid = _startID then
+		bHas = DELETED_PAR_VALUE ("FM_Type", FM_Type)
+
+	!INT
+		iFMType = 999
+		if FM_Type = `Default Objects` then iFMType = 1
+		if FM_Type = `Default Lamps` then iFMType = 2
+		if FM_Type = `People` then iFMType = 3
+		if FM_Type = `Elevators` then iFMType = 4
+		if FM_Type = `Security and Escapes` then iFMType = 5
+		if FM_Type = `Stairs` then iFMType = 6
+		if FM_Type = `Work Spaces` then iFMType = 7
+		if FM_Type = `Electric Facilities` then iFMType = 8
+		if FM_Type = `Distribution Panels` then iFMType = 9
+		if FM_Type = `Measuring Places` then iFMType = 10
+		if FM_Type = `Lamps` then iFMType = 11
+		if FM_Type = `HVAC Equipment` then iFMType = 12
+		if FM_Type = `Sanitation` then iFMType = 13
+		if FM_Type = `Locks` then iFMType = 14
+		if FM_Type = `Built-in Wardrobes` then iFMType = 15
+		if FM_Type = `Furniture` then iFMType = 16
+		if FM_Type = `Ceilings` then iFMType = 17
+		if FM_Type = `Floors` then iFMType = 18
+		if FM_Type = `Outdoor Objects` then iFMType = 19
+		if FM_Type = `Computers` then iFMType = 20
+		if FM_Type = `Monitors` then iFMType = 21
+		if FM_Type = `Software` then iFMType = 22
+		if FM_Type = `Phones` then iFMType = 23
+		if FM_Type = `Containers` then iFMType = 24
+		if FM_Type = `Others` then iFMType = 25
+
+	!AUT
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaugarderoben" then iFMType = 15
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!BRA
+		if FM_Type = "Objetos padrão" then iFMType = 1
+		if FM_Type = "Lâmpadas padrão" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos elétricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechamentos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tetos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objetos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!CHE
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Fussböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!CHI
+		if FM_Type = "默认对象" then iFMType = 1
+		if FM_Type = "默认灯" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "电梯" then iFMType = 4
+		if FM_Type = "保安与逃生" then iFMType = 5
+		if FM_Type = "楼梯" then iFMType = 6
+		if FM_Type = "工作空间" then iFMType = 7
+		if FM_Type = "电气设备" then iFMType = 8
+		if FM_Type = "分布面板" then iFMType = 9
+		if FM_Type = "测量地点" then iFMType = 10
+		if FM_Type = "灯" then iFMType = 11
+		if FM_Type = "HVAC设备" then iFMType = 12
+		if FM_Type = "卫生设施" then iFMType = 13
+		if FM_Type = "锁" then iFMType = 14
+		if FM_Type = "内置衣橱" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外对象" then iFMType = 19
+		if FM_Type = "计算机" then iFMType = 20
+		if FM_Type = "监视器" then iFMType = 21
+		if FM_Type = "软件" then iFMType = 22
+		if FM_Type = "电话" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!CZE
+		if FM_Type = "Výchozí objekty" then iFMType = 1
+		if FM_Type = "výchozí lampy" then iFMType = 2
+		if FM_Type = "lidé" then iFMType = 3
+		if FM_Type = "výtahy" then iFMType = 4
+		if FM_Type = "bezpečnost a úniky" then iFMType = 5
+		if FM_Type = "schodiště" then iFMType = 6
+		if FM_Type = "pracovní prostory" then iFMType = 7
+		if FM_Type = "Elektrická zařízení" then iFMType = 8
+		if FM_Type = "rozvaděče" then iFMType = 9
+		if FM_Type = "měřiče" then iFMType = 10
+		if FM_Type = "Svítidla" then iFMType = 11
+		if FM_Type = "lampy" then iFMType = 11
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "TZB vybavení" then iFMType = 12
+		if FM_Type = "Sanitární vybavení" then iFMType = 13
+		if FM_Type = "zámky" then iFMType = 14
+		if FM_Type = "zabudované skříně" then iFMType = 15
+		if FM_Type = "Nábytek" then iFMType = 16
+		if FM_Type = "stropy" then iFMType = 17
+		if FM_Type = "podlahy" then iFMType = 18
+		if FM_Type = "Venkovní objekty" then iFMType = 19
+		if FM_Type = "počítače" then iFMType = 20
+		if FM_Type = "monitory" then iFMType = 21
+		if FM_Type = "software" then iFMType = 22
+		if FM_Type = "telefony" then iFMType = 23
+		if FM_Type = "obaly" then iFMType = 24
+		if FM_Type = "jiné" then iFMType = 25
+		if FM_Type = "Jiné" then iFMType = 25
+
+	!FIN
+		if FM_Type = "Oletusobjektit" then iFMType = 1
+		if FM_Type = "Oletuslamput" then iFMType = 2
+		if FM_Type = "Ihminen" then iFMType = 3
+		if FM_Type = "Hissit" then iFMType = 4
+		if FM_Type = "Turvallisuus ja poistumistiet" then iFMType = 5
+		if FM_Type = "Portaat" then iFMType = 6
+		if FM_Type = "Työtilat" then iFMType = 7
+		if FM_Type = "Sähkölaitteet" then iFMType = 8
+		if FM_Type = "Jakelutaulut" then iFMType = 9
+		if FM_Type = "Mittauspaikat" then iFMType = 10
+		if FM_Type = "Lamput" then iFMType = 11
+		if FM_Type = "LVI-laite" then iFMType = 12
+		if FM_Type = "Saniteettikalusteet" then iFMType = 13
+		if FM_Type = "Viemäröinti" then iFMType = 13
+		if FM_Type = "Lukot" then iFMType = 14
+		if FM_Type = "Kiinteät komerot" then iFMType = 15
+		if FM_Type = "Kalustus" then iFMType = 16
+		if FM_Type = "Sisäkattopinnat" then iFMType = 17
+		if FM_Type = "Lattiat" then iFMType = 18
+		if FM_Type = "Ulkotilan objektit" then iFMType = 19
+		if FM_Type = "Ulkotilojen objektit" then iFMType = 19
+		if FM_Type = "Tietokoneet" then iFMType = 20
+		if FM_Type = "Näytöt" then iFMType = 21
+		if FM_Type = "Ohjelmat" then iFMType = 22
+		if FM_Type = "Puhelimet" then iFMType = 23
+		if FM_Type = "Säilytys" then iFMType = 24
+		if FM_Type = "Muut" then iFMType = 25
+
+	!FLA
+
+	!FRA
+		if FM_Type = "Objets par défaut" then iFMType = 1
+		if FM_Type = "Lampes par défaut" then iFMType = 2
+		if FM_Type = "Personnages" then iFMType = 3
+		if FM_Type = "Ascenseurs" then iFMType = 4
+		if FM_Type = "Sécurité et sorties de secours" then iFMType = 5
+		if FM_Type = "Escaliers" then iFMType = 6
+		if FM_Type = "Espaces de travail" then iFMType = 7
+		if FM_Type = "Services électriques" then iFMType = 8
+		if FM_Type = "Panneaux de distribution" then iFMType = 9
+		if FM_Type = "Armoires de contrôle" then iFMType = 10
+		if FM_Type = "Lampes" then iFMType = 11
+		if FM_Type = "Equipement CVCA" then iFMType = 12
+		if FM_Type = "Sanitaires" then iFMType = 13
+		if FM_Type = "Serrurerie" then iFMType = 14
+		if FM_Type = "Penderies Encastrées" then iFMType = 15
+		if FM_Type = "Ameublement" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Planchers" then iFMType = 18
+		if FM_Type = "Objets extérieurs" then iFMType = 19
+		if FM_Type = "Ordinateurs" then iFMType = 20
+		if FM_Type = "Ecrans" then iFMType = 21
+		if FM_Type = "Logiciels" then iFMType = 22
+		if FM_Type = "Téléphones" then iFMType = 23
+		if FM_Type = "Conteneurs" then iFMType = 24
+		if FM_Type = "Autres" then iFMType = 25
+
+	!GER
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!GRE
+		if FM_Type = "Αρχικά Αντικείμενα" then iFMType = 1
+		if FM_Type = "Αρχικά Φωτιστικά" then iFMType = 2
+		if FM_Type = "Άνθρωποι" then iFMType = 3
+		if FM_Type = "Ανελκυστήρες" then iFMType = 4
+		if FM_Type = "Ασφάλεια και Διαφυγή" then iFMType = 5
+		if FM_Type = "Σκάλες" then iFMType = 6
+		if FM_Type = "Χώροι Εργασίας" then iFMType = 7
+		if FM_Type = "Ηλεκτρολ. Εγκαταστάσεις" then iFMType = 8
+		if FM_Type = "Πίνακες Διανομής" then iFMType = 9
+		if FM_Type = "Θέσεις Μετρήσεων" then iFMType = 10
+		if FM_Type = "Φωτιστικά" then iFMType = 11
+		if FM_Type = "Λάμπα" then iFMType = 11
+		if FM_Type = "Εξαρτήματα HVAC" then iFMType = 12
+		if FM_Type = "Υγιεινή" then iFMType = 13
+		if FM_Type = "Κλειδαριές" then iFMType = 14
+		if FM_Type = "Εντοιχισμένες Ντουλάπες" then iFMType = 15
+		if FM_Type = "Εντοιχισμένη Ντουλάπα" then iFMType = 15
+		if FM_Type = "Επίπλωση" then iFMType = 16
+		if FM_Type = "Οροφές" then iFMType = 17
+		if FM_Type = "Δάπεδα" then iFMType = 18
+		if FM_Type = "Υπαίθρια Αντικείμενα" then iFMType = 19
+		if FM_Type = "Υπολογιστές" then iFMType = 20
+		if FM_Type = "Οθόνες" then iFMType = 21
+		if FM_Type = "Λογισμικό" then iFMType = 22
+		if FM_Type = "Τηλέφωνα" then iFMType = 23
+		if FM_Type = "Κιβώτια" then iFMType = 24
+		if FM_Type = "Άλλα" then iFMType = 25
+
+	!HUN
+		if FM_Type = "Alapértelmezett tárgy" then iFMType = 1
+		if FM_Type = "Alapértelmezett lámpa" then iFMType = 2
+		if FM_Type = "Személy" then iFMType = 3
+		if FM_Type = "Felvonó" then iFMType = 4
+		if FM_Type = "Biztonság- és menekülésjelző" then iFMType = 5
+		if FM_Type = "Lépcsők" then iFMType = 6
+		if FM_Type = "Lépcső" then iFMType = 6
+		if FM_Type = "Lépcsö" then iFMType = 6
+		if FM_Type = "Munkaterület" then iFMType = 7
+		if FM_Type = "Elektromos berendezés" then iFMType = 8
+		if FM_Type = "Elosztó" then iFMType = 9
+		if FM_Type = "Mérőhely" then iFMType = 10
+		if FM_Type = "Lámpa" then iFMType = 11
+		if FM_Type = "Légtechnikai berendezés" then iFMType = 12
+		if FM_Type = "Szaniter berendezés" then iFMType = 13
+		if FM_Type = "Zár" then iFMType = 14
+		if FM_Type = "Beépített szekrény" then iFMType = 15
+		if FM_Type = "Bútor" then iFMType = 16
+		if FM_Type = "Mennyezet" then iFMType = 17
+		if FM_Type = "Padló" then iFMType = 18
+		if FM_Type = "Kültéri tárgy" then iFMType = 19
+		if FM_Type = "Számítógép" then iFMType = 20
+		if FM_Type = "Monitor" then iFMType = 21
+		if FM_Type = "Szoftver" then iFMType = 22
+		if FM_Type = "Telefon" then iFMType = 23
+		if FM_Type = "Konténer" then iFMType = 24
+		if FM_Type = "Egyéb" then iFMType = 25
+
+	!ITA
+		if FM_Type = "Oggetti predefiniti" then iFMType = 1
+		if FM_Type = "Lampade predefinite" then iFMType = 2
+		if FM_Type = "Persone" then iFMType = 3
+		if FM_Type = "Ascensori" then iFMType = 4
+		if FM_Type = "Sicurezza e Fughe" then iFMType = 5
+		if FM_Type = "Scale" then iFMType = 6
+		if FM_Type = "Spazi di Lavoro" then iFMType = 7
+		if FM_Type = "Funzioni Elettriche" then iFMType = 8
+		if FM_Type = "Pannelli di Distribuzione" then iFMType = 9
+		if FM_Type = "Posti di Misurazione" then iFMType = 10
+		if FM_Type = "Lampade" then iFMType = 11
+		if FM_Type = "Apparecchiatura HVAC" then iFMType = 12
+		if FM_Type = "Risanamento" then iFMType = 13
+		if FM_Type = "Serrature" then iFMType = 14
+		if FM_Type = "Armadi a muro" then iFMType = 15
+		if FM_Type = "Armadi Incassati" then iFMType = 15
+		if FM_Type = "Armadi Incorporati" then iFMType = 15
+		if FM_Type = "Arredo" then iFMType = 16
+		if FM_Type = "Soffitti" then iFMType = 17
+		if FM_Type = "Pavimenti" then iFMType = 18
+		if FM_Type = "Oggetti Esterni" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitors" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoni" then iFMType = 23
+		if FM_Type = "Contenitori" then iFMType = 24
+		if FM_Type = "Altri" then iFMType = 25
+
+	!JPN
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ " then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ" then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄﾗﾝﾌﾟ" then iFMType = 2
+		if FM_Type = "人物" then iFMType = 3
+		if FM_Type = "ｴﾚﾍﾞｰﾀ" then iFMType = 4
+		if FM_Type = "防犯と非常用" then iFMType = 5
+		if FM_Type = "階段" then iFMType = 6
+		if FM_Type = "ﾜｰｸｽﾍﾟｰｽ" then iFMType = 7
+		if FM_Type = "電気設備" then iFMType = 8
+		if FM_Type = "配電盤" then iFMType = 9
+		if FM_Type = "測定場所" then iFMType = 10
+		if FM_Type = "ﾗﾝﾌﾟ" then iFMType = 11
+		if FM_Type = "設備機器" then iFMType = 12
+		if FM_Type = "HVAC機器" then iFMType = 12
+		if FM_Type = "排水設備" then iFMType = 13
+		if FM_Type = "下水設備" then iFMType = 13
+		if FM_Type = "ﾛｯｸ" then iFMType = 14
+		if FM_Type = "造り付けﾜｰﾄﾞﾛｰﾌﾞ" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天井" then iFMType = 17
+		if FM_Type = "ﾌﾛｱ" then iFMType = 18
+		if FM_Type = "屋外ｵﾌﾞｼﾞｪｸﾄ" then iFMType = 19
+		if FM_Type = "ｺﾝﾋﾟｭｰﾀ" then iFMType = 20
+		if FM_Type = "ﾓﾆﾀ" then iFMType = 21
+		if FM_Type = "ｿﾌﾄｳｪｱ" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "ｺﾝﾃﾅ" then iFMType = 24
+		if FM_Type = "その他" then iFMType = 25
+
+	!KOR
+		if FM_Type = "기본 객체" then iFMType = 1
+		if FM_Type = "기본값 객체" then iFMType = 1
+		if FM_Type = "기본 조명" then iFMType = 2
+		if FM_Type = "사람들" then iFMType = 3
+		if FM_Type = "엘리베이터" then iFMType = 4
+		if FM_Type = "보안과 피난" then iFMType = 5
+		if FM_Type = "계단" then iFMType = 6
+		if FM_Type = "작업 공간" then iFMType = 7
+		if FM_Type = "전기 설비" then iFMType = 8
+		if FM_Type = "분배 패널" then iFMType = 9
+		if FM_Type = "측정 장소" then iFMType = 10
+		if FM_Type = "조명" then iFMType = 11
+		if FM_Type = "공조설비" then iFMType = 12
+		if FM_Type = "위생설비" then iFMType = 13
+		if FM_Type = "잠금장치" then iFMType = 14
+		if FM_Type = "붙박이 장" then iFMType = 15
+		if FM_Type = "가구" then iFMType = 16
+		if FM_Type = "천장" then iFMType = 17
+		if FM_Type = "바닥" then iFMType = 18
+		if FM_Type = "실외 객체" then iFMType = 19
+		if FM_Type = "컴퓨터" then iFMType = 20
+		if FM_Type = "모니터" then iFMType = 21
+		if FM_Type = "소프트웨어" then iFMType = 22
+		if FM_Type = "전화기" then iFMType = 23
+		if FM_Type = "콘테이너" then iFMType = 24
+		if FM_Type = "기타" then iFMType = 25
+
+	!NED
+		if FM_Type = "Standaardobjecten" then iFMType = 1
+		if FM_Type = "Standaardlampen" then iFMType = 2
+		if FM_Type = "Mensen" then iFMType = 3
+		if FM_Type = "Liften" then iFMType = 4
+		if FM_Type = "Beveiliging en vluchtwegen" then iFMType = 5
+		if FM_Type = "Trappen" then iFMType = 6
+		if FM_Type = "Werkplekken" then iFMType = 7
+		if FM_Type = "ET installatie" then iFMType = 8
+		if FM_Type = "Schakelkasten" then iFMType = 9
+		if FM_Type = "Meetgebieden" then iFMType = 10
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "W-installatie" then iFMType = 12
+		if FM_Type = "Afvalverwerking" then iFMType = 13
+		if FM_Type = "Sloten" then iFMType = 14
+		if FM_Type = "Inbouwkasten" then iFMType = 15
+		if FM_Type = "Meubilair" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Vloeren" then iFMType = 18
+		if FM_Type = "Buitenobjecten" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitoren" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoon" then iFMType = 23
+		if FM_Type = "Containers" then iFMType = 24
+		if FM_Type = "Anders" then iFMType = 25
+		if FM_Type = "Overig" then iFMType = 25
+
+	!NOR
+		if FM_Type = "Standard objekter" then iFMType = 1
+		if FM_Type = "Andre" then iFMType = 25
+
+	!POL
+		if FM_Type = "Obiekty domyślne" then iFMType = 1
+		if FM_Type = "Domyślne lampy" then iFMType = 2
+		if FM_Type = "Ludzie" then iFMType = 3
+		if FM_Type = "Windy" then iFMType = 4
+		if FM_Type = "Bezpieczeństwo i ewakuacja" then iFMType = 5
+		if FM_Type = "Schody" then iFMType = 6
+		if FM_Type = "Przestrzenie robocze" then iFMType = 7
+		if FM_Type = "Urządzenia elektryczne" then iFMType = 8
+		if FM_Type = "Panele rozdzielające" then iFMType = 9
+		if FM_Type = "Stanowiska pomiarowe" then iFMType = 10
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "Wyposażenie grzewczo-klimatyzac." then iFMType = 12
+		if FM_Type = "Sanitarne" then iFMType = 13
+		if FM_Type = "Zamki" then iFMType = 14
+		if FM_Type = "Garderoby" then iFMType = 15
+		if FM_Type = "Umeblowanie" then iFMType = 16
+		if FM_Type = "Sufity" then iFMType = 17
+		if FM_Type = "Podłogi" then iFMType = 18
+		if FM_Type = "Obiekty zewnętrzne" then iFMType = 19
+		if FM_Type = "Komputery" then iFMType = 20
+		if FM_Type = "Monitory" then iFMType = 21
+		if FM_Type = "Oprogramowanie" then iFMType = 22
+		if FM_Type = "Telefony" then iFMType = 23
+		if FM_Type = "Pojemniki" then iFMType = 24
+		if FM_Type = "Inne" then iFMType = 25
+
+	!POR
+		if FM_Type = "Objectos por defeito" then iFMType = 1
+		if FM_Type = "Lâmpadas por defeito" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos eléctricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tectos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objectos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!RUS
+		if FM_Type = "Объекты по умолчанию" then iFMType = 1
+		if FM_Type = "Ист.света по умолчанию" then iFMType = 2
+		if FM_Type = "Люди" then iFMType = 3
+		if FM_Type = "Лифты" then iFMType = 4
+		if FM_Type = "Безопасность и эвакуация" then iFMType = 5
+		if FM_Type = "Лестницы" then iFMType = 6
+		if FM_Type = "Рабочее пространство" then iFMType = 7
+		if FM_Type = "Электрические устройства" then iFMType = 8
+		if FM_Type = "Распределительные щиты" then iFMType = 9
+		if FM_Type = "Измеряемые места" then iFMType = 10
+		if FM_Type = "Лампы" then iFMType = 11
+		if FM_Type = "Источники света" then iFMType = 11
+		if FM_Type = "Механическое оборудование" then iFMType = 12
+		if FM_Type = "Санитария" then iFMType = 13
+		if FM_Type = "Замки" then iFMType = 14
+		if FM_Type = "Встроенные гардеробы" then iFMType = 15
+		if FM_Type = "Гардеробы встроенные" then iFMType = 15
+		if FM_Type = "Мебель" then iFMType = 16
+		if FM_Type = "Потолки" then iFMType = 17
+		if FM_Type = "Полы" then iFMType = 18
+		if FM_Type = "Объекты снаружи" then iFMType = 19
+		if FM_Type = "Компьютеры" then iFMType = 20
+		if FM_Type = "Мониторы" then iFMType = 21
+		if FM_Type = "Программное обеспечение" then iFMType = 22
+		if FM_Type = "Телефоны" then iFMType = 23
+		if FM_Type = "Контейнеры" then iFMType = 24
+		if FM_Type = "Другой" then iFMType = 25
+		if FM_Type = "Другие" then iFMType = 25
+
+	!SPA
+		if FM_Type = "Objetos por Defecto" then iFMType = 1
+		if FM_Type = "Lámparas por Defecto" then iFMType = 2
+		if FM_Type = "Personas" then iFMType = 3
+		if FM_Type = "Ascensores" then iFMType = 4
+		if FM_Type = "Seguridad y Evacuaciones" then iFMType = 5
+		if FM_Type = "Escaleras" then iFMType = 6
+		if FM_Type = "Espacios de Trabajo" then iFMType = 7
+		if FM_Type = "Cuartos Eléctricos" then iFMType = 8
+		if FM_Type = "Paneles de División" then iFMType = 9
+		if FM_Type = "Lugares de Medidas" then iFMType = 10
+		if FM_Type = "Lámparas" then iFMType = 11
+		if FM_Type = "Control de Atmósfera" then iFMType = 12
+		if FM_Type = "Saneamiento" then iFMType = 13
+		if FM_Type = "Cerraduras" then iFMType = 14
+		if FM_Type = "Armarios Empotrados" then iFMType = 15
+		if FM_Type = "Mobiliario" then iFMType = 16
+		if FM_Type = "Falsos Techos" then iFMType = 17
+		if FM_Type = "Suelos" then iFMType = 18
+		if FM_Type = "Objetos de Exterior" then iFMType = 19
+		if FM_Type = "Ordenadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Teléfonos" then iFMType = 23
+		if FM_Type = "Contenedores" then iFMType = 24
+		if FM_Type = "Otros" then iFMType = 25
+
+	!SWE
+		if FM_Type = "Standardelement" then iFMType = 1
+		if FM_Type = "Standardarmatur" then iFMType = 2
+		if FM_Type = "Människor" then iFMType = 3
+		if FM_Type = "Hissar" then iFMType = 4
+		if FM_Type = "Säkerhet & Utrymning" then iFMType = 5
+		if FM_Type = "Trappor" then iFMType = 6
+		if FM_Type = "Arbetsutrymmen" then iFMType = 7
+		if FM_Type = "Elektrisk Utrustning" then iFMType = 8
+		if FM_Type = "Distributionspaneler" then iFMType = 9
+		if FM_Type = "Måttenhetsuppgifter" then iFMType = 10
+		if FM_Type = "Armatur" then iFMType = 11
+		if FM_Type = "VVS-utrustning" then iFMType = 12
+		if FM_Type = "Sanitärt" then iFMType = 13
+		if FM_Type = "Lås" then iFMType = 14
+		if FM_Type = "Inbyggda Utrymmen" then iFMType = 15
+		if FM_Type = "Möbler" then iFMType = 16
+		if FM_Type = "Innertak" then iFMType = 17
+		if FM_Type = "Golv" then iFMType = 18
+		if FM_Type = "Element för Utomhusbruk" then iFMType = 19
+		if FM_Type = "Datorer" then iFMType = 20
+		if FM_Type = "Bildskärmar" then iFMType = 21
+		if FM_Type = "Mjukvaror" then iFMType = 22
+		if FM_Type = "Telefoner" then iFMType = 23
+		if FM_Type = "Behållare" then iFMType = 24
+		if FM_Type = "Annat" then iFMType = 25
+
+	!TAI
+		if FM_Type = "默認對象" then iFMType = 1
+		if FM_Type = "默認燈" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "電梯" then iFMType = 4
+		if FM_Type = "保安與逃生" then iFMType = 5
+		if FM_Type = "樓梯" then iFMType = 6
+		if FM_Type = "工作空間" then iFMType = 7
+		if FM_Type = "電氣設備" then iFMType = 8
+		if FM_Type = "分佈面板" then iFMType = 9
+		if FM_Type = "測量地點" then iFMType = 10
+		if FM_Type = "燈" then iFMType = 11
+		if FM_Type = "HVAC設備" then iFMType = 12
+		if FM_Type = "衛生設施" then iFMType = 13
+		if FM_Type = "鎖" then iFMType = 14
+		if FM_Type = "內置衣櫥" then iFMType = 15
+		if FM_Type = "傢具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外對象" then iFMType = 19
+		if FM_Type = "計算機" then iFMType = 20
+		if FM_Type = "監視器" then iFMType = 21
+		if FM_Type = "軟件" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!TUR
+		if FM_Type = "Geçerli Objeler" then iFMType = 1
+		if FM_Type = "Geçerli Aydınlatma Elemanları" then iFMType = 2
+		if FM_Type = "İnsanlar" then iFMType = 3
+		if FM_Type = "Asansörler" then iFMType = 4
+		if FM_Type = "Güvenlik ve Çıkışlar" then iFMType = 5
+		if FM_Type = "Merdivenler" then iFMType = 6
+		if FM_Type = "Çalışma Alanları" then iFMType = 7
+		if FM_Type = "Elektrik Hizmetleri" then iFMType = 8
+		if FM_Type = "Dağıtım Levhalleri" then iFMType = 9
+		if FM_Type = "Dağıtım Panelleri" then iFMType = 9
+		if FM_Type = "Mekan Ölçme" then iFMType = 10
+		if FM_Type = "Aydınlatma Elemanları" then iFMType = 11
+		if FM_Type = "HVAC Ekipmanı" then iFMType = 12
+		if FM_Type = "Banyo-Wc" then iFMType = 13
+		if FM_Type = "Kilitler" then iFMType = 14
+		if FM_Type = "Ankastre Dolaplar" then iFMType = 15
+		if FM_Type = "Mobilya" then iFMType = 16
+		if FM_Type = "Tavanlar" then iFMType = 17
+		if FM_Type = "Zeminler" then iFMType = 18
+		if FM_Type = "Dış Mekan Objeleri" then iFMType = 19
+		if FM_Type = "Bilgisayarlar" then iFMType = 20
+		if FM_Type = "Monitörler" then iFMType = 21
+		if FM_Type = "Yazılım" then iFMType = 22
+		if FM_Type = "Telefonlar" then iFMType = 23
+		if FM_Type = "Konteynerler" then iFMType = 24
+		if FM_Type = "Diğerleri" then iFMType = 25
+		if FM_Type = "Diğer" then iFMType = 25
+
+		parameters iFMType = iFMType
+
+		actualGuid = _endID
+	endif
+return
+
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+targetGUID = TO_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+gosub "fmtypes_bwm"
+
+	_targetID	= "BC6E1C3F-6CD0-4365-B064-CDD57A439BEE"
+gosub "DrawerHeight_BWM"
+
+	_targetID	= "CB38D189-2B6D-4359-A87A-ABE792EE7E61"
+gosub "CustomizeDrawerPanel_BWM"
+
+! ==============================================================================
+! Set migration GUID
+! ==============================================================================
+
+setmigrationguid targetGuid
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+
+! ==============================================================================
+! Drawer Height
+! F725B6A1-3651-4E19-B166-347FA30FAE28 > BC6E1C3F-6CD0-4365-B064-CDD57A439BEE
+! ==============================================================================
+"DrawerHeight_BWM":
+	if targetGUID # "" then
+		if bDrawer & ABS(drawerHeight - 0.13) > EPS then
+			targetGUID = ""
+		endif
+	endif
+return
+
+
+! ==============================================================================
+! CustomizeDrawerPanel
+! BC6E1C3F-6CD0-4365-B064-CDD57A439BEE > CB38D189-2B6D-4359-A87A-ABE792EE7E61
+! ==============================================================================
+"CustomizeDrawerPanel_BWM":
+	if targetGUID # "" then
+		if bDrawer & bUseDoorFront then
+			targetGuid = ""
+		endif
+	endif
+return
+
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_bwm":
+	if targetGUID # "" then
+		if iFMType = 1 then FM_Type = `Default Objects`
+		if iFMType = 2 then FM_Type = `Default Lamps`
+		if iFMType = 3 then FM_Type = `People`
+		if iFMType = 4 then FM_Type = `Elevators`
+		if iFMType = 5 then FM_Type = `Security and Escapes`
+		if iFMType = 6 then FM_Type = `Stairs`
+		if iFMType = 7 then FM_Type = `Work Spaces`
+		if iFMType = 8 then FM_Type = `Electric Facilities`
+		if iFMType = 9 then FM_Type = `Distribution Panels`
+		if iFMType = 10 then FM_Type = `Measuring Places`
+		if iFMType = 11 then FM_Type = `Lamps`
+		if iFMType = 12 then FM_Type = `HVAC Equipment`
+		if iFMType = 13 then FM_Type = `Sanitation`
+		if iFMType = 14 then FM_Type = `Locks`
+		if iFMType = 15 then FM_Type = `Built-in Wardrobes`
+		if iFMType = 16 then FM_Type = `Furniture`
+		if iFMType = 17 then FM_Type = `Ceilings`
+		if iFMType = 18 then FM_Type = `Floors`
+		if iFMType = 19 then FM_Type = `Outdoor Objects`
+		if iFMType = 20 then FM_Type = `Computers`
+		if iFMType = 21 then FM_Type = `Monitors`
+		if iFMType = 22 then FM_Type = `Software`
+		if iFMType = 23 then FM_Type = `Phones`
+		if iFMType = 24 then FM_Type = `Containers`
+		if iFMType = 25 then FM_Type = `Others`
+		parameters FM_Type = FM_Type
+
+	endif
+return
+
+
+]]></Script_BWM>
+
+<MigrationTable SectVersion="1" SectionFlags="0" SubIdent="0">
+	<MigrationTableElement>
+		<MainGUID>A52DCC2C-F5F3-4E0E-9625-5BBD6346FD4C</MainGUID>
+		<Version>17</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+	<MigrationTableElement>
+		<MainGUID>CB38D189-2B6D-4359-A87A-ABE792EE7E61</MainGUID>
+		<Version>0</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+	<MigrationTableElement>
+		<MainGUID>BC6E1C3F-6CD0-4365-B064-CDD57A439BEE</MainGUID>
+		<Version>0</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+	<MigrationTableElement>
+		<MainGUID>F725B6A1-3651-4E19-B166-347FA30FAE28</MainGUID>
+		<Version>0</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+</MigrationTable>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_UIDefault/>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader><Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Cabinet Width"]]></Description>
+			<Value>0.9</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Cabinet Depth"]]></Description>
+			<Value>0.9</Value>
+		</Length>
+		<Length Name="zzyzx">
+			<Description><![CDATA["Countertop Height"]]></Description>
+			<Value>0.9</Value>
+		</Length>
+		<String Name="gs_detlevel_3D">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="gs_detlevel_3D_m">
+			<Description><![CDATA["3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Boolean Name="SetProgram">
+			<Description><![CDATA["Set Program"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- gs_cabinet: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_cabinet">
+			<Description><![CDATA["Cabinet"]]></Description>
+		</Title>
+		<String Name="cab_size_">
+			<Description><![CDATA["'A' 'B' Size="]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Counter"]]></Value>
+		</String>
+		<Boolean Name="cab_size">
+			<Description><![CDATA["'A' 'B' Size=Cabinet Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="depth_cab">
+			<Description><![CDATA["Depth of Connected Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.6</Value>
+		</Length>
+		<String Name="gs_toe_type">
+			<Description><![CDATA["Toe Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Full"]]></Value>
+		</String>
+		<Integer Name="gs_toe_type_m">
+			<Description><![CDATA["Toe Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="toe_h">
+			<Description><![CDATA["Toe Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.09</Value>
+		</Length>
+		<Length Name="toe_d">
+			<Description><![CDATA["Toe Setback"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Integer Name="shelf_num">
+			<Description><![CDATA["No. of Shelves"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<String Name="side_vis">
+			<Description><![CDATA["Counter Edge Visibility in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["None"]]></Value>
+		</String>
+		<Integer Name="side_vis_m">
+			<Description><![CDATA["Sides Visible"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<String Name="side_vis_mirror">
+			<Description><![CDATA["Counter Edge Visibility in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["None"]]></Value>
+		</String>
+
+		<!-- gs_door_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_door_type">
+			<Description><![CDATA["Door"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 1"]]></Value>
+		</String>
+		<Integer Name="gs_door_type_m">
+			<Description><![CDATA["Door Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<String Name="gs_cust_p">
+			<Description><![CDATA["Custom Panel Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Boolean Name="gs_bevel">
+			<Description><![CDATA["Edge Bevel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="fr_th1">
+			<Description><![CDATA["Door Thickness"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<Angle Name="door_ang">
+			<Description><![CDATA["Door Opening Angle"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Angle>
+		<Length Name="doorframe_w">
+			<Description><![CDATA["Door Frame Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.09</Value>
+		</Length>
+		<Integer Name="vert_gnum">
+			<Description><![CDATA["No. of Vert. Door Mullions"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="hor_gnum">
+			<Description><![CDATA["No. of Hor. Door Mullions"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+
+		<!-- bDrawer: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Boolean Name="bDrawer">
+			<Description><![CDATA["Drawer"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="bUseDoorFront">
+			<Description><![CDATA["Same Drawer Front as Door"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="drawerHeight">
+			<Description><![CDATA["Drawer Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.13</Value>
+		</Length>
+
+		<!-- gs_knob_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_knob_type">
+			<Description><![CDATA["Knob"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 1"]]></Value>
+		</String>
+		<Integer Name="gs_knob_type_m">
+			<Description><![CDATA["Knob Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="knob_pl_x">
+			<Description><![CDATA["Horizontal Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.05</Value>
+		</Length>
+		<Length Name="knob_pl_y">
+			<Description><![CDATA["Vertical Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.55</Value>
+		</Length>
+		<String Name="gs_knob_p">
+			<Description><![CDATA["Placing"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Vertical"]]></Value>
+		</String>
+		<Integer Name="gs_knob_p_m">
+			<Description><![CDATA["Knob Pos."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Length Name="knob_size">
+			<Description><![CDATA["Knob Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<String Name="gs_cust_knob">
+			<Description><![CDATA["Custom Knob Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Length Name="gs_customHandleLength">
+			<Description><![CDATA["Custom Knob Length"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<Length Name="gs_customHandleHeight">
+			<Description><![CDATA["Custom Knob Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.015</Value>
+		</Length>
+		<Length Name="gs_customHandleDepth">
+			<Description><![CDATA["Custom Knob Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+
+		<!-- gs_end_panel: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_end_panel">
+			<Description><![CDATA["End Panels"]]></Description>
+		</Title>
+		<Boolean Name="dob_face">
+			<Description><![CDATA["Double Faced"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="left_panel">
+			<Description><![CDATA["Left End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="right_panel">
+			<Description><![CDATA["Right End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="left_panel_mirror">
+			<Description><![CDATA["Left End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="right_panel_mirror">
+			<Description><![CDATA["Right End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="lrear_panel">
+			<Description><![CDATA["Left-Rear End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="rrear_panel">
+			<Description><![CDATA["Right-Rear End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="lrear_panel_mirror">
+			<Description><![CDATA["Left-Rear End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="rrear_panel_mirror">
+			<Description><![CDATA["Right-Rear End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<String Name="stEndPanelType">
+			<Description><![CDATA["End Panel Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Style 1"]]></Value>
+		</String>
+		<Integer Name="iEndPanelType">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<String Name="gs_cust_p_end">
+			<Description><![CDATA["Custom Panel Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Length Name="doorframe_w_end">
+			<Description><![CDATA["Door Frame Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.09</Value>
+		</Length>
+
+		<!-- gs_count_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_count_type">
+			<Description><![CDATA["Counter"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Rectangular"]]></Value>
+		</String>
+		<Integer Name="gs_count_type_m">
+			<Description><![CDATA["Counter Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="count_th">
+			<Description><![CDATA["Counter Thickness"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.05</Value>
+		</Length>
+		<Length Name="bs_h">
+			<Description><![CDATA["Backsplash Height (0-None)"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="front_cab">
+			<Description><![CDATA["Overhang to Front of Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.05</Value>
+		</Length>
+		<Length Name="left_cab">
+			<Description><![CDATA["Overhang to Left of Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="left_cab_mirror">
+			<Description><![CDATA["Overhang to Left of Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="right_cab">
+			<Description><![CDATA["Overhang to Right of Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="right_cab_mirror">
+			<Description><![CDATA["Overhang to Right of Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="lrear_cab">
+			<Description><![CDATA["Overhang to Left-Rear of Cab."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="lrear_cab_mirror">
+			<Description><![CDATA["Overhang to Left-Rear of Cab."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="rrear_cab">
+			<Description><![CDATA["Overhang to Right-Rear of Cab."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="rrear_cab_mirror">
+			<Description><![CDATA["Overhang to Right-Rear of Cab."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+
+		<!-- gs_sink_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_sink_type">
+			<Description><![CDATA["Sink"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 2"]]></Value>
+		</String>
+		<Integer Name="gs_sink_type_m">
+			<Description><![CDATA["Sink Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Boolean Name="sunder">
+			<Description><![CDATA["Sink Undermounted"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- gs_tap_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_tap_type">
+			<Description><![CDATA["Tap"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 1"]]></Value>
+		</String>
+		<Integer Name="gs_tap_type_m">
+			<Description><![CDATA["Tap Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Length Name="tapOffset">
+			<Description><![CDATA["Tap Offset X"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+
+		<!-- gs_connection: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_connection">
+			<Description><![CDATA["Connections"]]></Description>
+		</Title>
+		<Boolean Name="ConStatus_1">
+			<Description><![CDATA["Hot Water Connection"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="ConToolType_1">
+			<Description><![CDATA[" Tool Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<String Name="ConSystem_1">
+			<Description><![CDATA[" MEP System"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Undefined"]]></Value>
+		</String>
+		<String Name="ConType_1">
+			<Description><![CDATA[" Shape Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Circle"]]></Value>
+		</String>
+		<String Name="ConConnectorType_1">
+			<Description><![CDATA[" Connection Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="ConNominalWidth_1">
+			<Description><![CDATA[" Nominal Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Length Name="ConNominalDepth_1">
+			<Description><![CDATA[" Nominal Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.025</Value>
+		</Length>
+		<Length Name="ConWidth_1">
+			<Description><![CDATA[" Outer Diameter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.027</Value>
+		</Length>
+		<Length Name="ConDepth_1">
+			<Description><![CDATA[" Outer Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.027</Value>
+		</Length>
+		<Length Name="ConWallThickness_1">
+			<Description><![CDATA[" Wall Thickness"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.001</Value>
+		</Length>
+		<Length Name="ConLength_1">
+			<Description><![CDATA[" Connection Length"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<Length Name="ConConnectorWidth_1">
+			<Description><![CDATA[" Connector Diameter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.04</Value>
+		</Length>
+		<Length Name="ConConnectorDepth_1">
+			<Description><![CDATA[" Connector Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ConConnectorWidth2_1">
+			<Description><![CDATA[" Connector Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.005</Value>
+		</Length>
+		<Length Name="ConPosX_1">
+			<Description><![CDATA[" Connection Position X"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.35</Value>
+		</Length>
+		<Length Name="ConPosY_1">
+			<Description><![CDATA[" Connection Position Y"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.9</Value>
+		</Length>
+		<Length Name="ConPosZ_1">
+			<Description><![CDATA[" Connection Position Z"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.8</Value>
+		</Length>
+		<Boolean Name="ConStatus_2">
+			<Description><![CDATA["Cold Water Connection"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="ConToolType_2">
+			<Description><![CDATA[" Tool Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<String Name="ConSystem_2">
+			<Description><![CDATA[" MEP System"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Undefined"]]></Value>
+		</String>
+		<String Name="ConType_2">
+			<Description><![CDATA[" Shape Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Circle"]]></Value>
+		</String>
+		<String Name="ConConnectorType_2">
+			<Description><![CDATA[" Connection Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="ConNominalWidth_2">
+			<Description><![CDATA[" Nominal Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Length Name="ConNominalDepth_2">
+			<Description><![CDATA[" Nominal Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.0254</Value>
+		</Length>
+		<Length Name="ConWidth_2">
+			<Description><![CDATA[" Outer Diameter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.027</Value>
+		</Length>
+		<Length Name="ConDepth_2">
+			<Description><![CDATA[" Outer Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.027</Value>
+		</Length>
+		<Length Name="ConWallThickness_2">
+			<Description><![CDATA[" Wall Thickness"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.001</Value>
+		</Length>
+		<Length Name="ConLength_2">
+			<Description><![CDATA[" Connection Length"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<Length Name="ConConnectorWidth_2">
+			<Description><![CDATA[" Connector Diameter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.04</Value>
+		</Length>
+		<Length Name="ConConnectorDepth_2">
+			<Description><![CDATA[" Connector Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ConConnectorWidth2_2">
+			<Description><![CDATA[" Connector Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.005</Value>
+		</Length>
+		<Length Name="ConPosX_2">
+			<Description><![CDATA[" Connection Position X"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.55</Value>
+		</Length>
+		<Length Name="ConPosY_2">
+			<Description><![CDATA[" Connection Position Y"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.9</Value>
+		</Length>
+		<Length Name="ConPosZ_2">
+			<Description><![CDATA[" Connection Position Z"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.8</Value>
+		</Length>
+		<Boolean Name="ConStatus_3">
+			<Description><![CDATA["Waste Water Connection"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="ConToolType_3">
+			<Description><![CDATA[" Tool Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<String Name="ConSystem_3">
+			<Description><![CDATA[" MEP System"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Undefined"]]></Value>
+		</String>
+		<String Name="ConType_3">
+			<Description><![CDATA[" Shape Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Circle"]]></Value>
+		</String>
+		<String Name="ConConnectorType_3">
+			<Description><![CDATA[" Connection Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="ConNominalWidth_3">
+			<Description><![CDATA[" Nominal Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<Length Name="ConNominalDepth_3">
+			<Description><![CDATA[" Nominal Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.04</Value>
+		</Length>
+		<Length Name="ConWidth_3">
+			<Description><![CDATA[" Outer Diameter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.042</Value>
+		</Length>
+		<Length Name="ConDepth_3">
+			<Description><![CDATA[" Outer Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.042</Value>
+		</Length>
+		<Length Name="ConWallThickness_3">
+			<Description><![CDATA[" Wall Thickness"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.001</Value>
+		</Length>
+		<Length Name="ConLength_3">
+			<Description><![CDATA[" Connection Length"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.02</Value>
+		</Length>
+		<Length Name="ConConnectorWidth_3">
+			<Description><![CDATA[" Connector Diameter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.042</Value>
+		</Length>
+		<Length Name="ConConnectorDepth_3">
+			<Description><![CDATA[" Connector Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="ConConnectorWidth2_3">
+			<Description><![CDATA[" Connector Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.005</Value>
+		</Length>
+		<Length Name="ConPosX_3">
+			<Description><![CDATA[" Connection Position X"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.45</Value>
+		</Length>
+		<Length Name="ConPosY_3">
+			<Description><![CDATA[" Connection Position Y"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.9</Value>
+		</Length>
+		<Length Name="ConPosZ_3">
+			<Description><![CDATA[" Connection Position Z"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.6</Value>
+		</Length>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D Representation"]]></Description>
+		</Title>
+		<String Name="stCabSymbolType2D">
+			<Description><![CDATA["2D Symbol Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Type 1"]]></Value>
+		</String>
+		<Integer Name="iCabSymbolType2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<String Name="side_vis2D">
+			<Description><![CDATA["Edge Visibility in 2D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["None"]]></Value>
+		</String>
+		<Integer Name="side_vis2D_m">
+			<Description><![CDATA["Edge Visibility in 2D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<String Name="side_vis2D_mirror">
+			<Description><![CDATA["Edge Visibility in 2D"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["None"]]></Value>
+		</String>
+		<String Name="SinkSymbol">
+			<Description><![CDATA["Sink Symbol Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="SinkSymbol_m">
+			<Description><![CDATA["Sink Symbol Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<String Name="TapSymbol">
+			<Description><![CDATA["Tap Symbol Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="TapSymbol_m">
+			<Description><![CDATA["Tap Symbol Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<LineType Name="gs_line_type">
+			<Description><![CDATA["Symbol Line Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</LineType>
+		<PenColor Name="gs_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_fill_pen">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="gs_back_pen">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+
+		<!-- gs_min_space: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_min_space">
+			<Description><![CDATA["Minimal Space"]]></Description>
+		</Title>
+		<Length Name="MSFront">
+			<Description><![CDATA["Minimal Space in Front"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.9</Value>
+		</Length>
+		<Length Name="MSSide">
+			<Description><![CDATA["Minimal Space on Side 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="MSSide2">
+			<Description><![CDATA["Minimal Space on Side 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+
+		<!-- gs_3D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_3D_representation">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Integer Name="gs_resol">
+			<Description><![CDATA["Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>16</Value>
+		</Integer>
+		<Boolean Name="gs_shadow">
+			<Description><![CDATA["Shadow"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="gs_full_edit">
+			<Description><![CDATA["Extra Hotspot Editing"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- gs_material: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_material">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Material Name="gs_cabinet_mat">
+			<Description><![CDATA["Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>60</Value>
+		</Material>
+		<Material Name="count_mat">
+			<Description><![CDATA["Counter"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>23</Value>
+		</Material>
+		<Material Name="bs_mat">
+			<Description><![CDATA["Backsplash"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>23</Value>
+		</Material>
+		<Material Name="toe_mat">
+			<Description><![CDATA["Toe"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>23</Value>
+		</Material>
+		<Material Name="doorframe_mat">
+			<Description><![CDATA["Door (Frame)"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>15</Value>
+		</Material>
+		<Material Name="doorglas_mat">
+			<Description><![CDATA["Door (Glazing)"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>24</Value>
+		</Material>
+		<Material Name="DrawerMat">
+			<Description><![CDATA["Drawer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>15</Value>
+		</Material>
+		<Material Name="doorframe_mat_end">
+			<Description><![CDATA["End Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>15</Value>
+		</Material>
+		<Material Name="gs_knob_mat">
+			<Description><![CDATA["Knob"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="gs_ShelfMat">
+			<Description><![CDATA["Shelf"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>60</Value>
+		</Material>
+		<Material Name="gs_sink_mat">
+			<Description><![CDATA["Sink"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>13</Value>
+		</Material>
+		<Material Name="gs_tap_mat">
+			<Description><![CDATA["Tap"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="gs_con_mat">
+			<Description><![CDATA["Connection"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Boolean Name="useSysMat">
+			<Description><![CDATA["Use System Surface"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Material Name="sMat">
+			<Description><![CDATA["System Surface"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>78</Value>
+		</Material>
+		<Integer Name="gs_ui_current_page">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="ifc_subtype">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>33</Value>
+		</Integer>
+		<Integer Name="ifc_predefinedtype">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>5</Value>
+		</Integer>
+		<Integer Name="ui_current_con">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="ac_mep_connectionpage_active">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Integer Name="MEP_version">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+		<String Name="MEP_ConInfo">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="3">
+				<AVal Column="1" Row="1"><![CDATA["2"]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA["Hot Water Connection"]]></AVal>
+				<AVal Column="3" Row="1"><![CDATA["0"]]></AVal>
+				<AVal Column="1" Row="2"><![CDATA["2"]]></AVal>
+				<AVal Column="2" Row="2"><![CDATA["Cold Water Connection"]]></AVal>
+				<AVal Column="3" Row="2"><![CDATA["0"]]></AVal>
+				<AVal Column="1" Row="3"><![CDATA["2"]]></AVal>
+				<AVal Column="2" Row="3"><![CDATA["Waste Water Connection"]]></AVal>
+				<AVal Column="3" Row="3"><![CDATA["0"]]></AVal>
+			</ArrayValues>
+		</String>
+		<Length Name="gs_Connections">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="26">
+				<AVal Column="1" Row="1">0.35</AVal>
+				<AVal Column="2" Row="1">0.9</AVal>
+				<AVal Column="3" Row="1">0.8</AVal>
+				<AVal Column="4" Row="1">0</AVal>
+				<AVal Column="5" Row="1">1</AVal>
+				<AVal Column="6" Row="1">0</AVal>
+				<AVal Column="7" Row="1">-1</AVal>
+				<AVal Column="8" Row="1">0</AVal>
+				<AVal Column="9" Row="1">0</AVal>
+				<AVal Column="10" Row="1">0</AVal>
+				<AVal Column="11" Row="1">0</AVal>
+				<AVal Column="12" Row="1">0.027</AVal>
+				<AVal Column="13" Row="1">0.027</AVal>
+				<AVal Column="14" Row="1">0.001</AVal>
+				<AVal Column="15" Row="1">0.04</AVal>
+				<AVal Column="16" Row="1">0</AVal>
+				<AVal Column="17" Row="1">0.005</AVal>
+				<AVal Column="18" Row="1">0</AVal>
+				<AVal Column="19" Row="1">2</AVal>
+				<AVal Column="20" Row="1">0</AVal>
+				<AVal Column="21" Row="1">2</AVal>
+				<AVal Column="22" Row="1">1</AVal>
+				<AVal Column="23" Row="1">0.02</AVal>
+				<AVal Column="24" Row="1">0</AVal>
+				<AVal Column="25" Row="1">0</AVal>
+				<AVal Column="26" Row="1">0</AVal>
+				<AVal Column="1" Row="2">0.55</AVal>
+				<AVal Column="2" Row="2">0.9</AVal>
+				<AVal Column="3" Row="2">0.8</AVal>
+				<AVal Column="4" Row="2">0</AVal>
+				<AVal Column="5" Row="2">1</AVal>
+				<AVal Column="6" Row="2">0</AVal>
+				<AVal Column="7" Row="2">-1</AVal>
+				<AVal Column="8" Row="2">0</AVal>
+				<AVal Column="9" Row="2">0</AVal>
+				<AVal Column="10" Row="2">0</AVal>
+				<AVal Column="11" Row="2">0</AVal>
+				<AVal Column="12" Row="2">0.027</AVal>
+				<AVal Column="13" Row="2">0.027</AVal>
+				<AVal Column="14" Row="2">0.001</AVal>
+				<AVal Column="15" Row="2">0.04</AVal>
+				<AVal Column="16" Row="2">0</AVal>
+				<AVal Column="17" Row="2">0.005</AVal>
+				<AVal Column="18" Row="2">0</AVal>
+				<AVal Column="19" Row="2">2</AVal>
+				<AVal Column="20" Row="2">0</AVal>
+				<AVal Column="21" Row="2">2</AVal>
+				<AVal Column="22" Row="2">1</AVal>
+				<AVal Column="23" Row="2">0.02</AVal>
+				<AVal Column="24" Row="2">0</AVal>
+				<AVal Column="25" Row="2">0</AVal>
+				<AVal Column="26" Row="2">0</AVal>
+				<AVal Column="1" Row="3">0.45</AVal>
+				<AVal Column="2" Row="3">0.9</AVal>
+				<AVal Column="3" Row="3">0.6</AVal>
+				<AVal Column="4" Row="3">0</AVal>
+				<AVal Column="5" Row="3">1</AVal>
+				<AVal Column="6" Row="3">0</AVal>
+				<AVal Column="7" Row="3">-1</AVal>
+				<AVal Column="8" Row="3">0</AVal>
+				<AVal Column="9" Row="3">0</AVal>
+				<AVal Column="10" Row="3">0</AVal>
+				<AVal Column="11" Row="3">0</AVal>
+				<AVal Column="12" Row="3">0.042</AVal>
+				<AVal Column="13" Row="3">0.042</AVal>
+				<AVal Column="14" Row="3">0.001</AVal>
+				<AVal Column="15" Row="3">0.042</AVal>
+				<AVal Column="16" Row="3">0</AVal>
+				<AVal Column="17" Row="3">0.005</AVal>
+				<AVal Column="18" Row="3">0</AVal>
+				<AVal Column="19" Row="3">2</AVal>
+				<AVal Column="20" Row="3">0</AVal>
+				<AVal Column="21" Row="3">2</AVal>
+				<AVal Column="22" Row="3">1</AVal>
+				<AVal Column="23" Row="3">0.02</AVal>
+				<AVal Column="24" Row="3">0</AVal>
+				<AVal Column="25" Row="3">0</AVal>
+				<AVal Column="26" Row="3">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Integer Name="MEP_NumberConnections">
+			<Description><![CDATA["Number of Connections"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>3</Value>
+		</Integer>
+		<Length Name="MEP_NumConnectionData">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="26">
+				<AVal Column="1" Row="1">0.35</AVal>
+				<AVal Column="2" Row="1">0.92</AVal>
+				<AVal Column="3" Row="1">0.8</AVal>
+				<AVal Column="4" Row="1">0</AVal>
+				<AVal Column="5" Row="1">1</AVal>
+				<AVal Column="6" Row="1">0</AVal>
+				<AVal Column="7" Row="1">-1</AVal>
+				<AVal Column="8" Row="1">0</AVal>
+				<AVal Column="9" Row="1">0</AVal>
+				<AVal Column="10" Row="1">0</AVal>
+				<AVal Column="11" Row="1">0</AVal>
+				<AVal Column="12" Row="1">0.027</AVal>
+				<AVal Column="13" Row="1">0.027</AVal>
+				<AVal Column="14" Row="1">0.001</AVal>
+				<AVal Column="15" Row="1">0.04</AVal>
+				<AVal Column="16" Row="1">0</AVal>
+				<AVal Column="17" Row="1">0.005</AVal>
+				<AVal Column="18" Row="1">0</AVal>
+				<AVal Column="19" Row="1">2</AVal>
+				<AVal Column="20" Row="1">0</AVal>
+				<AVal Column="21" Row="1">2</AVal>
+				<AVal Column="22" Row="1">1</AVal>
+				<AVal Column="23" Row="1">0.02</AVal>
+				<AVal Column="24" Row="1">0</AVal>
+				<AVal Column="25" Row="1">0</AVal>
+				<AVal Column="26" Row="1">0</AVal>
+				<AVal Column="1" Row="2">0.55</AVal>
+				<AVal Column="2" Row="2">0.92</AVal>
+				<AVal Column="3" Row="2">0.8</AVal>
+				<AVal Column="4" Row="2">0</AVal>
+				<AVal Column="5" Row="2">1</AVal>
+				<AVal Column="6" Row="2">0</AVal>
+				<AVal Column="7" Row="2">-1</AVal>
+				<AVal Column="8" Row="2">0</AVal>
+				<AVal Column="9" Row="2">0</AVal>
+				<AVal Column="10" Row="2">0</AVal>
+				<AVal Column="11" Row="2">0</AVal>
+				<AVal Column="12" Row="2">0.027</AVal>
+				<AVal Column="13" Row="2">0.027</AVal>
+				<AVal Column="14" Row="2">0.001</AVal>
+				<AVal Column="15" Row="2">0.04</AVal>
+				<AVal Column="16" Row="2">0</AVal>
+				<AVal Column="17" Row="2">0.005</AVal>
+				<AVal Column="18" Row="2">0</AVal>
+				<AVal Column="19" Row="2">2</AVal>
+				<AVal Column="20" Row="2">0</AVal>
+				<AVal Column="21" Row="2">2</AVal>
+				<AVal Column="22" Row="2">1</AVal>
+				<AVal Column="23" Row="2">0.02</AVal>
+				<AVal Column="24" Row="2">0</AVal>
+				<AVal Column="25" Row="2">0</AVal>
+				<AVal Column="26" Row="2">0</AVal>
+				<AVal Column="1" Row="3">0.45</AVal>
+				<AVal Column="2" Row="3">0.92</AVal>
+				<AVal Column="3" Row="3">0.6</AVal>
+				<AVal Column="4" Row="3">0</AVal>
+				<AVal Column="5" Row="3">1</AVal>
+				<AVal Column="6" Row="3">0</AVal>
+				<AVal Column="7" Row="3">-1</AVal>
+				<AVal Column="8" Row="3">0</AVal>
+				<AVal Column="9" Row="3">0</AVal>
+				<AVal Column="10" Row="3">0</AVal>
+				<AVal Column="11" Row="3">0</AVal>
+				<AVal Column="12" Row="3">0.042</AVal>
+				<AVal Column="13" Row="3">0.042</AVal>
+				<AVal Column="14" Row="3">0.001</AVal>
+				<AVal Column="15" Row="3">0.042</AVal>
+				<AVal Column="16" Row="3">0</AVal>
+				<AVal Column="17" Row="3">0.005</AVal>
+				<AVal Column="18" Row="3">0</AVal>
+				<AVal Column="19" Row="3">2</AVal>
+				<AVal Column="20" Row="3">0</AVal>
+				<AVal Column="21" Row="3">2</AVal>
+				<AVal Column="22" Row="3">1</AVal>
+				<AVal Column="23" Row="3">0.02</AVal>
+				<AVal Column="24" Row="3">0</AVal>
+				<AVal Column="25" Row="3">0</AVal>
+				<AVal Column="26" Row="3">0</AVal>
+			</ArrayValues>
+		</Length>
+		<String Name="MEP_StrConnectionData">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="4">
+				<AVal Column="1" Row="1"><![CDATA["{B58525F9-A8D8-454D-A768-BF66DE95BC32}"]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA["0"]]></AVal>
+				<AVal Column="3" Row="1"><![CDATA["Hot Water Connection"]]></AVal>
+				<AVal Column="4" Row="1"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="2"><![CDATA["{B58525F9-A8D8-454D-A768-BF66DE95BC32}"]]></AVal>
+				<AVal Column="2" Row="2"><![CDATA["0"]]></AVal>
+				<AVal Column="3" Row="2"><![CDATA["Cold Water Connection"]]></AVal>
+				<AVal Column="4" Row="2"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="3"><![CDATA["{B58525F9-A8D8-454D-A768-BF66DE95BC32}"]]></AVal>
+				<AVal Column="2" Row="3"><![CDATA["0"]]></AVal>
+				<AVal Column="3" Row="3"><![CDATA["Waste Water Connection"]]></AVal>
+				<AVal Column="4" Row="3"><![CDATA[""]]></AVal>
+			</ArrayValues>
+		</String>
+		<Length Name="gs_AddConnections">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="2">
+				<AVal Column="1" Row="1">1</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="1" Row="2">1</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+				<AVal Column="1" Row="3">1</AVal>
+				<AVal Column="2" Row="3">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Length Name="MEP_NumConnectedConnectionData">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="1" SecondDimension="26">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="3" Row="1">0</AVal>
+				<AVal Column="4" Row="1">0</AVal>
+				<AVal Column="5" Row="1">0</AVal>
+				<AVal Column="6" Row="1">0</AVal>
+				<AVal Column="7" Row="1">0</AVal>
+				<AVal Column="8" Row="1">0</AVal>
+				<AVal Column="9" Row="1">0</AVal>
+				<AVal Column="10" Row="1">0</AVal>
+				<AVal Column="11" Row="1">0</AVal>
+				<AVal Column="12" Row="1">0</AVal>
+				<AVal Column="13" Row="1">0</AVal>
+				<AVal Column="14" Row="1">0</AVal>
+				<AVal Column="15" Row="1">0</AVal>
+				<AVal Column="16" Row="1">0</AVal>
+				<AVal Column="17" Row="1">0</AVal>
+				<AVal Column="18" Row="1">0</AVal>
+				<AVal Column="19" Row="1">0</AVal>
+				<AVal Column="20" Row="1">0</AVal>
+				<AVal Column="21" Row="1">0</AVal>
+				<AVal Column="22" Row="1">0</AVal>
+				<AVal Column="23" Row="1">0</AVal>
+				<AVal Column="24" Row="1">0</AVal>
+				<AVal Column="25" Row="1">0</AVal>
+				<AVal Column="26" Row="1">0</AVal>
+			</ArrayValues>
+		</Length>
+		<String Name="LibraryLangCode">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value><![CDATA["INT"]]></Value>
+		</String>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+		<RealNum Name="gs_list_cost">
+			<Description><![CDATA["Cost"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_manufacturer">
+			<Description><![CDATA["Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductName">
+			<Description><![CDATA["Product Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_GUID">
+			<Description><![CDATA["Product ID"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_material">
+			<Description><![CDATA["Material"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_gauge">
+			<Description><![CDATA["Gauge Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="gs_list_area">
+			<Description><![CDATA["Area"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<RealNum Name="gs_list_volume">
+			<Description><![CDATA["Volume"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_note">
+			<Description><![CDATA["Note/Remarks"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_location">
+			<Description><![CDATA["Location"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_accessories">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_Type">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["HVAC Equipment"]]></Value>
+		</String>
+		<Integer Name="iFMType">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>12</Value>
+		</Integer>
+		<String Name="FM_InventoryNumber">
+			<Description><![CDATA["Inventory Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_SerialNumber">
+			<Description><![CDATA["Serial Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductionYear">
+			<Description><![CDATA["Production Year"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="FM_ObjectWeight">
+			<Description><![CDATA["Object Weight"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_ObjectWeightUnit">
+			<Description><![CDATA["Object Weight Unit"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["kg"]]></Value>
+		</String>
+		<String Name="gs_list_custom1">
+			<Description><![CDATA["User Defined 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom2">
+			<Description><![CDATA["User Defined 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom3">
+			<Description><![CDATA["User Defined 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom4">
+			<Description><![CDATA["User Defined 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom5">
+			<Description><![CDATA["User Defined 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+
+		<!-- gs_onorm_Title: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_onorm_Title">
+			<Description><![CDATA["ONORM Listing Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		<String Name="gs_onorm_dimensions">
+			<Description><![CDATA["Dimensions W/D/H"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_manufacturer">
+			<Description><![CDATA["ONORM Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight_value">
+			<Description><![CDATA["Base Height Value"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight">
+			<Description><![CDATA["Onorm Base Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_assemblydate">
+			<Description><![CDATA["Assembly Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext1">
+			<Description><![CDATA["Additional Information 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext2">
+			<Description><![CDATA["Additional Information 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_aks">
+			<Description><![CDATA["AKS Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_product">
+			<Description><![CDATA["Product Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_leistungbuch">
+			<Description><![CDATA["Collection of Specifications ID"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_description">
+			<Description><![CDATA["ONORM Description"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_number">
+			<Description><![CDATA["Onorm Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_id">
+			<Description><![CDATA["ID Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_admission">
+			<Description><![CDATA["Admission Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_modification">
+			<Description><![CDATA["Modification Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_tozonenumber">
+			<Description><![CDATA["To Zone Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+	</Parameters>
+</ParamSection>
+</Symbol>

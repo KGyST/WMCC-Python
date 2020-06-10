@@ -1,0 +1,2422 @@
+<Symbol IsArchivable="yes" IsPlaceable="no" MainGUID="8599EC27-A639-47C7-8027-6940785DDCC2" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>C76BC373-89AE-4368-A490-BB2485825242</MainGUID>
+	<MainGUID>3FCE1BC2-9644-44D4-9D5F-4DBF6C762CA4</MainGUID>
+</Ancestry>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+unID = officeCab02_unID
+
+if gs_detlevel_3D_m = 0 then end
+
+if NOT(gs_shadow) then shadow off
+
+if GLOB_CONTEXT > 20 and GLOB_CONTEXT < 40 or gs_detlevel_3D_m = 1 then 		!! for Simple Model and in 3D Windoow
+	if GLOB_CONTEXT > 20 and GLOB_CONTEXT < 40 then
+		iResol = 3
+	else
+		iResol = 8
+	endif
+else
+	iResol = gs_resol
+endif
+
+resol iResol
+
+pen gs_cont_pen
+
+if NOT(bPartOfLayout) then
+	call "Resize_A_B_ZZYZX" parameters all
+
+	hotspot 0, 0, zzyzx, unID:	unID = unID + 1
+endif
+
+if NOT(bPartOfLayout) then
+	if bCabinetBase then
+		hotspot 0, 0, 0, unID, cabinetBaseHeight, 1 + 128:	unID = unID + 1
+		hotspot 0, 0, -1, unID, cabinetBaseHeight, 3 + 128:	unID = unID + 1
+		hotspot 0, 0, cabinetBaseHeight, unID, cabinetBaseHeight, 2:	unID = unID + 1
+
+		hotspot a, 0, 0, unID, cabinetBaseHeight, 1 + 128:	unID = unID + 1
+		hotspot a, 0, -1, unID, cabinetBaseHeight, 3 + 128:	unID = unID + 1
+		hotspot a, 0, cabinetBaseHeight, unID, cabinetBaseHeight, 2:	unID = unID + 1
+
+		hotspot a, b, 0, unID, cabinetBaseHeight, 1 + 128:	unID = unID + 1
+		hotspot a, b, -1, unID, cabinetBaseHeight, 3 + 128:	unID = unID + 1
+		hotspot a, b, cabinetBaseHeight, unID, cabinetBaseHeight, 2:	unID = unID + 1
+
+		hotspot 0, b, 0, unID, cabinetBaseHeight, 1 + 128:	unID = unID + 1
+		hotspot 0, b, -1, unID, cabinetBaseHeight, 3 + 128:	unID = unID + 1
+		hotspot 0, b, cabinetBaseHeight, unID, cabinetBaseHeight, 2:	unID = unID + 1
+	endif
+	if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+		hotspot 0, 0, 0, unID, totalDrawerHeight, 1 + 128, gs_drawerHeight:				unID = unID + 1
+		hotspot 0, 0, -1, unID, totalDrawerHeight, 3 + 128, gs_drawerHeight:			unID = unID + 1
+		hotspot 0, 0, totalDrawerHeight, unID, totalDrawerHeight, 2, gs_drawerHeight:	unID = unID + 1
+
+		hotspot a, 0, 0, unID, totalDrawerHeight, 1 + 128, gs_drawerHeight:				unID = unID + 1
+		hotspot a, 0, -1, unID, totalDrawerHeight, 3 + 128, gs_drawerHeight:			unID = unID + 1
+		hotspot a, 0, totalDrawerHeight, unID, totalDrawerHeight, 2, gs_drawerHeight:	unID = unID + 1
+
+		hotspot a, b, 0, unID, totalDrawerHeight, 1 + 128, gs_drawerHeight:				unID = unID + 1
+		hotspot a, b, -1, unID, totalDrawerHeight, 3 + 128, gs_drawerHeight:			unID = unID + 1
+		hotspot a, b, totalDrawerHeight, unID, totalDrawerHeight, 2, gs_drawerHeight:	unID = unID + 1
+
+		hotspot 0, b, 0, unID, totalDrawerHeight, 1 + 128, gs_drawerHeight:				unID = unID + 1
+		hotspot 0, b, -1, unID, totalDrawerHeight, 3 + 128, gs_drawerHeight:			unID = unID + 1
+		hotspot 0, b, totalDrawerHeight, unID, totalDrawerHeight, 2, gs_drawerHeight:	unID = unID + 1
+	endif
+else
+	hotspot 0, -extCabinetDepth, zzyzx, unID, extCabinetWidth, 1 + 128:			unID = unID + 1
+	hotspot 1, -extCabinetDepth, zzyzx, unID, extCabinetWidth, 3 + 128:			unID = unID + 1
+	hotspot -extCabinetWidth, -extCabinetDepth, zzyzx, unID, extCabinetWidth, 2:	unID = unID + 1
+
+	hotspot -extCabinetWidth, 0, zzyzx, unID, extCabinetDepth, 1 + 128:			unID = unID + 1
+	hotspot -extCabinetWidth, 1, zzyzx, unID, extCabinetDepth, 3 + 128:			unID = unID + 1
+	hotspot -extCabinetWidth, -extCabinetDepth, zzyzx, unID, extCabinetDepth, 2:	unID = unID + 1
+endif
+
+add a / 2 * NOT(bPartOfLayout) - a / 2 * bPartOfLayout, - b * bPartOfLayout, 0
+
+! -----------------------------------------------------------------------------
+! Toe
+! -----------------------------------------------------------------------------
+
+if bCabinetBase then
+	material toe_mat
+	add -a/2, frontThk * (iCabinetScheme <> SHELVES), 0
+		block a, b - frontThk * (iCabinetScheme <> SHELVES), baseHeight
+		gosub 2000
+	del 1
+endif
+
+
+! -----------------------------------------------------------------------------
+! Cabinet Body
+! -----------------------------------------------------------------------------
+
+add 0, b, 0
+call "fa_cabinet_credenza_T_WMCC" parameters all	b				= b - frontThk * (iCabinetScheme <> SHELVES),
+											iCabinetForm	= 1,
+											cot				= 0,
+											leg_h			= baseHeight,
+											boardThk		= boardThk
+del 1
+
+
+
+! -----------------------------------------------------------------------------
+! Drawers
+! -----------------------------------------------------------------------------
+
+if enableDrawers then
+	add 0, 0, baseHeight
+
+	!!! Drawers
+	for i = 1 to drawerNum
+		material gs_drawer_mat
+
+		addy frontThk
+		rotx 90
+		if gs_detlevel_3D_m = DET3D_DETAILED & gs_bevel then
+			fprism_ gs_drawer_mat, gs_drawer_mat, gs_drawer_mat, gs_drawer_mat,
+				5,		frontThk,	45, drawerGap * 2,
+				-drawerWidth / 2, drawerGap, 15,
+				drawerWidth / 2, drawerGap, 15,
+				drawerWidth / 2, drawerDist - drawerGap, 15,
+				-drawerWidth / 2, drawerDist - drawerGap, 15,
+				-drawerWidth / 2, drawerGap, -1
+		else
+			prism_ 5, frontThk,
+				-drawerWidth / 2, drawerGap, 15,
+				drawerWidth / 2, drawerGap, 15,
+				drawerWidth / 2, drawerDist - drawerGap, 15,
+				-drawerWidth / 2, drawerDist - drawerGap, 15,
+				-drawerWidth / 2, drawerGap, -1
+		endif
+		del 2
+		gosub 2000
+
+		addz drawerDist / 2
+			gosub "drawerKnobs"
+		del 1
+
+		addz drawerDist
+	next i
+	del drawerNum
+
+	!!! Shelves for Drawers
+	add 0, frontThk, drawerDist - shelfThk / 2
+
+	for i = 1 to drawerNum - (iCabinetScheme = DRAWERS)
+		material gs_cabinet_mat
+		prism_ 5, shelfThk,
+			-shelfWidth / 2, 0, 15,
+			shelfWidth / 2, 0, 15,
+			shelfWidth / 2, b - frontThk - boardThk, 15,
+			-shelfWidth / 2, b - frontThk - boardThk, 15,
+			-shelfWidth / 2, 0, -1
+		gosub 2000
+
+		addz drawerDist
+	next i
+	del drawerNum - (iCabinetScheme = DRAWERS)
+	del 1
+
+	del 1
+endif
+
+
+
+! -----------------------------------------------------------------------------
+! Shelves
+! -----------------------------------------------------------------------------
+
+if enableShelves then
+	add -a/2+ boardThk,\
+		 frontThk * (iCabinetScheme <> SHELVES),\
+		 shelfDist + (baseHeight + boardThk - shelfThk) * (iCabinetScheme = SHELVES) + (zzyzx - gs_upperCabHeight - shelfThk / 2) * (iCabinetScheme = DRAWERS_SHELVES)
+	for i = 1 to shelfNum
+		material matShelf
+		block shelfWidth, b - frontThk * (iCabinetScheme <> SHELVES) - boardThk,  shelfThk
+		gosub 2000
+		addz shelfDist
+	next i
+	del shelfNum
+
+	del 1
+endif
+
+
+
+! -----------------------------------------------------------------------------
+! Upper Cabinet
+! -----------------------------------------------------------------------------
+
+if enableCupboard then
+	add a / 2 - drawerGap - doorWidth / 2, 0, (baseHeight + drawerNum * gs_drawerHeight) * (iCabinetScheme = DRAWERS_CUPBOARD) + (baseHeight) * (iCabinetScheme = CUPBOARD)
+
+	for fi = 1 to iCupboardDoors
+		material gs_upper_mat
+
+		addy frontThk
+		rotx 90
+		if gs_detlevel_3D_m = DET3D_DETAILED & gs_bevel then
+			fprism_ gs_upper_mat, gs_upper_mat, gs_upper_mat, gs_upper_mat,
+				5, frontThk, 45, drawerGap * 2,
+				-doorWidth / 2, drawerGap, 15,
+				doorWidth / 2, drawerGap, 15,
+				doorWidth / 2, realUpperCabHeight - drawerGap, 15,
+				-doorWidth / 2, realUpperCabHeight - drawerGap, 15,
+				-doorWidth / 2, drawerGap, -1
+		else
+			prism_ 5, frontThk,
+				-doorWidth / 2, drawerGap, 15,
+				doorWidth / 2, drawerGap, 15,
+				doorWidth / 2, realUpperCabHeight - drawerGap, 15,
+				-doorWidth / 2, realUpperCabHeight - drawerGap, 15,
+				-doorWidth / 2, drawerGap, -1
+		endif
+		del 2
+		gosub 2000
+
+		addx doorWidth / 2 * (iCupboardDoors = CUPBOARDDOORS_SINGLE) - doorWidth / 2 * (iCupboardDoors = CUPBOARDDOORS_DOUBLE)
+		if bUpperKnobs then gosub "cabinetKnobs"
+		del 1
+
+		addx -a / 2
+		mulx -1
+	next fi
+	del 2 * iCupboardDoors
+
+	del 1
+endif
+
+del 1
+
+! ======================================================================
+officeCab02_unID = unID
+end officeCab02_unID
+! ======================================================================
+
+
+
+1000:
+
+roty 90
+vert 0, 0, 0
+vert 1, 0, 0
+vert 0, 1, 0
+vert 0, 0, 1
+del 1
+
+coor 2, -1, -2, -3, -4
+
+base
+
+body -1
+
+return
+
+
+
+2000:
+
+vert 0, 0, 0
+vert 1, 0, 0
+vert 0, 1, 0
+vert 0, 0, 1
+
+coor 2, -1, -2, -3, -4
+
+base
+
+body -1
+
+return
+
+
+
+"drawerKnobs":
+	if gs_knob_type_m > 0 then
+		knobPos		= CABINET_KNOB_HOR
+		knobSize	= drawerKnobSize
+
+		add xDrawerKnobPos, 0, zDrawerKnobPos + (drawerDist - drawerGap * 2) / 4 * gs_knobVerPos_m * bPartOfLayout
+		knobMatForMacro = matDrawerKnob
+		gosub "knob"
+		del 1
+
+		if NOT(bPartOfLayout) then
+			hotspot xDrawerKnobPos, 0, 0, 				unID, zDrawerKnobPos, 1 + 128 	: unID=unID+1
+			hotspot xDrawerKnobPos, 0, -1, 				unID, zDrawerKnobPos, 3 		: unID=unID+1
+			hotspot xDrawerKnobPos, 0, zDrawerKnobPos, 	unID, zDrawerKnobPos, 2 		: unID=unID+1
+
+			hotspot 0, 0, zDrawerKnobPos, 				unID, xDrawerKnobPos, 1 + 128 	: unID=unID+1
+			hotspot -1, 0, zDrawerKnobPos, 				unID, xDrawerKnobPos, 3 		: unID=unID+1
+			hotspot xDrawerKnobPos, 0, zDrawerKnobPos, 	unID, xDrawerKnobPos, 2 		: unID=unID+1
+		endif
+	endif
+
+return
+
+
+
+"cabinetKnobs":
+	if gs_knob_type_m_up > 0 then
+		knobSize		= knob_size
+		knobPos			= gs_knob_p_m
+		gs_knob_type_m	= gs_knob_type_m_up
+		knobMatForMacro	= gs_knob_mat
+
+		addz drawerGap
+			addx knob_pl_x * (iCupboardDoors = CUPBOARDDOORS_DOUBLE) - knob_pl_x * (iCupboardDoors = CUPBOARDDOORS_SINGLE)
+			addz knob_pl_y * NOT(bPartOfLayout) + realUpperCabHeight / 2 * bPartOfLayout
+
+			gosub "knob"
+
+			del 2
+
+			if NOT(bPartOfLayout) then
+				hotspot knob_pl_x, 0, 0, 			unID, knob_pl_y, 1 + 128 	: unID=unID+1
+				hotspot knob_pl_x, 0, -1, 			unID, knob_pl_y, 3 			: unID=unID+1
+				hotspot knob_pl_x, 0, knob_pl_y, 	unID, knob_pl_y, 2 			: unID=unID+1
+
+				hotspot 0, 0, knob_pl_y, 			unID, knob_pl_x, 1 + 128 	: unID=unID+1
+				hotspot -1, 0, knob_pl_y, 			unID, knob_pl_x, 3 			: unID=unID+1
+				hotspot knob_pl_x, 0, knob_pl_y, 	unID, knob_pl_x, 2 			: unID=unID+1
+			endif
+		del 1
+	endif
+
+return
+
+
+
+"knob":
+	if gs_knob_type_m=4 or gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 or gs_knob_type_m=8 then
+		roty 180 * (gs_knob_type_m = 8) * (knobPos = CABINET_KNOB_VER)
+		add knobSize / 2 * (knobPos = CABINET_KNOB_HOR), 0, knobSize / 2 * (knobPos = CABINET_KNOB_VER)
+	endif
+
+	call "fa_knobtyp_T_WMCC" parameters	gs_detlevel_3D_m	= gs_detlevel_3D_m,
+									gs_knob_type_m		= gs_knob_type_m,
+									gs_resol			= iResol,
+									gs_shadow			= gs_shadow,
+									knob_size			= knobSize,
+									gs_cont_pen			= gs_cont_pen,
+									gs_knob_mat			= knobMatForMacro,
+									gs_knob_p_m			= knobPos
+
+	if gs_knob_type_m=4 or gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 or gs_knob_type_m=8 then
+		del 2
+	endif
+
+return
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+unID = officeCab02_unID
+
+if NOT(bPartOfLayout) then call "fa_minimalspace_T_WMCC" parameters all MSType = 1, unID = 3000
+
+pen gs_cont_pen
+line_type 1
+fill gs_fill_type
+
+if NOT(bPartOfLayout) then
+	hotspot2 0, b,			unID : unID = unID + 1
+	hotspot2 a / 2, b,		unID : unID = unID + 1
+	hotspot2 a / 2, b / 2,	unID : unID = unID + 1
+else
+	hotspot2 0, -extCabinetDepth, unID, extCabinetWidth, 1 + 128:			unID = unID + 1
+	hotspot2 1, -extCabinetDepth, unID, extCabinetWidth, 3 + 128:			unID = unID + 1
+	hotspot2 -extCabinetWidth, -extCabinetDepth, unID, extCabinetWidth, 2:	unID = unID + 1
+
+	hotspot2 -extCabinetWidth, 0, unID, extCabinetDepth, 1 + 128:			unID = unID + 1
+	hotspot2 -extCabinetWidth, 1, unID, extCabinetDepth, 3 + 128:			unID = unID + 1
+	hotspot2 -extCabinetWidth, -extCabinetDepth, unID, extCabinetDepth, 2:	unID = unID + 1
+endif
+
+add2 a / 2 * NOT(bPartOfLayout) - a / 2 * bPartOfLayout, - b * bPartOfLayout
+	rect2 -a / 2, b, a /2 , frontThk * (enableDrawers or enableCupboard)
+
+	if enableDrawers or enableCupboard then
+		rect2 -a / 2 + 0.005, frontThk, a / 2 - 0.005, 0
+	endif
+
+	if gs_detlevel_2D = 1 then
+		line2 -a / 2, frontThk * (enableDrawers or enableCupboard), a / 2, b
+		line2 -a / 2, b, a / 2, frontThk * (enableDrawers or enableCupboard)
+	endif
+
+	poly2_b 5, 2, gs_fill_pen, gs_back_pen,
+		-a / 2, 0, 1,
+		-a / 2, b, 1,
+		a / 2, b, 1,
+		a / 2, 0, 1,
+		-a / 2, 0, -1
+del 1
+
+if NOT(bPartOfLayout) then call "Resize_A_B_ZZYZX" parameters all
+
+! ======================================================================
+officeCab02_unID = unID
+end officeCab02_unID
+! ======================================================================
+
+
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+! const values for parameter: iDrawerKnobPlacing
+KNOBPLACING_VERT  = 1
+KNOBPLACING_HORIZ = 2
+
+
+EPS = 0.0001
+
+DIM stDetail3D[3]
+	stDetail3D[1] = `Off`
+	stDetail3D[2] = `Simple`
+	stDetail3D[3] = `Detailed`
+
+DIM st_knobplacing[2]
+	st_knobplacing[1]=`Vertical`
+	st_knobplacing[2]=`Horizontal`
+
+DIM st_knobtypes[9]
+	st_knobtypes[1]=`None`
+	st_knobtypes[2]=`Style 1`
+	st_knobtypes[3]=`Style 2`
+	st_knobtypes[4]=`Style 3`
+	st_knobtypes[5]=`Style 4`
+	st_knobtypes[6]=`Style 5`
+	st_knobtypes[7]=`Style 6`
+	st_knobtypes[8]=`Style 7`
+	st_knobtypes[9]=`Style 8`
+
+DIM stCabinetScheme[5]
+	stCabinetScheme[1] = `Drawers + Cupboard`
+	stCabinetScheme[2] = `Drawers + Shelves`
+	stCabinetScheme[3] = `Drawers`
+	stCabinetScheme[4] = `Cupboard`
+	stCabinetScheme[5] = `Shelves`
+
+DIM	stCupboardDoors[2]
+	stCupboardDoors[1] = `Single`
+	stCupboardDoors[2] = `Double`
+
+DET3D_OFF				= 0
+DET3D_SIMPLE			= 1
+DET3D_DETAILED			= 2
+
+KNOB_VERTICAL 			= 1
+KNOB_HORIZONAL 			= 2
+
+DRAWERS_CUPBOARD		= 1
+DRAWERS_SHELVES			= 2
+DRAWERS					= 3
+CUPBOARD				= 4
+SHELVES					= 5
+
+CUPBOARDDOORS_SINGLE	= 1
+CUPBOARDDOORS_DOUBLE	= 2
+
+CABINET_KNOB_VER		= 0
+CABINET_KNOB_HOR		= 1
+
+frontThk		= 0.019
+shelfThk		= 0.019
+boardThk		= 0.019
+drawerGap		= 0.005
+baseHeight		= (cabinetBaseHeight * bCabinetBase)
+
+enableDrawers	= (iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES or iCabinetScheme = DRAWERS)
+enableCupboard	= (iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = CUPBOARD)
+enableShelves	= (iCabinetScheme = DRAWERS_SHELVES or iCabinetScheme = SHELVES)
+
+if iCabinetScheme = DRAWERS then
+	drawerDist		= (zzyzx - baseHeight) / drawerNum
+else
+	drawerDist		= gs_drawerHeight
+endif
+if iCabinetScheme = SHELVES then
+	shelfDist = (zzyzx - baseHeight - boardThk * 2 - shelfNum * shelfThk) / (shelfNum + 1) + shelfThk
+else
+	shelfDist = (zzyzx - baseHeight - gs_drawerHeight * drawerNum - boardThk - shelfNum * shelfThk - shelfThk / 2) / (shelfNum + 1) + shelfThk
+endif
+if iCabinetScheme = CUPBOARD then
+	realUpperCabHeight = zzyzx - baseHeight
+else
+	realUpperCabHeight = gs_upperCabHeight
+endif
+
+shelfWidth		= a - boardThk * 2
+drawerWidth		= a - drawerGap * 2
+doorWidth		= (a - a / 2 * (iCupboardDoors = CUPBOARDDOORS_DOUBLE) - drawerGap * 2) * enableCupboard
+
+
+minKnobSize = 0.045
+if gs_knob_type_m_up = 1 then
+	minKnobSize = 0.025
+endif
+
+bUpperKnobs = 1
+if gs_knob_p_m = CABINET_KNOB_VER then
+	if (realUpperCabHeight - 0.025) < minKnobSize then
+		bUpperKnobs = 0
+	endif
+else
+	if (doorWidth - 0.04) < minKnobSize then
+		bUpperKnobs = 0
+	endif
+endif
+
+
+
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+call "FM_types_T_WMCC" parameters all
+
+values "gs_resol" range [3,)
+
+lock			"totalDrawerHeight"
+hideparameter	"totalDrawerHeight"
+
+if NOT(bPartOfLayout) then
+	values "gs_detlevel_3D" stDetail3D
+	values "gs_detlevel_3D_m" 0, 1, 2
+
+	if GLOB_MODPAR_NAME = "gs_detlevel_3D" then
+		if gs_detlevel_3D = stDetail3D[1]	then parameters gs_detlevel_3D_m = DET3D_OFF
+		if gs_detlevel_3D = stDetail3D[2]	then parameters gs_detlevel_3D_m = DET3D_SIMPLE
+		if gs_detlevel_3D = stDetail3D[3]	then parameters gs_detlevel_3D_m = DET3D_DETAILED
+	else
+		if gs_detlevel_3D_m = DET3D_OFF then parameters gs_detlevel_3D = stDetail3D[1]
+		if gs_detlevel_3D_m = DET3D_SIMPLE then parameters gs_detlevel_3D = stDetail3D[2]
+		if gs_detlevel_3D_m = DET3D_DETAILED then parameters gs_detlevel_3D = stDetail3D[3]
+	endif
+
+	if gs_detlevel_3D_m = DET3D_SIMPLE then
+		hideparameter "gs_resol"
+		lock	"gs_knob_type",
+				"gs_knob_type_m",
+				"gs_knob_mat"
+	endif
+	if gs_detlevel_3D_m = DET3D_OFF then hideparameter "gs_resol", "gs_shadow"
+
+	for i = 1 to 255
+		put i
+	next i
+	values "gs_cont_pen" use(NSP)
+	values "gs_fill_pen" get(NSP)
+endif
+
+
+values "cabinetScheme" stCabinetScheme
+values "iCabinetScheme" 1, 2, 3, 4, 5
+if GLOB_MODPAR_NAME = "cabinetScheme" then
+	for iCab = 1 to vardim1(stCabinetScheme)
+		if cabinetScheme = stCabinetScheme[iCab] then iCabinetScheme = iCab
+	next iCab
+	parameters iCabinetScheme = iCabinetScheme
+else
+	cabinetScheme = stCabinetScheme[max(iCabinetScheme, 1)]
+	parameters cabinetScheme = cabinetScheme
+endif
+
+values "cupboardDoors" stCupboardDoors[2], stCupboardDoors[1]
+values "iCupboardDoors" 1, 2
+if GLOB_MODPAR_NAME = "cupboardDoors" then
+	for iCabD = 1 to vardim1(stCupboardDoors)
+		if cupboardDoors = stCupboardDoors[iCabD] then iCupboardDoors = iCabD
+	next iCabD
+	parameters iCupboardDoors = iCupboardDoors
+else
+	cupboardDoors = stCupboardDoors[max(iCupboardDoors, 1)]
+	parameters cupboardDoors = cupboardDoors
+endif
+
+if NOT(bPartOfLayout) then
+	values "gs_knob_type_m" 0, 1, 2, 3, 4, 5, 6, 7, 8
+	values "gs_knob_type" st_knobtypes
+	if GLOB_MODPAR_NAME = "gs_knob_type" then
+		for iKnob = 1 to 9
+			if gs_knob_type = st_knobtypes[iKnob] then
+				gs_knob_type_m = iKnob - 1
+			endif
+		next iKnob
+		parameters gs_knob_type_m = gs_knob_type_m
+	else
+		gs_knob_type = st_knobtypes[gs_knob_type_m+1]
+		parameters gs_knob_type = gs_knob_type
+	endif
+
+	values "gs_knob_type_m_up" 0, 1, 2, 3, 4, 5, 6, 7, 8
+	values "gs_knob_type_up" st_knobtypes
+
+	if GLOB_MODPAR_NAME = "gs_knob_type_up" then
+		for iKnob = 1 to 9
+			if gs_knob_type_up = st_knobtypes[iKnob] then
+				gs_knob_type_m_up = iKnob - 1
+			endif
+		next iKnob
+		parameters gs_knob_type_m_up = gs_knob_type_m_up
+	else
+		gs_knob_type_up = st_knobtypes[gs_knob_type_m_up+1]
+		parameters gs_knob_type_up = gs_knob_type_up
+	endif
+
+	values{2} "iDrawerKnobPlacing" 	KNOBPLACING_HORIZ, `Horizontal`
+	lock	"iDrawerKnobPlacing"
+	hideparameter	"iDrawerKnobPlacing"
+	values "drawerKnobSize"	range [minKnobSize, drawerWidth]
+	if gs_knob_type_m < 4 then
+		lock "drawerKnobSize"
+		hideparameter "drawerKnobSize"
+	endif
+	values "xDrawerKnobPos" range [-A/2 + 0.005 + 0.02, A/2 - 0.005 - 0.02]
+	values "zDrawerKnobPos" range [-(gs_drawerHeight/2-0.005) + 0.02, (gs_drawerHeight/2-0.005) - 0.02]
+
+	if NOT(enableDrawers) then
+		lock "gs_knob_type_m", "gs_knob_type"
+		hideparameter "gs_knob_type_m", "gs_knob_type"
+	endif
+
+	if gs_knob_type_m = 0  or NOT(enableDrawers) then
+		lock	"iDrawerKnobPlacing",
+		"drawerKnobSize",
+		"xDrawerKnobPos",
+		"zDrawerKnobPos",
+		"matDrawerKnob"
+		hideparameter	"iDrawerKnobPlacing",
+				"drawerKnobSize",
+				"xDrawerKnobPos",
+				"zDrawerKnobPos",
+				"matDrawerKnob"
+	endif
+
+	values "gs_knob_p" st_knobplacing
+	values "gs_knob_p_m" 0, 1
+	if GLOB_MODPAR_NAME = "gs_knob_p" then
+		for iKnob = 1 to vardim1(st_knobplacing)
+			if gs_knob_p = st_knobplacing[iKnob] then
+				gs_knob_p_m = iKnob - 1
+			endif
+		next iKnob
+		parameters gs_knob_p_m = gs_knob_p_m
+	else
+		gs_knob_p = st_knobplacing[gs_knob_p_m+1]
+		parameters gs_knob_p = gs_knob_p
+	endif
+	if gs_knob_type_m_up < 4 then
+		lock "gs_knob_p", "gs_knob_p_m", "knob_size"
+		hideparameter "gs_knob_p", "gs_knob_p_m", "knob_size"
+	endif
+
+	if enableCupboard then
+		if	GLOB_MODPAR_NAME = "cabinetScheme" or GLOB_MODPAR_NAME = "iCabinetScheme" or\
+			GLOB_MODPAR_NAME = "ZZYZX" or GLOB_MODPAR_NAME = "gs_upperCabHeight" or\
+			GLOB_MODPAR_NAME = "totalDrawerHeight" or GLOB_MODPAR_NAME = "gs_drawerHeight" or\
+			GLOB_MODPAR_NAME = "bCabinetBase" or GLOB_MODPAR_NAME = "cabinetBaseHeight" then
+			knob_pl_y = realUpperCabHeight / 2
+			parameters knob_pl_y = knob_pl_y
+		endif
+		if bUpperKnobs then
+			actUpKnobSize = knob_size
+			if gs_knob_type_m_up = 1 then
+				actUpKnobSize = 0.025
+			endif
+			if gs_knob_type_m_up = 2 or gs_knob_type_m_up = 3 then
+				actUpKnobSize = 0.04
+			endif
+
+			if gs_knob_p_m = CABINET_KNOB_VER then
+				values "knob_size" range [minKnobSize, (gs_upperCabHeight * (iCabinetScheme = DRAWERS_CUPBOARD) + (zzyzx - baseHeight) * (iCabinetScheme = CUPBOARD))-0.04]
+
+				values "knob_pl_x" range [0.02, doorWidth - 0.02]
+				values "knob_pl_y" range [0.02 + actUpKnobSize/2, realUpperCabHeight - 0.02 - actUpKnobSize/2]
+			else
+				values "knob_size" range [minKnobSize, doorWidth-0.04]
+				values "knob_pl_x" range [0.02 + actUpKnobSize/2, doorWidth - 0.02 - actUpKnobSize/2]
+				values "knob_pl_y" range [0.02, realUpperCabHeight - 0.04]
+			endif
+		endif
+	endif
+
+	if NOT(enableCupboard) then
+		lock "gs_knob_type_m_up", "gs_knob_type_up"
+		hideparameter "gs_knob_type_m_up", "gs_knob_type_up"
+	endif
+	if gs_knob_type_m_up = 0 or NOT(enableCupboard) then
+		lock "gs_knob_p"
+		hideparameter "gs_knob_p"
+	endif
+
+	if not(bUpperKnobs) or gs_knob_type_m_up = 0 or NOT(enableCupboard) then
+		lock "knob_size", "knob_pl_x", "knob_pl_y", "gs_knob_mat"
+		hideparameter "knob_size", "knob_pl_x", "knob_pl_y", "gs_knob_mat"
+	endif
+
+	call "ui_tabcontrol" parameters	controlType = 1,
+									nTabs = 4,
+									gs_ui_current_page = gs_ui_current_page
+
+	if MSFront < 0 then
+		MSFront = 0
+		parameters MSFront = MSFront
+	endif
+
+	values "A" range (0, )
+	values "B" range (0, )
+endif
+
+if not(bCabinetBase) then
+	lock			"cabinetBaseHeight",
+					"toe_mat"
+	hideparameter	"cabinetBaseHeight",
+					"toe_mat"
+endif
+
+if iCabinetScheme = DRAWERS then
+	lock			"gs_drawerHeight"
+	hideparameter	"gs_drawerHeight"
+endif
+if iCabinetScheme = CUPBOARD then
+	lock			"gs_cabDimensions"
+	hideparameter	"gs_cabDimensions"
+endif
+if iCabinetScheme <> DRAWERS_CUPBOARD and iCabinetScheme <> DRAWERS_SHELVES then
+	lock			"gs_upperCabHeight"
+	hideparameter	"gs_upperCabHeight"
+endif
+
+if NOT(enableDrawers) then
+	lock			"drawerNum",
+					"gs_drawerHeight"
+	hideparameter	"drawerNum",
+					"gs_drawerHeight"
+endif
+if NOT(enableShelves) then
+	lock			"shelfNum"
+	hideparameter	"shelfNum"
+endif
+if NOT(enableCupboard) then
+	lock			"cupboardDoors",
+					"iCupboardDoors"
+	hideparameter	"cupboardDoors",
+					"iCupboardDoors"
+endif
+
+if NOT(bPartOfLayout) then
+	if iCabinetScheme = DRAWERS_CUPBOARD then
+		lock			"matShelf"
+		hideparameter	"matShelf"
+	endif
+	if iCabinetScheme = DRAWERS_SHELVES then
+		lock			"gs_knob_type_up",
+						"gs_knob_mat",
+						"gs_upper_mat"
+		hideparameter	"gs_knob_type_up",
+						"gs_knob_mat",
+						"gs_upper_mat"
+	endif
+	if iCabinetScheme = DRAWERS then
+		lock			"gs_knob_type_up",
+						"gs_knob_type_m_up",
+						"gs_upper_mat",
+						"gs_knob_mat",
+						"matShelf"
+		hideparameter	"gs_knob_type_up",
+						"gs_knob_type_m_up",
+						"gs_upper_mat",
+						"gs_knob_mat",
+						"matShelf"
+	endif
+	if iCabinetScheme = CUPBOARD then
+		lock			"gs_knob_type",
+						"gs_knob_type_m",
+						"gs_drawer_mat",
+						"matShelf",
+						"matDrawerKnob"
+		hideparameter	"gs_knob_type",
+						"gs_knob_type_m",
+						"gs_drawer_mat",
+						"matShelf",
+						"matDrawerKnob"
+	endif
+	if iCabinetScheme = SHELVES then
+		lock			"gs_knob_type",
+						"gs_knob_type_up",
+						"gs_knob_type_m_up",
+						"gs_bevel",
+						"gs_upper_mat",
+						"gs_knob_mat",
+						"gs_drawer_mat",
+						"matDrawerKnob"
+		hideparameter	"gs_knob_type",
+						"gs_knob_type_up",
+						"gs_knob_type_m_up",
+						"gs_bevel",
+						"gs_upper_mat",
+						"gs_knob_mat",
+						"gs_drawer_mat",
+						"matDrawerKnob"
+	endif
+endif
+
+if iCabinetScheme = DRAWERS_CUPBOARD then
+	minUpperCabHeight = 0.1
+else
+	minUpperCabHeight = (shelfThk + 0.1) * shelfNum + 0.1 + boardThk + shelfThk / 2
+endif
+
+if	GLOB_MODPAR_NAME = "gs_upperCabHeight" or GLOB_MODPAR_NAME = "totalDrawerHeight" or\
+	GLOB_MODPAR_NAME = "gs_drawerHeight" or GLOB_MODPAR_NAME = "drawerNum" or GLOB_MODPAR_NAME = "shelfNum" then
+
+	if GLOB_MODPAR_NAME = "gs_upperCabHeight" then
+		gs_drawerHeight = (zzyzx - baseHeight - gs_upperCabHeight) / drawerNum
+		parameters gs_drawerHeight = gs_drawerHeight
+
+		totalDrawerHeight = baseHeight + gs_drawerHeight * drawerNum
+		parameters totalDrawerHeight = totalDrawerHeight
+	endif
+	if GLOB_MODPAR_NAME = "totalDrawerHeight" then
+		gs_upperCabHeight = zzyzx - totalDrawerHeight
+		parameters gs_upperCabHeight = gs_upperCabHeight
+
+		gs_drawerHeight = (totalDrawerHeight - baseHeight) / drawerNum
+		parameters gs_drawerHeight = gs_drawerHeight
+	endif
+	if GLOB_MODPAR_NAME = "gs_drawerHeight" then
+		if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+			totalDrawerHeight = baseHeight + gs_drawerHeight * drawerNum
+			parameters totalDrawerHeight = totalDrawerHeight
+
+			gs_upperCabHeight = zzyzx - totalDrawerHeight
+			parameters gs_upperCabHeight = gs_upperCabHeight
+		else
+			drawerNum = INT((zzyzx - baseHeight) / gs_drawerHeight)
+			parameters drawerNum = drawerNum
+		endif
+	endif
+	if GLOB_MODPAR_NAME = "drawerNum" then
+		if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+			gs_drawerHeight = (totalDrawerHeight - baseHeight) / drawerNum
+			parameters gs_drawerHeight = gs_drawerHeight
+
+			gs_upperCabHeight = zzyzx - totalDrawerHeight
+			parameters gs_upperCabHeight = gs_upperCabHeight
+		else
+			gs_drawerHeight = (zzyzx - baseHeight) / drawerNum
+			parameters gs_drawerHeight = gs_drawerHeight
+		endif
+	endif
+else
+	if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+		if gs_upperCabHeight - minUpperCabHeight > EPS then
+			gs_upperCabHeight = zzyzx - baseHeight - gs_drawerHeight * drawerNum
+		else
+			gs_upperCabHeight = minUpperCabHeight
+		endif
+		parameters gs_upperCabHeight = gs_upperCabHeight
+
+		gs_drawerHeight = (zzyzx - baseHeight - gs_upperCabHeight) / drawerNum
+		if gs_drawerHeight < 0.1 then gs_drawerHeight = 0.1
+		parameters gs_drawerHeight = gs_drawerHeight
+
+		totalDrawerHeight = baseHeight + gs_drawerHeight * drawerNum
+		if totalDrawerHeight > zzyzx - minUpperCabHeight then
+			maxDrawerNum = INT((zzyzx - gs_upperCabHeight - baseHeight) / 0.1)
+			if drawerNum > maxDrawerNum then drawerNum = maxDrawerNum
+			parameters drawerNum = drawerNum
+			totalDrawerHeight = baseHeight + gs_drawerHeight * drawerNum
+		endif
+		parameters totalDrawerHeight = totalDrawerHeight
+	endif
+endif
+
+if NOT(bPartOfLayout) then
+	if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+		values "zzyzx" range [(baseHeight + 0.1 * drawerNum + minUpperCabHeight),]
+		values "drawerNum" range [1, MAX(INT((zzyzx - gs_upperCabHeight - baseHeight) / 0.1), drawerNum)]
+		values "cabinetBaseHeight" range (0, MAX(zzyzx - minUpperCabHeight - 0.1 * drawerNum, cabinetBaseHeight)]
+		values "gs_drawerHeight" range [0.1, ((zzyzx - baseHeight - minUpperCabHeight) / drawerNum)]
+		values "totalDrawerHeight" range[baseHeight + 0.1 * drawerNum, zzyzx - minUpperCabHeight]
+		values "gs_upperCabHeight" range [minUpperCabHeight, (zzyzx - 0.1 * drawerNum - baseHeight)]
+	endif
+	if iCabinetScheme = DRAWERS_SHELVES then
+		values "shelfNum" range [0, MAX((gs_upperCabHeight - 0.1) / (shelfThk + 0.1), shelfNum)]
+	endif
+	if iCabinetScheme = DRAWERS then
+		values "zzyzx" range [(baseHeight + 0.1 * drawerNum),]
+		values "drawerNum" range [1, MAX(INT((zzyzx - baseHeight) / 0.1), drawerNum)]
+		values "cabinetBaseHeight" range (0, MAX(zzyzx - 0.1 * drawerNum, cabinetBaseHeight)]
+	endif
+	if iCabinetScheme = CUPBOARD then
+		values "zzyzx" range [(baseHeight + 0.1),]
+		values "cabinetBaseHeight" range (0, MAX(zzyzx - 0.1, cabinetBaseHeight)]
+	endif
+	if iCabinetScheme = SHELVES then
+		values "zzyzx" range [baseHeight + (shelfThk + 0.1) * shelfNum + 0.1 + boardThk * 2,]
+		values "shelfNum" range [0, MAX((zzyzx - baseHeight - 0.1 - boardThk * 2) / (shelfThk + 0.1), shelfNum)]
+		values "cabinetBaseHeight" range (0, MAX(zzyzx - (shelfThk + 0.1) * shelfNum - 0.1 - boardThk * 2, cabinetBaseHeight)]
+	endif
+else
+	if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+		values "extCabinetHeight" range [MAX(baseHeight + 0.1 * drawerNum + minUpperCabHeight, tableTopHeight),]
+		values "drawerNum" range [1, MAX(INT((extCabinetHeight - gs_upperCabHeight - baseHeight) / 0.1), drawerNum)]
+		values "cabinetBaseHeight" range (0, MAX(extCabinetHeight - minUpperCabHeight - 0.1 * drawerNum, cabinetBaseHeight)]
+		values "gs_drawerHeight" range [0.1, ((extCabinetHeight - baseHeight - minUpperCabHeight) / drawerNum)]
+		values "totalDrawerHeight" range[baseHeight + 0.1 * drawerNum, extCabinetHeight - minUpperCabHeight]
+		values "gs_upperCabHeight" range [minUpperCabHeight, (extCabinetHeight - 0.1 * drawerNum - baseHeight)]
+	endif
+	if iCabinetScheme = DRAWERS_SHELVES then
+		values "shelfNum" range [0, MAX((gs_upperCabHeight - 0.1) / (shelfThk + 0.1), shelfNum)]
+	endif
+	if iCabinetScheme = DRAWERS then
+		values "extCabinetHeight" range [MAX(baseHeight + 0.1 * drawerNum, tableTopHeight),]
+		values "drawerNum" range [1, MAX(INT((extCabinetHeight - baseHeight) / 0.1), drawerNum)]
+		values "cabinetBaseHeight" range (0, MAX(extCabinetHeight - 0.1 * drawerNum, cabinetBaseHeight)]
+	endif
+	if iCabinetScheme = CUPBOARD then
+		values "extCabinetHeight" range [MAX(baseHeight + 0.1, tableTopHeight),]
+		values "cabinetBaseHeight" range (0, MAX(extCabinetHeight - 0.1, cabinetBaseHeight)]
+	endif
+	if iCabinetScheme = SHELVES then
+		values "extCabinetHeight" range [MAX(baseHeight + (shelfThk + 0.1) * shelfNum + 0.1 + boardThk * 2, tableTopHeight),]
+		values "shelfNum" range [0, MAX((extCabinetHeight - baseHeight - 0.1 - boardThk * 2) / (shelfThk + 0.1), shelfNum)]
+		values "cabinetBaseHeight" range (0, MAX(extCabinetHeight - (shelfThk + 0.1) * shelfNum - 0.1 - boardThk * 2, cabinetBaseHeight)]
+	endif
+endif
+
+if bPartOfLayout then
+	if NOT(bShowExtCabParams) then
+		lock			"cabinetScheme",
+						"iCabinetScheme",
+						"cupboardDoors",
+						"iCupboardDoors",
+						"gs_drawerHeight",
+						"gs_upperCabHeight",
+						"drawerNum",
+						"shelfNum",
+						"bCabinetBase",
+						"cabinetBaseHeight"
+	endif
+
+	values "gs_knobVerPos_m" 1, 0, -1
+endif
+
+
+
+
+]]></Script_VL>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" length_in_bytes="1035" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000001810000
+	005004030000000D62D4290000000373424954080808DBE14FE00000000F504C
+	5445000000C0C0C0FF0000808080FFFFFFCD4225640000000574524E53FFFF00
+	FFFF682CD533000000097048597300000E9C00000E9C01079453DD0000001C74
+	455874536F6674776172650041646F62652046697265776F726B732043533571
+	B5E33600000350494441546881ED9B616EF3200C86C99A032437403D41A55D00
+	A9DCFF4C1FE01020C1D8A434C9F4919F53F5D80F04BFAB36C4337DA478721EF1
+	C3F9D419B0ED8FC5A8193C29B46234770A2C353030F3903C03330FD5DC49B0C4
+	0060140F60647367C162030F2BF3E4183E5668EE34586C300A0E4F4EACE69830
+	C5820D055862A0393C39CF9CE698300360C086195FB6D480C33306055E2DCC01
+	48D830E3CBB6354879B9AAD660C3C30C18300050306B902E5B80ED0C747881C5
+	80194CE2F71586C8841A44CD2130402802E6F6E0F19B85650C969553629E1103
+	0333CF32C8CD3B5A30A060F0196F8AC1EC39B0255F1958CEC0F184F5CE160518
+	F02CAC6C40C0BC8135C56103AC192CDB069637001852D4C32C0F5ED05C51916E
+	0069A07509164ABEB630C4400F785177A216DC8C168DF3A0008B0C140E7379F0
+	869A5BD8010318446FCA201A449F1BCC61D99A18ACBCA24118440D0CC2B2B531
+	F03CC2C06F431303BF6CADF600061B65B06C439B3D803C78B739073E0F0A45FD
+	39B6DBD0E41CF83C686010E501C3C06E43835914F2A081419C0778D1380F3E36
+	88F3A0C91EE89E07D5063D0F76063D0F8E18F43C888AF63C3860509307EACFE7
+	01C3E0E679600C146716E93BE701C3E0E679C0DA839E07B506FF4B1E089EC19D
+	F3C0BDB4A481BA731ED8E64803389EB7CD0331320CB4DF86367930B6CD03E608
+	6F99073C037E1EF0463834D7260F46F855A6591EF0463834D72C0F48839A3C80
+	E61806A6B966794019D4E4013DC2C7F5EDD0F7CC034D1DBEE8CF7BA53DB82E0F
+	1845D7E68A6FD16579C029EA9B23CEC135DF0F2AF28034B8E8FB414D1ED0B3E8
+	8AEF0797E401E31CDC3C0F28839E0769D19E07470C7A1E648AF63CA837E87990
+	31E8795061D0F36057B4E7C101839E07FBA23D0F6A0D7A1E2445C7700E3ECF83
+	9165C0CD03C91AE14FC1CA831A186920997920A37F2F2F141D664E1ED4C06803
+	661EC839FC577EB1E8DA5CB1281FC630E0E5C15384E66002678B4AB1360745F3
+	B71EBE035B0C22D8F63697E7B9098CDD8B5979B6E8845D3DF90EECBD85ED6ED4
+	2D3C37815F48D195A75CD020454F82EDAE0A2E3C3781D1A29EA75CD0A0454F81
+	652E3B02CFA6074EF33C0B2B5F85FB3A2C775DD3F21E040C7813D1D919B0FC85
+	53313C58574227B2B3EFC398576631DE0FF991AFC3E43F25EB72DDDD8FC1FF00
+	00000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="2" length_in_bytes="1304" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000750000
+	00B10806000000FA7DF21E0000000467414D410000B18F0BFC61050000000970
+	48597300000B1000000B1001AD23BD750000001A74455874536F667477617265
+	005061696E742E4E45542076332E352E313030F472A10000048A49444154785E
+	ED9D8B6EAB401043F3FF3FDD1B4889803C5C1ECB8E7D4F248A9A098BD767CD90
+	A86A6E3F3F3F37B62C0F16406FB7E1D7AC093ACF672F8F27D46180BD83381B57
+	59FB5E2623D4E960F68F855D71DBB2F8486AE1767338A95362B7AC085EDBF6FE
+	636A875BDB2277BE8593BA3734CF9EBA77008E6B9BD63D5750924A52DBAF4A92
+	FFEA313D3530795B173AEF538BBE2F5DBF579EF7D6F55DF13AC9F31BA5E12342
+	1E051DF876F99DC39F120DD48210D7923E417DF7C9D798E859AC0DA6F77F4A54
+	374A5C7E0DD705500DA129C940550E19D6816A084D4906AA72C8B00E5443684A
+	325095438675A01A42539281AA1C32AC03D5109A920C54E590611DA886D09464
+	A02A870CEB403584A624035539645807AA21342519A8CA21C33A500DA129C940
+	550E19D6816A084D4906AA72C8B00E5443684A325095438675A01A42539281AA
+	1C32AC03D5109A920C54E590611DA886D09464A02A870CEB403584A624035539
+	645807AA21342519A8CA21C33A500DA129C940550E19D6816A084D4906AA72C8
+	B00E5443684A325095438675A01A42539281AA1C32AC03D5109A920C54E59061
+	1DA886D09464A02A870CEB403584A624035539645807AA21342519A8CA21C33A
+	500DA129C940550E19D6816A084D4906AA72C8B00E5443684A325095438675A0
+	1A42539281AA1C32AC03D5109A920C54E590611DA886D09464A02A870CEB4035
+	84A624035539645807AA21342519A8CA21C33A500DA129C940550E19D6816A08
+	4D4906AA72C8B0FE09EAF0FC7ABB4FEFFEECF063DCF1A8EAC0B7A4CEA10E2C17
+	50DF51E7B9D724F4F26416BE29842FFB05D4AA2B145D0B07C614AEB7AF49C5C0
+	BA0EECEAA975A783B299036F933ABF2CBFF454ECABEBC0AEB73475A78332921A
+	BA06486A28D87777BECF1EFAF89CE1D973F9F0C16011905403483B2572F7BBD3
+	B8928791D492584E1145524FB1B1C82024B508880632486A0353BB0D4952BB59
+	DFFCC424B5B9C5179E80A45E68F6C5A722A9171BDEF47424B5A9BD5D0727A95D
+	ED3FF9E424F564430B0D47520BC1382C85A41EB6B0EC0024B52C9A1DC248EA0E
+	D34C0E21A926A0FE2493A4FEC926CB1791544B6C1F4493D4249ACBB990D424B6
+	24358926490DA6B9FA63EDFB4C1797E27592A762AE233933A3A7E6B01CFF7FC3
+	309D6D50930C089ECB36A8FC238FDA4B81A4D6E673441D493DE25EB563496A35
+	22E7E921A9E779D97F2492DA9F412B0524B595B33DC625A93D5CBFE69C24F51A
+	9FAF390B49BDC6E71E6721A93D5C6F754E92DACAD9FEE392D4FE0CCE534052CF
+	F3B2DA4824B51A91237A48EA11F76A1F4B526BF3D9A68EA46EF3CBE9D524D589
+	96D24A529543BE7592EACBEE5539494DA2B99C0B494D624B52936892D4609AFC
+	857E2C5C7A6A125A7A6A124D7A6A304D7A6A2C5C7A6A125A7A6A124D7A6A304D
+	7A6A2C5C7A6A125A7A6A124D7A6A304D7A6A2C5C7A6A125A7A6A124D7A6A304D
+	7A6A2C5C7A6A125A7A6A124D7A6A304D7A6A2C5C7A6A125A7A6A124D7A6A304D
+	7A6A2C5C7A6A125A7A6A124D7A6A30CD0F3D7548F07ABBBB30BE7AFC7E0C1EE5
+	1D78DB53E7507F593EA04EDF76C1FEB1BE8BFA3071FAB85F409D7E61FFF90B7D
+	9CBCF90794E1EA8EDBBF43900000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="3" length_in_bytes="1512" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000410000
+	00850803000000335065D5000000017352474200AECE1CE90000000467414D41
+	0000B18F0BFC610500000300504C5445000000C0C0C0FFFFFF00000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	000000000000000000000000000000005F1AB19A0000010074524E53FFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0053F70725
+	000000097048597300000EC300000EC301C76FA8640000001974455874536F66
+	7477617265005061696E742E4E45542076332E352E38373B805D000001364944
+	41546843ED59DB1683200C63FCFF3F332E3A1C9336A53E785C707B72466C4388
+	59082B23857E841067433893B691EF9E5C08DBF43D73C8CFE29B43BE9C08B5A1
+	AC43E335EBC03AC49859B0CB1CF581EB02E243D90CCBE77CEF441855AEDCBFBF
+	DB22115A4DA03AB87B51EF34F726D487AF5E5CE0E59A9F5C19A0A79D36F3C0A8
+	6200E65D27C2BC02E3DA7C7C251B4D2664E91A25D4415C341082D80E22FC1D27
+	2D7C5852DACFB6479DEC3988268A27E7B9360D6B934A0B308C8C3230CAA29340
+	EDC79F0CBD58525A2CA7051CA992D3EA089AB7D711B4548D081AC990775E1903
+	42009556C848414F2BA7ACE4C34DF800EAA4B79B17280CD3836ECD99606C7F61
+	DC38C9019596E9410F5A6FDC4D50271F9489B93D6DF6842FDB38B8EAAAF61E84
+	367D0F42F3B41E840BE6B0D7C1DA8D63629EC21B0C1DF3E6A6AC9EE000000000
+	49454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="4" length_in_bytes="302" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000410000
+	0085020300000079E07D740000000373424954080808DBE14FE00000000C504C
+	5445000000FFFFFFFF0000C0C0C0ED2E5F790000000474524E53FFFF00FFFE0C
+	BB0B000000097048597300000E9C00000E9C01079453DD0000001C7445587453
+	6F6674776172650041646F62652046697265776F726B732043533571B5E33600
+	000077494441544889636040064A4A4A0C0CA2A148406B554303BA0803869A45
+	186A4645088AA08041E09E9123321AF27410C12C251AD0421E5B69B30AC39CC1
+	211212EA8A2EC2C03AA85C484064C896F388905F8411F2A3699E9622C330CD2F
+	FE8F009F568162074D840143CD2222D400CD5980641513C82E00083A1CEB8EBF
+	A36E0000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="5" length_in_bytes="275" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000410000
+	0085020300000079E07D740000000373424954080808DBE14FE00000000C504C
+	5445000000FFFFFFFF0000C0C0C0ED2E5F790000000474524E53FFFF00FFFE0C
+	BB0B000000097048597300000E9C00000E9C01079453DD0000001C7445587453
+	6F6674776172650041646F62652046697265776F726B732043533571B5E33600
+	00005C494441544889636040065AAB56353088862281C12B1212EA8A2EC2C03A
+	A85C48406434E4074A6434E4074A6434E4074A6434E4074A6434E4074A040528
+	292931302CFE8F009F804A1AD0451830D42C22420DD09C0548563181EC0200CB
+	C828C6B591E8AE0000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="6" length_in_bytes="1396" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000410000
+	00850803000000335065D5000000017352474200AECE1CE90000000467414D41
+	0000B18F0BFC610500000300504C5445000000C0C0C0FFFFFF00000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	000000000000000000000000000000005F1AB19A0000010074524E53FFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0053F70725
+	000000097048597300000EC300000EC301C76FA8640000001974455874536F66
+	7477617265005061696E742E4E45542076332E352E38373B805D000000C24944
+	41546843ED9A4B0E80200C448BF7BF33F2539A0086DF86F82A0B136385E974A0
+	8D22336695895C2DFB788287009A800338A8F4810F110C700007BDABC007F800
+	1FCA731679415E9017E445B302A3BE38EA3CE98B693FEA957397DA270F7546E0
+	A17FBFD8100B5FC9B4BB23E4E651B919EA52A21963060EE0A0FB56F0013EC087
+	220BD0C974DE421FD007F4017D68E8003AF94B9D9CFAF740EC7BB97686983153
+	1D10F775E76AC1439CFE8A07F76E1C638B3079151BE6F0E0301A8D1C077F7703
+	4EA961C09CC5673F0000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="7" length_in_bytes="1374" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000410000
+	00850803000000335065D5000000017352474200AECE1CE90000000467414D41
+	0000B18F0BFC610500000300504C5445000000C0C0C0FFFFFF00000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	0000000000000000000000000000000000000000000000000000000000000000
+	000000000000000000000000000000005F1AB19A0000010074524E53FFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+	FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0053F70725
+	000000097048597300000EC300000EC301C76FA8640000001974455874536F66
+	7477617265005061696E742E4E45542076332E352E38373B805D000000AC4944
+	41546843ED984B0E80200C058BF7BF3316AAD0B82B9FC490A92EDC58CB03A71F
+	9111CBCE44AEB8091EAA68E86067071DD0C153E4C8F300690BF5C91796FBD001
+	1DA882F6647F480B61FABF0569212DA485B4AEC138B2BF888F61E8BB1FCD380F
+	CC1F7E3E7FA0A6A5A6A5A66556DC3045CEDA94B3202DA485B49016D27E3ACAE5
+	196788B492DBA501498A995B837E5D5D4D78B0F0673CE8BB76C71691FA2A16C4
+	F0EA10DD8DBE0FE5E9069AD960E01EED762C0000000049454E44AE426082
+	]]>
+</GDLPict>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+ui_dialog `Office Cabinet Settings`
+
+ui_current_page gs_ui_current_page
+ui_page gs_ui_current_page
+
+iPage_Cabinet		= 1
+iPage_Knobs			= 2
+iPage_Appearance	= 3
+iPage_MinimalSpace	= 4
+
+DIM tabTitles[4]
+	tabTitles[1] = `Cabinet`
+	tabTitles[2] = `Knobs`
+	tabTitles[3] = `Appearance`
+	tabTitles[4] = `Minimal Space`
+
+DIM tabIcons[4]
+	tabIcons[1] = "ui_tab_furniture_cabinet(1)"
+	tabIcons[2] = "ui_tab_furniture_knob(1)"
+	tabIcons[3] = "ui_tab_furniture_appearance(1)"
+	tabIcons[4] = "ui_tab_minimalspace(1)"
+
+file_dependence "ui_tab_furniture_drawer(1)"
+file_dependence "ui_tab_furniture_knob(1)"
+file_dependence "ui_tab_furniture_appearance(1)"
+file_dependence "ui_tab_minimalspace(1)"
+
+call "ui_tabcontrol" parameters	controlType = 1,
+								nTabs = 4,
+								gs_ui_current_page = gs_ui_current_page,
+								tabTitles = tabTitles,
+								tabIcons = tabIcons
+
+textElevInfield		= 3
+textElevBoolean		= 2
+textElevMaterial	= 4
+
+if iPage_Cabinet > 0 then
+! -----------------------------------------------------------------------------
+	ui_page iPage_Cabinet
+! -----------------------------------------------------------------------------
+
+	xCenter	= 222
+	yCenter	= 120
+
+	xLeftStr1	= 230 - 220
+	Strlength1	= 115
+	xLeftStr2	= 350 - 220
+	Strlength2	= 85
+	yLeftStr1	= 35
+	yCurrent	= yLeftStr1
+
+	ui_style 0, 1
+	ui_outfield `Style`, xLeftStr1, yCurrent, Strlength1, 16
+	ui_style 0, 0
+	yCurrent = yCurrent + 25
+
+	ui_outfield `Scheme`, xLeftStr1, yCurrent, Strlength1, 16
+	yCurrent = yCurrent - textElevInfield
+	ui_infield{3} "iCabinetScheme", xLeftStr2, yCurrent, Strlength2, 110,
+		2, 1, 5, 1,					!ui_cab02_scheme.png
+		80, 90, 77, 80,
+		1, `Drawers + Cupboard`, 1,
+		2, `Drawers + Shelves`, 2,
+		3, `Drawers`, 3,
+		4, `Cupboard`, 4,
+		5, `Shelves`, 5
+	yCurrent = yCurrent + 115
+
+	if enableCupboard then
+		ui_outfield `Cupboard Doors`, xLeftStr1, yCurrent, Strlength1, 16
+		yCurrent = yCurrent - textElevInfield
+		ui_infield{3} "iCupboardDoors", xLeftStr2, yCurrent, Strlength2, 20,
+			8, "",
+			2,
+			1, 100, 20, 100, 20,
+			"", `Double`, 2,
+			"", `Single`, 1
+		yCurrent = yCurrent + 25
+	endif
+
+	if iCabinetScheme <> SHELVES then
+		yCurrent = 195
+		ui_infield{3} "gs_bevel", xLeftStr1, yCurrent, Strlength1, 20,
+			7, "",
+			2,
+			1, 20, 20, 20, 20,
+			0, `Edge Bevel`, 0, 	! Edge Bevel
+			1, `Edge Bevel`, 1 		! Edge Bevel
+	endif
+
+	yCurrent = 220
+	ui_infield{3} "bCabinetBase", xLeftStr1, yCurrent, Strlength1, 20,
+		7, "",
+		2,
+		1, 20, 20, 20, 20,
+		0, `Base`, 0,
+		1, `Base`, 1
+
+	ui_separator xCenter, 32, xCenter, 265
+
+	xLeftStr1	= 230
+	Strlength1	= 115
+	xLeftStr2	= 350
+	Strlength2	= 85
+	yLeftStr1	= 35
+	yCurrent	= yLeftStr1
+
+	ui_style 0, 1
+	ui_outfield `Dimensions`, xLeftStr1, yCurrent, Strlength1, 16
+	ui_style 0, 0
+	yCurrent = yCurrent + 25
+
+	if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES or iCabinetScheme = DRAWERS then
+		ui_outfield `No. of Drawers`, xLeftStr1, yCurrent, Strlength1, 16
+		yCurrent = yCurrent - textElevInfield
+		ui_infield "drawerNum", xLeftStr2, yCurrent, Strlength2, 20
+		yCurrent = yCurrent + 25
+	endif
+	if iCabinetScheme = DRAWERS_SHELVES or iCabinetScheme = SHELVES then
+		ui_outfield `No. of Shelves`, xLeftStr1, yCurrent, Strlength1, 16
+		yCurrent = yCurrent - textElevInfield
+		ui_infield "shelfNum", xLeftStr2, yCurrent, Strlength2, 20
+		yCurrent = yCurrent + 25
+	endif
+
+
+	xPict		= 65
+	yPict		= 133
+	xPictPos	= 255
+	yPictPos	= 110
+
+	if iCabinetScheme = DRAWERS_CUPBOARD then ui_pict 3, xPictPos, yPictPos, xPict, yPict, 1	!ui_officecab02_drawers_cupboard.png
+	if iCabinetScheme = DRAWERS_SHELVES then ui_pict 4, xPictPos, yPictPos, xPict, yPict, 1		!ui_officecab02_drawers_shelves.png
+	if iCabinetScheme = DRAWERS then ui_pict 5, xPictPos, yPictPos, xPict, yPict, 1				!ui_officecab02_drawers.png
+	if iCabinetScheme = CUPBOARD then ui_pict 6, xPictPos, yPictPos, xPict, yPict, 1			!ui_officecab02_cupboard.png
+	if iCabinetScheme = SHELVES then ui_pict 7, xPictPos, yPictPos, xPict, yPict, 1				!ui_officecab02_shelves.png
+
+	if iCabinetScheme = DRAWERS_CUPBOARD or iCabinetScheme = DRAWERS_SHELVES then
+		yCurrent = yPictPos + 10
+		ui_infield "gs_upperCabHeight", xLeftStr2, yCurrent, Strlength2, 20
+
+		yCurrent = yPictPos + yPict - 48
+		ui_infield "gs_drawerHeight", xLeftStr2, yCurrent, Strlength2, 20
+	endif
+
+	yCurrent = yPictPos + yPict - 10
+	ui_infield "cabinetBaseHeight", xLeftStr2, yCurrent, Strlength2, 20
+
+endif
+
+if iPage_Knobs > 0 then
+! -----------------------------------------------------------------------------
+	ui_page iPage_Knobs
+! -----------------------------------------------------------------------------
+
+	bHideXDrawerKnobPos = 0
+	if gs_knob_type_m = 0  or NOT(enableDrawers) then bHideXDrawerKnobPos = 1
+	bHideZDrawerKnobPos = 0
+	if gs_knob_type_m = 0  or NOT(enableDrawers) then bHideZDrawerKnobPos = 1
+	bHideDrawerKnobPos = 1
+	bHideDrawerKnobSize = 0
+	if gs_knob_type_m < 4  or NOT(enableDrawers) then bHideDrawerKnobSize = 1
+
+	bHideXDoorKnobPos = 0
+	if gs_knob_type_m_up = 0  or NOT(enableCupboard) or not(bUpperKnobs) then bHideXDoorKnobPos = 1
+	bHideZDoorKnobPos = 0
+	if gs_knob_type_m_up = 0  or NOT(enableCupboard) or not(bUpperKnobs) then bHideZDoorKnobPos = 1
+	bHideDoorKnobPos = 0
+	if gs_knob_type_m_up < 4  or NOT(enableCupboard) then bHideDoorKnobPos = 1
+	bHideDoorKnobSize = 0
+	if gs_knob_type_m_up < 4  or NOT(enableCupboard) or not(bUpperKnobs) then bHideDoorKnobSize = 1
+
+	x1 = 10
+	x2 = 30
+	x3 = 160
+	x4 = 200
+	x5 = 350
+	xEnd = 440
+
+	y0 = 35
+	yCurr = y0
+
+
+	ui_style 0,1
+	ui_outfield `Knob Type on Drawers`, x1, yCurr, x5-x1, 18
+	ui_style 0,0
+	yCurr = yCurr + 22
+	ui_infield{3} "gs_knob_type", x2, yCurr, x3-x2, 85,
+		2,"Knob_Types_N(13)",12,4,
+		84,118,60,80,
+		1,st_knobtypes[2],`Style 1`,
+		2,st_knobtypes[3],`Style 2`,
+		3,st_knobtypes[4],`Style 3`,
+		4,st_knobtypes[5],`Style 4`,
+		5,st_knobtypes[6],`Style 5`,
+		6,st_knobtypes[7],`Style 6`,
+		7,st_knobtypes[8],`Style 7`,
+		8,st_knobtypes[9],`Style 8`,
+		9,st_knobtypes[1],`None`
+
+	yCurr = yCurr + 100
+	ui_style 0,1
+	ui_outfield `Knob Type on Upper Cabinet`, x1, yCurr, x5-x1, 18
+	ui_style 0,0
+	yCurr = yCurr + 22
+	yTemp = yCurr
+
+	ui_infield{3} "gs_knob_type_up",  x2, yCurr, x3-x2, 85,
+		2,"Knob_Types_N(13)",12,4,
+		84,118,60,80,
+		1,st_knobtypes[2],`Style 1`,
+		2,st_knobtypes[3],`Style 2`,
+		3,st_knobtypes[4],`Style 3`,
+		4,st_knobtypes[5],`Style 4`,
+		5,st_knobtypes[6],`Style 5`,
+		6,st_knobtypes[7],`Style 6`,
+		7,st_knobtypes[8],`Style 7`,
+		8,st_knobtypes[9],`Style 8`,
+		9,st_knobtypes[1],`None`
+
+	yCurr = y0 + 22
+	ui_outfield	`Horizontal Position`, x4, yCurr, x5-x4-2, 18, 4 * bHideXDrawerKnobPos
+	ui_infield	"xDrawerKnobPos", x5, yCurr - textElevInfield, xEnd-x5, 18
+	yCurr = yCurr + 22
+	ui_outfield	`Vertical Position`, x4, yCurr, x5-x4-2, 18, 4 * bHideZDrawerKnobPos
+	ui_infield	"zDrawerKnobPos", x5, yCurr - textElevInfield, xEnd-x5, 18
+	yCurr = yCurr + 22
+	ui_outfield	`Position`, x4, yCurr, x5-x4-2, 18, 4 * bHideDrawerKnobPos
+	UI_INFIELD{3}	"iDrawerKnobPlacing", x5, yCurr - textElevInfield, xEnd-x5, 18,
+			8, "", 3, 1,
+			0, 0, 0, 0,
+			1, st_knobplacing[1], KNOBPLACING_VERT,
+			2, st_knobplacing[2], KNOBPLACING_HORIZ
+
+
+	yCurr = yCurr + 22
+	ui_outfield	`Size`, x4, yCurr, x5-x4-2, 18, 4 * bHideDrawerKnobSize
+	ui_infield	"drawerKnobSize", x5, yCurr - textElevInfield, xEnd-x5, 18
+
+	yCurr = yTemp
+	ui_outfield	`Horizontal Position`, x4, yCurr, x5-x4-2, 18, 4 * bHideXDoorKnobPos
+	ui_infield	"knob_pl_x", x5, yCurr - textElevInfield, xEnd-x5, 18
+	yCurr = yCurr + 22
+	ui_outfield	`Vertical Position`, x4, yCurr, x5-x4-2, 18, 4 * bHideZDoorKnobPos
+	ui_infield	"knob_pl_y", x5, yCurr - textElevInfield, xEnd-x5, 18
+	yCurr = yCurr + 22
+	ui_outfield	`Position`, x4, yCurr, x5-x4-2, 18, 4 * bHideDoorKnobPos
+	UI_INFIELD{3}	"gs_knob_p", x5, yCurr - textElevInfield, xEnd-x5, 18,
+			8, "", 3, 1,
+			0, 0, 0, 0,
+			1, st_knobplacing[1], st_knobplacing[1],
+			2, st_knobplacing[2], st_knobplacing[2]
+
+	yCurr = yCurr + 22
+	ui_outfield	`Size`, x4, yCurr, x5-x4-2, 18, 4 * bHideDoorKnobSize
+	ui_infield	"knob_size", x5, yCurr - textElevInfield, xEnd-x5, 18
+
+endif
+
+if iPage_Appearance > 0 then
+! -----------------------------------------------------------------------------
+	ui_page iPage_Appearance
+! -----------------------------------------------------------------------------
+
+	x1 = 3
+	x4 = 217
+	x3 = x4-35
+	x2 = x4-120
+
+	x5 = x1+225
+	x6 = x2+225
+	x8 = x4+225
+	x7 = x8-80
+
+	y0 = 35
+	dy = 23
+
+	y = y0
+
+	ui_style 1,0
+	ui_outfield `2D Representation`, x1, y, x4-x1, 18
+	ui_style 0,0
+
+	y = y + dy
+	ui_outfield `Contour Pen`, x1, y, x3-x1-1, 18
+	ui_infield "gs_cont_pen", x3, y - textElevMaterial, x4-x3, 20
+
+	y = y + dy
+	ui_outfield `Fill Type`, x1, y, x2-x1-1, 18
+	ui_infield "gs_fill_type", x2, y - textElevMaterial, x4-x2, 24
+
+	y = y + dy
+	ui_outfield `Fill Pen`, x1, y, x3-x1-1, 18
+	ui_infield "gs_fill_pen", x3, y - textElevMaterial, x4-x3, 20
+
+	y = y + dy
+	ui_outfield `Fill Background Pen`, x1, y, x3-x1-1, 18
+	ui_infield "gs_back_pen", x3, y - textElevMaterial, x4-x3, 20
+
+	y = y + dy
+	ui_infield{3} "gs_detlevel_2D", x1, y, x4-x1-1, 18,
+			7, "",
+			2,
+			1, 20, 20, 20, 20,
+			0, `Detailed 2D Symbol`, 0,
+			1, `Detailed 2D Symbol`, 1
+
+	ysep = y + 20
+
+	UI_SEPARATOR 222, 40, 222, ysep-5
+
+	y = y0
+	ui_style 1,0
+	ui_outfield `3D Representation`, x5, y, x8-x5-1, 18
+	ui_style 0,0
+
+	y = y + dy
+	ui_outfield `3D`, x5, y, x7-x5-1, 18
+	UI_INFIELD{3}	"gs_detlevel_3d_m",	x7, y - textElevInfield, x8-x7, 18,
+			8, "", 3, 1,
+			0, 0, 0, 0,
+			1, stDetail3D[1], 0,
+			2, stDetail3D[2], 1,
+			3, stDetail3D[3], 2
+
+	y = y + dy
+
+	ui_outfield `Resolution`, x5, y, x7-x5-1, 18
+	ui_infield "gs_resol", x7, y - textElevInfield, x8-x7, 18
+
+	y = y + dy
+	ui_infield{3} "gs_shadow", x5, y, x8-x5-1, 18,
+			7, "",
+			2,
+			1, 20, 20, 20, 20,
+			0, `Shadow`, 0,
+			1, `Shadow`, 1
+
+	UI_SEPARATOR x1, ysep, 444-x1, ysep
+
+	y = ysep + 3
+	ui_style 1,0
+	ui_outfield `Surfaces`, x1, y, x4-x1, 18
+	ui_style 0,0
+
+	dy = 24
+	y = y + dy
+	ui_outfield `Toe`, x1, y, x2-x1-1, 18, 4 * NOT(bCabinetBase)
+	ui_infield "toe_mat", x2, y - textElevMaterial, x4-x2, 23
+
+	y = y + dy
+	ui_outfield `Cabinet`, x1, y, x2-x1-1, 18
+	ui_infield "gs_cabinet_mat", x2, y - textElevMaterial, x4-x2, 23
+
+	y = y + dy
+	if enableCupboard then
+		ui_outfield `Cabinet Door`, x1, y, x2-x1-1, 18, 4 * NOT(enableCupboard)
+		ui_infield "gs_upper_mat", x2, y - textElevMaterial, x4-x2, 23
+	else
+		ui_outfield `Shelf`, x1, y, x2-x1-1, 18, 4 * NOT(enableShelves)
+		ui_infield "matShelf", x2, y - textElevMaterial, x4-x2, 23
+	endif
+
+
+	dy = 24
+	y = y - dy * 2
+	ui_outfield `Cabinet Knob`, x5, y, x6-x5-1, 18, 4 * (gs_knob_type_m_up = 0 or NOT(enableCupboard))
+	ui_infield "gs_knob_mat", x6, y - textElevMaterial, x8-x6, 23
+
+	y = y + dy
+	ui_outfield `Drawer`, x5, y, x6-x5-1, 18, 4 * NOT(enableDrawers)
+	ui_infield "gs_drawer_mat", x6, y - textElevMaterial, x8-x6, 23
+
+	y = y + dy
+	ui_outfield `Drawer Knob`, x5, y, x6-x5-1, 18, 4 * (gs_knob_type_m = 0 or NOT(enableDrawers))
+	ui_infield "matDrawerKnob", x6, y - textElevMaterial, x8-x6, 23
+
+endif
+
+if iPage_MinimalSpace > 0 then
+! -----------------------------------------------------------------------------
+	ui_page iPage_MinimalSpace
+! -----------------------------------------------------------------------------
+
+	ui_pict 2, 150, 75, 117, 177, 1			!ui_officecabinet_ms.png
+
+	ui_infield "A", 175, 55, 60, 18	ui_tooltip `Cabinet Width`
+	ui_infield "B", 275, 113, 60, 18 ui_tooltip `Cabinet Depth`
+	ui_infield "MSFront", 275, 200, 60, 18 ui_tooltip `Minimal Space in Front`
+
+endif
+
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["fa_minimalspace_T_WMCC"]]></MName>
+		<MainGUID>AF6DF44C-111B-4480-BDEB-4FDC7C4088D4</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Resize_A_B_ZZYZX"]]></MName>
+		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Resize_A_B_ZZYZX"]]></MName>
+		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_cabinet_credenza_T_WMCC"]]></MName>
+		<MainGUID>251EAE48-4D85-4DF5-85B3-01F941038732</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_knobtyp_T_WMCC"]]></MName>
+		<MainGUID>075A4AC7-CC88-417E-8EF4-C6F61D290ED9</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["ui_tabcontrol"]]></MName>
+		<MainGUID>D512885C-336A-4161-B8CB-EE5DC5D09FFE</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["FM_types_T_WMCC"]]></MName>
+		<MainGUID>BB55B35E-4D06-44FD-9206-76B16B6E09EF</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["ui_tabcontrol"]]></MName>
+		<MainGUID>D512885C-336A-4161-B8CB-EE5DC5D09FFE</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_BWM>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>64</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>0.8</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>0.6</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>2</Value>
+		</Length>
+		<Boolean Name="bPartOfLayout">
+			<Description><![CDATA["Called as a Part of Layout"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<String Name="gs_detlevel_3D">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="gs_detlevel_3D_m">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Boolean Name="showHotspots">
+			<Description><![CDATA["Hotspots"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- gs_style: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_style">
+			<Description><![CDATA["Style"]]></Description>
+		</Title>
+		<String Name="cabinetScheme">
+			<Description><![CDATA["Scheme"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Drawers + Cupboard"]]></Value>
+		</String>
+		<Integer Name="iCabinetScheme">
+			<Description><![CDATA["Scheme"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="bCabinetBase">
+			<Description><![CDATA["Base"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="cabinetBaseHeight">
+			<Description><![CDATA["Base Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<String Name="cupboardDoors">
+			<Description><![CDATA["Cupboard Doors"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Double"]]></Value>
+		</String>
+		<Integer Name="iCupboardDoors">
+			<Description><![CDATA["Cupboard Doors"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Boolean Name="gs_bevel">
+			<Description><![CDATA["Edge Bevel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+
+		<!-- gs_cabDimensions: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_cabDimensions">
+			<Description><![CDATA["Dimensions"]]></Description>
+		</Title>
+		<Length Name="extCabinetWidth">
+			<Description><![CDATA["Extension Cabinet Width"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.8</Value>
+		</Length>
+		<Length Name="extCabinetDepth">
+			<Description><![CDATA["Extension Cabinet Depth"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.6</Value>
+		</Length>
+		<Length Name="extCabinetHeight">
+			<Description><![CDATA["Extension Cabinet Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="gs_drawerHeight">
+			<Description><![CDATA["Drawer Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.3</Value>
+		</Length>
+		<Length Name="totalDrawerHeight">
+			<Description><![CDATA["Total Height of Drawers"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1.3</Value>
+		</Length>
+		<Length Name="gs_upperCabHeight">
+			<Description><![CDATA["Upper Cabinet Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.7</Value>
+		</Length>
+		<Integer Name="drawerNum">
+			<Description><![CDATA["Number of Drawers"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+		<Integer Name="shelfNum">
+			<Description><![CDATA["Number of Shelves"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>3</Value>
+		</Integer>
+		<Integer Name="gs_knobVerPos_m">
+			<Description><![CDATA["Knob Vertical Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+
+		<!-- gs_knob_type: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_knob_type">
+			<Description><![CDATA["Knob Type on Drawers"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 8"]]></Value>
+		</String>
+		<Integer Name="gs_knob_type_m">
+			<Description><![CDATA["Knob Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>8</Value>
+		</Integer>
+		<Integer Name="iDrawerKnobPlacing">
+			<Description><![CDATA["Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Length Name="drawerKnobSize">
+			<Description><![CDATA["Knob Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.2</Value>
+		</Length>
+		<Length Name="xDrawerKnobPos">
+			<Description><![CDATA["Knob Position Hor."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<Length Name="zDrawerKnobPos">
+			<Description><![CDATA["Knob Position Vert."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+
+		<!-- gs_knob_type_up: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<String Name="gs_knob_type_up">
+			<Description><![CDATA["Knob Type on Upper Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA["Style 8"]]></Value>
+		</String>
+		<Integer Name="gs_knob_type_m_up">
+			<Description><![CDATA["Knob Style"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>8</Value>
+		</Integer>
+		<String Name="gs_knob_p">
+			<Description><![CDATA["Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Vertical"]]></Value>
+		</String>
+		<Integer Name="gs_knob_p_m">
+			<Description><![CDATA["Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Length Name="knob_size">
+			<Description><![CDATA["Knob Size"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		<Length Name="knob_pl_x">
+			<Description><![CDATA["Knob Position Hor."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.045</Value>
+		</Length>
+		<Length Name="knob_pl_y">
+			<Description><![CDATA["Knob Position Vert."]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.35</Value>
+		</Length>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D Representation"]]></Description>
+		</Title>
+		<Boolean Name="gs_detlevel_2D">
+			<Description><![CDATA["Detailed 2D Symbol"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<PenColor Name="gs_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_fill_pen">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="gs_back_pen">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+
+		<!-- gs_min_space: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_min_space">
+			<Description><![CDATA["Minimal Space"]]></Description>
+		</Title>
+		<Length Name="MSFront">
+			<Description><![CDATA["Minimal Space in Front"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.9</Value>
+		</Length>
+
+		<!-- gs_3D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_3D_representation">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Integer Name="gs_resol">
+			<Description><![CDATA["Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>16</Value>
+		</Integer>
+		<Boolean Name="gs_shadow">
+			<Description><![CDATA["Shadow"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+
+		<!-- gs_material: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_material">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Material Name="toe_mat">
+			<Description><![CDATA["Toe"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="gs_cabinet_mat">
+			<Description><![CDATA["Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>18</Value>
+		</Material>
+		<Material Name="gs_upper_mat">
+			<Description><![CDATA["Cabinet Door"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>18</Value>
+		</Material>
+		<Material Name="gs_knob_mat">
+			<Description><![CDATA["Upper Cabinet Knob"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>40</Value>
+		</Material>
+		<Material Name="gs_drawer_mat">
+			<Description><![CDATA["Drawer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>18</Value>
+		</Material>
+		<Material Name="matShelf">
+			<Description><![CDATA["Shelf"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>18</Value>
+		</Material>
+		<Material Name="matDrawerKnob">
+			<Description><![CDATA["Drawer Knob"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>40</Value>
+		</Material>
+		<String Name="LibraryLangCode">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value><![CDATA["INT"]]></Value>
+		</String>
+		<Integer Name="gs_ui_current_page">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Integer Name="officeCab02_unID">
+			<Description><![CDATA["unID"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Boolean Name="bShowExtCabParams">
+			<Description><![CDATA["Show Cabinet Extension Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bShowCommonCabParams">
+			<Description><![CDATA["Show Common Cab Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="tableTopHeight">
+			<Description><![CDATA["Tabletop Height for Ext Cab Height Limit"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.75</Value>
+		</Length>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+		<RealNum Name="gs_list_cost">
+			<Description><![CDATA["Cost"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_manufacturer">
+			<Description><![CDATA["Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_note">
+			<Description><![CDATA["Note/Remarks"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_location">
+			<Description><![CDATA["Location"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_accessories">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_Type">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Furniture"]]></Value>
+		</String>
+		<Integer Name="iFMType">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>16</Value>
+		</Integer>
+		<String Name="FM_InventoryNumber">
+			<Description><![CDATA["Inventory Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_SerialNumber">
+			<Description><![CDATA["Serial Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductionYear">
+			<Description><![CDATA["Production Year"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="FM_ObjectWeight">
+			<Description><![CDATA["Object Weight"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_ObjectWeightUnit">
+			<Description><![CDATA["Object Weight Unit"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["kg"]]></Value>
+		</String>
+		<String Name="gs_list_custom1">
+			<Description><![CDATA["User Defined 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom2">
+			<Description><![CDATA["User Defined 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom3">
+			<Description><![CDATA["User Defined 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom4">
+			<Description><![CDATA["User Defined 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom5">
+			<Description><![CDATA["User Defined 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+
+		<!-- gs_onorm_Title: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_onorm_Title">
+			<Description><![CDATA["ONORM Listing Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		<String Name="gs_onorm_dimensions">
+			<Description><![CDATA["Width/Depth/Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_manufacturer">
+			<Description><![CDATA["ONORM Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight_value">
+			<Description><![CDATA["Base Height Value"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight">
+			<Description><![CDATA["Onorm Base Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_assemblydate">
+			<Description><![CDATA["Assembly Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext1">
+			<Description><![CDATA["Additional Information 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext2">
+			<Description><![CDATA["Additional Information 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_aks">
+			<Description><![CDATA["AKS Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_product">
+			<Description><![CDATA["Product Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_leistungbuch">
+			<Description><![CDATA["Collection of Specifications ID"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_description">
+			<Description><![CDATA["ONORM Description"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_number">
+			<Description><![CDATA["Onorm Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_id">
+			<Description><![CDATA["ID Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_admission">
+			<Description><![CDATA["Admission Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_modification">
+			<Description><![CDATA["Modification Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_tozonenumber">
+			<Description><![CDATA["To Zone Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+	</Parameters>
+</ParamSection>
+</Symbol>

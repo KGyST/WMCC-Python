@@ -1,0 +1,4088 @@
+<Symbol IsArchivable="no" IsPlaceable="yes" MainGUID="9937A268-E5D3-4B0A-A7AB-6FBBF7B24E61" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>84E50B69-6FB6-4909-AC3D-E01EECBE3328</MainGUID>
+	<MainGUID>3B84C54A-D575-42FF-A34E-8D2225466A3A</MainGUID>
+</Ancestry>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+if iDetlevel3D = DETLEVEL3D_OFF then end
+if not(gs_shadow) then SHADOW OFF
+if iDetlevel3D = DETLEVEL3D_SIMPLE then	gs_resol = 8
+
+! --- 3D Feedback to editing ---
+if GLOB_CONTEXT>20 and GLOB_CONTEXT<40 then
+	iDetlevel3D = DETLEVEL3D_SIMPLE
+endif
+
+! -----------------------------------------------------------------------------
+! 3D Hotspots
+! -----------------------------------------------------------------------------
+addz topHeight - zzyzx
+
+unID = 1
+
+if iDispenserstyle <> 4 then
+	hotspot  A/2, 	0, ZZYZX,	unID : unID=unID+1
+
+	! --- Width ---
+	hotspot  0, 	0, 0,	unID, A, 	1+256, a : unID=unID+1
+	hotspot -1, 	0, 0,	unID, A, 	3 		 : unID=unID+1
+	hotspot  A, 0, 0,	unID, A, 	2, a 	 : unID=unID+1
+
+	! --- HEIGHT ---
+	hotspot 0, 0,     0,	unID, zzyzx, 	1+128 : unID=unID+1
+	hotspot 0, 0,    -1,	unID, zzyzx, 	3 : unID=unID+1
+	hotspot 0, 0, zzyzx,	unID, zzyzx, 	2 : unID=unID+1
+
+	hotspot A, 0,	  0,	unID, zzyzx,	1+128 : unID=unID+1
+	hotspot A, 0,	 -1,	unID, zzyzx,	3 : unID=unID+1
+	hotspot A, 0, zzyzx,	unID, zzyzx,	2 : unID=unID+1
+
+	! --- Depth ---
+	if iDispenserstyle <> 1 then
+		hotspot 0,  0, 0,	unID, b,	1 : unID=unID+1
+		hotspot 0, -1 + 2*(iDispenserstyle = 1 or iDispenserstyle = 4), 0,	unID, b,	3 : unID=unID+1
+		hotspot 0,  b - 2*b*(iDispenserstyle = 1 or iDispenserstyle = 4), 0,	unID, b,	2 : unID=unID+1
+
+		hotspot A,  0, 0,	unID, b,	1 : unID=unID+1
+		hotspot A, -1 + 2*(iDispenserstyle = 1 or iDispenserstyle = 4), 0,	unID, b,	3 : unID=unID+1
+		hotspot A,  b - 2*b*(iDispenserstyle = 1 or iDispenserstyle = 4), 0,	unID, b,	2 : unID=unID+1
+	endif
+
+	hotspot 0,  0, ZZYZX,	unID, b,	1 : unID=unID+1
+	hotspot 0, -1 + 2*(iDispenserstyle = 1 or iDispenserstyle = 4), ZZYZX,	unID, b,	3 : unID=unID+1
+	hotspot 0,  b - 2*b*(iDispenserstyle = 1 or iDispenserstyle = 4), ZZYZX,	unID, b,	2 : unID=unID+1
+
+	hotspot A,  0, ZZYZX,	unID, b,	1 : unID=unID+1
+	hotspot A, -1 + 2*(iDispenserstyle = 1 or iDispenserstyle = 4), ZZYZX,	unID, b,	3 : unID=unID+1
+	hotspot A,  b - 2*b*(iDispenserstyle = 1 or iDispenserstyle = 4), ZZYZX,	unID, b,	2 : unID=unID+1
+else
+	hotspot A/2, 	0, zzyzx,	unID : unID=unID+1
+
+	hotspot 0, 0, 0,	unID : unID=unID+1
+	hotspot A, 0, 0,	unID : unID=unID+1
+	hotspot 0, 0, zzyzx,	unID : unID=unID+1
+	hotspot A, 0, zzyzx,	unID : unID=unID+1
+	hotspot 0, -b, 0,	unID : unID=unID+1
+	hotspot A, -b, 0,	unID : unID=unID+1
+	hotspot 0, -b, zzyzx,	unID : unID=unID+1
+	hotspot A, -b, zzyzx,	unID : unID=unID+1
+endif
+
+! -----------------------------------------------------------------------------
+! Styles
+! -----------------------------------------------------------------------------
+
+pen gs_cont_pen
+resol gs_resol
+
+addx A/2
+gosub iDispenserstyle
+del 2
+end
+
+! =============================================================================
+! SUBRUTINES
+!
+! =============================================================================
+
+! -----------------------------------------------------------------------------
+! Wall Mounted  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+1:
+	addx -a/2
+	mul a/0.2, b/0.163328, zzyzx/0.16
+	addz 0.08
+	addy -0.08633
+	rotz 90
+	rotx 90
+	addz 0.01
+
+	material TissueMat
+	resol 2*gs_resol
+	prism_       7,      0.18,
+			0.07,     0.0,      79,
+			0.0,     0.0,    979,
+			0.0,     180.0,   4079,
+		   -0.07,     0.0,      79,
+			0.0,     0.0,    979,
+			0.0,     180.0,   4079,
+			0.07,     0.0,     -1
+	del 1
+
+	material matSteel
+	prism_      5,      0.2,
+			0.08433,     0.08,      15,
+			0.08633,     0.08,      15,
+			0.08633,    -0.08,      15,
+			0.08433,    -0.08,      15,
+			0.08433,     0.08,     -1
+
+	resol 2.5*gs_resol
+	prism_     12,      0.2,
+			0.08433,     0.01,      15,
+			0.076348,     0.01,      79,
+		   -0.0,     0.0,    900,
+			0.0,     202.5379,   4001,
+		   -0.066684,    -0.0385,      15,
+		   -0.064952,    -0.0375,      79,
+			0.0,    -0.0,    900,
+			0.0,    -202.3377,   4001,
+			0.07433,     0.01,      15,
+			0.07433,    -0.01,      15,
+			0.08433,    -0.01,      15,
+			0.08433,     0.01,     -1
+
+	addz 0.005
+	resol gs_resol
+	prism_      7,      0.005,
+			0.022913,    -0.01,      15,
+			0.08433,    -0.01,      15,
+			0.08433,     0.01,      15,
+			0.022913,     0.01,      79,
+		   -0.0,    -0.0,    900,
+			0.0,     312.8436,   4001,
+			0.022913,    -0.01,     -1
+
+	addz 0.185
+	prism_      7,      0.005,
+			0.022913,    -0.01,      15,
+			0.08433,    -0.01,      15,
+			0.08433,     0.01,      15,
+			0.022913,     0.01,      79,
+		   -0.0,    -0.0,    900,
+			0.0,     312.8436,   4001,
+			0.022913,    -0.01,     -1
+
+	del 8
+return
+
+
+! -----------------------------------------------------------------------------
+! Built-in 1  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+2:
+
+	if GLOB_CONTEXT = 43 OR GLOB_CONTEXT = 44 OR GLOB_CONTEXT = 46 then
+		! --- if the user want to substract the cabinet from the wall ---
+		material  5
+		add -a/2, 0, 0
+		prism_ 5,zzyzx,
+			0, 0, 15,
+			a, 0, 15,
+			a, b, 15,
+			0, b, 15,
+			0, 0, -1
+		del 1
+	endif
+
+	add 0, b, 0
+	rotx 90
+
+	material  CabinetMat
+	! --- Box / Top, Bottom, Lateral Parts ---
+	prism_ 10, B,
+		-A*0.5,	0,			15,
+		A*0.5,	0,			15,
+		A*0.5,	zzyzx,	15,
+		-A*0.5,	zzyzx,	15,
+		-A*0.5,	0,			-1,
+		-A*0.5+BoxThk,	BoxThk,			10,
+		A*0.5-BoxThk,	BoxThk,			10,
+		A*0.5-BoxThk,	zzyzx-(BoxThk),	10,
+		-A*0.5+BoxThk,	zzyzx-(BoxThk),	10,
+		-A*0.5+BoxThk,	BoxThk,			-1
+
+	! --- Box /Rear Part ---
+	prism_ 5, BoxThk,
+		-A*0.5+BoxThk,		BoxThk,			12,
+		A*0.5-(BoxThk),		BoxThk,			12,
+		A*0.5-(BoxThk),		zzyzx-(BoxThk),	12,
+		-A*0.5+BoxThk,		zzyzx-(BoxThk),	12,
+		-A*0.5+BoxThk,		BoxThk,			12
+
+	! --- Frame ---
+
+	material FlangeMat
+	addz B
+	prism_ 10,FrameThk,
+		-A*0.5-FrameWidth,			-FrameWidth,				15,
+		A*0.5+FrameWidth,			-FrameWidth,				15,
+		A*0.5+FrameWidth,			zzyzx+FrameWidth,			15,
+		-A*0.5-FrameWidth,			zzyzx+FrameWidth,			15,
+		-A*0.5-FrameWidth,			-FrameWidth,				-1,
+		-A*0.5+BoxThk,	BoxThk,			14,
+		A*0.5-BoxThk,	BoxThk,			14,
+		A*0.5-BoxThk,	zzyzx-BoxThk,	14,
+		-A*0.5+BoxThk,	zzyzx-BoxThk,	14,
+		-A*0.5+BoxThk,	BoxThk,			-1
+
+
+	del 3
+
+	GrabRad = 0.005
+
+	addy -RollRadius*0.25 - 0.01
+	addz ZZYZX/2
+	addx -a/2 + BoxThk + 0.01
+	roty 90
+
+	resol 3*gs_resol
+	material TissueMat
+	cylind A-(BoxThk)*2-0.02, RollRadius
+	del 4
+
+	if iDetlevel3D = DETLEVEL3D_DETAILED  then
+
+		addy -RollRadius*0.25-0.01
+		addz ZZYZX/2
+		addx -a/2 -(FrameWidth)*2/3
+		roty 90
+		resol gs_resol
+		material FlangeMat
+		cylind A+(FrameWidth)*2/3*2, GrabRad
+		del 4
+
+		for k=1 to 2
+			addx -a/2 - FrameWidth
+			addy -RollRadius*0.25-0.01-GrabRad*1-FrameThk
+			addz ZZYZX/2-GrabRad*3/2
+			rotz 90
+			rotx 90
+			material FlangeMat
+			prism_ 5, (FrameWidth)/3,
+				0,		0,			15,
+				RollRadius*0.25+0.01+GrabRad*1,		0,			15,
+				RollRadius*0.25+0.01+GrabRad*1,		GrabRad*3,	15,
+				0,		GrabRad*3,	15,
+				0,		0,			15
+			del 5
+			addx A + FrameWidth + FrameWidth*2/3
+		next k
+		del 2
+
+		addz ZZYZX/2
+		addy -RollRadius*0.25-0.01
+		addx -a/2 + BoxThk + 0.01
+		rotx 90
+		rotz 90
+		rotx 90
+
+		resol 3*gs_resol
+		material HoodMat
+		prism_ 11, A - (BoxThk)*2 - 0.02,
+			RollRadius+0.004,	0,		79,
+			0,					0,		900,
+			RollRadius+0.004,	90,		4000,
+			0,		RollRadius+0.004,	79,
+			0,		RollRadius+0.002,	79,
+			0,					0,		900,
+			RollRadius+0.002,	-90,		4000,
+			RollRadius+0.002,	0,		79,
+			RollRadius+0.002,	-B+BoxThk-RollRadius*0.25-0.01,		79,
+			RollRadius+0.004,	-B+BoxThk-RollRadius*0.25-0.01,		79,
+			RollRadius+0.004,	0,		-1
+
+		del 6
+	endif
+
+return
+
+! -----------------------------------------------------------------------------
+! Built-in 2  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+3:
+
+	if GLOB_CONTEXT = 43 OR GLOB_CONTEXT = 44 OR GLOB_CONTEXT = 46 then
+		! --- if the user want to substract the cabinet from the wall ---
+		material  5
+		add -a/2, 0, 0
+			prism_ 5,zzyzx,
+				0, 0, 15,
+				a, 0, 15,
+				a, b, 15,
+				0, b, 15,
+				0, 0, -1
+		del 1
+	endif
+
+	add 0, b, 0
+	rotx 90
+
+	material  CabinetMat
+	! --- Box / Top, Bottom, Lateral Parts ---
+	prism_ 10, B,
+		-A*0.5,	0,			15,
+		A*0.5,	0,			15,
+		A*0.5,	zzyzx,	15,
+		-A*0.5,	zzyzx,	15,
+		-A*0.5,	0,			-1,
+		-A*0.5+BoxThk,	BoxThk,			14,
+		A*0.5-BoxThk,	BoxThk,			14,
+		A*0.5-BoxThk,	zzyzx-(BoxThk),	14,
+		-A*0.5+BoxThk,	zzyzx-(BoxThk),	14,
+		-A*0.5+BoxThk,	BoxThk,			-1
+
+	! ---  Box /Rear Part ---
+	prism_ 5, BoxThk,
+		-A*0.5+BoxThk,		BoxThk,			12,
+		A*0.5-(BoxThk),		BoxThk,			12,
+		A*0.5-(BoxThk),		zzyzx-(BoxThk),	12,
+		-A*0.5+BoxThk,		zzyzx-(BoxThk),	12,
+		-A*0.5+BoxThk,		BoxThk,			12
+
+	! ---  Frame ---
+
+	material FlangeMat
+	addz B
+
+	prism_ 10,FrameThk,
+		-A*0.5-FrameWidth,			-FrameWidth,				15,
+		A*0.5+FrameWidth,			-FrameWidth,				15,
+		A*0.5+FrameWidth,			zzyzx+FrameWidth,			15,
+		-A*0.5-FrameWidth,			zzyzx+FrameWidth,			15,
+		-A*0.5-FrameWidth,			-FrameWidth,				-1,
+		-A*0.5+BoxThk/4,	BoxThk/4,			15,
+		A*0.5-BoxThk/4,	BoxThk/4,			15,
+		A*0.5-BoxThk/4,	zzyzx-BoxThk/4,	15,
+		-A*0.5+BoxThk/4,	zzyzx-BoxThk/4,	15,
+		-A*0.5+BoxThk/4,	BoxThk/4,			-1
+
+	! ---  Door ---
+	material DoorMat
+	prism_ 9, FrameThk,
+		-A*0.5+BoxThk*3/4,	BoxThk*3/4,			15,
+		-A*0.5+BoxThk*3/4+0.01,	BoxThk*3/4,			15,
+		-A*0.5+BoxThk*3/4+0.01,	BoxThk*3/4+2*(RollRadius+0.005),			15,
+		A*0.5-(BoxThk*3/4)-0.01,	BoxThk*3/4+2*(RollRadius+0.005),			15,
+		A*0.5-(BoxThk*3/4)-0.01,	BoxThk*3/4,			15,
+		A*0.5-(BoxThk*3/4),	BoxThk*3/4,			15,
+		A*0.5-(BoxThk*3/4),	zzyzx-(BoxThk*3/4),	15,
+		-A*0.5+BoxThk*3/4,	zzyzx-(BoxThk*3/4),	15,
+		-A*0.5+BoxThk*3/4,	BoxThk*3/4,	-1
+
+	if iDetlevel3D = DETLEVEL3D_DETAILED then
+		!!! *** KEY
+		material AccMat
+		addz FrameThk
+		addy ZZYZX-(BoxThk*1.5+0.008*2)
+		cylind 0.002, 0.008
+		del 2
+	endif
+
+	del 3
+
+	! ---  Toilet Tissue ---
+
+	GrabRad = 0.005
+
+	addy 0.01
+	addz BoxThk + RollRadius + 0.005
+	addx -a/2 + BoxThk + 0.01
+	roty 90
+	resol 3*gs_resol
+	material TissueMat
+	cylind A-(BoxThk)*2-0.02, RollRadius
+	del 4
+
+	! ---  Spindle ---
+
+	if iDetlevel3D = DETLEVEL3D_DETAILED then
+		addy 0.01
+		addz BoxThk + RollRadius + 0.005
+		addx -a/2 + BoxThk
+		roty 90
+		resol gs_resol
+		material TissueMat
+		cylind A-(BoxThk)*2, GrabRad
+		del 4
+	endif
+
+return
+
+! -----------------------------------------------------------------------------
+! Commercial Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+
+4:
+	rotx 90
+
+	if iDetlevel3D = DETLEVEL3D_DETAILED then resol 2*gs_resol
+
+	! --- Cabinet ---
+	material CabinetMat
+	cutform 9, 1, 2+16,
+		0, 0, -1, -frontInsetDepth,
+		-0.1225,         0.01+frontInsetDepth,      1+2+4+8+16+64,
+		0.1225,         0.01+frontInsetDepth,      1+2+4+8+16+64,
+		0.1225,         0.15,    900,
+		0,          180,   4001+2+4+8+16+64,
+		0.1225,         0.29-frontInsetDepth,      1+2+4+8+16+64,
+		-0.1225,         0.29-frontInsetDepth,      1+2+4+8+16+64,
+		-0.1225,         0.15,    900,
+		0,          180,   4001+2+4+8+16+64,
+		-0.1225,         0.01+frontInsetDepth,      -1
+
+	material CabinetMat
+	prism_ 9, cabDepth,
+		-0.1225,         0.01,      79,
+		0.1225,         0.01,      79,
+		0.1225,         0.15,    900,
+		0,          180,   4079,
+		0.1225,         0.29,      79,
+		-0.1225,         0.29,      79,
+		-0.1225,         0.15,    900,
+		0,          180,   4079,
+		-0.1225,         0.01,      -1
+
+	cutend
+
+
+
+	! --- Door Panel ---
+
+	addz b-frontInsetDepth
+	material matDoorPanel
+	poly_ 50,
+
+		-0.1225,         0.23,      79,
+		-0.1225,         0.15,    900,
+		0,          180,   4079,
+		-0.1225,         0.07,      79,
+		0.1225,         0.07,      79,
+		0.1225,         0.15,    900,
+		0,          180,   4079,
+		0.1225,         0.23,      79,
+		-0.1225,         0.23,     -1,
+
+		0.100010619661, 0.1107361611466,      79,
+		0.1075281606273,        0.108,    900,
+		0,          110,   4079,
+		0.1075281606273,          0.1,      79,
+		0.1225,          0.1,      79,
+		0.1225,         0.15,    900,
+		0, 159.5963082752,   4079,
+		0.1399316219128, 0.1968629764045,      79,
+		0.1371425624068, 0.1893649001798,    900,
+		0, 90.4036917248,   4079,
+		0.1296250214405, 0.1921010613264,      79,
+		0.100010619661, 0.1107361611466,     -1,
+
+		-0.0705013162677,          0.2,      79,
+		-0.0705013162677,        0.192,    900,
+		0,           70,   4079,
+		-0.07801885723399, 0.1947361611466,      79,
+		-0.1085923569124, 0.1107361611466,      79,
+		-0.1010748159461,        0.108,    900,
+		0,          110,   4079,
+		-0.1010748159461,          0.1,      79,
+		0.0705013162677,          0.1,      79,
+		0.0705013162677,        0.108,    900,
+		0,           70,   4079,
+		0.07801885723399, 0.1052638388534,      79,
+		0.1085923569124, 0.1892638388534,      79,
+		0.1010748159461,        0.192,    900,
+		0,          110,   4079,
+		0.1010748159461,          0.2,      79,
+		-0.0705013162677,          0.2,     -1,
+
+		-0.1399316219128, 0.1031370235955,      79,
+		-0.1371425624068, 0.1106350998202,    900,
+		0, 90.4036917248,   4079,
+		-0.1296250214405, 0.1078989386736,      79,
+		-0.100010619661, 0.1892638388534,      79,
+		-0.1075281606273,        0.192,    900,
+		0,          110,   4079,
+		-0.1075281606273,          0.2,      79,
+		-0.1225,          0.2,      79,
+		-0.1225,         0.15,    900,
+		0, 159.5963082752,   4079,
+		-0.1399316219128, 0.1031370235955,     -1
+
+	del 1
+
+
+
+	! --- Door Frame ---
+	material matDoorFrame
+	cutpolya 9, 0, 0,
+			0.06974357685338,        0.145,      79,
+			0.06974357685338,         0.15,    900,
+					   0,          180,   4079,
+			0.06974357685338,        0.155,      79,
+			-0.06974357685338,        0.155,      79,
+			-0.06974357685338,         0.15,    900,
+					   0,          180,   4079,
+			-0.06974357685338,        0.145,      79,
+			0.06974357685338,        0.145,      -1
+
+	addz cabDepth
+
+	material matDoorFrame
+	cutform 9, 1, 2+16,
+		0, 0, 1, doorFrameDepth-frontInsetDepth,
+		-0.1225,         0.01+frontInsetDepth,      1+2+4+8+16+64,
+		0.1225,         0.01+frontInsetDepth,      1+2+4+8+16+64,
+		0.1225,         0.15,    900,
+		0,          180,   4001+2+4+8+16+64,
+		0.1225,         0.29-frontInsetDepth,      1+2+4+8+16+64,
+		-0.1225,         0.29-frontInsetDepth,      1+2+4+8+16+64,
+		-0.1225,         0.15,    900,
+		0,          180,   4001+2+4+8+16+64,
+		-0.1225,         0.01+frontInsetDepth,      -1
+
+	material matDoorFrame
+	prism_ 18, doorFrameDepth,
+		-0.1225,         0.01,      79,
+		0.1225,         0.01,      79,
+		0.1225,         0.15,    900,
+		0,          180,   4079,
+		0.1225,         0.29,      79,
+		-0.1225,         0.29,      79,
+		-0.1225,         0.15,    900,
+		0,          180,   4079,
+		-0.1225,         0.01,      -1,
+
+		-0.1225,         0.23,      79,
+		-0.1225,         0.15,    900,
+		0,          180,   4079,
+		-0.1225,         0.07,      79,
+		0.1225,         0.07,      79,
+		0.1225,         0.15,    900,
+		0,          180,   4079,
+		0.1225,         0.23,      79,
+		-0.1225,         0.23,     -1
+
+	prism_ 12, doorFrameDepth,
+		0.100010619661, 0.1107361611466,      79,
+		0.1075281606273,        0.108,    900,
+		0,          110,   4079,
+		0.1075281606273,          0.1,      79,
+		0.1225,          0.1,      79,
+		0.1225,         0.15,    900,
+		0, 159.5963082752,   4079,
+		0.1399316219128, 0.1968629764045,      79,
+		0.1371425624068, 0.1893649001798,    900,
+		0, 90.4036917248,   4079,
+		0.1296250214405, 0.1921010613264,      79,
+		0.100010619661, 0.1107361611466,     -1
+
+	prism_ 17, doorFrameDepth,
+		-0.0705013162677,          0.2,      79,
+		-0.0705013162677,        0.192,    900,
+		0,           70,   4079,
+		-0.07801885723399, 0.1947361611466,      79,
+		-0.1085923569124, 0.1107361611466,      79,
+		-0.1010748159461,        0.108,    900,
+		0,          110,   4079,
+		-0.1010748159461,          0.1,      79,
+		0.0705013162677,          0.1,      79,
+		0.0705013162677,        0.108,    900,
+		0,           70,   4079,
+		0.07801885723399, 0.1052638388534,      79,
+		0.1085923569124, 0.1892638388534,      79,
+		0.1010748159461,        0.192,    900,
+		0,          110,   4079,
+		0.1010748159461,          0.2,      79,
+		-0.0705013162677,          0.2,     -1
+
+	prism_ 12, doorFrameDepth,
+		-0.1399316219128, 0.1031370235955,      79,
+		-0.1371425624068, 0.1106350998202,    900,
+		0, 90.4036917248,   4079,
+		-0.1296250214405, 0.1078989386736,      79,
+		-0.100010619661, 0.1892638388534,      79,
+		-0.1075281606273,        0.192,    900,
+		0,          110,   4079,
+		-0.1075281606273,          0.2,      79,
+		-0.1225,          0.2,      1+2+4+8+16+64,
+		-0.1225,         0.15,    900,
+		0, 159.5963082752,   4079,
+		-0.1399316219128, 0.1031370235955,     -1
+
+	cutend
+	cutend
+
+	del 1
+
+
+
+	! --- Bottom ---
+	material CabinetMat
+	cutpolya 9, 0, 0,
+		-0.1225,         0.01,      79,
+		0.1225,         0.01,      79,
+		0.1225,         0.15,    900,
+		0,          180,   4079,
+		0.1225,         0.29,      79,
+		-0.1225,         0.29,      79,
+		-0.1225,         0.15,    900,
+		0,          180,   4079,
+		-0.1225,         0.01,      -1
+
+	material CabinetMat
+	prism_ 5, bottomDepth,
+		0.2, 0,      15,
+		0.2, 0.1,      15,
+		-0.2, 0.1,      15,
+		-0.2, 0,      15,
+		0.2, 0,      -1
+	cutend
+
+
+	if iDetlevel3D = DETLEVEL3D_DETAILED then
+
+		resol 2*gs_resol
+		! --- Paper Inside ---
+		addz b/2-paperDepth/2
+		material TissueMat
+		prism_ 2, paperDepth,
+			-0.1225, 0.15, 979,
+			paperDia/2, 360, 4079
+		prism_ 2, paperDepth,
+			0.1225, 0.15, 979,
+			paperDia/2, 360, 4079
+		del 1
+
+		! --- Lock and Key ---
+		add 0, zzyzx, b/2
+		rotx -90
+		material AccMat
+		prism_ 2, lockHeight,
+			0, 0, 979,
+			lockDia/2, 360, 4079
+		del 2
+
+		! --- Lever and Sliding Access Panel ---
+		add -0.03, 0, b/2
+		roty -90
+		material AccMat
+		prism_ 5, 0.01,
+			0, 0, 15,
+			0.03, 0, 15,
+			0.02, -0.02, 15,
+			0, -0.02, 15,
+			0, 0, -1
+		del 2
+
+		! --- Paper ---
+		add -0.12, 0, b/2-paperDepth/2
+		roty -90
+		rotx -10
+		material TissueMat
+		poly 4,
+			0, 0,
+			paperDepth, 0,
+			paperDepth, -0.05,
+			0, -0.05
+		del 3
+
+	endif
+
+	del 1
+return
+
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+pen gs_cont_pen
+fill gs_fill_type
+
+! -----------------------------------------------------------------------------
+! 2D Hotspots
+! -----------------------------------------------------------------------------
+
+unID=1
+
+hotspot2    A/2,    0, unID : unID = unID + 1
+
+if iDispenserstyle = 1 then
+	hotspot2    A/2,    -B/2, unID : unID = unID + 1
+
+	hotspot2  0, 0, unID, A, 1+256 :	unID=unID+1
+	hotspot2  A, 0, unID, A, 2 : unID=unID+1
+	hotspot2  -A, 0, unID, A, 3 : unID=unID+1
+
+	hotspot2  0, -B, unID, A, 1+256 :	unID=unID+1
+	hotspot2  A, -B, unID, A, 2 : unID=unID+1
+	hotspot2  -A, -B, unID, A, 3 : unID=unID+1
+
+
+	hotspot2  0, 0, unID, B, 1+256 :	unID=unID+1
+	hotspot2  0, -B, unID, B, 2 : unID=unID+1
+	hotspot2  0, B, unID, B, 3 : unID=unID+1
+
+	hotspot2  A, 0, unID, B, 1+256 :	unID=unID+1
+	hotspot2  A, -B, unID, B, 2 : unID=unID+1
+	hotspot2  A, B, unID, B, 3 : unID=unID+1
+endif
+
+if iDispenserstyle = 2 then
+	if iSymbolType = SYMBTYPE_DETAILED then
+		hotspot2  0 - FrameWidth, 0, unID :	unID=unID+1
+		hotspot2  A + FrameWidth, 0, unID :	unID=unID+1
+	endif
+
+	hotspot2  0 + BoxThk + 0.01,  -RollRadius - RollRadius*0.25 - 0.01 - 0.004, unID :	unID=unID+1
+	hotspot2  A - BoxThk - 0.01 , -RollRadius - RollRadius*0.25 - 0.01 - 0.004, unID :	unID=unID+1
+
+	hotspot2  0, 0, unID, A, 1+256 :	unID=unID+1
+	hotspot2  -1, 0, unID, A, 3+128 : unID=unID+1
+	hotspot2  A, 0, unID, A, 2 : unID=unID+1
+
+	hotspot2  0, 0, unID, B, 1+128 :	unID=unID+1
+	hotspot2  0, -1, unID, B, 3+128 : unID=unID+1
+	hotspot2  0, B, unID, B, 2 : unID=unID+1
+
+	hotspot2  A, 0, unID, B, 1+128 :	unID=unID+1
+	hotspot2  A, -1, unID, B, 3+128 : unID=unID+1
+	hotspot2  A, B, unID, B, 2 : unID=unID+1
+endif
+
+if iDispenserstyle = 3 then
+	if iSymbolType = SYMBTYPE_DETAILED then
+		hotspot2  0 - FrameWidth, 0, unID :	unID=unID+1
+		hotspot2  A + FrameWidth, 0, unID :	unID=unID+1
+	endif
+
+	hotspot2  0 + BoxThk + 0.01, -RollRadius + 0.01, unID :	unID=unID+1
+	hotspot2  A - BoxThk - 0.01, -RollRadius + 0.01, unID :	unID=unID+1
+
+	hotspot2  A/2 , 0, unID :	unID=unID+1
+
+	hotspot2   0, 0, unID, A, 1+256 :	unID=unID+1
+	hotspot2  -1, 0, unID, A, 3+128 : unID=unID+1
+	hotspot2   A, 0, unID, A, 2 : unID=unID+1
+
+	hotspot2  0,  0, unID, B, 1+128 :	unID=unID+1
+	hotspot2  0, -1, unID, B, 3+128 : unID=unID+1
+	hotspot2  0,  B, unID, B, 2 : unID=unID+1
+
+	hotspot2  A,  0, unID, B, 1+128 :	unID=unID+1
+	hotspot2  A, -1, unID, B, 3+128 : unID=unID+1
+	hotspot2  A,  B, unID, B, 2 : unID=unID+1
+endif
+
+if iDispenserstyle = 4 then
+	hotspot2   0,    0, unID : unID = unID + 1
+	hotspot2   A,    0, unID : unID = unID + 1
+	hotspot2   A,    -B, unID : unID = unID + 1
+	hotspot2   0,    -B, unID : unID = unID + 1
+endif
+
+! -----------------------------------------------------------------------------
+! Styles
+! -----------------------------------------------------------------------------
+add2 A/2, 0
+gosub iDispenserstyle
+del 1
+end
+
+! =============================================================================
+! SUBRUTINES
+!
+! =============================================================================
+
+! -----------------------------------------------------------------------------
+! Wall Mounted  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+1:
+	add2 -a/2, 0
+	line2    0,   -0.002,      a,   -0.002
+	line2    0,    -0.01,      a,    -0.01
+
+	poly2_b     13,     7, gs_fill_pen, gs_back_pen,
+					 0, -b,      1,
+					 a, -b,      1,
+					 a,    -0.01,      1,
+				   a-0.005,    -0.01,      1,
+				   a-0.005,       -0.002,      1,
+					 a,       -0.002,      1,
+					 a,            0,      1,
+					   0,            0,      1,
+					   0,       -0.002,      1,
+				   0.005,       -0.002,      1,
+				   0.005,    -0.01,      1,
+					   0,    -0.01,      1,
+					   0, -b,     -1
+	del 1
+return
+
+! -----------------------------------------------------------------------------
+! Built-in 1  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+2:
+	add2 0, b
+	line_type CabinetLineType
+	add2 0,0
+	poly2_b 5,3, gs_fill_pen, gs_back_pen,
+			-A*0.5,		0,		3,
+			A*0.5,		0,		3,
+			A*0.5,	-B,		0,
+			-A*0.5,	-B,		3,
+			-A*0.5,		0,		3
+
+	if iSymbolType = SYMBTYPE_SIMPLE then line2 -A*0.5,	-B, A*0.5,	-B
+	del 1
+
+	add2 A*0.5,		-B
+
+	if iSymbolType = SYMBTYPE_DETAILED then
+		line_type  1
+		poly2_b 5,3, gs_fill_pen, gs_back_pen,
+				-A-FrameWidth,		0,			3,
+				FrameWidth,		0,			3,
+				FrameWidth,		-FrameThk,		3,
+				-A-FrameWidth,		-FrameThk,		3,
+			-A-FrameWidth,		0,			3
+	endif
+	del 2
+
+	! --- Toilet Tissue ---
+	if iSymbolType = SYMBTYPE_DETAILED then
+		add2 -a/2 + BoxThk + 0.01, -FrameThk
+		poly2_b 5,3, gs_fill_pen, gs_back_pen,
+				A-(BoxThk)*2-0.02,		0,			1,
+				0,		0,			1,
+				0,		-RollRadius-RollRadius*0.25-0.01+FrameThk-0.004,		1,
+				A-(BoxThk)*2-0.02,		-RollRadius-RollRadius*0.25-0.01+FrameThk-0.004,		1,
+				A-(BoxThk)*2-0.02,		0,			3
+		del 1
+	else
+		line_type  1
+		add2 -a/2 + BoxThk + 0.01, 0
+		poly2_b 5,3, gs_fill_pen, gs_back_pen,
+				A-(BoxThk)*2-0.02,		0,			1,
+				0,		0,			1,
+				0,		-RollRadius-RollRadius*0.25-0.01-0.004,		1,
+				A-(BoxThk)*2-0.02,		-RollRadius-RollRadius*0.25-0.01-0.004,		1,
+				A-(BoxThk)*2-0.02,		0,			3
+		del 1
+	endif
+
+return
+
+! -----------------------------------------------------------------------------
+! Built-in 2  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+3:
+
+	! --- Cabinet ---
+	add2 0, B
+	line_type CabinetLineType
+	add2 0,0
+	poly2_b 5,3, gs_fill_pen, gs_back_pen,
+			-A*0.5,		0,		3,
+			A*0.5,		0,		3,
+			A*0.5,	-B,		0,
+			-A*0.5,	-B,		3,
+			-A*0.5,		0,		3
+
+	if iSymbolType = SYMBTYPE_SIMPLE then line2 -A*0.5,	-B, A*0.5,	-B
+	del 1
+
+	add2 A*0.5,		-B
+	if iSymbolType = SYMBTYPE_DETAILED then
+		line_type  1
+		poly2_b 5,3, gs_fill_pen, gs_back_pen,
+				-A-FrameWidth,		0,			3,
+				FrameWidth,		0,			3,
+				FrameWidth,		-FrameThk,		3,
+				-A-FrameWidth,		-FrameThk,		3,
+				-A-FrameWidth,		0,			3
+	endif
+	del 2
+
+	! --- Toilet Tissue ---
+	if iSymbolType = SYMBTYPE_DETAILED then
+		add2 -a/2 + BoxThk + 0.01, -FrameThk
+		poly2_b 5,3, gs_fill_pen, gs_back_pen,
+				A-(BoxThk)*2-0.02,		0,			1,
+				0,		0,			1,
+				0,		-RollRadius+FrameThk+0.01,		1,
+				A-(BoxThk)*2-0.02,		-RollRadius+FrameThk+0.01,		1,
+				A-(BoxThk)*2-0.02,		0,			3
+		del 1
+	else
+		line_type  1
+		add2 -a/2 + BoxThk + 0.01, 0
+		poly2_b 5,3, gs_fill_pen, gs_back_pen,
+				A-(BoxThk)*2-0.02,		0,			1,
+				0,		0,			1,
+				0,		-RollRadius+0.01,		1,
+				A-(BoxThk)*2-0.02,		-RollRadius+0.01,		1,
+				A-(BoxThk)*2-0.02,		0,			3
+		del 1
+	endif
+
+return
+
+! -----------------------------------------------------------------------------
+! Commercial  Toilet Paper dispenser
+! -----------------------------------------------------------------------------
+
+4:
+	circle2 0, -b/2, lockDia/2
+	poly2_b       4,      1+2+4,      gs_fill_pen,     gs_back_pen,
+			-a/2,  0, 1,
+			 a/2,  0, 1,
+			 a/2, -b, 1,
+			-a/2, -b, 1
+return
+
+
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+! const values for parameter: iDetlevel3D
+DETLEVEL3D_DETAILED = 1
+DETLEVEL3D_SIMPLE   = 2
+DETLEVEL3D_OFF      = 3
+dim typRes[3]
+	typRes[1] = `Detailed`
+	typRes[2] = `Simple`
+	typRes[3] = `Off`
+
+
+eps = 0.0001
+
+! const values for parameter: iDispenserstyle
+DISPENSERSTYLE_WALLMOUNTED	= 1
+DISPENSERSTYLE_BUILTIN1		= 2
+DISPENSERSTYLE_BUILTIN2		= 3
+DISPENSERSTYLE_COMMERCIAL	= 4
+dim stStyles[4]
+	stStyles[1] = `Wall Mounted`
+	stStyles[2] = `Built-in 1`
+	stStyles[3] = `Built-in 2`
+	stStyles[4] = `Commercial`
+
+! const values for parameter: iSymbolType
+SYMBTYPE_DETAILED	= 1
+SYMBTYPE_SIMPLE		= 2
+dim stSymbTypes[2]
+	stSymbTypes[1] = `Detailed`
+	stSymbTypes[2] = `Simple`
+
+! -----------------------------------------------------------------------------
+! Geometry parameters for Built-in 1 and Built-in 2
+! -----------------------------------------------------------------------------
+
+FrameWidth = 0.02
+FrameThk = 0.005
+BoxThk = 0.004
+
+! -----------------------------------------------------------------------------
+! Geometry parameters for Commercial
+! -----------------------------------------------------------------------------
+
+cabDepth		= 0.11			!Cabinet Depth
+doorFrameDepth	= b - cabDepth	!Door Frame Depth
+frontInsetDepth	= 0.003			!Front Inset Thickness
+bottomDepth		= b - 0.01		!Bottom Cabinet Depth
+paperDia		= 0.22			!Paper Diameter
+paperDepth		= 0.11			!Paper Depth
+lockDia			= 0.02			!Lock Diameter
+lockHeight		= 0.005			!Lock Height
+
+
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+ui_dialog `Toilet Paper Dispenser Style`
+
+ui_infield{3} "iDispenserstyle", 0, 5, 444, 260,
+	1, 1,
+	4, 1,
+	132, 128, 85, 85,
+	1, stStyles[1], 1,
+	2, stStyles[2], 2,
+	3, stStyles[3], 3,
+	4, stStyles[4], 4
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+! --- Bottom, Top Level Calculation  ---
+			ac_toplevel		= topHeight
+			ac_bottomlevel 	= ac_toplevel - ZZYZX
+parameters	ac_toplevel		= ac_toplevel,
+			ac_bottomlevel 	= ac_bottomlevel
+
+call "FM_types_BA_WMCC" parameters all
+
+! -----------------------------------------------------------------------------
+! 3D detlevel
+! -----------------------------------------------------------------------------
+
+values{2} "iDetlevel3D"	DETLEVEL3D_DETAILED,	typRes[1],
+						DETLEVEL3D_SIMPLE,		typRes[2],
+						DETLEVEL3D_OFF,			typRes[3]
+
+values "gs_resol" range [4,)
+
+if iDetlevel3D = DETLEVEL3D_SIMPLE then
+	hideparameter "gs_resol"
+	lock "gs_resol"
+endif
+if iDetlevel3D = DETLEVEL3D_OFF then
+	hideparameter "gs_resol", "gs_shadow"
+	lock "gs_resol", "gs_shadow"
+endif
+
+! -----------------------------------------------------------------------------
+! Styles
+! -----------------------------------------------------------------------------
+values{2} "iDispenserstyle"	DISPENSERSTYLE_WALLMOUNTED,	stStyles[1],
+							DISPENSERSTYLE_BUILTIN1,	stStyles[2], 
+							DISPENSERSTYLE_BUILTIN2,	stStyles[3],
+							DISPENSERSTYLE_COMMERCIAL,	stStyles[4]
+
+! -----------------------------------------------------------------------------
+! Default Sizes
+! -----------------------------------------------------------------------------
+
+if GLOB_MODPAR_NAME = "iDispenserstyle" then
+	a = defaultSizes[iDispenserstyle][1]
+	b = defaultSizes[iDispenserstyle][2]
+	zzyzx = defaultSizes[iDispenserstyle][3]
+	parameters a = a, b = b, zzyzx = zzyzx
+endif
+if GLOB_MODPAR_NAME = "A" or GLOB_MODPAR_NAME = "iDispenserstyle" then
+	halfA = a/2
+	parameters halfA = halfA
+else
+	if GLOB_MODPAR_NAME = "halfA" or GLOB_MODPAR_NAME = "" then
+		A = 2*halfA
+		parameters A = A
+	endif
+endif
+
+! -----------------------------------------------------------------------------
+! Symbol Types
+! -----------------------------------------------------------------------------
+values{2} "iSymbolType"	SYMBTYPE_DETAILED,		stSymbTypes[1],
+						SYMBTYPE_SIMPLE,		stSymbTypes[2]
+
+! -----------------------------------------------------------------------------
+! Limitations
+! -----------------------------------------------------------------------------
+
+if iDispenserstyle = 1 then
+	values "a" range [0.1,)
+	values "b" range [0.1,)
+	values "zzyzx" range [0.1,)
+	hideparameter "RollRadius", "iSymbolType", "CabinetLineType", "CabinetMat", \
+				  "DoorMat", "FlangeMat", "HoodMat", "AccMat", "matDoorFrame", "matDoorPanel", "FlangeBracketMat"
+endif
+if iDispenserstyle = 2 then
+	values "A" range [(BoxThk)*2+0.01*2+0.01,)
+	values "B" range [0.02,)
+	values "ZZYZX" range [(BoxThk)*2+0.05,)
+	values "RollRadius" range [0.02,MIN((ZZYZX-(BoxThk)*2-0.002*2)/2,B-BoxThk+RollRadius*0.25+0.01)]
+	hideparameter "doorMat", "accMat", "matSteel", "matDoorFrame", "matDoorPanel", "FlangeMat"
+	if iDetlevel3D = DETLEVEL3D_SIMPLE then	lock "HoodMat"
+endif
+if iDispenserstyle = 3 then
+	values "A" range [(BoxThk)*2+0.01*2+0.01,)
+	values "B" range [0.02,)
+	values "ZZYZX" range [(BoxThk)*2+0.05,)
+	values "RollRadius" range [0.02,MIN((ZZYZX-(BoxThk)*2-0.002*2)/2,B-BoxThk-0.01)]
+	hideparameter "HoodMat", "matSteel", "matDoorFrame", "matDoorPanel", "FlangeBracketMat"
+	if iDetlevel3D = DETLEVEL3D_SIMPLE then	lock "AccMat"
+endif
+if iDispenserstyle = 4 then
+	values "a" range [0.1,)
+	values "b" range [0.1,)
+	values "zzyzx" range [0.1,)
+	hideparameter "RollRadius", "iSymbolType", "CabinetLineType", "FlangeMat", "HoodMat", "doorMat", "matSteel", "FlangeBracketMat"
+	lock "a", "b", "zzyzx"
+endif
+
+if GLOB_MODPAR_NAME = "FlangeBracketMat" then
+	FlangeMat = FlangeBracketMat
+	parameters FlangeMat = FlangeMat
+endif
+if GLOB_MODPAR_NAME = "FlangeMat" then
+	FlangeBracketMat = FlangeMat
+	parameters FlangeBracketMat = FlangeBracketMat
+endif
+
+if gs_cont_pen = 0 then parameters gs_cont_pen = 7
+if gs_fill_pen = 0 then parameters gs_fill_pen = 91
+
+
+
+
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[]]>
+</Comment>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[bathroom accessory]]>
+</Keywords>
+
+<Picture MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="0" length_in_bytes="15535" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000800000
+	008008020000004C5CF69C000000097048597300002E2300002E230178A53F76
+	00000A396943435050686F746F73686F70204943432070726F66696C65000078
+	DA9D96775454D71687CFBD777AA1CD30025286DEBBC000D27B935E4561981960
+	28030E3334B121A2021145449A224850C480D150245644B1101454B007240828
+	311845542C6F46D68BAEACBCF7F2F2FBE3AC6FEDB3F7B9FBECBDCF5A170092A7
+	2F9797064B0190CA13F0833C9CE911915174EC0080011E608029004C5646BA5F
+	B07B0810C9CBCD859E2172025F0401F07A58BC0270D3D033804E07FF9FA459E9
+	7C81E89800119BB339192C11178838254B902EB6CF8A981A972C66182566BE28
+	4111CB893961910D3EFB2CB2A398D9A93CB688C539A7B353D962EE15F1B64C21
+	47C488AF880B33B99C2C11DF12B1468A30952BE237E2D8540E33030014496C17
+	70588922361131891F12E422E2E500E048095F71DC572CE0640BC49772494BCF
+	E173131205741D962EDDD4DA9A41F7E464A5700402C300262B99C967D35DD252
+	D399BC1C0016EFFC5932E2DAD24545B634B5B6B434343332FDAA50FF75F36F4A
+	DCDB457A19F8B96710ADFF8BEDAFFCD21A0060CC896AB3F38B2DAE0A80CE2D00
+	C8DDFB62D3380080A4A86F1DD7BFBA0F4D3C2F890241BA8DB1715656961197C3
+	321217F40FFD4F87BFA1AFBE67243EEE8FF2D05D39F14C618A802EAE1B2B2D25
+	4DC8A767A433591CBAE19F87F81F07FE751E06419C780E9FC313458489A68CCB
+	4B10B59BC7E60AB8693C3A97F79F9AF80FC3FEA4C5B91689D2F81150638C80D4
+	752A407EED07280A1120D1FBC55DFFA36FBEF830207E79E12A938B73FFEF37FD
+	67C1A5E225839BF039CE252884CE12F23317F7C4CF12A0010148022A9007CA40
+	1DE800436006AC802D70046EC01BF8831010095603164804A9800FB2401ED804
+	0A4131D809F6806A50071A41336805C741273805CE834BE01AB8016E83FB6014
+	4C80676016BC060B10046121324481E421154813D287CC2006640FB941BE5010
+	1409C54209100F124279D066A8182A83AAA17AA819FA1E3A099D87AE4083D05D
+	680C9A867E87DEC1084C82A9B012AC051BC30CD809F68143E0557002BC06CE85
+	0BE01D7025DC001F853BE0F3F035F8363C0A3F83E7108010111AA28A18220CC4
+	05F147A29078848FAC478A900AA4016945BA913EE426328ACC206F5118140545
+	4719A26C519EA850140BB506B51E5582AA461D4675A07A51375163A859D44734
+	19AD88D647DBA0BDD011E8047416BA105D816E42B7A32FA26FA327D0AF31180C
+	0DA38DB1C2786222314998B59812CC3E4C1BE61C6610338E99C362B1F2587DAC
+	1DD61FCBC40AB085D82AEC51EC59EC107602FB0647C4A9E0CC70EEB8281C0F97
+	8FABC01DC19DC10DE126710B7829BC26DE06EF8F67E373F0A5F8467C37FE3A7E
+	02BF4090266813EC08218424C2264225A1957091F080F0924824AA11AD898144
+	2E7123B192788C789938467C4B9221E9915C48D124216907E910E91CE92EE925
+	994CD6223B92A3C802F20E7233F902F911F98D0445C248C24B822DB141A246A2
+	436248E2B9245E5253D24972B564AE6485E409C9EB92335278292D291729A6D4
+	7AA91AA99352235273D2146953697FE954E912E923D257A4A764B0325A326E32
+	6C99029983321764C62908459DE242615136531A29172913540C559BEA454DA2
+	1653BFA30E506765656497C986C966CBD6C89E961DA521342D9A172D85564A3B
+	4E1BA6BD5BA2B4C4690967C9F625AD4B8696CCCB2D957394E3C815C9B5C9DD96
+	7B274F9777934F96DF25DF29FF5001A5A0A710A890A5B05FE1A2C2CC52EA52DB
+	A5ACA5454B8F2FBDA7082BEA290629AE553CA8D8AF38A7A4ACE4A194AE54A574
+	41694699A6ECA89CA45CAE7C46795A85A262AFC255295739ABF2942E4B77A2A7
+	D02BE9BDF4595545554F55A16ABDEA80EA829AB65AA85ABE5A9BDA4375823A43
+	3D5EBD5CBD477D564345C34F234FA345E39E265E93A199A8B957B34F735E4B5B
+	2B5C6BAB56A7D694B69CB69776AE768BF6031DB28E83CE1A9D069D5BBA185D86
+	6EB2EE3EDD1B7AB09E855EA25E8DDE757D58DF529FABBF4F7FD0006D606DC033
+	6830183124193A19661AB6188E19D18C7C8DF28D3A8D9E1B6B184719EF32EE33
+	FE6862619262D26872DF54C6D4DB34DFB4DBF477333D3396598DD92D73B2B9BB
+	F906F32EF317CBF4977196ED5F76C78262E167B1D5A2C7E283A59525DFB2D572
+	DA4AC32AD6AAD66A84416504304A1897ADD1D6CED61BAC4F59BFB5B1B411D81C
+	B7F9CDD6D036D9F688EDD472EDE59CE58DCBC7EDD4EC9876F576A3F674FB58FB
+	03F6A30EAA0E4C870687C78EEA8E6CC726C749275DA724A7A34ECF9D4D9CF9CE
+	EDCEF32E362EEB5CCEB922AE1EAE45AE036E326EA16ED56E8FDCD5DC13DC5BDC
+	673D2C3CD67A9CF3447BFA78EEF21CF152F26279357BCD7A5B79AFF3EEF521F9
+	04FB54FB3CF6D5F3E5FB76FBC17EDE7EBBFD1EACD05CC15BD1E90FFCBDFC77FB
+	3F0CD00E5813F06320263020B026F0499069505E505F30253826F848F0EB10E7
+	90D290FBA13AA1C2D09E30C9B0E8B0E6B0F970D7F0B2F0D108E3887511D72215
+	22B9915D51D8A8B0A8A6A8B9956E2BF7AC9C88B6882E8C1E5EA5BD2A7BD595D5
+	0AAB53569F8E918C61C69C8845C786C71E897DCFF4673630E7E2BCE26AE36659
+	2EACBDAC676C4776397B9A63C729E34CC6DBC597C54F25D825EC4E984E7448AC
+	489CE1BA70ABB92F923C93EA92E693FD930F257F4A094F694BC5A5C6A69EE4C9
+	F09279BD69CA69D96983E9FAE985E9A36B6CD6EC5933CBF7E137654019AB32BA
+	0454D1CF54BF5047B8453896699F5993F9262B2CEB44B674362FBB3F472F677B
+	CE64AE7BEEB76B516B596B7BF254F336E58DAD735A57BF1E5A1FB7BE6783FA86
+	820D131B3D361EDE44D894BCE9A77C93FCB2FC579BC337771728156C2C18DFE2
+	B1A5A550A2905F38B2D5766BDD36D436EEB681EDE6DBABB67F2C62175D2D3629
+	AE287E5FC22AB9FA8DE93795DF7CDA11BF63A0D4B274FF4ECC4EDECEE15D0EBB
+	0E974997E5968DEFF6DBDD514E2F2F2A7FB52766CF958A6515757B097B857B47
+	2B7D2BBBAA34AA7656BDAF4EACBE5DE35CD356AB58BBBD767E1F7BDFD07EC7FD
+	AD754A75C575EF0E700FDCA9F7A8EF68D06AA83888399879F049635863DFB78C
+	6F9B9B149A8A9B3E1CE21D1A3D1C74B8B7D9AAB9F988E291D216B845D8327D34
+	FAE88DEF5CBFEB6A356CAD6FA3B5151F03C784C79E7E1FFBFDF0719FE33D2718
+	275A7FD0FCA1B69DD25ED40175E474CC7626768E7645760D9EF43ED9D36DDBDD
+	FEA3D18F874EA99EAA392D7BBAF40CE14CC1994F6773CFCE9D4B3F37733EE1FC
+	784F4CCFFD0B11176EF506F60E5CF4B978F992FBA50B7D4E7D672FDB5D3E75C5
+	E6CAC9AB8CAB9DD72CAF75F45BF4B7FF64F153FB80E540C775ABEB5D37AC6F74
+	0F2E1F3C33E43074FEA6EBCD4BB7BC6E5DBBBDE2F6E070E8F09D91E891D13BEC
+	3B537753EEBEB897796FE1FEC607E807450FA51E563C527CD4F0B3EECF6DA396
+	A3A7C75CC7FA1F073FBE3FCE1A7FF64BC62FEF270A9E909F544CAA4C364F994D
+	9D9A769FBEF174E5D38967E9CF16660A7F95FEB5F6B9CEF31F7E73FCAD7F3662
+	76E205FFC5A7DF4B5ECABF3CF46AD9AB9EB980B947AF535F2FCC17BD917F73F8
+	2DE36DDFBBF077930B59EFB1EF2B3FE87EE8FEE8F3F1C1A7D44F9FFE050398F3
+	FC91C05ADB0000000467414D410000B18E7CFB5193000000206348524D00007A
+	25000080830000F9FF000080E9000075300000EA6000003A980000176F925FC5
+	46000031D64944415478DA62FCFFFF3FC32818380010404CA34130B000208046
+	2360800140008D46C0000380001A8D8001060001C44245B3DE333CB8C9705A8C
+	415A8441868F419C81817D347C09028000A266049CFB7468E7F335FCEC0CCC4C
+	6C2C2CACACCCCC229CC2429C8A02AC12220C52220CD2820C920C0C5CF80DF9F6
+	EDDBF317CFFFFFFBCFC9C9C9CECE0E24B9B9815A18876B040004103523808F4D
+	889BE91F271330F4BEFDFFF5EF0F03C393AF6F1EFDBFFD971158D0313133B302
+	6385859959808D47844B4988435A8841121831A20CD240ADFF187E3C7DF7ECF3
+	DB6FCC7FD858995981E1FDE3CBCF6F9FBFBFFDFF8E81E1FF7F466063F93F1323
+	132456383838B8B8B85859598741040004A0AE5E7210866120803AB1F37181B6
+	1BD4FB9FAD2B845814810A248E717B06365C6016F3349A5F02446450D89B720D
+	B67741045488AEA93680AAE5291FB8AEB7CB328B7A2B95281A0B61081E0FD41F
+	A773743DEB9065E43A243991245F02D5E4152DB0BCE4BD3E9676DF482C731F86
+	49188CA964CE1D77FF05F01580F932C8611806812078098A65A9C9FF1FD727E4
+	54A96964E2ACE33EA187720284C46158103F0560DFA54F06AAE3C42BFDF1EA25
+	95B30FB1A42650F19E104D678BA3D5E32375D76DD3278B015798A5C9269F7DC9
+	65CDE062238FC75CD71C0B558270524118195071EFD74EB944ABA33B0D402772
+	2BA694C2F03F015C021057462B0C8330144DB4B35A6859FFFF1BF7523A36668C
+	BBB7FEC260E04BF220E19E1CFD2580AC0BC2B824900180D9770D7C40903E9B0A
+	06889EEB1F985D8319A1A32F332AEE343899F46A2E56F57CCAA38B935F9C70F0
+	BB20CAF9B6E6B0834A962DB7BDF8BDF836D5128DBA444F7ADD58DFF6791D8DF2
+	D1150CA3AA29A5A1CB60F377005F017831971406621886462E3353775186DEFF
+	743D41FF14F271250FBD412959847865FC2C09F24B004B717902B48445B7ACC7
+	2C290C8CCA19582E22F8921EA400CBC97CFF43201A3A49256466591696687DD4
+	F2B6C284B9169C417BA3A228949D4C6C990F7B3F918A639DE34807F3BE4EDDAD
+	A556EA94F347B4F1BCBDEE9747B03B35BA75A174D9C0305D80FF65FE47005ACB
+	2087411806828E43029510E2FFEFE3C6854A408116875D02EA075ACE91104C66
+	EC9F2628EF9DE9A6802F5679F6EF6DB41055717D9DFAC07FEA836738124A93CE
+	8320736F3ACA6A398AA35F322E378CD52258B97A8251B3038BECABACA30C2ADD
+	F96EA8120BCEFC92D3A1A22B0F6D2A694B5269E2A7061520812ECE20220CB565
+	DE5ED362664CA45CFAE6352C3F50E71F000E01582D631C8461188A3A49DBB4A8
+	8409242EC0C62D724ACEC4C69A0D2131515475682ADCF01DE80D2A4599220F7E
+	F1F35F1740F30300F78B703475F778BDC4E7ED7D386D99B83D9AFD19E9946C6D
+	AA9D6E5AD21256750693BB8C0D2191291B4C497AD2E2AF94BFE4476E018B1958
+	460C9468799FAA3F42386B2220892992EA5EF4C0A691DA455D6A2B540ABBB1D9
+	6038C9D5B303185011240033958A0D30CC3433F3300C7DDFA3EA388E2104E79C
+	F77EC5A67D0560B56C521086A1209CA40DFDB1868094BA75E9CE330A1EC3E378
+	08116385A62D8AB888509426F5BDE40ADD842410087C33F3667E07508C0E5CC7
+	891476733CECA1DAABFA7AB99DD55D75A7B6EFDB67F79095C8579173B6DAF1BC
+	84764AD2822D4A3E59CB538E818F6048D03A0D7B8C26E08A60FCB400AF8C9856
+	78F6FC5CC82B16C2CCA3416BC13D7C09D4FD25C36F1A60BABCA926287E42814A
+	9C600D8BD32C5F66118249A8A02FB1FE6CA108B088C1C3A669B4D6C61829E5BC
+	0EF80BC08A19EB200C0201F4909AD414376DA25DE9E2E45FF4F71D8D89A9DA5A
+	898B9D0A0809DE61F50BCA4408217070EF5D98FE022253460AF1048A628B8365
+	292BA8B0E3BD1F62534AD5B7FA743E5EDB8B3ADC1FDDD36A9B4B6107C733C8F7
+	F3E51A0F1F5291642B7AFA7C86252BED16D7643C828E8F8620A33060FF5F1516
+	A50D1C0B2CA23B1186F291BC12B393A1A57F900F0EDE4E9BA001FA9E75514E38
+	375DBCE446EC108418FAA66D8C365F154D0EA28F00A26604300123005CCFC102
+	82E10FB02440B38F85850F0C2424240C0C0C20823F7FFEFCFEFDDBA74F5F1E3E
+	7AF000182BF76E3EBBFFF8E1D1A78F1FBEE0E6631192E7F9F3E3379704B3A80E
+	B0A1FB9F8585819D9799938F8919D485600295422C204BFF83BB1DA05A1D9C05
+	FF31FD0557E9FFFE821B05C09E09A839066AB342F30AA8310C712A23247B81B2
+	113358F6DF1F60CB98E9C5F3972F9EBDF8F8F123301340AB1EB0FBA91B010001
+	C44265D3E0D5E67F508DF98BF13B51CD2730101010949393B565B0855480DF81
+	71F2EDDBBBB7EF815172E7C1EDBB0FEE3C3B0E2C069EBDBCFF5C5451985D9889
+	E1CF3F6E6966097D36604D0E0C491E3156362E60F50EAA5440B1022CC659804A
+	18A0C1072E891841E515A895C5042AC4FE81DB64E0562E23B8890C9262049766
+	CCBF7EFCBC75E316B0F00186F87F488E06BB8AEAFD098000A2727C32C392CA7F
+	B047FE32FC00566590C29824000C0B2E301011115153577563700375837FFF06
+	C6CAD7AF5F5F3C7F0EAC4E80B1F2F0F1BD67BB9EBF7CF9EADDE38F52DAFC2C5C
+	4CC03611AF14B39836307330B071B3728B30B0806202D4DD06C601A4AD050E6B
+	48D7E21FA886676680043EC45E6060FFFD0BAA5C18C0953FA409006EB08264A9
+	3EFE011040548E0056680D0C8E022686DFFFBFFEF9F7878D893AE5262B18008B
+	2F49494943232378F105CC28C0EAF1E1C387771FDEBDF3E0D6D3E78F9F6D7BF9
+	F421B09A651453E301A67460BA103764E5110176E2FEB17133F18882EA03605A
+	86F4ED1899FF82BA2BC07A9E0958B3333332FD015518E09630D00BC04C009480
+	E700604781BA21061040548E007666BE9FFF3E313281872280C90858A8FEFBC7
+	40CB490748F12528082CBEE46C6D41C517D0466093119851DEBD7B77FFE1FDBB
+	0F6EDF7F78F7E9D567D79F3E7EF5E0159F248F9034E7EFFFFF800594A4112B27
+	0FB0CFC0CE23CACCCEC7C0C1CDC4CC0E6D07839A5CE0E604A453F61F961BA81E
+	010001C402379D3A0D2146AE9F0C9F60C50803B0F3FBF7DF5FCA8D05163E5F3E
+	7D7BF9F285B8A418B02188DFB5C0040B29BE444545D5D5D519183C20AD2F58F1
+	F5E2CEFDDBB7EFDF7AF4E4C1D3634F2FDE7BC8F28FC3244B405280F53FB41709
+	2A8518FFB2828205D62363047701812653BD150410402CD08E3EB55AA24CDCA0
+	616866504104CAE74CFF7FFDF9C9CDC64D8999C0147DF1C295FA869AD3A74FC7
+	C526A4A5A6AA69A892EC4F16165E3000B5BE0CA1ADAF5FBF7E1556E79D38781A
+	D853038D4981FA05B066F43F46505680570CB0344AF5E1238000422F1D208D18
+	B2D7AAB03071C2C78240DE6066FCF3E737E5AE9C31732AB03D0E6CB62E5EB270
+	C5CA15C0844C9DE4C2C6C6C1C5061A3F6762068F0432C0EBDBFFFFA00C78A300
+	9214A89E0300020832DE82341A8614DB64C4041B33E77F0606F89000B0A50DCC
+	01143A1158267CFAF44948881F5802008B94ABD7AE3C7EF48C5AFE07D6E1A032
+	07D4656364800E9DFF030DD9FE67420E7A482780161D31800062420B6BB4FA80
+	D4D28985891D3617008E0660590A1EA3A730062C2DADEEDE7D00647EFCF88E9B
+	9B9B85896A8DF17FFFC12D51505201675C7027FAEF3F608F981912E8A0460403
+	247B40330D75230020809820E10EAFEB91CB223480B5B042D3C5CECC01494620
+	D78307F77FFCFA4E69F83332262524FBF9F8EDDCB9535C5CCACFC75F5A4E925A
+	FE0756CE2C8C2C0CE0661B78E61414E64CE0914078DB1F9E34A9D85A81038000
+	62810722B2D1F056176656408B09348DAC4C1CFFC0F2FF401393402FFDA7420E
+	6060E017E4ED9FD89F9B9B0F6CBB4B4A8B53AB2D084CDDC07A183A87F78F01C9
+	67C08E32F37F06682D006E023152B7B502070001C4821CC3C8818E9C33D0523D
+	5A76418E0316660EF88028780486E1D79F1FD4EA85A9AA2B43DA8254F4FF3F60
+	0AF90F6D33C0667F40D37690F62868EC1BC93A5AACA305082016AC018D1C2B98
+	9501AEE208A88685890532FB08F50913F3EF7F3FA9565C3251B9470774F6EFBF
+	BF18C1E33FC064FE0F324D0A1E4761F8CB049E1702E512F0201E238DA6C90002
+	8809B3F4C71AEE68D5002318C0C31DAE8C958913DE78FB0F1EA3FFFDF70FC360
+	05C0C0FDFDF317333703131B13ACA1C3009EAA03F3FEA387002DE200208098D0
+	6A5DE4D0440E6BACC90793C1CEC289D47861606666FAF1E71BC32006C05610BF
+	323397D03F06E89A01D07C0EA8FB056B05A10D7B50DD010001C48499F6892CE9
+	302B6D206067E6FCF70F5AFC809741009BA1BF07750EF8F38B8905E419707314
+	521F83FA010CFF90D21F7CAC9785FA6B5B00028809ADD50FE76216FAD02E09AC
+	C8C21A4F1CA01CC008695640E81F7FBE0FE608F8F5E70FB4D4F9CF089D0B6000
+	B77FFE3143DA407FFFFD05E5094646A0625616EAAFC503082026B490450E6248
+	298F5CF6213793D0620EA2928D9103BE2805342703ACD918FE0CE622089290C0
+	210C59B9042E86FE31333160F1322D16430204100B5AA063E5620E10A1F512E0
+	6C0E062E46D83804241F7CFBF57910E780BFBF7FFF02CD5D02031D3EE6FF0F3C
+	AB0C6D10A1E478165616AABB01208098305B96685901AD5CC28C2AE4ACC0C6C0
+	C1002B83404D3766863FFFFF0CE2E40FF208132B64FE14985F99C1A1CF041A4D
+	F907698DA204081B2BF5970601041013722183DCB88497FB58CB7A5CDD02F8C2
+	08E852405033E3F7208E807FC0A29D999519D2D5FDFB0F3C3DC9041464018DC7
+	31FE87AE2F830508D567E48100208098708526D6460E5A8719ADF2001741B0D5
+	8990C5B9A001A1C11B01BF7FFDFBF1FBD7FF9FD0FA173CF6C6001F80F8FF9F01
+	B9A3036423D701D4EA150304100BC1C21D5EC1E21F8683E86505ADB1850C4440
+	1A70D4190BA2610DFC87093265F79FE12F23132B34F0810D9FFF886A185E4220
+	E700829D32223B6E0001C484D538E410471BABC0AC0F50C7E938FFFF832DE200
+	C3DF0C3F066D04FC05B543C10BA719FF825A9F90A947507DCCF6FF1FCAA81750
+	21A408420E16FC9980C86E334000312197FBB886DBD09AA1985D01E4AAF83F74
+	440B5A0A0DE666E89FDFBF7FFEFEC3045A76C70C9A62002D16FA0F6990821710
+	A1A439C81A215C0D71E40021A97402082026CC40440E65B4460EE63035668E63
+	86247ED868E89FFF3F07731104ECDB323233FEFB0B5ABC0259A1055AE4F59F99
+	01D227805503E07140680E400B10E4B1645C436778C61A0002888501DB5C18E6
+	6828D61A02B95A86EB656766F8CF085F6A0E2C4E076F25FCF5FB973F90E06062
+	804CC880FD035E4BF69F113AAF84D41B85CC43FCC758AB822C82567EE02A45E0
+	DA010208A5278C67EA07EBA0295A850C61B331F2FDFB0BDF21C3F0EBDFB7415C
+	04FD65F9CD026C75FEFFFB0FEA60D8A80F300EFE83973282C208B4DE14D42882
+	0FC661860FDCFB685182D673429302B201028809335163D61EB80A25AC31CFCA
+	C0CD80B43CF43FE3AF413C140A1A2B07CDDC314307DF20AB74414BA4C110B2A8
+	1D322D0C6A64C366E2F0D704B85AF6589335400031E16A5C626D45A135493187
+	834045100B37B8050D9D17FB0B5AF93D480F64F9FEFD3BB87605ADA264F80FDE
+	4D0BAA80FF819655FE83A63494D2152907E00971AC3D2ACC520B220B10404C68
+	FA91533A66998575C402D5BEFFAC4C9C903A00B45E9C89F13723B09CFD3B4873
+	C0DFBF0CE0F922466045CC0C1E0B05953ACC907C8E59B84322801106B0A66ECC
+	0207570B15220510404C58D74360C621AE3919E4BE22A4A06463E680EC7E8374
+	E38125ECDF7F83B425FAEBF72F6052119065816CD6FBF71FBC9506946D99210D
+	0B482F8C013A2F0F5D93822B58F1AC64C0D37B05082026AC85092E0D5807AED1
+	BA05AC8C9C9035369038F809EC0A0FD659C96F3FBE019DF9FDE35FC86A7546C8
+	F61888974055F33FB4E21E79460C5740636DBC606D3742440002880933DED066
+	7A91332356656885182B133BA873CF086D56FF6542AC6A1A6C0054C4FF65FDF9
+	E92FD085CCE02510E09E30646D3A2293E36AD8105941620EED2097510001C484
+	B61691A45E355A29091D306166FBCF08DD2BC900AE067EFE1AA47DB11F3F7FFC
+	FFF35F4C831558D2405A3A505FFC65006F0E60442B66F174B2082E2BC1D56D02
+	082026B4D14DACFD5EB4016A5CD53D0374650A3BA40F0C4944CC4CA0D3080667
+	04FCFC0D4A19ACDCE07589B0CE236840E81FB00EF88732E28BAD5583ABEB8BD6
+	D5C29A70E16C800062420E7DAC6D583CD503D666282B13DB7FD89400F8D4082A
+	AC4EA45511043A988201B43217BC858C01DE7A636086D705F0ADE2982530D6C1
+	1F3CAB9BB116E00001C48439F18267F1215A7EC41CA800351598B9207BB0E04B
+	7407EDA4D8B7EFDF98D9C06B1DC07BC4FF3381775482F6B63131C047B470D479
+	B88A2092C6E380CA00028809738C134FC3146B26408B3C7616E8FA5CC8D22666
+	2686DF7F076967F8F7DFDF7FFF31808EAD809CA7030961D07662F8882EC283F0
+	A1503C95303260C03BB90B070001C4845960E12A61B076F0D0C682402BE89938
+	20879E401AD7A096E89F413A2500ECA1303383872220BE0135D8FEFFFDFF8FE9
+	2F0BA69721D36178C6C4704D1520B65AA2961F90F8000820265CC18DB54AC053
+	A5C0B5B0B17042F7D53242A7BA07EDDA2C602B8881017AAC05C8CD90E38C103B
+	7C10652F7C6F0CFEF6285ACF14B938C2DA180502800062421B0AC5DAB6C5557E
+	61156167E284F88AE13F64711CD09F83B412FE0F192A042DBD026F1003758441
+	CBE298FEB130628CF3B0A2AE49C11C8FC36C4362EDC0220F630001400031614D
+	CB984D5DCCD62AAECE01070327AC02F80F5E9BC5F477B04E8AFDF9071A246162
+	60FDCF0849A4A028F807AE7BFF2397C9E0B0626161C52C64305B2898C3C3B81A
+	EE107180006261C0BDCA0AAD62408E033C63A5AC0CE8BB277EFC266A4A8046CB
+	8FF155C2BF7E30838FA203B91C74A801B039F417B4AFFF0F3324E45072001B2B
+	D6063A66A5881607F07AFB3FF2D67B982E800062C2ECE9E19F6A60C0BD500E3A
+	21C3C0FE1F696A03D8A4FE8BBA32052D1DC147DB91931584812C45A39E002808
+	C08B67C0D5C05FF0C62AC8064974DFB1C27200663EC033398CC9400B64800062
+	C26C3661AD7BB1E626B45159E84E5A060E26A4733E81ECAFBFBE621D33410E68
+	D85E388443212290E5080CB8A7BC29899B5FBF7F824FC281EEE5879C4804DE1E
+	C384D9F087AC49C15300E0595D88A70605082016AC85005AF661C0B138053367
+	809AA1B0C5718CFFA12BB4FEFC453443E1018DAB2F03DA91829C432195E3BF7F
+	F05C8C6B2A8AAC7EC01F5006FD0BDEA1C7C0F40F3485071E8CFBC704399D0B54
+	49820F8AC05C168767F514D6E11CAC4B4F800C800062C2339186B9080EFF7A08
+	9889EC90A108706D06F2C69F7FBF301D8A0980A1FCF7EF5F78DA872B86843E3C
+	F2909B86B8AA2E625B41A0E3E640C53EC824C8A94FD0CDAAA883C6E05A187959
+	1C667980164A5867E7B14E610104100BD6A903CCD627D61E329A593035703321
+	875D30FCFCFB0BDAE442DAE4050C6BFC83889025F9680E804706D684426A9EF8
+	F1FBE77F602DCCC608761713CCD5D05DDA90D139B0B10CC81D31FC8B1630031D
+	EBD0295C10208058701505B8F2115A5EC35A0A313342075218A191F01B12FA17
+	CE5E3C79EA848989B1A292121B3B1BD04BC068801732D0C1292668F98BB6250F
+	73E81B393E30332B513DE13F7F58381820253EF4F433680B1471FA26BCBD0D19
+	8AC03534846B240D4F7505310D2080082FF7C5559F60C62D62F29A09D1D36102
+	15B53FC1A3BB8C4F9F3DDEB16DFDD1C3DB05854485844564A4E5D4D5B5E4E415
+	F904F88091013AAFE71F62101839F9430B372626B41608AE91193C2336C8E02F
+	B0D0FB0AD922093DA8911152FE811605FD439C3D0B3AC2E92FE4AC2CAC699C81
+	D0022A3C0506400091B9DE1ADBAA5044A2E06416FCF1FF3D13648D136861C4EF
+	3F7FFEFCFAF55D808F2330D01D68EDD7CF5FBE7CFDF2F0C1B52B97CF0075F0F0
+	0948884BC92BAA28292A8989497070714096E2A015A3C050409A7CFE8FD5ABC8
+	59876086F8F5FB0733F3FFBF90ED18A0DA0BB4559EE93F647008BC5A8211DA0A
+	00798A9313B3298939538275761E5718026501028885ECD0C7530272B18AFCFF
+	F79381890D742EF4BF6F7FFEFDFEF9F3D7DB972F5EBF792820C0FFF7EF3F3E1E
+	5E60680213E09FDF7FBEFFF8FEF5CBD70F1F9E3D39747BF7CE9FDC5C7C024242
+	B232F2CA2A6A3232723C7CBC90E6073001425AABF0620A1ECAF036129E4A0F6B
+	2501AEF39999C161003E7319B41D0C3228046980818BDAFF90239C90EB00ACF3
+	54B866D1B10E5FC2C50102889A3B0EE08E6363E2FC023A270CD8806367650436
+	E0D8DFBF7F7BEFDE25361616D011362CA003F340391A582EB1B3717172080A08
+	FCFBFB077432F1EF5FDFBE7EFFFCE5F38D1BE7CF9C3EC8CCC2C1CB2B20262EA9
+	ACACAAA0A02C2C22CCCAC6061ADB006705785B08B97EC2551B63CD07E00D788C
+	0C7F99E1EBF8C0A1CFFC1FB6A2005E210105E033F2F867A808EEB84613070820
+	2A6FF980562C4C1CA0B5C4A0A32281D519CBF73F1F6EDFBEF0F7CF2F606FFEDF
+	3FC86948FF40AB91C1453E13E8CCB6BFCC2CCCACFF193838D9B97978444545FE
+	FCFDFB0B58400033C7D76FAF5EDEBF7BE70A30D0B9B9F98584456565155494D5
+	2424A439793881B1885C1B630E8A415231D61114D0C9663FBF732B3073F0830E
+	5064012F0F059DA6F8F73FA4198A3EC6055B188A3CD889BFEEC5B3BE040E0002
+	88FA7B6E40863282BB0290E63CC37F1E06CEFFBF7EB1B030FF03372F40DE0577
+	FC81B99F093C29085A85003D2B03D81702C50A330B131B1B3032B8058580B1F3
+	EF37B02FF7EBE7576051F5F9FDB9B38F0F1FDEC5C9C9C3C727202929A3A2A426
+	2BAF20282C0839760F2DA141220652B7A39D3809DA9CF1FB2F0B37688F1838AA
+	C0353F2807B0C20F26F80F3B40027E5210AE65CB58CB1CAC9D35B4720C208068
+	14016C0CFF41870AFF0326ED3F6C32FF34410BBB817D9E7FD0820218F27FFE81
+	2A3F26C8596CE0E36CFF82162983CFB8019FFF0F5ACDF2EF3F33B051CECCC0CA
+	CEC8C9C1C1CFCBFB57F40F50F027B042FFFEFDCBE72F0FEE5DBD72F93430D078
+	B8F844C5A414159514949481F539A41A67402A43E09181DCE5FEFDE717ACB1CF
+	003E5B1152F03033A21C5200D9E9035A9585EB60135CDD315C35017214020410
+	4D2200B434E8FF1F887784BE29F3FCE4FFCBF817D4D8039F0CC608DA9A0E5E82
+	C302DE9FCEF01FB2061352F442CFC880ACA86006C501E49CDBFFE0D3EA212BF4
+	817D081E1E6E61616160C501AC3A4067247EFBFAE1E3D343876FEEDAFD8B9D9D
+	5B484814528DCBC9CAF3F0F342DAB8900612EAE831B824FC0FED0400FBC52CA0
+	1D7AA0AD1AE0BA1DBA618601BC320EF39C02CC6E10661701B3EB803638011040
+	B4C9014CAC20F783F606300B7C92877A81013A4B0CBED001D40305AF4A006F48
+	0137BEC1CD1B906E60F308D897FB0F0E7AD07E51F069DCFFFEFCFD0F3D0507A8
+	97E91FB09D0E0C2D607CFCFBC7C505ACC6F98159EA2F30327EFEFCF6F51BB095
+	7BEDEA999327F633B1B0F2F00A484A48A9AB69292AAA48484B72717121063980
+	F1CDCAC0C40C1D6F80AC24F80F3A2E0B5C7930FC83872072558FB5C98F99C631
+	831B73FE00C80608201A4500784A80F10FCF6F696E60F267F80B3E419B01B227
+	1D9CA899A091013B96107AC436747C1854F0FE6382389109BA59057C2C32236C
+	FF3713A4E5CEC4021D4702A6E5FF2C0CACFFD8D8D9F9F87845FF8AFE0555E3BF
+	7E7CFFF1E9D3A7E74FEFDDBC79E9E78FDF1C9CDC3A3AFA4929199046EDAFDFBF
+	FEB183DDF00F1A7820734036A1AFD8646662C21C4B476B74E1AA1EF0730102D0
+	76F63A0082301036429CFDD97DFF77330C26181D80DABBB21871746703BEB657
+	7AFC84A081133F32C6D5753ED107D89451A63D3CBFF51D0E6F3ACD0A7BEE0D28
+	A4B199815AAA302FE6F90C81B598CE2A582C3C9539836D98A72063D80B4553D1
+	3B8586926A5E26C594161CD7796E211C71B7B2B62464BDCE6C52E0E34DF07136
+	864A2E03863CFF91F890169A354753DD7A2748B700B45DBB0A80300CB42F29B6
+	1407FFFF07751375B1ADC9B50A82828B7B8792904B2E24975F1CD06A4B41AC63
+	F0DBC040C420D348798918A4FA6DE832B0A171DB04618E99A85CE54B44399A91
+	D239300270C633E82821832B46A10C6CE78C027641D48D8CCE30426540DC8DD1
+	C25AE73B1FDC38CDCBBCAA5E510924D076C855DEA5B81A6705520956C8AFDF37
+	B71E99D7DB6EEF17BA700840DB15E43008C3B09196B61267FEFFB33E0071584E
+	EB0614EA04B681D423C74A3D35516547B17D8BABB033A1BC4E37F57EEE145E4A
+	77FF0C61004E08BECC0D7DD9533E00CABED6A5B63D8DBACBCB1F95A52BAD843B
+	14DE00D48954943D17E8A15930E526ECD3A9700E481F5B6ABDB3C69135C10766
+	1E8631C6F87E25E6679A3F484059B13F8F2A2F020ECEF38B7F1C5553EFD648C0
+	655473D140EA711380B62BC60110848116D89CFDFF0F1531016304A45770501C
+	1D099D284793D2BB333F2520E634FA092C254A8DED76BB6BE0B265D2E0C249E7
+	979847A0AACA109C642210C0282189D2836E6B58FD10B1BEE45052A221B15D65
+	F6B2A8F6A24E882F138255D8C362E78209B7ADD63A1F423C4E1EE4E66E5579C7
+	4C3B5A45991EA5B5AB93D2FDE67D0F937F915F64F71280B62BC6011084810213
+	9BFEFF8D46132231925A7B2D10077573230C2CCD35DCB5D7FE8480E86988FBA8
+	BCD74C0F6C320B73ABFD55DED5AC11F8E338AA9BAFAC59C734511C6CC3C2692B
+	F558093606E170D585F0B6EF86220C44076282C241F388402284659D0979C995
+	A3A49472DE24E671C2984A091391D246E5E6DD9DDAD99CE0E9B110FBDDD4F3D6
+	BE76BFB904A0ED8A56000461605A8AF5FFBF1AA4B86CBB4B888ADE7AF361284C
+	D8DDE6DCFD7201699C634D21A70181875C87CD7FEEECBE24F0F16BA8450DA234
+	8766B44E091D06F9B4FE60DC638C83481024ACB01BE290B9DCD01B679147D13D
+	66E67DDE4C37456DC4C86A2D59F3EAB554991613A2F19A63087469144376D784
+	5D6597293021DE2A101F15C9E1ED5FD79380727D08209A44003B0307EB1F7ED6
+	7F9CD0E40FDE7905393CE53F9C020F55FC878C0D31C227D0202E432E3AA1F384
+	E0E085C427A4C685C802838EF91F6C7D036489032303E2223350F003AB0466E6
+	0F1F3FFCF9F70772FB21300E7EFF016683DFC0B800F5D8FF8244FE811D04AA86
+	FFC3B76D31C0E744E133F278C6DA30B7D7615D698896630002D076053B008220
+	94ACD6A9FFFFD3962B45E0816DCD8E5D3DC85478C07CC0F2D3036C659F956E50
+	14CD2BA0837DC21EE68481013B21122568AE1F20C52F3CD4DEFB0F11F7097DD1
+	CACDEECB2CAC0697D68777787D857903C19C7CE6C3F6B15C5A43A3226BF7C5E2
+	0358B9402B64A85CF5E96661E9A18EF72E112FDCA78F6AC821616798B8350168
+	3B632400411808466BFFFF4F86CA5140924D74442DED4943185872E1F8E70CE8
+	095817BF21359A3EBCAA65EF1EAAF28F4FAA3AA76216193A265FECB96FE40404
+	A18A04BB4ABBE8914D0D8CA7994A4DC30D4025C2734EC8FD0CE9A145BDB27629
+	1BE5A7CAFAD7CCCFD6167493E450E49F54F32AA77F890403029DF93B0410ED8A
+	202E480B9309790BFA3F685B13B6911B3A320149DBD0D550E08209565943A208
+	1C38E0D4CCC408DD4A0DBDF4055EB941F6F7C26EA34404162368F2E0FBF7AF8C
+	B0710660FF00920EFE00431F64C21F6036FD0FB9560912A5FF98303659FC433B
+	A806F33002AC83A0F83B0710364000D124025819D859FEB34116A743F68A418B
+	0B70B392091A1FE0640B3D10E31F24FF43968AC1322AF8B255066849F50F1237
+	E0140E39E91F723A3B84820C5780FA74E0131E209D38C85E716007F817B0ACF9
+	0FF531302D43D2E98F9F3F419D0D48C88256053183C73398410512E4AC144492
+	47DCDD4370833CE6B404D645D470298000A2D1F52E1CCCFF99C1633ED0863964
+	4893015AADFD83EF2003DFB481485A0C90FC0F3D7D1AB678187AA10EC8B5E0DE
+	1CB4B486CD6021468C81050BA8A686AC6B001B0CD4F2F5FB1744C707E90C1460
+	3104DABBF315BC800C540D814FB2079D9ACE025F9E0E6B7EFD8757C2682B7F90
+	67E21870EF5BC2B52E112802104034BC5F87093A72065E6F025D29C700BB480D
+	7E1C1B221C19512EB080651C06C832294658F10F2983C034E416014829051E17
+	62020F6983CE6C875D56F5E70FA8BD03BE90123AA604AA0CC05EFFF3E70F5001
+	1B0FECA871708B0A980718A1EB12416D59E8E4F37FC4D43C9E952298A7AEA235
+	40318FD900028000B45D410EC0200CB266FEFFBF73C159A1CD1297DD76F58A82
+	6969F90B8083E99C719D63DC27638998665B627176829573597288834A4E7A06
+	8A057420D998CCE4C3204D911F8F86AADE4FAF330C090DDC61A81CC36B7E43BD
+	CABD98CF9ACC58BE33B7AA45F120EE7D5DDFC7A0D2EBCBD8459B87B700A25504
+	3083A6C020932D0CD0613548BA62805C45FE1F69F93178EE0012A6D028816805
+	95004CF05DF7D04D07FF18E1C515FCAA1AF08C0123625915A4850BF2E0CF9F3F
+	A0FA203DECFFC09401B51BD81DFBFFF33F1B0F689A0874CD01B82308CE4E28C7
+	37C0EFE7A6709E1C574C000410CD22801D76F83E640BEE7FD8381B64EAE33F74
+	32F23F7C3F1F74A72E38D099201A189810FD49E85012780FD75FD8F401A43B01
+	BD7E10514083C7F721DD81DFA0D32060353A385B80D23D7830157C8205237804
+	8809D470830E3C3131C1B6C943EB5506F4F3128909713C0716A08DE20104A0ED
+	0C720006412028F4D2FF3FB796D0EEBA25A667FD82263A2CE8ECDA80386F37C5
+	0AAEB0332900B65AFA92B650669E031F9B3EC8D32B33AEB218D2180139415EAD
+	CA7144A07AFAB0550D4C947E01E6EC6913ADC21C2D29CFD5E19660AE71D40DFD
+	52508B7928D1E858826F7BD5D4C8AF347B04A0ED5AAE0084619058DD7F613526
+	01B403E8B5875EFA09015EF8EB00A2A6A89FE692CD93292A04725FC2A2FCAB15
+	30F4FC823F924693F19873C44010654A0AD30B589A1CAD093460347A5EFF43D4
+	5D18B7941F60635C0315F181B196332B17F656DF30557FB5D6B9EBB7017A73AD
+	BE05A0ED0C5000864118481D8CFDFFB783698BF1EA3EB0BD2108678CFA970071
+	F973DE87FA30334C340547AC82984C02C417F9F817A71AD8E9D9F9A03EA291A9
+	EC53BAE4C12BDA0A411AE6281D73B804C8EC90949EB9978AEB9918EA5ABBC3BC
+	334A2EEF14BC0CBAE1E5F39BB9ADC11240B48A0046F6FF3F783E3133B180DB72
+	E04A12D6D064040F77812751607783804FAC62845D590E2979A0878681276118
+	61F3C390C16248878BE13FF48A11582D026B6B33412B7660F9039E4F834EF842
+	E6236047E432FCFEF30B7473242BD019ACA0796058F9086BB032C21775011553
+	AB08C2040001683BB72B006110864AA99CFEB9FF7C0EE0065548405DA05DA1AF
+	E4429B5513B0EBB88ED38F930C2617A6FC0AC575F9CC646BC9F2DB1755946B36
+	8A60AF34E2A70E78DB0C495994BB1CDD2C3431C9B39BEB9C6836AA5D139421A0
+	82419A41B6BA5DECA6D2519F33DD3A5A65F4FEDD96F4622BB233381E0144AB08
+	E060E2FAC0F1E42BFF3B76663666D08030030B78121192FCC12B0AFF43AA05B0
+	20A8B7CB04AB10E1874542AA0768EB04A40ED29A0757EC0CE0D512D0E21D7A01
+	0978211BB4D3064AEAC0FA00BAF3025A0B40A6D62036FC021F95C2CCC2CACCCC
+	069AE3049FDB0D8E52062606F419765ADC1C0001000168BBB623006110D683EA
+	A1BFEEBF9613B885A70801EA04DDA0BCDA4272615600D62E66CF759CCF7E6F8B
+	38900BBF774CE7BD67759B1B53412C1C98CAA88390F2AC4860689DEA07A9099B
+	F9CEB97341077AE57F7ABF7992E349AAD51142AB3808B96063347B0548EC44C0
+	99898316F7FEFE1FD8CBBC0AF804100BAD8A2016765646969F2C5F1E885D50FC
+	ACC7F393FFD7EF1FBFFFFC85AE0505ADAC02AD8283AEC8821D59FEFF3F64FD1A
+	721B04D62D6684CE6402E3EE1F647402B68B1A3252049D6E002F6661844F6D82
+	7BC88CB01D83C030676565870D4AFF6561636563E662666405D726A0999BFF7F
+	99A01D6AC4DE18F0D20B66661A05144000D12C0298D81999585899383EB3BDBD
+	267494FFA5A2AD8CCF9F3FDF3F7E7AF507343C006AA2FFF9FB97E92FB4DFFFFF
+	3FD210C33FE8B03274140FDCB0840C6443AA5FC8A209886246E89A3644CF98F1
+	3FBC870C59E002BD9A19DC06868F1030FCFAFD9B87871D18054C909BB5413DB0
+	BFE02559D07E0064910AF1B71A91070002885645103B0B1728DD30025B191CFF
+	59FEDEFD7DFD2DC32F3159AD1FBF05566FD8FBE0C10B6089C2CB0D041CECECAC
+	6C6CC032808585910972CB38A8946201174ECCE07527A061376045093949033A
+	3D09195C65860FFD43B7D2819B464CB0F94D686F03D2DC850EEC31405788822A
+	06360E6EA0DDC01CC00499B60775C4205D3EF87C00B42346BB080008205AE500
+	76060E16C8BA6F60ABE21F9B9034D3EEAF7D276FCB7DFFC47CE1D3F123EB8F0A
+	B189CA8BCBEAA96B28C84A080AF201D31FA8DBFA07D86E011FDE03197703A771
+	2616E8200F13784B05307EC09980E93F349132C06F1E6784D5C5D055D6D0659D
+	D0B40F5D89C6CA061E70005D99CACFCB072CFF1941EB635840AD0366D6BFC0F6
+	E83F68A90549FBBF7EFD8A8D8DA55D04000410AD22007C95C67F166636606103
+	0C3E3656763601B6BFFFDEB0F0FDF52936FCFEF5FB8B7B1F5FDFBEB7FAE4E5FF
+	7B9845B8C5D5E415B5D55424A54479B8B9404308A0020AB46D18BC16E51F232C
+	B08115F9BFFFF0CB1FC1EBD840BD6226481DC204BBBAE33FBC9FC7085D93C184
+	B4F11AB6CAF11F27270F68CD161378A511A86D002CED98E1A3DDE0A1A4DFC0D0
+	E7E3E3A35D040004100D7300E42036D0297E8C908C0DCCE51CA0B5F72C8C9C9C
+	DC42C222BFF57F7FFFFEE3FDCBCF2FEF7CB970FBD4FE0D0778180564C5657454
+	D49515644484F95938997EFFF9FD0F3CA6F3F71F6CE3376C92043C0C01DAE401
+	5DF805BB7FE1EF3F483782193659F617D28B6080DF1E0C6E71810A3D6025059A
+	1303D5BEE0D931604C828EED86DC2C4687D007028000A25925CCC0F1E71FDB5F
+	F00190C00AF92FF89E10D0B27546F07026B85502AC008139838F8F5F56F9DF6F
+	C75F5F3F7F7D7EFFDDEBBB4F365EBDF9EF10831097A89A9C92969A8A8C94383F
+	1F305B802AEDDFBFFFFCFBC7049ECE02AF768174AEFF41FB604CE04E183378C0
+	19B6C30B1C297F1921C7D103AB7666F0C245502F97F13F2B031B642C04D84B81
+	D7E34CE0F5A03F7FFD8C8888A075E803014000D12A02041914D2C43BEF339CB9
+	F7EBD28B6F37C0CD0BD06413B0ABC90C3DD100B605FDFF3F5085CBC1CEC1C129
+	2422FCC7F0CFAF1FBFDFBFFEFCE2CEBBEBB72F1CDB7698E31FBFA490A48EAABA
+	AA92BC9888001B37D39FDF909D19E0E53CD0452EF04209E9207D36B66FDFBF41
+	F206A8F10BAE1558D9D881353C30E6417D123650238109580130837609303183
+	8AA27FC0D2EFE79FF0887051515106DA03800062A1A5E1CC8A0CE68A6CE60C6C
+	0C9F181EDE6438FBE8D3D5AF7F3E817CCA006E7880AE6DF9FB1F3ACC00992800
+	365D813D08365E7E1E1925895F76BFBE7DFDFAE2C1FB57775FEFBE796FF37126
+	410E7E2569455D753559697101011E608A07E609486DF10F5224419AB2E0894E
+	767636E8EA2C6026F80D9FDE044D6F717272827A7C6C4CE0FDEFA0FE39B0FD05
+	5E3C0FDAFF141511232626C640170010402CF4B1868F41DE1488F88218187EDE
+	6238FDF0E7E557DF1E40D22533231BB01102EEBF825221A876FC0BDEFACBC0C8
+	09CC169C1CC222A26A06BF7E7CFFF5E9FDE7E7B7DE3EBA7DF5EC9ED32CBFB824
+	F8C5B455D53554154445047979D88119E20F385F80CA28F06A0A4E0E4E565616
+	F0A41874F4147C591B30F9B30311B04BCCCACC0A1AE2606604F502C043A9C042
+	2E3A348A6EA10F040001C4C2406FC0AEC660A3C66E03ACA6DF30DCBAF3FFE2E3
+	4FD7BEFDFE06CA0E8CC0C4C8091EF7F90BB9E31D94294087C9802672F97881B5
+	059F848CE81FBB7F5F3F7F79FDF8C3CBBB1F0FDEDCB3FDCC2F3E66614529055D
+	0D7579190921215E60631E1419BFFE026B576E2EAEEF3FBE4396FB30806E8C01
+	153EC0DE07B074821C5301CC00E0CE06A86FF1E71F8386AC8EB898043D830320
+	80E81F010820C2A026C2A866C10F4C9D9FAE339C79F0F5F2FB1F2F80D902981C
+	81F536685802586230314397B583A7C040FB021819D8858585458455747F036B
+	8B0FEFBF3CBBF3E6E5ED3BCB0E5F60FAC62ACC23A2ADACA1A5A62C2126C8CBCB
+	292B2D098C804F9FBE401AA5C06CC5C5C5058C48565636D0043C10B03282A301
+	3C05C1F08F9F5B90CE8100104003190148233E7C5A0C4E5ADC4E0CDC0CCF192E
+	DFF975F1F9D7DBBFFFFF0236475898D8C16309908E1728D0FE31FD8334A29899
+	59B978D8B87979A5E5C47F5AFFFAFAF5EBDBA71F9EDD7E7BE6D6913D6BF7F231
+	09C849803A7AC2427CDF597EFEFBFF0798D0FFFEF9272A222E222202340ED89E
+	E2E0051642A0B900D0C17D6CAC8CFF7F827BC87405000134282200194832E84A
+	B2E902EBEDDF0C6F6E309C7BF8E5F2C71FEF41A3D68C2C2C90AB9741D50613B0
+	2D0B39DD0AB24694831D083805858455B414BEFFF8F5F9E3A7A777DEBCB8F378
+	D5A94B0C9F39F85879F9B9047E7EFBF5F8F1938C0C191E3E6ED0A261A67F4C90
+	1A00D85006D609EC6C7F7FFD666564A3B37F010268D04500524F424497C14D97
+	C78D8187E111C3B97B3FAFBCFA76F71FE4684960F305DC65FD0F5EC809DB580C
+	DE3EC6C4042CF7B9B8B924A4C47E5AFCFAFAE5EBFB979F9EDFFFF0FAEE8BD777
+	3EB30A73000B2F70030DBAD9001479DCEC4004D99F408BEB3AF10380001ABC11
+	800CE4188CE4D88D80F5F63786E7C0DAE2C9A71BDF7E7F82AE8E0376A7202D7C
+	C83E4BC8F011B8D46267E5E010E614161655D4002D81F8FAF5F3CB471FCEBEDD
+	6BC865C3CDC4072CB2383939B804D9B8F8D9A18B1B9918385979E8EC35800062
+	A4E9582B2DC1FF7B0CA71EFC00668B07E0BD918C2C4C1CA025B6E0A5188CD06C
+	C18058F408DE120F6C207DFDFEE5FBB76FAC3F05DFBDFC00CC28C28A9CE0F10B
+	50047EFDFED542384895CD989EDE0008A0A11B0108F081E1FEEDFF171E7FBAFE
+	E3CF0FD0C590A0816556F8817B90A543B00DDFF0A3ECFE818E3E004F07813607
+	82AF30FFF2ED9383588C2C93163D1D0F1040C3210290C0CFDB0CA7EE7FBFFAEE
+	FB33D07A42502B9F05BC0F19317F0659FD069AAF6484EEA0850CA302A53F7FFB
+	E428112FCDA0464F170304100BC3B002ECAA0CB6AA9CB60C9C0CAF196EDEF977
+	F1F9E7DB3FFEFE0036F05998D9C18D28F0781DE8B82826705F9B117A5CC27FE8
+	60351703179D5D0C1040C32C02104094415D94499D811FC8FC7C8DE1F4A3EFD7
+	3EFE7CCD083E078185919D01BE5FE53F74EE007272083303339DDD091040C336
+	0290002FA897C7E904CC162F18AEDEFD77E9F9E75B7FC0F756B130B08177C832
+	40D6AD02EB0F76064E3A3B0E208046420420800483B6049336305BFC61780BEC
+	E53DFA7EF5D3CFF74CE0E548ACCC6C7FFFFD6361A077800004D030AB84C9018F
+	81BDBC3F9781BDBCF79FFEA5C9B4D0D97680001A8D00A49E05C36746065E3A5B
+	0A1040A31130C000208098468360600140008D46C0000380000300F9FA0428AF
+	3C6DC40000000049454E44AE426082
+	]]>
+</Picture>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" length_in_bytes="38729" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000001540000
+	0055080200000099DB8BF30000000467414D410000B18F0BFC61050000000970
+	48597300001C1F00001C1F0160FD04DA0000000774494D4507DC081B081F0743
+	6D272E0000001A74455874536F667477617265005061696E742E4E4554207633
+	2E352E313030F472A1000096A849444154785EEDFD07781BC7BA258A9E7767EE
+	F7EEF7BE7BE7CE99999D9D730E926CC9B26C59B2329565CB720EB2E42CD9B272
+	A02866820018C09CC49C73CE1100738EC89104987326C5B7FE6A88A6657B1F7B
+	6F7B9F7DCEE857A9585D6800DD8D5AEB5F7F5575F5BF2CDDB6DB76DBFEB7B4DB
+	E0FFAB7663696991E5B7EDB6FDA7B3DBE0FF49BBB1B438B2A41D5B52CE2DF52D
+	2DCD588880E3022EB19DFEF7B2E573E7125773DBFE63DA6DF0FFA44D2F4DC60D
+	5DF0EB3B94347C3277CCAE7C36B06621B2733EAB67B166F2866E7E697C1EBB2C
+	CD131D2CAC2085FFD4367B63AC6BBEC2B0D834B9D037BB3836870A9CF9F215E0
+	2EC24DA3EB71E3C6FCFC3C724BD56DFB67B2DBE0FF09BB015F3F156A3A6DA359
+	E7ACDFECA2DFE06C7CC9D5B849D8BDC3CB743864E0C3E8F113E913678BC65D1A
+	A6A3B40B25C6A5E6A125F9EC92796969DC02861B1620100658E13FBCDD5832CF
+	695CB56FF3B47B7DF4EF879A3E8E1FBA9037E6593B112F9B28D6CCD6F52F29A7
+	9686890318114C8C4CF768FA357263B7D6D4D7D33B3C38383232323A3A3A3D3D
+	BDB8883D6EDBBFB3DD06FF4FDAC2D24C7CBF2D4FBBC9C3B8C7D3B8C7CDB0CBCD
+	B847A0DF21D4EF74253AD888979C749B5C0CDB843DBBDD4C7BFCCDAF87F57E9A
+	3C78B968D243BC18DC7223CEB05831BE28070AF05137A01138FB2119FC47E186
+	1B4B438B2677D53BF6F2F54ECA8DF68A176D951B1CE59BEC149BEC955B5CB5DB
+	BCBADF0CECF92CC67C317B909739E49ADD2F2AEB8DA832A7357657B469EB658A
+	16B95CAE90ABB54A9D5663ECD6F518F43D3DC6DEA181E1D9E9B945E883F90590
+	C26D99F00FB3DBE0FF495B589A4F1E7471D06C06F819FEAD3C8D7B2DB9C1CAC3
+	B0075C801C9BEEFADD7CDD2E8166A740B39BAFB672D5EE166A7709B4BBDD0D07
+	7D4CEF050F1C8B9AFC2A73FC6AF584AF7C36BB67B1A177A963644935BB34081D
+	6DF93234784E3623FDD336FE1B5035033EBA63CEAA6D749AAAED42F50E3EA5ED
+	28F394DB78AADD3CE54E6715259E66AB50B3DD4DB7CBCBB8DFAFFB4860EF0751
+	FDDF240DD9E60C78950D44559B536ABB8B5B0C35326D5B97BA53A9542B151A95
+	4CAD5176F7E8FA867B47A746A6C747A627C62667A767171616C0089C598EE4B6
+	FD1A761BFC3F6910AF59A32207ED56F7EEBD6E464A0CFC7B057ACA3D8CFB910B
+	0DBB8905747BDDB5073DF4873DB4AF7B68DFF0D0BCE6A97B5DA43BECA13B807A
+	77D57EBE72B7B3629793729BA36EA74BCF0EB7BE7D21BDEF250D9F2F1A73AB9C
+	096F5E8851CEE7F42D344CDCE89D5E9AF8AE2B01E9666FC23F49AB1F5F9AF0D7
+	1F77526C76535B09D556EE262B51EF2E61B71540EEAED9EDA63D88337553EEE3
+	ABF609D5FB5170555809547B5C957B5D153B046007E5AB8EEA2DD04A826E2BAF
+	DED783FA3F8E1E3C9336689B3BE059361051DD97D2D85BDA62AC6ED33474293B
+	E50A9546A1D3A9BB113BF41A864DFA817ED3C0C8D0F8D4D4D4CCCC0C6287B9B9
+	B9DB74F0F7D86DF093AD6C43CCC158364BC6829C359BDDF47B3D0CFB41014C02
+	50C193E8608FBB769F877AAF407DC85D7D40A47ECD43F91A60EFA67ADD5375D0
+	5375080537F5EB9EEAC342ED1B9EDA2322CD1B5C8D5079802FDFE7ACD8E3A8DC
+	65AFDC6AA77AC545F30A94828FF19D50F3E75123DFA48E9E174F78B4CE24A8E7
+	CB7B965A4697D40B4B034B37181DE0B896F37F0F9B5B9A09D19F7056BEE2A1DD
+	059FFF49C40B876C9F79DBE3F9CF62D79F2D7CF1A2E4E56B8D9B9D3B763ACBAC
+	04EAFDEEAA5D02D56EA172AF50B197A7D8032E1028F6F2E57B78F2DD02C51EB0
+	A18B7287B3F25527F5260450AE869D20112FD39190BE0FA307BE4E1EB2CE1976
+	2F1B0A95F427D598F29ABA2BDB7575727D974AA5D2AAF43AB951ADD269349ADE
+	DEDE91B161AD566B301856FE88BFB5818D977F87E5347F636961017F97E629FB
+	F19F687EE1BB83FCE10E8BD47DFA8FB3DBE0FF0EEDB7B69E1B4BD2D1183BF5AB
+	1E86DD10F642C31E77C33E14DC8D56EE5A78B3FD02F91E7ED77E81EC805BE77E
+	97F6FDFC8E0382AE0342F941A1EC0055CAF7F151E692F28050F59A4079D84D71
+	08054FD5EB1E2C0995AFE12581E2005FB9D749B1DB81D4C10E47E55627286735
+	8B1A7A8E84998FC6F79D2A1A7392CE05362E44A9167286161BA6978C734B938B
+	1435CC7FC7082C7DFF1C7E655B5C5A08D19E04F885FA9D762D3BA373FC23C2A3
+	1D84765F3B7CFAE6D77BF77CF4F21B6736BE7EF585B7BD57BFE3F3EC6709ABBE
+	C97DE18A740BAFDD8A27DF095100167093EF112AAC4001B87A02F92E68041458
+	CD6E17A51518C155F92AC20A17D516040E7C9D9587F190AFE9CD80DE8F42FB4F
+	C40F5CCC18E2150FFB97F6C534296AB46A6D4747476E6EAEB7B777494989E510
+	7F55E3A0084CC2805B6C02DEB373F38844E616E6F107EA636E7E7E76910A6C93
+	7B71717E7111BB637F6CCEB1EE4D50032AA9B0888F220E4099FB64CE566EA2CC
+	192A56ECF22BDB3F16FCBFDD79FC7DB60C7BC60354A67C71A96124CD5EBD4960
+	D8E7A6B76211FE6E77CDAE0F1D37BF71EEE5637EDB4E446E3B9FB9F362D14E9B
+	4A2BFB86BD0E8D7BEC9BAC1C9A773B35EF736CD9CD6BDD8B460F52706DDBE7DA
+	C9A583CE9DC40B42D941816CAF0044203FE8A678DD5D7188AF38E4AE3CE0AE7C
+	0D8968427D50A020D90CFFE9AADE8540DA4963C5536F75D5EE14E9F705988F44
+	0C1D8D9FFC367BC25A3CE1DE391B6B58AC302DB58C58A6244CD27546F3E1CEE9
+	57BDE6B82A91FA334E8A8D02DDD6ABB5DB4C135A7CD1D4F46C7FDF904A65E86C
+	ED925448C2E3C3053ECE67AC4F9DBC7AECCDAF771F3AB371F7D74FED39FFE4BB
+	1ECF1F0B7BE17CD9E6CB55AFDAD66F73E9D8C9EBDCE5DCB1DB5566E52A43BE1B
+	8208A28029052B4803E256A5155FB91321830B927287AB7ABB8B7A074FBFC359
+	B5B3A0395E5A5A151911EEED2D727373ABACACB41CE2AF6D1C5C0156801F009F
+	E3003F3B373B3B33333B37333B3B8D343D333DCB55533D0AECA5B959209F3322
+	8A859B64B1383747ECC03EF60698025FC13E7F8103BF25A78C6CF9075CAEF9B5
+	EC37013F90333C3C3C303030393939CF4E9B43D43FA111D697D1BEC2687371A9
+	7524C751F58A9BCE0ACA1FDEDED388E0D6EA15ABE79F7CEAE9E737AC5ABF71CD
+	866D6B37ED5ABBE5C8FA83275E7AFBDAA6E35EAF7E15B6EDDBA4AD17F2775A97
+	EEBA56BDDBBE76B77DCD4EC786BD4E4D7B1D5BF6B8B458B9B4EC716DDBCF6FDF
+	CBEB002FECE175EC052FF0BB0EB2FC90407608EA80AF781D74C064C261A8032E
+	584058E1A63AE8A63920D4ED77D5EEE6EBB6BB6AB609743B84D023DD7BBD4C87
+	82CD6FC7F77F963B76B57C5654772342BE983E70A36AF286E6D76C360B4B51FA
+	B3F68A97DD743BAC1B5ED60E35FD905C50B138BB343F353B3132A9D3199A9A9A
+	72727222626304BE82AFAF7EF2EEB7FBB71D597FE0F82BAF9FDEF0BEE8C563D7
+	D77E16B5FE54E6CB678B365E916EB669D8E2D0BAC3A9732744012205840902D5
+	1E37D53E480624BE120512087CD9EEC024572F0F5F91C8C3D7C7CBDDDDBDB6B6
+	D6F2F5BF9E0190C0211049A0058CE717A601E8B9B9E99919246453535368E113
+	9353131313286383322A4D4D830F58C7C41478817626035D70A400441043CC2F
+	D0E7CD2F7CC711B44568213A20ED400740C74042E1D7B7DF04FC5037D06345C5
+	25E5E515959555B5F5F5EDED1D6AB5A6BBA7A7D7DC373A32864B067EFC2719EC
+	BD05FCDF8D362DC29916504347CC4F5D7A7B04DD7BF96AAB35AF3CF6D8D30FAE
+	DBF4CCB31B9F5EFDD2D3EB363DBBF6A555CFBFB466DDC6D5CFAF5FB5F6C5352F
+	EF5AB7EDF0FADDC75F7AEDD48677EC367EE4F5F2C9A82DA753B75E2AD87E59BC
+	DDB6C6CAA161A7532B58C0CAB9798F4BF32E276284BD28F35AF739B7ED76EDD8
+	C72722A080C255FE1A64025840A02475E0A93AC457BF4E3D0B5A4A22DD210FDD
+	2137EDEB22ED21EA71D48117F6E03891E398057A2BB05564F745E3B0FAC61C3B
+	B7BFDF1697620D17EC951BDD753BAF34BD201FACFBF9CA023BE2C24E4DCC9A4D
+	FD2D4D2D092989425FD7AFCF7DFDE989A3EF9F78F38D933BDEB8F8D281F3CFBD
+	EFFEC2BBDECF1D8F7EFEB3B435DF16AEB954FDB26DF34E01E202A51594142E0B
+	3402AFE38028CAD1CBC3DBDBCFD7D7DFDFC3C3031463F99ABFDBD02871A804BF
+	8545F2F3A4F3E718766709F6D3D380F7F8C4C4F8F8F8D8D8D8E8E8E8C8F0F0E8
+	C8C8F8E82836478647A86E64640C2F8F8FD34ED80D05B478E209FACBB1046381
+	597CF2F434B40391027D0BE302E09FE806E0670730CB8208C8046201E2821BBF
+	1615FC56E0EFECE82A29292B2D2DCBCF2FCCCACA4E4FCB484D494D4D49CFCCCC
+	CACF2B282D2E9388A5F8C13ABBBA346A4D4F8F69686808D7050A8AB1DE3FCE96
+	910FE3C868B906BF7FE76821357404FC3A4214627E78FEE7B73F7CEFBD773FF2
+	F0E30F3EF4E0838FDCF7F013F73EF2F4030FAFB9E78917EE7FF6A5C79F7EEE49
+	A435EB9E5DF5FCEA556BD63CBFEEB9752FAFD9B07DEDA6DD6BB71D59B7F78B17
+	DFBEF2CA07FC573E0DDAF24DC2D60B39A0835DD76A1135EC7669DCE1D8B8C7B9
+	79B76B33F23DF6CD7B9D5BF6F35A7753E070930B045DFB21011026B8ABA90016
+	F0501F8016F0D4BEEEA17FCDD3F0066384C3EEBAC35EBA039EFA03D437D9762C
+	252766B86F94CEF6EFB785A524E31517A686AC9B5EE8E895FC7CF0FF88DD7C6F
+	4F8FB9AEAE2E393935C03FD8DD5B78E6EAD7C72FBEF3C6673BDF38F1EAE18B2F
+	EE3DF7F43B1EAB4EC46EB6AED8EED4B4DBB96B17AFE39028D2C9CBD30FE6EBEB
+	0BF0B7B7B75B3EEBEF33B400608CC18F803733370FD70D3F4E8007E227268167
+	807B687090D3B668B70303FDFDFD7D037DFD6C7310396AF07778187BC1868669
+	E721D0040C040102C02770440016807200A74C81566667493110CBCC3322807F
+	A4C22C8B19E6482EE0A8081E5C4EA2808524B88AD4707FB9FD36E0BFB1D8D9DE
+	5950505454549C9F9F9F939B9B9D9D939E9E999C9492949C9298989C109F1813
+	1D1B1B131717179F989098969A9693935B58585451216E682099A0516B4D2613
+	2E2A2E17020770A0E5A37F63FB0EF9B0C525E578B99D623B0D6269F6417F7A68
+	F7C0BB6E7CF3F1871F7FE0D955AB1F7DF4E17BEEBCEB0FBFFBFD7FFBBFFFDFFF
+	F1DFFFF50FFFE3F7BFFFC3EFFED7EFFEE79FFEF23FEF7EE02F0F3E76FFA34F3F
+	F4C4330F3FBDFAC967D73EF3EC9A6756AF59F5FCDA35CFAD5BF5DCDA556BD6AD
+	DAB065F5B6D7D65A7DB07EFF572FBD7D75E351D1E62FA3B69DC9D87AA9781704
+	024206DBBA3D0EB5BB20139C1BF638375AF19A76F39AF7215E202EE8DC8F0859
+	28DB27408C20DFE7AE3820541E7453BDEEAE3E0C2E70579310F0D2BDE6D67DC0
+	BDE193B084B0A1FE313AA31F33CBC9FE4C5B5CCA30B9D8C95F71D7EDB8D4F442
+	93A9D452FF336C7E76213C34C2DBDB7B74F82798883B901B4B7333F3BDE60159
+	9BAAB6B229333333382CE8A3CFDFDBB86FD5D9DCCD2ECDDB5DBBACF81D873D23
+	78DE9E3E3E7EDEFE7EBE9E9E9E0A8582BDF9EF358AC3594F1EF3C9E4E8017BE0
+	945C3D1CFBC8088377BFC98C7F3DDDDD46A3D180D46D3430D319BB5136F6F474
+	9BBA2173BB4DA6EEDE5E535F2F67E6FEBEBEA1011001186160786868180261CC
+	221FC02920024410240C4866E09B67B822050BD495304791020AF3F314262CE2
+	08890E8811D88C4AD82FF921C97EAB98BFA3BD233717C02FC8CE02EC33929353
+	9280FCC4E4F884A404A4C444C01E29262616293626369A0A7128A332012F2726
+	A7A4A4E2872F2C2CAEAAAC6E6A6C92C9643ABDAEAFAF0F8CBB7C5156FAEABFD9
+	389DCF7DC8F247516171493359CB4784A9B672535BF1357B4101EEFA7DEB8EDC
+	7FF7437F79E6A9A7EFBEFB2F77DDF5C7071FB8F791C71E7BF4B1471F7AE4E107
+	1E78E09E7BEEB9F3CE3BFF72E79D7FFACB9F607FF9CB9FEFFCCB1D77DC75D79D
+	F7DE71DF83773FFAE4034F3DFBE8336B1F7F76DD93ABD73F0D81F0DC0BAB57AF
+	5DB366EDEAE75F7EEEC5CD6B5FDEB676F3EBEB777FB2E18D0B2F7FE4BAF9CBE0
+	ADA7E2B79FCFDE71A594BA151DEAF63835EF0305B834ED8528706ADDCBBBD99B
+	E826DF8FD080FAD269F8803A0B112AC33F8BEA3E4D4A4F181F9EE0CEEBEFB51B
+	4B5926773BC51637BDD5A5D675B5DDC596FA9F617979796B9E7FFEFEFBEF77E5
+	F197AFF3CFB21B4B7189B1EBB7AD3E9DF3AA63CB2E9E7C27AFFD0D8F303E811F
+	F0F7F3F310790079969DFF56E37AE3E154A965CDCE53B83E350DFF0C63F81C83
+	930774CD26809E10AFBD694AA55CA554C8655D3219846CA74CD6C572995C4EF5
+	1A8D5AA755EBF55AA206A3018C001660FF4CBD66F3E0403FB804099CC27DCB77
+	6182A50F817A16A8E3808C050890044C0E201EC1D182086858813A267E7114FD
+	CBC0BFF21723B8FCC44F88FA8E8ECEACAC9C9C9CBC0C38FCE4D4F8F884B8D878
+	B8FAC888A8C8C8E8E8A81814A2A2A22323B119151D151D1D4D2CB09C4747C7E0
+	55A2835830425C6C2CA8221EF44151437E417979454D4D4D5B6B9B56ABEBEEB6
+	840C8895FE869061F92C380AE06A384E21F04FB7BA6A1066EF20FC2B7793F3EF
+	DEBDFAE01DFFCF7FFFBFD6AC5965B5C7EAD3CF8E7D71F2CB63C73F7AFB9DB7F6
+	BF7660D7EE5D5BB6BEBAFEE517D1CA57AD5AF5D8538F3FFAD8630F3DF0D07DF7
+	DD074680DD416C807F60853FDE7DFF1D0F3C7CDFC34F3EF0D8AA079F7CFE7170
+	C1F32F3EF3DC8B6B28AD5FF3DCF3AB573FB7FAF975AB5F7CF5F94D07D7597DB4
+	FEE0C98D6FD96EFED867F389B8EDE7F2B75D2CDF71AD6AE7B5DA9D8E8D568084
+	4BDB1EC7963DBCD6BDCE6DFB9C210DE4FB68B28DC6CAADFAF3D4CC94F1B1293A
+	A31F183BFBEFFD88CBD7E1C7EDC6525E9FBFBD728B50BBCBBA7D5D8D3ED752FF
+	332C3931E599A79F7AFAE927DE7EFBEDD1E19F54223F6AD1C9912FED24CFEFD4
+	B2C34566C56F79CB2B54E8E5E905F043F6C3F39BCD66CBAEBFDCF06323CDB39E
+	7CF855C00B0083D7871F26BFCC217F78A8BFBFB7A7A7070006E0356A15B44657
+	6727C28DB6F6D6D69696A64658437D7D7D6D6D6D5D6D6D7D5D5D63637D634343
+	331C577313EDD5DED6D1D1DE25EB5228E42A9552A3052968F47A1DF403F8A40F
+	BAA0BFAFBFAFB71F21036C7010720001C6C4F824EB37188726202A2032E01409
+	A20446019C9154011750CF20D747F873EC177B7E88701C16AE35748DC964EEEB
+	ED8388C135C251913EBFD97470B26969E9F0F9803D000C848785475CBF1E1A1C
+	1C121A1A167A3D2C38283824F83A6AB8141A1A8E14161681141E1E81FD017E24
+	B0003880D4416C1C470D4C20101D2426262188484BCBC8C9CD2F292EADADAB6F
+	696D552A95BD7D7D2314534DE25270C7FCD76DB9AD130E6EE29F6D2F75CFCA84
+	AA3778CA6DAECABD4EF26D8E8A2DEE86036F5C78E583A3EF46C68465E4A6A567
+	A54427C68445860604FB7B780AED5D1C2FDB5C3A75FA9B4F3FFFE4FD0FDF7BFD
+	CDC3BBF7EEDEB663DBC68D1BD7AF5FBF6ACDAA279F7EF2B1279E78F8D1471E78
+	F081FBEEBDFFEE3BEEF9CB9FEFF8E31FFF78070C72E19E7BEEBAF7EE071FBFEF
+	F1550F3F0D3A78F1A9D51B9E796EC3AA355007CF3DF3ECEA55AB9E5FFDDC0608
+	84E75ED9BEF6D5C32FECFD62C391CB2F1DF5D8FC79D8D66F92B69C2FD872AD62
+	07D401F0CF97EF71559054F1A83C999193899892CEE80766395386F9959BCB85
+	655BBE26A503214E8ACDEEFADD57DA5FACD0A5106E7E9E4D8C4D1C3B7AEC89A7
+	9E080C084153B1D4FE3C0B8D0BDEB8EBB9F3055B9DDA773977ED00F83DAF0B7D
+	4414F003FF5E5E5EC08B65D75F6E3803A0676E719140CF7AE058284EBD75D0F9
+	509A802254BBB1DBA8D5EBE1C99572796747475B5B2BE05E575B53299540E226
+	2525858586060504E298020302D0C4E3E3E3D3D2D3F2F3F2CA4A4A24127175A5
+	B4B6B6A6018CD0D8D0D4D4D8C60C1F2397412028C126F8648A207A8C0017142E
+	6204200BDF0EE36E88224530C10617262918E1B8801302CCB89E0A4800FAA910
+	0B707D847FC57E19F8A1464CA65E830EE4A7D721E90C08CE556AAD5AADD56874
+	06630F021D1CF7E8D8586707627EEAEA838C8F88880C0E0A01478B3C455E5EDE
+	48DEDEA4D702FC83FC0370A102030383030282504011EC10024EB81E16161A7E
+	1D74101E114109641003C9004A00EC6363E291E3934950E07F42522245138990
+	18A9A969A40E0A0A2B2AC4F5F50D32B9A2A7C734C0061D6FFCC495586EF72B5B
+	3C956F2C99E7B502D53B3CE55647C5263BD9AE08CDF9126D428BA2AE5DD15ADF
+	D650552B16579696888B8A4AF3B20B7332B2535232921352E22362C243C2837D
+	037D849E6EF64E7617AF5E3EF5ED379F7C76FCBDF7DF79FD8DC3FBF6EDD9BA7D
+	EBC64DAFAC5DBF0EBEFDE9A79F7EFCF1C71F7AE411E8E17BEFB108843BFF7CC7
+	9FFEF897DFFFF1F77FBEEBCF773F7027E8E0B1D50F3DB9E6D1D52F3CB176C3D3
+	6B5E7C065CB07A1D050BCFAD7B6ECD73AB57AD5DBD6ED3EA2397375E2EB7B2A9
+	D98570C055B617CE1FA18A87F4546E7EDEECF4ADDDFD16757313D5B7387CAEBC
+	9C7305B21B4B1543914ECAAD22FDCEAB1D1BCA34093F1FFCB0E9C969BDAE1B4D
+	D6B2FDB32D38C26FC38E35E7F3B63AB7EE04F8054D6F7B070BBC3DBC96C10F84
+	5876FD258663074298DB248384263C4DCFB0CE7C023FB9E0FE7EA09190AF552B
+	D52AB9BCABBDA31DE8ADAAAA02AA3332D2838383DCDC84AEAEAE3C1E4FC0E70B
+	04029EB38B93A3A3BD8383BDBD8393939390CFC711A24DC74447A7A6A4E4E5E6
+	9596148B2B2AAA2A2B6B6AAA211620101A9B9A5A9A9BA123402B32B90CD200BA
+	00B10CB406270A101A80873816000F408E50F7233B5C1C3C323A05423F45018C
+	066E2090F9EB73BE7E2EF8D1382043E0E9CDE65EC429BDE63E538FB9A7C7ACD7
+	1B0C948C003F925AA351A9D42A9506825CABD1C9E58AD696F6EA9ADAC2826208
+	01B8F1A0C0605080802F747676E1F1F830A1C0CDC3834801ECE0E3EB17101080
+	3FFEFEF81BE8EF0F6A08824608263E08430ED51016068110CED401C2077C640C
+	175300FC492929C9F89F929A929A969292969A02ED9199939D9B919985300117
+	C772322BEC7B2DFBE6268C6D2C0D2F767B683EB8DCF19CBBEA1D716F4AFF28F5
+	EE9A06BBB5DD6A354E4ED5D1216F6FEB6C696AADAB6FAAAEA9AF92D454945596
+	945614E596E666176666E4A5A766A4C4A7C446C685074784F806FB798ADC9C5D
+	1CAE5CBD7CFAECE94F3FFFF4FD0F3F78F3CD37F7EEDFBB65C7AB1B376D7AE1C5
+	F5CF3FFFFC33CF3C0375F0C8A3AC07E1BE7BEFBAF31E2282DFFDE10FBFFBC39F
+	FEF8E7BFDCF56750C4BD0FDFF3D0D3F73FBEFAD1A7563FF6CCBAA75E7865CDAA
+	A79F7DFDDB97AE56ECB0AFDDEDD2B297D7B51FF1BFAB7A9F7BD999C2A2B21B4C
+	03E1BC7E08F21FD6709B1C3B70E5E54A5C13C970A2BD72ABA7CEEA5AD78BB9F2
+	C8855FE6C2FF46F309F7DEB075D5B99C2D8E6D88F9B7BB36BE270A72F711F992
+	EEF7F181ECFFDBC00F910C9C003308F249EACFCE52C73EEB8787D6C767C2FD9A
+	CC26C4F83A9D06ED1A913CD425E02A2E2FCFCACC8464E5D827007E2C28084E0C
+	DE8B7C183334631F6F6F4F0F0FA19051838BB393A30318012D9FCF77051D60FF
+	98E858A2833C0B1D545755D5D5D43434D43369D08230412E93A9D52A440746A3
+	11D101C981211A4E403B0417E02027C61905508FC0143776486386C40134C5F0
+	AF0F0AFE2CF0E393FAFB078C460427903F70ED03FDC03FC5280350FEA831F5E0
+	02211CEA31B0CE4E7001C9029D1E6544347823EA41132AB5A6A3AD13D70E417B
+	6E6E5E62623250ECE7E70FFCBBB8F01C1D9D793C5757BE4028041D78421DF87A
+	FB797BF9E0AF9F7F00764322991080EB0C79001E0847BC101E4631028509C403
+	D45F082E800440C4919E969199999D9D930BDEC137E2F258CEE7FBC6B56CD8CA
+	320C0D7D7269C055F97E80FAABEEB1AEB9A9C589A9A9D1A9E1A1A921A4C1B1DE
+	BE61B369D8D4DD6FD4F5A834DD2A854E2657CB40072DB2D686B6C6FAE6BAEAC6
+	4A699D585C5556262E292C2FC82FC9CDC8CF4CC94E4D488D8B898F0E8F0E0B0C
+	F1F7F4F670E6F3AEDA599F397FFACB135F7C70F4FD37DF3AB2EFE0FE1D3BB76F
+	7A75D3860D1B9E5FF73C04FF934F3DF9E8A38F820EEEBEEB9E3FFFF1CF7FFCD3
+	9F7FF7BBDF215EF8D7FFFEBFEEB8FBCEED0737BFF4F286C397365E2EDBEA58B3
+	DBA969B76BC76E5ED71E9E62BF57D139A9A49A3BD365A3B35B6196F35D51CF15
+	38FC73C676A16B523B9A61A7D8E6A6DB612BDB98210FA101E8DFDE3C83845BDF
+	5B73A9749B7DCB2E27F94EB786F744FE88F9BD813D5F72FC5E7089965D7F89CD
+	2DD0581A0CB087E2078AC6017BD6AB0F43FBEEEFED450B465B862697CB651DED
+	6DB5D535D959596871E49D020381F8EB4CAAC2455D0F4191FEA37D06A391523B
+	C5EB8C14400FFEFE68D074AC2291B797B787BB3B3C9F83BDA303DABD8BB32B9F
+	2F1279060707933A484DC9CFCB2D2B2D938AC58814EA1BEA9B9B9BA108144A19
+	85060683A9A7DBCCC60E2007C050D42D418311E338FE6916B9C03806A05EC0EF
+	FDD4DFB37F1BFCF8C9878786815EE86780BFC78468DF8432427EC602A0A14116
+	A110178008200DA008B0032800210CDE08150022D0232C8078620944801A040B
+	08763A3BBB6A6AEB4B4BCB20D7A3A362E0F3017EB000920BB88087CB2210BAB9
+	7BB87B88440818C0B3E05AD00123024409E081100409E161A161A00084031C05
+	242743064005A401FD5919598802860687A8F9FEC058ABFEAEE9A3C52F37FA99
+	A5B1941ED79E71EDFCD4D22C44214DC7C44EB8AE5393B3131333E3E082B1C9A1
+	C1F1FE81B1BEDE619379C8D83360D4F680AB156AA352A55574421A74B536B735
+	36B535D636D756350089E20A29A2C0E2C2D2829CC2ACCC9CD4D48CE4C494D8A8
+	B8C8EB1121DE417E6E2221A903EBCB67CE9EFAFCF3CFDFFFE0BDC3470EEFD9B7
+	67DBF6AD2F6F7AE985F5EB9E5DBDFAF1A79E7884450A7FF9CB9DF7DD7FEFA6DD
+	1B563FB766FF99F517CB5E75A8DEE1D464E5D2B6DBA573374F79485470A9AE96
+	26C07067B75CE0CE914E8739FFE553E68CDB6765C16237965A27F3ECE55B39F0
+	A775F92F425CFED6766349E8E762F5CD2AEB8A2D2ECDE4F905F5EF7BFABB7B89
+	C8EBC2FCFCFCD0FE2D3BFF1283A3A4E1F4D9D949F29C6C546F720AA1F528903F
+	308036DD8340B6DBA8D7EB552A45734B737151715242725424C2CEF8B494B4B4
+	D48CB4945448CEB8985804A46161D47D0563FD58D4B385FF61A1A1C40DE084E0
+	E040520741222FCFCF3EFFFCEDB7DF3E79F2247401F8C0D3C3D3DDDD4D2814B8
+	B8B8383B3B3B3A3B39BBB8207CF0F6F6C25BE2E3E3E0C90A0A0A24E2F2BABADA
+	B6B656C801086B6EECC06C362132191E1A02638D02FF93347F082AC04200D485
+	09DF4DC3813FB47F1BFC60134278DF00A06E06F801FB6E3879423558001440C3
+	993D380624D205084FB03F4983DE7EE80224BC85006FC045348007C0051A0D94
+	811E05BD1E4466042FE888200C6A8D4EA954B7B4B4D7D6D6810E20DA816780DC
+	538448019786E704CDE4C213101B800E3C49174018F8F8416F05073116B0F416
+	465B7A049392D352D35353D3C4156208A7B9D99BF7CFFFC0B8567E6BA3BFB130
+	3B3B3E31363933F3A31D6668F988AFA667E666D066C002C39383C393430363FD
+	20828191DEBE1133B8004967D2E87A342A9DB24BD9D98E48A8A319A9AE05015F
+	15A441696519B8A0A02C3FBF3437AB202B233B35391D6D2C262A3632382CC82F
+	D0D7DDC3CDD1D9E1D2954BA74E9F3AF6C927EFBCF7CEC1D70EEEDEBD7BCBD64D
+	8F3DF6D8DDF7DFB5CEEAD1A7D63C74C866F5A5924DB695568E4D7B5DDBF6BB74
+	EE14280EF9E65F6BAEEBE00E1727C59D175780ADAC84810296CB9C2DBF6A29DC
+	58EA9C9138CA7608553BEC159B123B3D66E7FE115330F83E8EBB4E3C7BB17CAB
+	7DD30EBE6287B0F603113493C81B6E1F6E141E00F1B965D75F626071384A0EFC
+	50CED4973631414E9F26F00CF6F79AE1E58C46205FD9D6D2565B555B575DDBDA
+	D4DAD6D2D9DAD2D654DF5C535527A990941597171714E5E5E6E766E766A66722
+	D84C4A488C8D89850F8F40901A4A863095D102198FC75BBB76DDA38F3EB279D3
+	26387F28024E4170020144465D6288173C295E4080E0E8E804750037087E80D0
+	41234F4C4828C8CBAFA9AE96C9BAC00288BA2922E8EFA399452323140B50E442
+	3280FA03166ECCB139F696735E61FF06F8A122FA076896120C8E1D90EEEB250F
+	0FF70E9C03F6CCC99B39550F5230906367B31B100EF4910A30F5D09E66731F6A
+	60500F403BE7FF51D06AC1AA06EA2060DD8790033AAD9EE80054C1EDA0D1CB64
+	8A9696B6EAEADA92E2525020D43DE800EA800F4DC017F05C5C51F6043D881000
+	FA223480D84244101E1E19131D979000FC2725C627414481C3713A9613FBBE59
+	5A362B703E90AB017B8E8D4FC027A0CC76FC9EA192430B312B1982C629A489D9
+	C989C9F1D189E1D189C1A18901E4C3E34343A37D7D237DA6C19EEE7E83A157AF
+	31AA5446B5CEA852923A686DEE6C863A686C69A86DA894D456945796964A8B0B
+	CBF2738B734007A9D96929E9497149B19131E1A161C1FE417EDEFE5E972E5FDC
+	F8CA4BFFF3BFFDEECF7FF9DD8BFB1E5DB3E1E1F7F96B2F146FBE26DDEED868C5
+	6BB1726DDF29501EF2CDB9D6526F01FFB271A7B3F2A47EB48C02575EAE81A917
+	EAED643B3C34DB6D14AF44B4BBCCCDFC23827E17F76B3BBE7CE6AA98C0EFA2D8
+	C1AFF9D8D3C703A13E70821F1EE8FA5BC14FDE11CC3E3D33CB34FFD4E8E818D7
+	AF86068F866B3018D44A4D571714BF02058D5AAF5522FAD769945A1DCA2A1D92
+	4AAEEAEA9023426FAC6F213A289794169715E517E5E5E4E76466656664A526A7
+	26C427C4C4C4444646868786222E803F8768416800C50A82E0D80139B8024446
+	814360303102C286A020D67D4072D7D3C35D2014B8BABA72F280CFE381293233
+	33EBEBEBD42AA541AF03F0FA7A7BA96B7064848D0E4ECDD0BD05B3744B02E00F
+	47F5DDCF48F6D7C0BFB0B008C0E2FCE1D821F89196453EBC3ACA8889C005C402
+	CCBD2301CA403653FB84F065B78F1D4004E003161450F8008EC0EBAC9B004C40
+	391884604F144074A0D3E3740CC8C10B2C7040D9885A954ADDD9296374505358
+	589492928A602124340CD0F74064E029A238D0CF2F202008AA0B041C1F9F101B
+	1B5F52528A03C2E5B09CDBF76D65135F6EE88034AE204894DB5C69D807465A99
+	1923560EFF34EE8A1C5A6096F424CDCB803B199B1A451A99181A19A7180144D0
+	3F4ABA0079EF90C9D467D0F71AB406A502BA47AB90293BDA3A9B5B3A9BEA5AEB
+	EB9BAAABEAA5A08332D041456151695E29344249BED043B071D3C67FFDD77FFD
+	FFFCCBFFF9C7BB7FF7D2BEC757AF27F05F2C79F59A64BB43C32EA7562BE70E2B
+	BEEC75EF2C87E6BA56CB717F1FC6301CBCA5C48C3BAFE5F2720D0C656E67DD42
+	878362A750B3CD56F972449BFDFCEC3F02FC0EEED6BB4E3D7355BADDA17927C0
+	EF56750C51B30FEBEE0305005490BB965D7F8931553CCFE6D2B1293D348797A6
+	D930CFDF8F1629EF9277B52B649D0A79975229572B652A955CAD526894326C6A
+	340AAD56A50523E8347ABDD6A8D31859AE074DE02D08F69AEA9B6AAAF0E349CA
+	8ACA4A8A4A0A720B72B2721184A6438DA6A424C4C745474545464450F7755858
+	5444645404690532C4B0A8031F5C0F09BDD989005EE01402308F13F712798209
+	ECECED9D9D7971B1B1B5B5B52AB50238419CD2871874707064786462628CFA03
+	E1F4689620E9FF85C5EF26C3FC35F00F0D0FABA9DF9E1BD5235C934A07540D46
+	F2FCD4E10F4C43E80F109CA1FC7BE1DE7B490EB04E3E401A5A003973E3D0034C
+	26B0FE022E1CC0CE142998FBC00A5C65770F1764F500F34407F48D4C0E3051A0
+	D1E8807C840C16A5C05E4201359D5DB2D6D6F6C6C6E6A2C2A2989838C45C80BF
+	BF9F7F7858389B2C108B20026FC0EFCAB5E31FB5E597586BBF81F6343A3A7A0B
+	3C60DCABA8A72BC98CC33C678C01E681FC79F8C49BF5D8A49AF9F9294495344C
+	3B313A353E32C6498361A88391F101AED7A07FB4CF34D0DDDD8B4B4C74A03228
+	BAA82175B4CBDA3AE5ED081C8ACBF23FFCECE85FEEF8CBBFFCCB7FF9AFFFF5BF
+	FE97FFE3FFBAE39EDF6DDCF7D8732F3EFA0E79FE8D7695DBECEA763837EF736A
+	DFC5971DF1CB746E6924CFCF1DF3F2F173855BF265FBD14DCA1797CC0B4A0705
+	AD53E6A4D912D67A757EF6B797FD8B4BD77817769E7CE65AE536E7A69D2E4A2B
+	51E527DE5E70F924FB3D3C3CE2E2E270612D3BFFC06E399795869885B97D446D
+	348706CD638C4DB61D1A1A068A3A5A3B3BDBBABA3AE540BEAC4B895CD1A950CA
+	D48A2E95524114A09223A9D54AAD5A4589A6EDA80D3AB5011460D07543B41AF5
+	3D06AD11EA40ADD07475C8DA5A3B1BEB9AAAA555E23271594959716149417E01
+	82850C0A1668225C6C740C5A2BC2D648C4AE9C85471041C0C011611646407C1B
+	14488AC0CFD7CFD7C7DB4D20B0B3B3831C4078DBD1D14E0B241AF5BD6633B762
+	2ABB2381C603E08EA829C24FDDBC1E3F097EB454386CC23CFCB01A9ED7008CA9
+	55F8A7417C0EF869D40025300A770D3A40FC4F50371AC999C3D173E29FDC3B5E
+	622C002433F76E245CB3025E22CA0089401480025874801CB262594AD00C69A2
+	0462137C028E076FE4608F9F070743530CD4B8D8DD38C28888E84B972E3B393A
+	7A8BBC2222227069104F8585A118555C5C0CCEC0AFBBC8D65A5936B40CCE9637
+	B9022E13A29D1F3629ECC0F8D3E2E7610CDD16E340CE1556D6C09637B97751CD
+	EC34D214BC0E399EB189B9998999F1B1A9919189E191A9610804EA471CE9EF63
+	9102648279A8273A31FACD770FBDBA7DEDE62DEB5E58F7CC1D77FEF9FFF897FF
+	EF1DF7FD6EE3FE479EDFF8E807A275E70B365F136FB1AB23E5EFD4B243D0FE56
+	403A5FD6A6B21CFDF79180F2321D20FF296A58B90F6C68564FFDEDEA1D0EAA57
+	835BCF4FCFFC5A370CFE35BB64777EEBE7CFDA54ED746AB1E22977BA8B8F7B78
+	8910EE43E4B9BBBB272626729D32CB07F9330DBE10C8C7AF0C6800FCDCE03E94
+	3F5A1760DFD92E436213762DCE5F2153C1FFA3A0421000E42B344035B0AD5102
+	F63AE09F24800678D15350C0C9016E5E2F92BEA7C7D0D36DE8215E50EBF15E59
+	87ACB5A9ADBEA6BEBAB2465221051D941495121DE4800E325292539212136363
+	63A369760B9B05CB126D302A08BD7E1D414160402045049E1EAEAE3C1B1B1B88
+	82DA9A6AB55A058C0155838314028C8D8E59E04FFE7F6EFEA63FFB49F08F8D8D
+	C3C9537F1E427A4BF84DFE16B057E37C556AA5524574A0D62A556AE67E69601F
+	8E1A0A81E0ADC79B4D10F6403E8B02004E7A81A1D7E2CC412B24251829D088A1
+	8502FAA96791F404EB623423B618408CC1C50B2C99B96081123B30D4C8E5CAD8
+	98EBDF9C3CBAE5D5570E1E3C78EEEC59A140101C1C02E740730AAF8721E6C79E
+	C3C3C3009EE50C992D377118D7CA6128C003E0AA2DD770B6BCDB32FEE9527EDF
+	ED23676027E3CACBF5DCE6B2A1923394112670E5190886D9E959D4D1C0F3E4D4
+	F408E285A9B989A9D9B1EB1101EF7FF4FAD973471D9D4FDA3A7CFDD9676F6E7C
+	79CDEFFFE7EFEFB8EF0F1B763FBA6ED3E3C7FC5EBC94BFF16AC556FB9AED0E8D
+	BBEC9AB7BBB4BD1D9CEEAEEED27207BF7C16C871165CE1967AE4DC59AFACE78C
+	DB1C9BE903F8059A9D4EEA4D01CDA7D09C2C2FFC9676FEF2E96D9F3E73B56A9B
+	4BF32E57F9760FF1E7F8653DA997C7472814262727FF14F87F58B3D2008729B8
+	7DEAE79F9E98A489B4A3A32310B1EDADED84FC8E2EC27C879C5217924A0ECFDF
+	05D8C3DB43F9AB40016AB95AABD26B007B35DC21043FFC3FA20003925ECBE514
+	1440C5810EA00250400E0AE8319A4DC65E734F2F729002B803F11EBE14C1427D
+	757DB5147420292F2D2F2D2E2B2C28CACECA41984013DF19F2A10D807EFCA7A1
+	C5E090402601BCBD695D836BB676CECECE65A5251A8D062034F7D20CB791A161
+	901AC33F5B736401F8A7D3FF71F0A365037270BF9C4F462227CC3C3927FE391D
+	0EE4AB546C62A246AB50AA687A8F92643925100275E6939307C89193BB266A40
+	B91B058D06F8376217C414D893514037B4060D0A800B7ACC5CCF022301F8601A
+	41E074417F1F1D180E069B20A7DEBE011C4C5C74A8979B75908FA3B3DD998307
+	F71DFDE8E8A54B17712DD038445EDE08978A4B4AF1C5A323A33835CB49325B6E
+	1C2B5B095A12680298B46CDF34ECC3611E39AE210AD8872B70C6C19B2B7086CD
+	9566A965B6B2867B0B72000F39BEE83B702E2D2E2CDD88898F3CF1D5BB9E9E17
+	7DFD6D9C79DF5CBC72FC93E3AF6DDEFCFC3D77DD75FF637F5EBFEBC1E7363CFC
+	A1D7DA8BF99BAF96BD6A5FBBDDBE7E877DF3167ECB3B61E93E5A9571F9F8B902
+	67CB9B2BD1BE325F366E07CEC6E7FA5D957BF9EAAD0EAA577C9A4E70A8FBADED
+	D4A5933B3E23F03BB7D252A882B22F017CFCB27074007F7A7A3AAE1EB7E72D47
+	0EBBA5069BCB357334A58F4D9545243681286F6C707048D62987E0874AEF6AEF
+	A21CB2BF13B21FCE1F9E5F8D024900399CBF46D985281B9E50AB516A34D0F62A
+	1D0BFE8179EA0BD4234708A0861080D7A4EE00BC64D4F5A06084FF4744A02721
+	60329ABAB9917BB465608D0A7DDD7A13A30355677B5753434B5D4D1DA70E72B2
+	7313E2E2280C607141281B5B2406080EF6F70F4020E4E1E18E100012A0203F4F
+	A55212FE692C7010CE9FC3FFCC2C4D6A00F871097E1CFC087759700E774C2E97
+	8973620114504FC13993E2802B0BBFC1795AA5924DEC4358AE54ABD51A6C8214
+	B83225D2081AEC4650270571336920DEA943816D72DD7B54AF6762012C836FE1
+	26114017E060F0DB20810250C38D26F6F4F4E564A6F88A6CC3835C4383F89121
+	02EB0B270EBF7EF8D437DFD8D9DA7933CFE0EBEB5F58548C4319191D05E8F0FB
+	5BCE9319D7149673D8F8E8F848FFF0FCEC3C4D8C43356BF9A807E6010386560B
+	F27F98E3A56548A3B06CCB35B7D4C35083F77239472EF816187730F8EA92D2C2
+	6FBEFDD8DFCF2630D0DEC3E382A3F3D7972E7F7AF4A3432FBFB4FADE7BEEB8F7
+	C93F3EFFEA43ABD73DFAA160EDF9FC4D57CBB6D9556FB5AFDFE9D0B44DD0F476
+	68BA5FB78E6E7AE13E6A65CE7D05B7B96CD85CB6E51D5040CE95C767FB85AA83
+	7CF50E17D526AF96CFFE31B2FFEB3327B67FF1AC4DF5165E2BAD0EEE567252E4
+	E923F2B6803F37371717CDB22B33762A16B35431BBA586BA64676832EFC438CD
+	ED81E7EF361869661DA7F9DB64F0FCC03F72C4F9744B4E974A23D36B6446ADA2
+	5BAB306A957A8D1CCA5F0B2140630100BF5A4F2302003C1B08C0A69E3669861E
+	C2819BF8EFD6692078BB81F06E7D0F0B074C3D7A530FE42F0901736F775FAFA9
+	DF4C7703F70FF40E984D7D081CBA3AE42D4D2DCD8DCDF535B5F9797931D1D108
+	FE23C2E9661876B3CC751A14F0F5452CE42614DADADA5EB1B62E282804E4A0B3
+	FBFACC34231001250D004E41FCA39DE117FD71F0C3CD02C914B753C8CD896D60
+	9E3C3F90CF31028504DCB03F9BD847BE5D8744D0E5BA06007884069003803D98
+	1265220564740B03050E2B6307A61768FC1F6FE38403DE8E02780114C098D268
+	020FF4F5B39E41EA5C649A60B8BEB626D8CF253CD8352AD43D2AD42D26DCC3DF
+	CBEEA38FDE3D7EEC932B972F0BDDDC0402A1C8D32B3F3F1FC731383404B0119E
+	BF6F2B1B049AD1F0C0E8D8C8D8ECE4CCFCF4DCFCDC12ADD53847F55498B5A094
+	032D9773355C0176CB4BB0E51A6EB7953B70355CCE910B72CEB8A3C2F9DB5C3B
+	2D125D090BE379FB5A7B7A5C7070FEE6C2C5631F7EB0EFA5F5ABEFB9EBCF773F
+	F687D52F3DF4C2C6C73EF65F7F36E755EB922D0E553BE0F9017E61E3FBE1A941
+	7D26BAE985FBB4E533456165992BC0B8F20FF3E5C2C4FC9048F5AEAB6A8B937A
+	8B57EBD17F8CE7FFF2D45700FFB59A1D4EADB4AA9F7BF1D75E225F801FCD5D20
+	10949494ACA427CEB89A65FBD133A2809F6E97A369FCC0C6C8F0B042AE68A57B
+	F03A3BDBC9F97792FFB704FC1AB95ED6A1AEAC971435641535A54B9A4BEA9BEA
+	651D4ABDAADBA8EC316810C943DB03F0740B2F043F148156495A00D085FFA7A4
+	41F06C34D0D34ABA8DFA6E83B61B4280A6EA5032C3FF03FCE6EE3E6801332202
+	535F2F4D9FE937F7F4F52199FBC10ED0026DADED3465BEB2263535358C4D740F
+	0B0D83F8E7660AF8FA52FC0F42B4B3B5BD6A635351510EB0F5741BFBFB7B7176
+	DC2CC0A9E92904998B37167E04FC68884032804A31391B788356E7C26C12ED90
+	E66C9E0FE7FC891AD8241F230DDD23082763A101C5F32002809D44819272405D
+	011240AE50C9650A2572B902BC804D2202C605F85E8E17C008AC0C2E20428118
+	00C5E04BB96082D1501F3E212E2A202CD0392E5214CF12C01F13E17EFEEC571F
+	7EF8D1F9F3E75C792E7C57BE9B9B7B696919E210B005CECE729ECCD044965B09
+	DA048C06E887C64687C7C6C7A627C6A7A7C767A6261010CE4E4FCECC4CCC4E4D
+	CE61730EE5A9D9B9491AD60768E7A667E66766110970F0E67218BDC40C35B0E5
+	026CB97E794F2EC7C100F65C8E43C217F8F97BBBB89C898912060539F8F85C75
+	773BE7E074E2DCF963EFBDB77FFD0BCF00FC8F3EF1E7552F3EBC7ED3239F5E5F
+	7736739375D1E66B9550FEB4BAAEB0FE83D8CCB0B1211A03C7A9E163B973E436
+	E99C6F9E3567CB355C01C695D98B96CAE9F99140DDA7B4BAAE6E8B67CBDBB333
+	533F24D35FDD3E3BF1C9B62F9FBE56BBCDA56D174FB9CDB3E8148DF4893C017E
+	1757178944C2ED76CBD12E17385BAEE472D8347E5E760F0FD7C503858990BBBD
+	B5A3A35DD6D1D6D9D1DED5D9D66941BECC905F9321AAF8D2B16CAF43859583C4
+	CAA1629F4BF911AFCA2F226B79E9D511A575796D5D6D6AA55EA73075ABCCDD5A
+	B341D3A35719E1FC890E58E71FE7F90DBA6ED2FC3A00C6041500CF0F0940CEDF
+	683675F7526EE881F8A7C97BE00296684D909EBE7E733F92A9DBDCD921C77136
+	37B6E4E5E4C1EFB3E9839649C40101FE5E2291A7878780CF87F377E1F11A1B1B
+	E091BB7B8C830303EC96207AF0C13404DBDCDCF7C0CF5D27687EA00E7823DF0D
+	D45986D9F594E90C843D0BB609DEA00500111440C844A80E1660F3FF483230BE
+	C01B01637C02170500DE00B61CC0972B817F994CDED981280AF84758852D05E8
+	000CC0D58014687F70078B1AF087E40075AB225AD0EBF4C6BC9C8C107FA7F828
+	2FA4C418EF8428AFD808CFF8284F17FBF31F7CF0DEA953A75C9C9D699EB04050
+	5E5EAED568217EE0A9B89F9F33AECCA1820AF33740B183FD882E4687E91E8A61
+	B0C0E0C0C8E8F0E810E2266C0D8DE3A591E1D1D19189F1E1B1A9B1E9B9A979D0
+	01D2ECF4DCC2EC1C91C20C21798669040EEACBB60CF295656E1365CE38F0B3A3
+	5B2A2F2FB5B7FB3632CC056E3F38D0DECFF7AAABF0DC35FBAFCE9CFBF8DD77F7
+	AD5BFBF47D77FDE991A7FFBCEA85875ED8F4D8A7216B4F65BE7CB170D3D58ACD
+	A4FC1BB7F26B8EA666C7CDCE58BA39964F9C2B20872D7F1757B96CB76C2EDBD4
+	FC4490EE4B7A688F760BBFF5F0E4ECAFB44CC84F1B8EE4D8E747B77DF58C4DDD
+	16C7365ACCD7B3E05B91BBAFC887643FF8BDA6A66679CFE5D3E18C3B8B65D683
+	71955C0130A0F9BC4CF08F8E8CA2B9B634B5C1B512F8DBE1FC6570FEF24E85AA
+	531B2FF6B32BDFEA2CD9E95AB98F5FB9DF55BA9F5FB90F6517E96E67E92E47F1
+	0E140455EF7B4B4E864A6C33EA232ADB4A9BDA5A945D9A1E4D9F496B366A4DE0
+	020394BF06EE94006F6033028802F4DD847C0322FF1EF87660FB3B1630A20CCF
+	DADB67EA4314808402A380014419CD4DADADCDEDA5C5A5803FDDFC46060AE0C4
+	3FCD17767571B974E9D2F59010854206EE41D83C02B736462B6852C7DFFC8F79
+	7E04D5C027204E77E94190B3C89CC6D7D97D7B803130CF2973E09F6439D3FC96
+	1E3B364040BA80E6F070B380E9251A1DE4DECEC6EA81648BFF07DA817225022A
+	594797ACAB4BD6D9090E50D066475757177BB81B1181024C8102EB5950E30DF8
+	9CD6B6F6C850CFD870F78468EFC468AFA458DFA4589FF848805F2412587FFCF1
+	87A7BEFDD6D9D9C919E6E222168B71E8C300FF8F75E32DE70076372E7A4F1F4D
+	4030F599CC7DFDA6813EE4BD030366BA9711D4306082861AE8EB1D1CE81B1E1E
+	1C1E1A1805470C0F8E8C0E8E8C8F4D8D8F4E4D31B1303DC911C13C0A0CF854A6
+	FCA601E75CBED238E47307333234EAEEC9F3F7BA1A13ED1112E2141468E7EB63
+	2D703B6B63FBE55980FFEDBDCFAF79E6EE3BFEFCD0D3773CB3F6C1F59B1FFF34
+	E4B953E91BAE146DB12EDF6253B9CDA161BB7BE5F18CBC743A4966D4E4BFDFFA
+	97F3E52FE58C5EFEFE0EAC9A6C7A7132C270DA5EB61131BF2BC03FF32BAD0EF8
+	D336BFB8F8C1C71FED3BFDAC6DED36C7B65DCE8A5DEEB9A769E95E16F33BB938
+	B7B4B4707BFEF068976B38BBA5726A6A9246F7C66832FFF0F0B052A16C6906F2
+	3BDBDBBB98E7070574A9BB74E9E2689BF25779957BF995077852207FAF8B7417
+	D08E844D7EE56BC2AA43A0039E748F8BD4CA49B2C349B2DD59B2DBA5EC80A7E4
+	93885AE794CAD0B2FA827679BB4665E856F79AB47D667DBFD9D8C72800E29F3A
+	FFC9FF53E79F19C13F8BFC4D88FCD1142101902CAB81F5F4A1B2CFD4DFDBD33B
+	D0DBAFD775C3F9B734B594979623E6670B6404B31B88FCBD7CBC459E9E6E6E42
+	0707870B172E141515218486561FE8EBB744FED03CB3B3DFF7FC37E88AF474F7
+	0060E4F9355A1AD5A7D935147E8306909328008CF12A2AA8C6D26347D101F979
+	D201403B75DAB31B7BF012488138E266671EF769DC48C1321174C9E4C03C419D
+	0AF2AE4E1081BCB3932800D200A440BA80A48192CA32398E2B2F273D22C43501
+	B08FF64E06F26340013ED884F80FF675FCFCD38FBFFEFA6B0707472727271717
+	9E442CC1210E0C0CCCCCDC7A6FDF72538099A1C41098E9E9F7E83698C16B281B
+	0D26A3C1DC430BB4A19226356037A264636F4F37B103ADC8641A2052300D0EF4
+	D28A4C100B2C76181D03218C4E8E8E4C8217261829D0ADD7A080298BCF07E0B9
+	1CB0E76CD977959795B83A9E8B8D768B8A100687B80405D87BFA58BB08CFDA5C
+	FBF2DBD31FBDF1C6AE356B9EBAEB8E3F3CF4F49F9E5DF7E08BBB1FFB347CFDA9
+	F48DE70A365E297BF5AA74AB4DE376A1E4B3CCDC0CEED3B813847165AE12B6B2
+	865E66859F7295B0991B5391DD17ED152F43F6BBB41E1E9E18E4EA7F3B83A6FA
+	E0830F8E38ADB956B30D313F4F0EF09FF572F7F3F2A275BC5C5C5CDADADA2CBB
+	AE10719CFDB0BC324700CC296102FFD05057174DCB6B6BE9686FEDEC68EB6A6F
+	451354D6D53438951C06DA399FEF08608B0F7B947EE9557A5258F621AFF2204F
+	6AE55675905F795080547500399F18610F4FBACB59B2DD41F2AA5DC52647C916
+	17E91BEE659F84886DB29A232ADBCB1A9B9BD40A7D9F71B0DF3864D6F775EB09
+	F64CFC43F3A3699938CCC3ED53CF5F4F1F78A1DF04DFC328A0872860A0770071
+	44534373637D534941715020797F9AF9E3E7E7CBD638F0F4F0E433F12F14083A
+	DADBD92D0026901C9C3FF40E08E056CF8F560890735DF74850E0C027A59B1D78
+	481C7A1980D91C1B100003369B964FAE9E0DE05B3A0BA89E751C503D530A1C05
+	30F0D3B7702C40C13F8480C2826D6CCA08FC5DF8D7DE4664DCD181448BA36107
+	ECD9D2D21A13E1131BE101CC27C7FA20C1ED2301FC71119EE181AE9F1EFFE0F8
+	27C76DAF5DA35B269D5DCACBCAF14DFDFDFD00FFCA06015BDE4464AF51B3711A
+	8D0104879C466E34460DD7854B9B349743ABC4C91B8C5AEC43D319400DE06044
+	7126EAB9ED46CEF1025135470A7DD00803FD7D43882306FA2982181F9D00294C
+	8D4E4E23FE228D30C31E534B6B322EB75D344A6F6F41488063429C5764B82038
+	D831C0FF9A97D71517D753576C3EFBE6D47BAFBFBE7DD5AAC7EFBCF30F8FAEFA
+	E3EA750F6FD8F5F8E7A16BCFA46FBC90F7CAE5D2CD9725DB6C1BB689C45F6565
+	67AE8CC9F1E1CB760B4E38D2E17218F712DB916CB9069E3FB2E7AAAD6C0364BF
+	4BEBA1DE1123EDFD5BDAE4CCF4BB1FBCF51EFFB96B755B1D5A21FBF778645DF4
+	72F381EC87C485B05B097EEE6861966D7646DC497195CBAFA2120E104800F247
+	8781FD2159BB1CB21F317F6B33C37F6B87A25D9B501A682FDEC29342E1EF7110
+	6F0F17F3EA9A6B65EDAAAE56655B5BBBA4BE3C46EAC9AFDC2BAC3AE85AB9C7B9
+	9CA200387F9E7427C0CFAFDCED2ADD839C2745CD3607C9167BF126DB8A4DF6E2
+	6D8EA556A2CA6391F54EE9B561E58DF99DCA0E83AEA747D7D7AB1F1C300D998D
+	70EF7D047ED690D0A28802BAFBCCD0A4C4051621D06F1E4410D150DB505FDB80
+	F81FA23F2828D01FE8A7897FDE1ECCF9C3FB5D387F21272747A35177C3F9A309
+	B295C5A767666E05FFD4E42453DA5C3F1CEB9C635D74002AB7C9710185DF2C02
+	474E718125D1301ED3F6E4E719F8A99B0E8102B703B40023023DDEC205149C04
+	E07804FC82709F488075072031F023182021D049E087128324EB90CB94A5C505
+	51A142401DA17E4A9C6F4A9C5F729C4F62AC776294774CB8474430FFCBCF3EFA
+	E8E8511B1B1B5B5B3B7B3B7B894482AF181A1E829745ABB79CED8A06811C9ABF
+	ABAD532157ABE46CF2021260AF62033972958A3A2971885A14684917999AE678
+	28595F060DE7801770467A2D4E10A70FB2D319894474A0C31E9A888444448EDF
+	8FFA6C10350CF60FE18740C830323C0E2E98189F9E9A9C9D0511B010BD522C71
+	713A9F12EF1513298C88E043F60704D88944571C5D4E5DB2FEECE437EFBD7E68
+	DB33CF3E7CD79DBF7FF4B93B56AD7D68E3DE273E0D5B733A6DC385DC972E976E
+	BC26D96657B755547E2A3B3B9BCE7345A3E7F2E50272C060B912F653BB719BB3
+	8BD3C9BDCE367202BF63EB21F3908EABFFED0C01F9DBEFBFF19EF0399AB6DCBE
+	839EEA937911B2DF9BF5F63BBA7C07FE5B8EF916E32A1915581AC0D4D4344DE9
+	A38EFE91C1810168CCB616787EE0BFB3AD15F8EFE86855F8149DE749B703DEA0
+	8058A997AA43AF9269155D2A45271AAB46AF34363636F12ADE02BC836A2E94D7
+	1767D645868AEDBCCB4EF02ADE84FE77946C76916E71916CE14BB7F12B77B948
+	B6BA4829394BB6384B5E75966C72106F72926C75951EF6967E1A517535B339BC
+	AAABBC5DD6AE5519FB8DC3FD3D43ACFFDFDC6BEA27C1CF75FE9B0708F9AC66A0
+	6F0870ABADAAAFA9AE4B4D4965ABE004208326F2F6A2693FAEAEBC4B972FBBBB
+	0B3B3B3BF5067D6FAF796870087487B8FF56F00F8F8C50B79B82E0C775B9110F
+	008DD8A24D823F57CFC6F31811301F8E864FFE9C811FA806D0B1094540BD84AC
+	B390B0CE24808526E0394914802FE8ED900F340F80C602495C702C0390D37741
+	EA93C327F10FE433FC77A62585C786BBC1D52713F229DA4F8AF14A8A81E71745
+	87B94586084E7C71F4E08143E03CDB6BB6CE2EBC86867A7CFAE0F02024F72D2D
+	6379B35B6B686C68696D6E6D6DE9E86AEDE86CEFC20FDCD5C97850A650C91825
+	C9959D209F2EA5AC53DE899A2E90145800BCA05276623F36B58125BA5F8F0A20
+	362D1BFB65BD1E5A5C17BD41630435402C982970A0048DD0DF3B30DC8F9001AA
+	60627C78C2CF4F743DD83139CE1B9A3FFCBA4B70B033027E778F0BF64E5F5FB8
+	7CECC4C9770FEEDFFAF4530FDF7DC7EF1F5F73C7B36B1E7CE5E0135F86BFF04D
+	CAC6F3B99B2F956CBA5C41937CDD4B4FE7E6E7736787D35C3ED35BCACB359C2D
+	63E316C34BC81797163206DCAECA5E14A8B7BAB4EED70E7C3777F837B291B1E1
+	23EF1D7E57B80631BF4BDB2E57D95E8FF44B22775AC607E077757545CBE0F6E4
+	8E9C3B0B18575EAEE176585980F7A3876C50C00F440C20CE6F6D6A6D81F207F2
+	11F3B7753535B60A4B8E2392871B174A8EB5B5C023D13C3FFCFA72BAD547A555
+	180AA5B90E122B67C9AEE2865CB37A40AFE8D1C88C4A99AEA5BDA5A8263BAECC
+	FF8AFF71D792F79CCB763B566C03D41D09ED9B890E2AF70A90A47B04100895DB
+	4007A87710BFEA28DEE12ADEEF5D753CAE915FDC980E9739D8330ACC03F02002
+	AEC06604F53316E81FEC1B54C894D592EA4A4955447804FC3EC27EE41CF8DD84
+	423B07878B172E88CBCBD1167BCDE6C1C1419CF2E4E4E4ADE0EFEBEF47F80DF9
+	8DD81B6D1D71382067D9648A801305A4CC150A44E08452EABAB38802A5928200
+	160EB0F102161DB05B03B87E01609E91022B308DA0656201C6EE8E6083FC8C4D
+	E863D9E8A0125F8CAFE3526727BE58555D5D1D17294A881221D487E04F8CF68E
+	8B1221870A888F12C584BBFB79DA1E3C60B57BCFDEB367CE0A5CF93131B17575
+	B5F856686904D83F3A34353FBFD8DED6555FD70CFC2335D7B7B436B63437B635
+	3534B534B7830E3A5BBB3ADA3ABA3A641DAC1398E58849E42CEF9475D06C90CE
+	2EF0825C4ED3426842282803DC01A650E242C941664C32282072343A15DDFB75
+	33C44010D1DDAD43D44021DFE8E0585D7D03DFD52629CE3B36D23D2AC28D81DF
+	D1DBCF46E076DEDEF1ABF3173FFEFCCB37F7EDD9FCE4130FDEF1A7DF3FB1E6AE
+	679E7B68EB3B4F7E1EB1F6EBE417CFE56CBC50BC99C2FEDA6D5E25174B8ACB2D
+	67B8C29631005B2E70864DAE0639B7DBB25976585ACC1BF2B3EE5AEFAADDEED2
+	BE4FD1F79DE4FE8D6C70A4FFF05B07DF153E7FAD7E876BFB4E57D93E518AB5C8
+	DDDBC75B04E72F140AD142B83D970F12B65C5E66042E5FAE4761666E8EBB819F
+	9CFFD030FC4A53434B4B532B3C3F1BEA97D5D6D4F1CADE43C06F2FDE1A2D7657
+	77EA3B19EC153215DDDE03F0CB8C11651E0EE22D6ED2F71005E89434699FA6F7
+	E067551AF4EA6EA3A6D7A83675B4CAABEBABCB5AF2136A7CFC4BCE78941F7591
+	EE77146F7194BCCA936E7195EE7095EEE657EE11481126ECE6533FE22E9E642B
+	C7059ED28FF25B628C5A537F0FF52E41F09B7BCCD4094D3D7F08FEFBFA7BFB07
+	CCF410A42A6965615E215B2020C0DF8F1618F3F414E1FAB8B8389F3D7B2E3A3A
+	0AA0EA61AB6CB23EFFA95BC1DFDBDBC7FC1B0DC22101F910DBAC4C2CC0D5585E
+	6539D739CF3AE4C108C8F0F9349E47B73D4114306F4FFD056C553F220224A202
+	03BD469D8910057A120F2C2EA0BF8C1AF016BC9DB1094840458100B8862409EA
+	B4F9B9E9B1E1EE2CD407F8BDA3AE0BC2825CA24385F1515EF1919E5E6E361F7F
+	F8F6279F7C2212795FB1BEEA26744F4B4D035FE0A32120E7D9FC39FCF49613BE
+	6973B3F3AD8D6DF5B54D8DF52DF575C89BA82BA5AE09D154535D73535D63435D
+	23CA0D750D4DF5CDCD4D6D1DCD6D200B84091D2DED6DADED9D908828B4B47522
+	A7359AE1373AE049389A8080845E40994BE005D001230595068183127A87420C
+	A60E0C66536F6C7C6CA0AF437CAC477C940779FE50D7A020072F9FAB7CB7F336
+	F65F9C39F7E1679F1FD9B7E795A79E78F0AEBFFCF189E7EE7CFAB987B7BFF7E4
+	A7E1EB4FA66C389FBBF17CD11684FD00BF77E1E58A32A9E50C57D84A54637339
+	5FB9C9D9CA1A2EC7B52B1C09BBD2F9BCAB769B53C7FE2EF3AFF69CAC9FB2DEA1
+	FE4387F7BF235C07F03BB56D07F83D93AF8968EA36025B6F3737377808EC86C3
+	E38C2BB3B75A2A5796571A0DF54D4C8C92F31F1E41CCDF256F6E6C696BA15934
+	CCF977D554D7BA967DC093EE76946C49155F5775EA646C9E3F24A11CB25FA169
+	6DEA722F3B0ADD1E5AE9A8551829425468E9561F15FDAC6A05FC18CA5A68BD1E
+	7DAF49DB6B549A35722342CBBAD6EAFC9AE4D84AEFC0EAF3828AB79DCBADA853
+	1081801421C00E280221E9827D1005D008F6E2CDFE955FB7C95B074DA3881909
+	FF261A05E0227F88FFC1DE41D45749ABAAA4357171F11044F0FC5EDEDE222F91
+	87BB3B8FE76A6D6DED2E14A2511AF486BE3E36E1677C6205F8D925EAEEE921F7
+	CEE19F4B34022707C40173CA1185B37E78B040274D81A2A81C9B44076C640E04
+	409F6019A5677A9EF5EA1317B0F09EFE5A7A0A6904D1D24D40D13285CA742304
+	530737E980440412B1004D16D6C297A62686C645BA43EAA7C4FB06FB393B5C3B
+	EFE5E11C1EE206C1EFC1BF72ECE8FB172E5E8A8BA555832F5DBAECEEE6919A92
+	D2D4D468EC3642DFCDB1197E96E6B0C2A08200F8DA9A06387F78FB4660BCAEB9
+	BEBAAEAEA6B1AE96526D752D36EB6B1A6BAA6AABABEA6A2BEBEA6BEB919AEB9B
+	C0057017142EB612FE5B9BDB5A5ADBA117DA5B913A5083326ADA5A3B493ED0BD
+	62CB4440B3C759ECA0827243F8A0D5184113FE3E6ED1E17C203F264A1813E116
+	1AEA121868EFED73C55570F68AEDE7DF9E79FFF827AFEFD9BDE9C9C7EEBFF38E
+	3F3EFDDCBDCFAC7968FB074F7D12F1223CFFE9EC9700FE0B655BAED46CF7CEBF
+	5655F9BD2758A2C5AF2C205FA9026EB1953B5B8C6D4A46A22F75ADE5EBB63B77
+	EC6D317EEFF1B83777215B59FE7BAC77A0FBC0A1BDEFB9ADB56DD8C96BDB21E8
+	B2F288B7A107F5D17237646816DC9E2BCF858E969557E6CBC66DD2241FBA8D97
+	85FDA32388639B20F748F97710A1B77536D7B77A947EE12CD9E928DE9A2A0951
+	76E8F07B513B87A0932934727D795DB173E91E27C9CEFC9A14ADA21B7440F3FC
+	A957584BD3FE955A0D4B3AF83935241E223E03CDEDD5820BCC265D9F49DF6F50
+	993A3A64B52D35054DA9315502BF8A6F8592D78455BB08FF5500BF956B2544C1
+	6E67C9AB7CF1A13A79E5B0798CC33C750430CF4F21404FDF50FF20F4666585B4
+	A8A010C21F7E9F160CF4F474F7F0E0F3F9D76C69C27F4D5515E26F880736DB7F
+	F456CFAF37189833B73876241A84EB246003DF2C27E47742EB7676515CC43AE1
+	A9678E48813DAA840DD773EF25162063A13B8DEA2B9934202403C6D008A88406
+	2606A0FE02162380084819705D03AC7790EA49148002743A637D5D6D7CA45742
+	9427901F16C43F7BE61B67675E4A4A7A5A5A1ADFC5E693E3C79C9C5C5253D392
+	93528243AE5FBE7C4524F2CAC8CC6C6D6981E081DA81E7C74FFF43F40F0D0C37
+	D6929F671E1EC82722A8AB6D02E66BABEB6AAAEBBF4BD2DADA2ABA0DB34A5A5D
+	25AD05BA88712B6937BC17D20074000D86442CD0043742D48084D8A1B5199292
+	94024710284341206AE86CA70802097141515191B7A77D7C8C477CB457749467
+	64986B68A86B70809D9797B533EFDBCB369F7C7DEA9D63C75FDBB973C3638F3D
+	70F71D7F7C6ADD7DF0FC3B3E7AE6F3C80D2712379CCD7AE95CE1E68BC5AFDAD4
+	ECF1CDB5ABAB6DE64E90A0B00200B76CAED4029C317DF4BDDD960BD523C9573A
+	567968B65F6BDF59A72F5DBEF701C60D55729F863272AECC5572BBD1DEBFC4A0
+	77F71EDAF39E3B3CFF56E7F6ADC2CE831E71B69EF0FCDE220F0FE200BD5ECFED
+	890FE73E7FF95B9637976D65E5F4CC2CBB9F8775F90D0F1B0D86E646FAA55AA8
+	CFAFA3BD056A4EE95F620DC70E891E231101FCC08282DDDB83A4EE324697BB43
+	BAF32BDE6FEF68532BF43433A7A7DF68E801D455D4374C13FEB52A683A8A6A11
+	EBA1C092CEA0B34CF241AC4763C6FABE5EC38049D7DFA3E9AB682CE68977C3E7
+	0B2A773955202ED82AACB48210408127DEDF28AB1E348F587C3E4BD0FFD4F967
+	1E001DA059569455C446C702F93EBEBE2298A7A740C0B7B7B7BF78F162715111
+	B4A5A9BB7B70600094772BF8E175DBD1169927079ED94C1BE6F9B92E77F0825C
+	01C0B777601FBC4A3975C2B10257E63691880164B4337101AE9885111434AD87
+	4DDDE36402DC1DC505949011CE89022CCE1F1101F97F867FAAD41B7ACA4AF2A3
+	43DD48F3C7F9D85FBB70E58A755A5A7A6E765E6656369CBC8787282323333131
+	19E2273838C4DAFA2A14505A7A466B6B6B4F8F696262FC87E3FC9CE16AD6D610
+	74017B92FDB50D7535F0ED94C3C9575756D755D55656D5D555D65413F2AB6B2B
+	6BA4926A14400128D48208C49555D4E95283043A8040A8619102C20724A8038A
+	231A5A202C9B1B9B913735B63650536BA1892534BC4C9241DE2E8B890AF7F7B1
+	4F46C01FED09B71F1EC60FBBEEEC1F70CDCBEB9293F3D7172F1FFFEAE4DB473F
+	3EB86BC74B8F3DF2C01D77FEE99197FFF4E4E6BF589D7CE4B3F0E74E26ADFF26
+	F3A533F9AFC0F9DB54EDF5CBB66D6BA2275872CD1DC6417165CDCA97B8C20F0D
+	FB70BB517E63A96534FB42C7B3AEDA9D361DDBAB3479CB4CCAA629580C240B43
+	011FCBD52C839FFB28D4B037FDDBD6D36BDC73C80AE0B769DCEED2B98BDFB5DF
+	2BC6DE83C97EB87D485CA3D132DCC87D32672BCB2B8DABE7F2D919BAA56F8C4D
+	EC1F1A1E4630DCD20CD6C66F0105076AEEEC6A55C696F93B49B63B49B6F94ACF
+	74B52910F343F9B35B7D94B276B57BF1974E922D21922BEA2E0304BFC08507A9
+	5D515AAE94A94004DD46B3516F6677F8C28919180BE8890E3490B7D4D1C316FF
+	6193FCB53D34A344DFD3DB3D807083577E4850B94D203998DF949C5C17E05AB9
+	8F27DD0E2DE02A7DD54D7C44A6940F50FCCF26FCB0693FF0FF837DFD43BD43B2
+	4E594599383B2B9B96F960A3FDDC6C1F6727970B172E646464C0BB9A4CA68181
+	FED1911F7A7E9D01E8A5E17540197A9EB43D5100619BC97B14806702791BE19C
+	DBE46AB09BE5254604F42E44BCF45EEAAB470D90CF7D267804F55C988044BD7B
+	ACB3005480E857C1F51730A9CFC601282EE0DCBE4AA5CDC94C880D774B4BF0BB
+	1EC03B75EAEBA0C0A0BCFC82F4B48C14787B0880D48CA4E4E4F8F884C4C42488
+	9FCB972FF378BCB8B83844E1E61E133C3F5AA5E554BF6F3DC69EC61A5A25B9BE
+	A191047F5D33A43E3C39643F02BF3A1A4AA987DA87ABAF9156D754D649C10592
+	4AC09E92B8B2525A23154B21BA9057554825E595E2F2CA6A71654539BD84B758
+	E4436D6333D4417D0B228B06186442235103EB62003DB4E24B7D7C10E4F313E2
+	7DE3623C6323DD23C385DC389F87E8A29DC389D3E73FF8E2C49B1F7E7470EBB6
+	F5F0FC7FB9F38FF7AFFFBFEFDBFC2FAF9EFEF3D1A8473F4F5E75327BEDD9A20D
+	674A5EB2ADDE1390CD537469B8134473E75A3C57E60AB0956518B7B972CFE51A
+	CEE0E7DB478ACE763CC357EFB0EBD82AD164A1666C7C7271CE726101729AC6C4
+	0CF85F3991092FAD34E01F1FF86FB280D1A4DDB17FDBFB1E2FDA356E77ECD8C6
+	EF38208AB4F372BB097E7F9FEEEE6EEC46C7C6EC96C272CE197BC562336C250F
+	9ADE3F3A3A4C0FE8A0D13EE6FC41C4D477236B53486A2A1C4B5F7396EE7492EE
+	29AB2B517669BA58F78D5AA6175797394BA0F977E435A468E5B4E0C5E50B17D6
+	AC79E6A5F56BF7EFDEF1C5A71FBB0B5CB333325B1A5B01787377EF00FE01DDFA
+	6E76930F4D21A149BE74DF1D606FA43BFC0C900DC3F90D4970F8CE92CDF175A2
+	E1EED15EDD704573215F7C805FB903FEDF49F24A449D6D7FF7702F9BEA07E4F7
+	53B73F5100DD02D8D32B2997141796040506539708D49188C27E67676778FE84
+	F878E08ADDE7D3770BF8E9BA188DDDE4AB2D2067B86565A200422C7C7E471B8D
+	B711F22D80C79E6CF89DCA1CF82D394900B65B27B73F3E0D35F4C94C5C70FB13
+	172056206A6021064402EB3BE4740185098C08500605E07352E283E2A3DC017E
+	1787CBE7CF5F80DBCFCECE81CEE79ED5C19E089A04CD1F1A167EF5EAD52B97AF
+	383838A4A4A4E0737B4C26FCCC50A0DC99DE627AAD1EF13C143BA27D609E7AF8
+	EA9B1B6A1AAB21FEE1EA6B51A8ABA9AA878767BEBD8AD04E7EBE5222E6F02F15
+	9749C5159552C0BEA2525221A1C518CA24D232B1B85C0C3216975648CAA4A891
+	54E0236A6AAAF07175F87C480C5000A8A1BEB61E414149518987877D5CA47B62
+	8C08A7191DE50ED94FE0F7BF26F0386F6DFBD9C9B3EF7EF2F9E10F3ED8BF75CB
+	FAC71E79F0EE3BFF78F7F3FFBFFFF5CCBFBC7CF20FEF87DD7B3CFE912FD29FF9
+	32F789AFCA565DA9DF1D94E5DEADEFC5D90169C8B9A6BF9C7385BF6E2BF7E13E
+	0417AF73A4E842FB2302D52EDBF62D159AD4F9D9A5EBC1D72F5F3C9392100BF2
+	33759B012A401DE007E661803757463D727C0E270A38E35800F94F1D92B65BBD
+	6DCFB60F3DD7DB366D75EADCEEDABEDF33CAC9C79D627E28BD808080DE5E3A47
+	EEBD2BF35B36B9AFE0726E737A9A16F042AB60CFDF1D86F4474B6B6E4048C6FA
+	FC5ADA3A5A3B5A1B3B83C5D60EE2AD0EE26DC1526B799B8646FB3AE4007F4279
+	100DD18B8FD437366814B41A07FC53675B57415E61A0AFFF99535FBF7E68DFA6
+	57D6BFBAF9C5B78E1CFCE6E4093F1FDFA2C262855C09ADDEDB4323F63D861E5A
+	DE832683D07D7E3D06B35163F62DFFC645B2C9596255DF51DD6BA49BF9067BC6
+	8A1B725CC456080484557B9CC55BA51D8503A621287FEAF633D350F18079002C
+	40D16B7D634951694C4CAC17AD754F9EDFDD5DC87375B974E9725C6CAC46A3EE
+	E61EAB3532726B871F24010748067E0654E41C4A599970DED601524422C06313
+	597B472BDD0E41AF32D077D2ABACD39BDB073847A1ADAD1D392B509966EE1141
+	B08F5DD177F01DE3D0C01EB48165B41FF047C09F18ED951CEB1D17E979E6F4D7
+	42A15B764E0EF0CF811FC84F4E4E4D49490B0BBD6E7BCD06261008217CB2B3B3
+	E532399AC8E44F2FF308F0531F1E047F5D3375E913053403FF4D5001B5F5C02A
+	25B8EE2AC8FE3A44F8D5C0BFA412495C5105F003D295E512C0BEA29C28006847
+	81A05E26462A2B292B2F119797969717579495949795518ED8ACAC5CCCB8A09A
+	6284DA7AE8FFE484443F6F87C458AFF8382F84FDD191EE11A1BCEBD79D0302EC
+	05EE172E5C3976ECCBD78F1E7FEDFDF70F6CDDF6E2130F3D74D75D7FBAE7B9FF
+	F63F9EF82F1BBFFEDD3B210F7E10FED007310F1F4F5FF545E19336353BC2323C
+	877B2D73EF9761C015966B7E8E717B5AF65F5CEA1AAFB0EE5ACB53EDB469DD5C
+	A24A981E9B8D8F09E1395D70753EEF687BF69AF56921DF212AFCBAB4A25CA954
+	9ACDE6F1F1710EDE9CA10C2E0011708CB09208F015D881BEE5A6E12B5546F536
+	AB57DF17BD68D7B48D81FF9047A4A39707C95A3737B7E0E0C0FEFE7ECBCE3F38
+	A3E523C7C7AE7C156518BE9DC3FF04774BEFC8489FD98C989FEE996969E7F47F
+	57BBA2B8B2C0597A101EDE41B23D457A5DD5AE9777A9DA9A64A2B2138EE25703
+	2BA1F9F514BDB225FD20ECE1CF4DDDBD468309E21F2D2A2529D5D9C9F1CD375E
+	7FF699271E79F86EAB9DAF7EF6C931A1C035272B0BFC62D08106FA0D866EBD0E
+	41427F5D6B8D538595B36493BFE44CB7AECF64ECEDC68719CDBDFAE1D82A7717
+	C916B7AABD2ED2ADFE95DFF6F60CD1983F827FF30005FF2898FAE0FCD54A6D49
+	61716A529A97C88B7AFDBCE90E7FE85FA8604860B54AD96D3430D9BF12FCCC70
+	1D814372C237BBF4590840F82418330A802727E8B6DE043003332A3978538F37
+	729660AD5460FB58EA5970DBD6D68AFF78EFCD3DD9CEE002CBB7709F46657C21
+	BE929151974C5151561413E6964A9DFCAEA74F7F1D1E1E8EF006C8A71E3E023F
+	213F362AC4DBC3C1D9D191CF1740F3040604141414AAD52A9CDAF4D4D48DEFB5
+	81EF0C515955554353635B637D0BE97FD6E70FFF0FE453573F9C734D033C7F43
+	0DD3FF14F053871F043F905F21A99288AB10F38BCB25E5CCE103D8E5A51515A5
+	6294CB80F9324969716959710528B9A4B89CF0CFB8002FA1068C40A90C42A23A
+	24D0EF7AA0534ABC5742B46742B47B4C947B78B86B6808CFCFEF9A4078F68B6F
+	8F1C797FC7D18F5EFBE0DD435B5F79E1E1FBEEBEEBCE3F3DB1EEEE27D7DCBBE7
+	DCA31F053DF651F8D35F676DBC5CB9F36ADD6E5EC3DB21A9BEA343C4771CA256
+	9EF98F5F859F633796D413352E322B77CD61C7CEBD791D111D8DCDA94941D9A9
+	A169C9D7A1CBE2A27D8303F8EEAED636D65FDB5CF956E06A1F7EDD2F272BBDBA
+	BA9A165362532DB8EFE6E0C7C9846516583EB0E582522F7F75E7A6A35E1BEC1A
+	B6BB40F6B7BDE119E60CCF8F685F201084858501B4DC9E2BDFCB9557D6FC30C7
+	F771CFEAA0653BC72084A9EB4F29573437B4B4B674B0311BF8FF8EAE565594D8
+	0D9EDFB1628793645F7A65B4AECB5C5553E55872C051B2354D1AAE961BE45D4A
+	959C16F6A1E57DE5B4B6074B5AAE57CFC46ED493B5CB0B0B4A02FC03CE7EFBED
+	FE7D56AFBCB46EF3C6F5475EDB6F7BED6A67BBACDBD0D367188C97881CC59BF0
+	B105CDC9BDFA41EA383098CD0673BF690028E14B0E0B2B77092AAD5CA4BBEA3B
+	6B064D4374AB5F0F9BF0DB4D5140BF79004AA1BCA43C33238BC27E16F3BBBB09
+	783CBAC30FBE51A356F5F4740FF4F7E35C6F05FFC8C828C026830EE73AF99814
+	E7B0C75C34C70216647E07DA9B35F0F62DC03610CF5E6D6D01D6890268CFD676
+	A803EAEBA6321B15A3B7B39DD9ABDC263E01153430469B5CA28FA20F69EFCCCD
+	4A8E0913A62705B8F36DCE9C399D9890989E9E919AC6343F09FE94E888A08860
+	97405FBEA7A7C8879EF9E71F1272BDA4B454A7D70D0D0D4D7FFF7EDE95363632
+	D6D2D40284B735B5B7B474B1FEB9260AFB6B1A490E40D8A18054CD3A022DA37D
+	35900014F923CE07F2E1C2CB017B387309DC3E1C3EE7FC81F9D2928AB2523124
+	3D154ACA4A0B4B20FFC0026084D2A2B2A2C2528E148A0A4ABD45FCC8EBFCA404
+	1F0AF8A33D62A33DA322DCC2E0F9036DED9DBFDA72E0D92D479EFDE8C2DE773E
+	DFB575D7F30F3D78EF5D77FDF1E9B5F7AE79F6B103E79EFF2C7CDDA5821D2EAD
+	87DC3BDFF0917FE2D5FE7550A2F7D800DDCCCFF93DEEDC5716E8CC7FA9DD58D2
+	4E36F214FB3C94AF09648723C52E459949D919E1D91991D9E9E19969A159A9E1
+	1969E159E9616929A1F191DE817ECE7CDE25876B67ECAF9D133ADB04F87824C6
+	47492BC46863837DFDF3379792E53C3FC7025C61F9F03AE5EDDBDE7CF98BF057
+	A8C3AF6BABB0F54D51284FE401ECFBBA0A04519111DCF2EADCFE2B3DFC2D851F
+	EE30472B26CE4DCDCCC0F38F310307F4C2F9D3549FB6B6661A9481F3EF6C5340
+	037A4BBE76146F73915A394AAC2224AE81E22B8E926D3CE96BF56DB55A8551D1
+	C56679D2782DADEAC906F969854FA55CA5602BFC6A945AA316BE1D12BD1F4480
+	9AFADA86A4F8A46B57ADDF7EF388B8BC02F096752805156F53F7BEF42DA55C0D
+	601BB95BFD689D2F13B8204CECC4936E1156EE014164345E1F328FB3D17E36DB
+	879C3F82FFFEFEDE4184A559195981818122805FE409CFEFE2E272E9F2E5FCBC
+	3C9D4643E01F181819FD81E79F999EA1909FF5CC739D7396505CCE75FED3045B
+	A6D549ED23E7B80055044E20B6BD13D025AFCE722E71652205C6056C37C233A3
+	09B61B955BD9CE963DD96E8C79D9265EC5BB1A1B9BD3522213A23CD212FDED6C
+	CE5EB87091F3F984FC1412FC3191C1E141BCB808F7E00091B7970F7B8C575844
+	7864595919429DA1C121C84CCB79FE98A9E42D8931FE69C93105F9D9F0E0C039
+	EBA86F6D6A6CA79C0DE351FF7F2DF5E1B36E7F1A05A891D6B2E0BFAA428C2485
+	0420CC97C2E18B11FF23E607DAE1EA816D027F615931437B716109005F568402
+	368B5183DD32D2B3459E4EC03CE7F913633CE2A2DC22C9F33B0507D89F3CF3D6
+	63CFDEF5EAFB4FBEE7B1E62DA7B57BBE5CBDD6EAE1A736DEF9D4CB773EFACC9D
+	6FD83E675DB1DDB5E5807BD7DBA2CEE3FEB22F3D5B4F0426FA8C30F02FDB4A3C
+	2C977F992D2EE9A6DB79CAD75D650784ED47928ABC8AB2E3F37263F273A2F3B3
+	A27332A3880832A3B2D223C002C873D3C373D2A3A108A22344A181024FB76B3C
+	478A0EECED2F790A1D23AF076665A6425CF59ACC70C2803DF725DCE1C1506E6E
+	6DD8F1D18B27125FB4A9DB4E0F0B6A7EC72B84EFEB411D7EF0FCB1B1B1533717
+	595E7E0B675C79A5EA59463E978368E8064B66E3E313C3C3C3F08730994C819F
+	BEB5092D16F8874B83DC55D4D4578BC4C7017817E96EA800B080A06ABF936457
+	5C8DA8A9B145D9A5D5C98D3A85512D03CE75B4C827C70244046CA89F16F9A5C1
+	3FC4055AB54EAFA520DFD46DEEEF1D3075F7E9B5865EC360615D8643F91647F1
+	2B71F5A23EE33076B0809F6EF237F5F78C6448A29D255BDDAAF68102C2EBADCD
+	06EAE183C36777FBF473F81FE81D6CAC6BCCCECC09090E81DBF7F4F07077133A
+	393A5DB3B5954A245AADB6C7DCC3ADEA7F2BF87175E472259006A823D447ECCD
+	510072190B04E0FC3921403DF96C1FEAF0030520C22722A0EE40822E4B16FF4F
+	BE9D3A05389013CC6FF2026DB2D44CF8E690CFE8E0E6AB9642337668ABADAD4B
+	8E0B4A8C16A5C5FB5D3EFFCD556B1B8AF6E969BC24F89392926322BDE3A33C13
+	A2BC4283FD4282AFB3450EA3E262E3A595957A837E6878081EC5729E3F665AAD
+	3C394E141FED1517E91313E6111FE19F9E1493979309010F9C03FF90030807EA
+	595F00E4405D557D5D35F5D591FF97D6D448AAA4E26A7145154BE4FC11029495
+	4AE0EDC105A5F0FFC56528732C000A282E2C462A2A28861404F8B17F627CA2A7
+	873D8E2101017F3479FE1802BF00317F70B0F387C7F73DFAD03DFB4EAEFAC8F3
+	F9775CD6EC3BBD7ADB074FBD7AE4C997ADD66C7BFBB97704CF7D1CB05ED072C4
+	BBFD33DFF62FFDE45F78359F8848BD3E36FCBDD5C7D1E857B6FEBFCD0C536D7C
+	C5EBC06168DD99D2BC94C2FC78A482DCB882DC184AD9B1486001C01E44909511
+	0916484F8DC84C09CB4C0B4F4F094B4B0C4D8C0B880AF50CF275721358BB385C
+	B0B739EDEC70D9CBC33521364A22912814B2E915BD338D2DF5DB3E78E1CB8497
+	1C1A76BAC8B6B936BEE91522F4F624CFCFE7F393929266D91A0D1CC8613F3CC7
+	1F2DC000FEB9F905387FEAF61B9F00ECC749FDD3923E2DCD6D2D8D68791DD0FF
+	34E6DFDA2E6B53553554794B4E30876FC5AF3C80E44ADDEFBB05E2B702ABCE27
+	54F916D6A6B774342B655ABDDC685076EB9434FE07FCD3541F850E655A8A0665
+	5AED57AF531BD42A48D21EA46E7D8F4165F62F3FEB22790584D2D0516D6237FC
+	23166039ADF3D3DF3358D698EF24D906D9CF93EEF0AEFC48AB32F4F50CD0DD7E
+	F0FF9413110CF50F75B47664A6675D0FB94EA3FC90FD42A1BD9D9D80CF0798F4
+	7A5DAFD93434380899732BF86108CC1A1A1A8161C015929B75D75122C02371C8
+	675100CA847F4A9611414B9F1F2B30D85BC08FCF2118E32F877F72E66DC033F7
+	2AE30372F2CDDF01BEBD995572C86F6AC4565B65A5343EDA2739966EE33B7FF6
+	84BDBD437A46666A6A2A45FB2969F450AE189F94389F8428EF88B010067B7A64
+	6F725272754D754F4F0FD8FDC7A6F6590C2F0CF69B0B72A3F232223252AFA7C6
+	FB27C5FAD1D4FA708FA8EBEEB191BE2949D1B959E91565650DB52D003F0502F5
+	CD0D758D8DB54D75AC23A08E66FB5886FDB9FE7F4EFF8BCB11DE43F6539C0F9D
+	0FD8D3E39C0ACB4A0A8AE1FC8BF34B8A0A8A20044A4BC4515131BE5EF670FB20
+	A0A458CF78F2FC1E91E17C803F28C8E9D393875FDAF7F09BBC67DEF75DF5367F
+	D5C1D34F6FFBE0998DAF3FF5CA8E973FB4B17AEDE2FACD6FAE16341CF7EBF8CA
+	A7E3733FF967DE4D5FC7A5454C8FD31A7B2BBDDF726179F397D98DA59E19859B
+	E2B04BDBAEAC72DFF2BCF4E282C4E2BCF822803F2F311F790E183316A9202B2A
+	373B262F333A272B1A5A20372B124220273D223B2D3C333D2A3B950284D4E4B0
+	A478FF9830CF407F9E4868E3687FDEE6EA996B3667F82E3601FEDE105AF8C2FA
+	869AAD1FAEFF3AE925DBDAEDCE5D5B050DEF78057B787BD0DC5E17576734004E
+	2F2C837FD96E39DF655B3E7DC4FCF0FCD3F46425B0CD14B7802F0500E3E37A9D
+	A1A901CDB4BDAD990DFBB576B5B574CADA158D0DAD91123767E93E47C97676C3
+	0F4DC2E557EE7191EE7496EE7092ECE449DEF2AE38115DE35AD09056DD58D5D9
+	AED42B7A748A6E9D8A56F2D328F520025ADE8F6EF7A2057FF55AA346A5EFD699
+	1B5A6B9D2AF638895FF1979C326A7B8179B87DC0DE04F0D3923EE6FEEEC19286
+	1C67E956F7AA3D7CE94E77C91195528B600198377793ECA7C8BF87FAFCE41DF2
+	8CF40C023F797E77A14070E58A7574649452DE65341ACC263334CEF8F80F26F9
+	C04647471AEA1B9B9A9A9BE18E01D4668646C0948BED59B73CCA1690DFE405AA
+	612F71BDFDDC4BE4FBDBB0C1710187FFEF1C3B12297C067B9A064735A01BC23F
+	97C00E440ACDDC665B7979695CA42835CE17203F7FF6A48383634646163C3F3D
+	9017E08F8F60BCE0131FED171D1D9D909048C37E894929C929F5F5F5BDBD6602
+	FF5F6DEE8B0B73E2B2D4DCACF0BCEC0834DCBCF43034D0CCE4A0D484C08458DF
+	98085164983022D43D26C22F253E2237271B513DC43FA283C6FA26363BB01E72
+	A0A6BA162140351B0E945454555650142066837CD4DB5F0AFD8F089F9C3F87FC
+	D202F87FE282D2526954444480AF53529C77428C0809E08F8D708B08138486F0
+	FCFDEC6C6D4F7CF1CD912F2E1FFADCCEEABDAB1BF67EF9E4A6771FDFF9F6F307
+	8E1C38EABC67C7B175FB8E6DF26CFDC2AFE36490EC84A8EB33F79A2F92D2E366
+	27BFB7A6F572CE15FE16BBB1649A56B9A90EFA351D2D2A4C2ACE4F29C823B70F
+	FC97E4258008B0999F135B948B3CBA30278E2302B0407E1688202A273D927A07
+	2007322251CE240A088328484F0A4B4D0A498E0F86ECBA1E2CF413395CBD7432
+	3CD41F5F585357BDF59DE7BF4E7ED1BA76877DE7ABAEF56F890285224F02BFAB
+	ABEB32F8617F9DE3E89C6F96B93DE71616E1F967E72CCA9F56F1E51EDA33427D
+	7F5D4CFC53944A9D7FE4FF110574B6C9BA5A55255505A152475EF9DB0457C90E
+	57E94E360F7F3F8480ABD4CA45BACD59B20D02DEB9C2CAADE223EF9CCBE9D298
+	86CE1A6041D365E8519B8D1A13B97D5AE49FAD10A1D143C0C7497C20F81DC59B
+	8B5BD211DE1B746C794F5D372DEF693421EFEF19CEAC8C70126F02F8F18D1EE2
+	B7C01D0CFCE63EF2F9B4CE0FF27EF380A2539191920ED9EFE1494F3444C07FF5
+	EAD58AB272958A7AFBFAFBE996FE1FB9AB0F363F3F0F304B25957575404D0322
+	6D10017101A88073CB2CC79990236FB5687B8E05903A19171041DC1C02B00CFB
+	B3DD90D35B41015C02AAF1619C87675C409F0FFC330940EA80211F3944446949
+	01547D722CDCBBEFA50BDFD8DADA516F1F75F5B141BEF8C0D478DF9478DF84B8
+	90F88444C01E41415A6A1A28106F1E1C1C989DF9C947F42E5B735D71414E7871
+	6E6C514E14521E8820232C3F037A35343D25249D114162AC776C987B78B02032
+	D82D26D23F25312A273BA3B4B8183EBFAEB6A5A9BEA5A181A20336059028A0AA
+	8206FF68200014504A9D7FC402407E51597931F7CCA6E292FC226C8604FB07FB
+	3BA524F852573FC01FED1947937C0421212EFEBE763CDEE98B973E3977E6E353
+	5FBDFFD17B875ED9F2FC23CFDEF5EC0BF71D38B2EBF8B5833B8FAF3BEABED5BB
+	EB0B9FCE93FEB2CFAF4A77B9541C4FCB4A9D9FBE358A86719B5CFDDF607D731A
+	77CDDB11D5D6A5059945798945F9094505C90CFF0905F9B14CFF4305100514E4
+	C4430B10FE01FEDC84826C0A0AF2326373B3A27333A2B23363200472191764A7
+	417085595252707A6A584488D0DFC76D626CBAA2B2FCE5379EFD2AE165FB9A6D
+	34C9A7EE035180D0D34384989FC7E3A5A5A5A1C5E2A87E786ACB05187B913657
+	12040BF9E9599D681B746FFFC438E7FC918302A08DE1B49A49FC5B26FC01FF1D
+	ED34AB5DDEAEEA6A53D6D4D6175667C5883DFDCACE0AC41F40FF3B4BB74390B3
+	09F97B5C2B77BAD21A1EBB0495075D2B5F1348DEE5171C0B97DA66D4441648F3
+	001C83CAD4AD36776B4D3D3A93AC5D2D287F9B27DD2C14BF2D9329BB0D66209F
+	E19F56F8D323379A4CDA01FFCA0BFCCA6D427CB874AB7FD5177A750F776F9F99
+	1BF047992DF2A794A95293D202FCFC99EAF7B4B5B3F3F5F1851F06D398586F1F
+	186E7AFA078B797046B4D7D905C0D7D4D65557D720D86E686C020B34226F6A82
+	08272A686AE190C91C38206B09F2B9C47CB88511D8DF2E023CF97626F5A9EB9E
+	7A07C8B1E3BD4407A40B28E0E7A88175F2D1E7B3B73437E16BDA0B0BB213A23C
+	5213FC5313FC1CAE9D3D7FFE5C5A5A06F5F9A564242746A6C6F9A03E35DE2F31
+	3E2A25D502FB2C5866160E0867FB4359788BA139F4F71B4A72C2CB8AE2CBF263
+	8BF3A28A73220B72A290A890199E97199993761D292B2D242D393839C10FFA3C
+	2A4C1016EC1A11EA1617E19F12179693915A525804CF5F5BC3E608D4355555D6
+	810268166085545A4E530068220042809232E485C5656545A5ECC12CA54101DE
+	E121BCD404EFF8582F027F94475CA430228C1F1AE2ECEB6B23E49FB5B1FDE2E2
+	E5E3A7BE7DFFC30F0FBCBCE1F9FBEFBCFB8EFB7EFFD47377AEDFF8F451AF0D57
+	C5BBE0F611F35FA9D87BAE74837BC5E7D9B9D97FE5F9F91C007EB1DD58EABFA1
+	0FD27C96542628CD4D2FCA4F2ACC4F2C84F3CF8F2B2E882722C88D2F84CFCFC3
+	054CE22800B0870A2046C8615D03A402E20A410DD96081485000B82027333A3B
+	03BA203C238D14417E66A487FB255B9B0B1A85363B2BEDA5C34F9C88DF685DB5
+	CDA165B373D5FBDEFE1EBE847D1F9EAB4B4646C6B2E7872D9FD432C839E32A2D
+	1B3737E7E698E7A7C7F5B1A7F4D37A9E932000687F40000A60A0BF1F986F86FE
+	877F22E74F2A8056F567F765D15DBD9D5A65BB4EDEA66A686E2A90A4274802FC
+	A5E7F8E56F394BE84640C402AE1417BCEE56F5A67BF59B9E356FB955BDCE131F
+	E2951DF6A8FC30A4E6724A75A0A4A548A5D6E5D4C53B556C71966C4EA817F51A
+	86F45A43B79616F63730E7DFADEF19348D9734663949B603F96E557B9DC49BE3
+	1A84033DC3B4D40F90CF56FB03F2CD3DBDFDBDFD5D1DF2F8D8045F5F3F4F9127
+	9F2F70B0B72F2D2D51AA947A3D2DE601B70F769BFAE14A3ECBB6B848373C0E0D
+	0F1B0C4680BAA6A6AAAEB6A1BEBEA9A1815100CD4E6DFC4E14401550E2DCF8B2
+	DFC6A5628CC0C6F99108E40CFC046F42351558A5A5C0553216C0E7588603180B
+	203CE8C8CB49031E108DC3C307783B9CFAE6ABA0A0E0F48CECE4C4585AD223DE
+	2F2D0129302539198A00A8CFC9CE41CACBA347974C4DFDE4F49E958616532BC9
+	AC288C1617279615C49517C494144497E6C796E6C514E6468005F27322F3B3C2
+	F23243F3D243B3D3282EC84A0B82A74A8AF74D8CF28C0E750BBF8EE41113E113
+	1F1392939A585A58502991D45537D45537D1E88084E605322150595E222E6143
+	FDA405CA2405056581FE9E51A17C78FEC418515C8C47428C474CA430325C1816
+	E21CE0672B149EB3B3FBEA92F527DF9EFEE8D847AF6F7AF9B907EEBBEBFE27FE
+	BCEA85075FDAB1FAD3F08DF655873C9B3EB72EDF73A6F095CBD22DEE65270B0B
+	0BE9B923ECBCB816BFDCF45103A3D77EA9DD581A593244E9CEA5177817E7A5C2
+	DB03F94870FEA505C402F9F988FF130BF313281CC803172402E7A4025874405C
+	904DC8470172007490971D9597134FF8CF8ACDC98ACECB8C467D5A5230C21C3B
+	BB4BCDF52D515151AFBCFBF017892F5EA8D866D7BCCD557AD4C3971ECE0FF0F3
+	F9FCDCDCDCE533E20E1005AE06C6159673CE966B10F3539FDFDC1C3DC58E3DB1
+	935C3F04C0183DB48FC5FE137DFD7D70F5A0004BCF1FCA8864E9911E5DDCB33D
+	E8F67E7A8C974A23D7EB144659BB0AC1427963518CC4C73DF714BFEC3D1E7510
+	6C75964002EC1356BDEE517D4454F38E7BF51167B6AA97B3748750FC8EAB9494
+	BCABF4D5B0DAAB7A95A9573FD06B1CE831F4F500AD86FEFEEEB1F2A622D70A44
+	163BDDAAF600FF0EE2574B9B72064C003FB7D41FADF945EBFC7703FC832D4D6D
+	51E1915EDE5E00BF9D9D7D7C7C3C740B628C9E6E23773FDF24B03FFBFDA5BB7F
+	CA70650CDAAEC6DAE2DAAA92DA6A492DF4405D537D7D337101F57B3580081817
+	902EB8C9082D70D744081C29302E206C73C29EE06D89F3895359F8F05D2573FB
+	D884E767829F0B34DA733293810A801FB23F36C243E07289E7742532DC2F3916
+	0EDF178A200DF84F0A03F233333209F6B979B939B9DCC3B9B90E614B8BF8ABD6
+	67D25414444BCA52A425491525F1E2A284F2626201A4A2FC18C881A2BC68A402
+	6881AC88DCCCB0FCCC70A49C8CD0DCF4D0AC94EB69490149F1FE0951A2985041
+	78083F2C0441BB4F52CCF5ECF4A492C27CC09EEE0EAAAAAFAD6EA0A1010801D6
+	1D88A0A0B8B0D8DFD73D3A5C9812EF85D3448A8DF68C8D104685D38D3D7E7EF6
+	EEEEE7ED9D4ED9D87C7EE6F4D18F3E7A6DE34BABEEBBF7CE479EFAF3732FDFBF
+	61CF53C7AEBF605DBCE34AD1CE7385AF5E2ADD6E53B9C3A3F4EBF20ACB82F69C
+	2D37FD5BCABFD4C6964CE93A97CCDCE0A29C14809CF09F8F945402C0E7C691F3
+	A74D4A9CFEB7740402F92C2782602C40BA00B1005307007C6E2E18211A2FE1ED
+	61A1025B9BAFEC6D2F5555D60605FABF74E481AF125EBC52B6D5A6610B4FF291
+	173D998696F1120AF9F9F9F9DC893036BB15FF5C0D3B57DAE40ACBB6B0C0DD74
+	B408D84F4207CFCC52B7DFE42412E03F41D8A76E00384CFC40C0792BDDA64D9E
+	1F14C0E19F2440A742DE497764CA3B957299929EDBABD0696406759741D6A646
+	FBCD97645ECFF208905C722D7BDBAE7897A364BBABD4CABDEAA0B0F2005FBA13
+	C945BA950F0AA8DACDA7353FB7FA567F195F232A694A6FECAA6D96359437E546
+	553B3B4BB6F32B770AE93EFF3D2ED257BD2B3F37EA6985DF1E23ADEACF647F2F
+	9C3F0A03E6816A697570508897C8D3D9D1313030A0BEAE41A994EB0D865EB369
+	74989EDB8718E7E7821F76E3C6E2D4F8606F8F5C2BAF6B6F2A6DAC2DAAAB2EAB
+	ADAD424450575B5F57D75057D7C8F511C090B3422311828514880E88119A2958
+	002F70650B29B470430048960E0514D8ABC4021C05C0F767672426468BE0E191
+	92627D62C33DC283F971911E70F8E989011949016989FEE9A9F11999D990FA79
+	B9F9850585B9B97952A9646464183FB0E54CFE2D9B9F9BED682E1797C4D58A53
+	ABCA92A49412C5A509E2A2B8F2E2445000298242C4053145B99110B785B95145
+	D9E150040520828CEB79196160018406E929D77154E029104154B847C4754178
+	103FE2BA282E3A3823253E3F2F474213036BD81D41344DB0A4A0D8DF1F92C12D
+	39DE07D13EC2FE38763F3F3CFFF560177F7F80FF928BCBB700FFD973C73EFEE8
+	B59737ACB9E79E3B1E79F62FEBB73EF2D2DE278EFBAFFD366DD3F9DC2D574B76
+	5B57ECB4AED9E15E72AEA6AAE6A7080F4D7F192ABFD42697860BE4019999C125
+	B9C9B8021CE019C821012C1E9E2AF3C8FF831408F6D405C83A0258B930877628
+	C88EA6B7E4249010C0FEB98978A9B820312B33DCCFFBAAFDB52F5DECAD2BC5D5
+	DEDEA2F5AFDFF765FC5A80FF5AFD56D78AE322BAA3C78B815F5854546439ACEF
+	1B4E70B9B06CCB5CC0E5E4F9E71738FF4F9E9F1ED23F3309F0C32847E44FF8EF
+	361ABD445EF939F904F8F62E84FD6CA596AEAE761912BBC90F14A094B1559B68
+	793F99522147AE92B175FEB40ABD4ED9ADE9D2D7D636E657E4A6568778E59D3B
+	1775F06226E2826D4EE24D70F870E9824A2B01BB759F27DDEA287E05C29E27DD
+	EB5AB9DF8554C32621DDE10BC14F02C1BE6C8BA4B5A8BF7B90DCBED1643240F0
+	8302D80ADFDDD4E1579057E4E3E3EBEAEA723D38442C1677C9BAB43A8DC9D4D3
+	DFD707B73F313E89939D5B5CFCB9E05F365CB2B9D9A9F111B3D9D8A192557534
+	9535D695D45597D7544BABAAAAABAB6B6B6B1B90181D34D4830E1823302E40A4
+	C0050B5CD4D044BD07D485C0F102C50E241658CED6546004C1EA9B58CA4C8F83
+	B406F2B9D83E25DED7A2F681FCE4C0F424FFB4C4A0D494940CA03F3B1B6A3F3F
+	BF00CE1FDFC7FDD83FDFA626C7DB1B0AAB2B08FF7592B41A496A753911416569
+	A2A41C8A2041521C2F2E4928A7B820AEA420B6188A005C9013934FC304110599
+	11284014E4A4215DCF4C0D4D4F094A490C4C8AF58B8B164585212E108607BB81
+	0862A34240048579F9E2324949717954986F7C947B4A9C1FD7DB1F1BE385983F
+	3C941F1204D96FEF2DBAEAEA7A1A62F8FCB963473F3AF8D28635F7DD73C7932F
+	DCB56EFBA31B0F3EF949C8FA6F33B75E2EDC71A56CF71589957DC36EEFA20B4D
+	8DAD9653FA556D7669A2AC23362B2304E13D45F84CF603CC9CABB794C9B193E0
+	A7CD3CA206B0007620E74FE382C402AC7780A206CBFE1C47142525C6F9787B5B
+	DB5DFBCAC1F692A4BCD2D35DB0E1E03D9FC7AEBB54BAC9A67693A0F4132F1F0F
+	6F918F97B7482010949595590E6B05AA571660EC45B2E54DAE00976051FE2CF2
+	A761BFD95944BBC03F84C0384500088EA710F97B7B79DBDBD95D0FB95E2DAD01
+	BC1154231060CEDFB2220BE97F5AE44701E7CFCDF3A3A5BE689547D001FC2E3D
+	CF57AF36D2937C14265597BEB1BEADB0222FAD322AB4DACEBDE23DE70A2B27C9
+	AB2E1210C11657BA7B9756F262CB7B21C88722002F1035B84AB7DA956FCA6B8C
+	6353804C3D06F6540F823D219F34BFA9CFA0EF8E8F4BE0BBF22323224A4B4BA1
+	9BB51A15047F7F6F2FA2FD7172FB93B374C63FF6D08E9F34B6AAFF2D309A991E
+	1B1ED075EB5A959D956D8D6575D5C5D5952555D28AAACAAAEA9AFA9A1A362BBE
+	B69E04028401180154C072C40B28305E40C8C058A0B189752B323A60B103930C
+	D868E508222B2D2E29DA8BE43DF5F9F9A7268205A89C9E14C07CAC8FB422BFAE
+	BE01ADA1A8B028273717CA3F33330BFAC172ACBFC4A6A646149DE2E6DAF47A49
+	72BD24A55E9A5E2349A9A948A911A7579727430E902800FE8BE3481114C69716
+	526880B8A0282FB2383796860C72A2F2332373B32822C8CB88000B64A4820842
+	329202D3E271FC8149D1DE31911EE14182D0607E54844F6274486C8477529C28
+	31D60709CE1F2926CA0DB21FE00FF4B713892EF35D59D87FE11864FF4B1B563F
+	70DFBDABD63FF0C2B6C7B61C7EE6D388CDE773ACAE96ECB5951EB0ADDC63DFB0
+	D7B3E0525B73A7E57C7ECC7EF063FE5C5B589A91B62401FCC579492579C0701C
+	8D8F30D81703D5F9E4FCE1DB09E704F544801C513DB703CA0472023F1801ECC0
+	76CBA31D50CF1444627898D05304F09F7472B0A928970A5D791B0EDDFF79CC9A
+	8BC59BAD6B360B8A3F17798BBC3CE1F8C9F3575454580EEBA671E775CBD92D6F
+	A200E324C0E20D0AFBE7E7E767E7E72D0F5E9B9E9D9A9E9E9C9E810400EE817D
+	52FE139370E565A5A55191513EDE3EB1317155D22A4800F8F9AE0EEE0E7F5080
+	9C3DC9931EE6A99223A941012401646AC60248ECD9DE34E74FCD9EE7AFD76BBA
+	8D1AB35666008F54B74833EB22AE8B6D3C244779D2DD200267C966401DE0E751
+	5F0072EA20702D7FABB021ADCF386499FC07CCD323247AE8064123DC7E6FBF79
+	B0ADA543E4298A8A8E2C2929696A22C16F3418CC26D340FF00433E3DAC8BC0FF
+	37787ECE68B6CCF75BCEE2E2DCF4E4D050BFA647D7AAE8AC6CA92FAEAD2CAC92
+	165742B755D7D41011D43322A8ABA9AEAD813EA8A94319BC40C102ABB768843A
+	5A4B8742062205961329207C68CACA884F8A11A5250400F3403BA9FD24A8FD40
+	8253827F4E6A287E2C1C0958BB7FA05FA3D5B6B5B74B2412F9CDD51D7FA941FF
+	8F0E680C9A3A7567A9ACA9B8B3BEB4A526BBA13ABDBE2A0D2C0051804444500E
+	45404450564CA14145613C58A0343FB6243FBA241744105D90195E0422C8A2DE
+	81BCCCC8EC8C706EBC203D25243339844E24DE3F911E37E09110E39D1C274A8E
+	11C5C77AC5C5D2687F74B87B54281BEA0B70F0F2BA22109CB3B5FFEAE2C5E31F
+	1D3DFCD28B6B1EBCEF9EA75FB86FDDB627F6BEBFFEDBB85D970BF65D2BDFEF58
+	79C8B16A1FAFE50D51EE958E06CBB2B6BFAECD2FCE5535A566A40597E52516E4
+	82F2B8381FD8662100E4400E6222100162221AF04725E7DEF3F3626E229F05FF
+	394CEAE7720304B10559F8A884ECF4F09060276FEFABB6D74E3ADB5D11975638
+	3939BC78F8FE2F62575F2CDA6E53BDD5B5E82B0402DC3F3737B7AAAA2AEEA838
+	54C3B84D18575E59B95C80A10CF0B3B09FFAFC110333F82F90F367CA9F6EF8E3
+	2200F6646B4405E3939310CF0D8DF5D0955919592545A588AEE1F395725ABD4B
+	D9A5967530E52F23F013E069914FB58A6AB0A996132F702BBE6BD9B37D69791F
+	8E05BAD5A66E75AF416992CB55958D15D9B571E1B54E22E93161C56161C56BC2
+	8A23FED26F33AA23657245AF61D0480FF665CFF6654FF83675D3FC3FD6F36786
+	E64F4D4E8F8E8E2E2D2901AEE432995EAFEBE9E9E9EF1F181E1E029141F04F41
+	F32FCCE3DCFF46F0FF755B989F01118C0CE80DDA96AE3671536D414D654195B4
+	A4B2525A5D5583D0A0BABAAEBAAAAEA686C61199A1A6968614890E50CF0A758C
+	1A6A891188201A1AB333139363BD11D803EA88F029CE4F26E467A50427C77AB5
+	35DDBA52257E67F654A27F7B78FFAFDBDCEC707B4F5693225E252FD5B4962B9A
+	4A3AEA0B9B6B731B2BD31A2A331017D456245555A49016284DAC2889A70EC262
+	B0402C0D1916C48108A89B90860CC30BB32391F2101A64453045100616C0F167
+	A75FCF4E05170425C57927C67B27C5D2DC7E78FEE8088FC870480327787EE0C1
+	CDEDBC93D337972E7E7AECC3D75E7A71D59D77FCE5D1E7EE7979FBB3AF7FB6ED
+	7CF2C1AB85AFDB890F3A56BFE1507B88DFF6A6778E7D7BD35FF3FC7FB32D2E2D
+	54B56666670494E6C693E7CF23B75F9C1707A81764C712E611D2D39C1F4B78CF
+	CDF601E0590E9CC7E56547E125EC431A819309341108EF4A4888F70FF2B7F3F5
+	BE7ACDE64B9EC3B5B212F1B5ABB61BDEB8FF44C2BA4B055B6DAAB70B0A4E22E2
+	87EC87E707F86B6A2CE0FF515B09FB9565AE0000400070CA1FC8278443FCCF50
+	790A12801E674B1280EB082063B7004E53E534E267A552515D5515121C101F1B
+	5B51266E6DE9A0085FA5532B7490FD486C6946CBB3BD99F227B74F37FF31B220
+	FCD353218808542A7AFE9D414BB3008D5A9349D7A757F6747528DB5A3B5ADADA
+	3A3BE40695A9CF38D8A3A3A77A03F646032BD0B3FD6913F807F87B7B7A214312
+	E2120B0A0A1181CBBA3AB53AADA9A7BBAFB76F7888E6F3128BB133E56EA7FA4D
+	C0BF6CE0D6F9B9E9A989C17EB34AA7AAEF682E6BA82AA89114568A4BA5127165
+	654D55756D5515520D4BB892A8A96604419B288008482954830A1AB2B3520072
+	12F9371D3EC09F89683FC12F3B2D747C6CD8F2ADBFB6A1A9140EF98A8C87D34C
+	D6A5DDA27A7DA25C99A7EA28573697763516B7D5E635566582056AA5D002C955
+	E5C95CEF80B89888A0A228810D19C695420EB091026EE240412E710144414126
+	58202C17A220230C414172BC0FCDF08BF58E8F15C546BBD10CBF70B7B0EBBCC0
+	407B1FEF2B6E6E1700FECB973EFBF8E3C32F3CFFE4FFF8D7FFE79167EFDEB56F
+	F3BBA70E5C4E3D645B72C449FA8673DD9BBCFA23C2B6F702B29D65AD0ACB39FC
+	AAB6B0B450D999959311589617579C1F5F04D803FFF9C03FF5DBB1217DF2F05C
+	6E8908B2A309E4A8C98AB1ECC30A88F969C08FA600C5E567530401CA0B0C74F4
+	F1B2B976F50B177B9BD2928A4B972E6D7CF381AF935F86E7B7AED9CACF3B05CD
+	2FF222F0BBBBBBC339580EEBE7D932F2619CECB7E01F613F73FD730B8B608149
+	36F84F12990D014ECF4C1305D02C600402140B004878157F3C84B617CF7E6A7B
+	F534CFF95A809F4F467A7A75654D6B7307ADF6A3A4353CB9F85F892D52FE1AB0
+	80929C3FDDF3A355E91102E868A95FB6749D9A9E0D4549A50311746B7B8C84F6
+	5E609E96FDA047FA93CFA7D9FE4696B3A7FA732A006EDF6CEC4D4E4C4E4C4C94
+	88259D1D1D3A423EADDB3138400BF5E390416DD4B171B3A7F73704FF77D79819
+	88008A6062ACBFBF47AE95D5B43596D457E755490B2A25A552B1442AA99448AB
+	A5955595D2AACACAAAAACA6AE4548056A8A40499909F9B09CF0F9FCF397C5000
+	908F72429487BCABD1F235BF81E152150EF908BA0F04F61DF7EDFD28A8F75874
+	DF99CC1E2789E17A9B364D292F52B797C99B490EB45667375665D756A6430E54
+	8B932A2B921117884B13C0029292A4B2A2D88AC2B832161114E5C794E44617E5
+	D0DC01B04051368902F8FF9458EF44EAEDF38E8BA5197E5111FCA83041C47557
+	787E1F1F1B77F78B8ECEDF5CBEF2F9B18F0E3DF1C443FFFD7FFCEBEA979F3CFC
+	D66B1F9F7FED72F65B76156F3955BF23687C5FD0F4AE7BE7D1E02CBEBA4B6B39
+	875FD1209597162B9569B9D98165F989257920B598E282F812E87F92FA34BDA7
+	283786FC3FB9F4D8FC6C9ADE539843A3F7900694332D409E3F9B46FB973711F6
+	E767454745B80506388844576CAF9E7071B205F8CF5FB8F4F29B0F9E4A7AD9BA
+	D8EA5ACD0E61DE590F2F6F2F6F5A9D1212E06FE8D36122800C1800FE6184FF39
+	FCA3C7ACE3EFEC02450134E79FE042F29134006301D2022C6CE6A4C0E8D8A89F
+	9783E3B553CEB6A71DAE9DB2B972E2CA85AF2E5F3C1918E0535A5452905F2815
+	4BDBDB3AD9F89F96E584798A05E8CE7FB6B035BBE78FC15EA7D71A34B4D49F0E
+	F8D7D13A5F069DC6A0D776D3B3BDE9119234E70FF867B29F66FED10D3F50016C
+	16E060FF70465AD6B7A7CFE4E464B7B5B7EA74D895EEDBA75B15D9F3B9405E30
+	9C23053BFF00CFFFD37663617E7A7CD46CEEEE527555B53614D55581050AC515
+	25E5E565151560AE2A108114742045AC402C80B8A0A8303F25DE8F033F143251
+	40725062B4675961127E11CB07FFEA4661E142FEB0B75BCFE1D0FE6FC2FBBF09
+	EDFF32A8FF2BFFDE4F827A3F0FEDFD2AC97CB9C0EC5EAB8FEC52672BE5C5CAF6
+	0A596359575D41734D6E7355668D2415414175794A258282F2A4CAB2141A2928
+	8222202D5096CF90C3BA094B0AA281FF94045FA89B4436C32F26CA3D368266F8
+	8587BA04043AFAFADA883C2F3A03FC365F1E796B3734FF1FFEF0BF36EE5EF7EE
+	07EF7C7EED1DEBDC775DA5EF09EA3F746B3EEAD67654D4F97140AA50A7B22C6B
+	FBEBDAE2D2A2B83B3EA3C85F9C0F468B2F29A0B97D380B04380801A0F6817F2E
+	21F887FF676E3FB6202726979C7C747E169BE46B813D4D010623E46502FFD159
+	E9111161C290400778FEABD65FF21CAF95954ACE9F3DFBCA9B0F7C93BAC5A678
+	8F5DDD2E41F6594F7A5A07AD4C0DFCCB6432CB61FD7D063CC025526243FF2401
+	161767E6E71905CC4ECFB24080FC3F78802203920433B32323237E5E4EAE8E67
+	058EE75D1CCFB9389CB1BF76EA9B2FDF4D4D89C54B5D5D9D75B5D5C5C5C579B9
+	F9E5A5153595356DCDEDD0FC80342DEC2F674F8203F869F10F2D3402CDF357E9
+	B4EC8191DC6D7FA0033D3DE509E037C2F3430EB044B7031305D063E0E86EFF81
+	DE414985F4AB2FBFBA6A73B5B5B545AFD79BCDA6FEFEFEA1A121AE871F3A6516
+	7CC6F4FEC2CD3514FEF1E0FFC19D75376ECC4C8F8D0CE8BB752DF20E69737D51
+	B524AFA23CAFA2ACA8A2BC42422C504B0142556D6969695A5230819F13FC29C1
+	29713EE989FEBD2683E5A37E235B5CAA1C8BF6EE7FC77FF08380818F43074E46
+	F69F8EEA3F15D97F36ACFFEBB0BEAF43FABEBA6EFE32DAF46D468FB3D81858AF
+	89475CA0EC2C55B78A150DE56DD5F92C2848010B202EA0DE4136520016801628
+	B3C405318010E282D4A48024BA9FD72B2E4A141BE91EC362FEF050D790200738
+	7F4FCFCB4E2E5FDBD87CF9CAC6B5BFFFC31FEFBCFB8E6DAFBDF2FED1F7BE727C
+	DFB1E87D61F551B7C6E3A2D663DE9DC73D3B8FA74B6326477F2B4EAC18894CA9
+	74AD2C48ADA0A95049886E4A8B1219F8E34AF2E390B35E40B8FA28E01F0EBF38
+	278AE27CC402D9D03B349F1789033FEA5109B78FDD325343A34229C6F1F5BEC6
+	811FBEE0DCD96FB71C7DE45CC62EEBD243F60DFBDC017E1AE427CF0F0A50A97E
+	85E785711280CB2DE37FF3B4B228C5027374E70F0504EC1620BC0410A1300D72
+	B8B104BF0ACFEFE672D1CDF58AC0F9A2ABFD599B2B5F25C4868E8C8E006FC3C3
+	43F414F7E1C1BE3EB342A1A8ADAEA9282F2B2E2A2E2D2E6FA86DA0C5BFE9265F
+	887C72FB2401543A1DDDEAA7575317009CBF41A725E77F13F3866E9D11446024
+	E5DF7D330A3003F91515E28B172F5DB972A5A1BE1E80E71EC8056F4F4315D027
+	ACEB0B5CB670E37B533BFEBD3C3F197497A574D31617B821036D37F5144A1A6B
+	0BABC4391210414589445A25165765A5C56624F9C1ED67A504A725F801FC2AC5
+	6FFEB828D8E4FCA07A41523D1D9937C60B1BFE0A14103EF855E4D0D9D8813391
+	0367A3FB2F440D9C0E359D0CEEF932B0F7CB50D3A9846E9BAC6E77B121AC5593
+	2297176A3ACA154D659D75454DD5590DD254C405B5E2F4AA0A365E5896C81141
+	45616C7971425E7A08347F124DEFA57B7BE0FC63E8C63E5E50B0B3BFBFADBBE7
+	05A1FBB98F8FBD7EFF7DF7DE79C79FEFB9EF9E03EFEE3CFEC9C7DFF08FBA898F
+	8BEA8EFBB67DE6DBF955A0E22B5FD9E74393B4ACE56F628B4BD2F19840F96735
+	95C975659955E5A992B2E4F29244701937DE519A4F374780CEA002101700F914
+	F9E744410214E4228F242D401200917F546E4614B40095B363539203C3AEF382
+	031DBC4557ADAF7CC573B4AD28119F3E7D72EBC78F5BE71C74283FE2DCF4BA28
+	EBA2C8D3C7D78B9ED8E1EDEB037D6B39AABFDB08FC2CFE9F6744308BD2C202F2
+	394607F30B37E6E6E767D1461118A0669E264E0FF4F7F989EC3D5C2F8904D67C
+	F87FE70BD595967907E009365840089C9CA431B6E9996994804C8D5A535F5707
+	45505C545429AE6C6E6801111800725D37E27FAD9296FA876A83F307D4D97000
+	3DDC912D01CE1E0CCD943FD47EAFA90F617F4E568EB5B5B5A3A363A7AC0BDF35
+	0AE219A37B9326A7A87B92F4C93C2D9086B4F8CF03FEBF6E346400EA1CD0EBD5
+	4D1DCD658DD579E2B2ECF4E4B0F40452FEA9F0F9490140FE0F08E4B7317C0BFB
+	A2B9A5F1BE4599764E5C3EE31F33723E6AF09BC8C16F2306CFC40E5E8CEBBF14
+	DB7F29DA7C36A2F73CF08F14D2F36D84E16C6AB743BEC1B3CA10D5AACE527695
+	A8DA4A3B9B8BDBEAF340048D95693489A822851B2C001D94E54727C7FB705DFD
+	4871F4B82E7E4498EBF560673FBF6B01FED71C1C4F3CBFF6E97BEEBEF3FEFBEE
+	79F0A1FB0F7DBCEFF3939F5FF4FECCADF20BAFD6137EB29301F21341EA9391FA
+	8BF3377EFC0905BF8AD54DA409BB8FA4A91C9B1AB35A6BB2EB2429A46EC4A955
+	1589D2D2640A6D8A134B0BE9FE08080184363403024200984720C012F5F9D1B4
+	28500071415E567821C09F181416EC1214E028F2BC0ACFCF77B683ECFFEADB13
+	BB3F5D6B5BF0A683E45D5EEB1151C6252F4F8AF93D3C3CFCFCFC9617EDFFB58C
+	A3002E300660F0B303C6ECF7A73E82F94592062413587BE8ED35F97ADA7AB95D
+	7575381316E40E1F8DCAE51E35C805D66338C7C26D9A41304D0104D437DD8608
+	0E191C18502864B535351565E5450544041DAD5D6AA50E68877B479CCF643F2D
+	EF4F2BFC23ECD7D10ADFDDD4B1DF6F329AEB6AEA0203024193428140A55400EE
+	A4F04138DC3425EAA39805F249B530AABAC5FE79C1BF6C5C4FE1D4F8609F49D5
+	D25052900D5F1126294DEF33FFCABFFA5F37F65B3363A5F9A5B9A9C551FD62A3
+	78263A77DC2D6EE462C4000281D35183176207AFC4F45D66E9228820BCFB7C44
+	CFF9A89E0B31DD57D20DAE653D410DDA04B9B240D551AE6A2EEDAA2F6CABCD6F
+	ACCAA47944D23450405A925F4294C5F3C745BAB167F5D123BA8383ED7DFD6DF6
+	1FDAF2C0FDF73DFCD0830F3E70FFE34F3CFCDEE7AF9F3C75E25AE0175E75DFF8
+	767C1BA0F83654732EC2782EC5E432BB30B9E2A07F656B99CAF7EEFE20C0742C
+	467D51ADAB1BD4A9A525690DD26C596361734D768D34535A9E0239C03A38A005
+	E2C002C505B134EA491D817473048D7DE6D2B44892FDA0832C0A0AD212FC2342
+	5C83039D3C3DAD2F5FFA82EFE25C5E223D79FA8BC3DF6E72287C8F57F9A16BEB
+	DBA2B42B5E9E5E3E3E3E6E1E42C8FE5F1DFCB0793876207FF13B224062B2995E
+	450D0AD844B9A7DBE0ED7ED59D7721272B617A8AD89683FDB26193C5DAB0455A
+	3E80A615B015845804B1BC0F603A38D0AF50C8AB2A2B111720D8A9AFA96F6FEB
+	542BE1EEBBCD3D086D4D261AD833A995DA96A6F6823C7A26978BB38BADED3591
+	878756ABE5EE4A6446031384FBF959801E5FFD533776FED383FF56CF7E63667A
+	1AD206D7D252F1EF65CBC70557B034D3BBA892CF5488A7C392466DE3872F8305
+	62062EC40D5E8BEFB789EBBB1AD76F1B67BE1AD76B1D61B68E345D8C365927F6
+	D8E599BC6A8CE1AD9A3485BC58D356226B2AE9A8CB6BADCB45FC1FCBB9FD18F2
+	FCB47A7718FF7AB0CBF560C74F3E79F3C9271E7BF2F1279E7EE6C9C71E7FE4C9
+	A71FFBE8E43B672E9CBE16762AA0E94C48D7F970F585F81EEB48F3C5D43EB7D9
+	455AC3E7D7379CF88DA5F6B9D200F3F1EBE6137E864F520DEE25CA94D32EC7BE
+	B9F081BF8F635E5A448338ABA53AB7B5BE00EAA6469252599A48439E45F19689
+	0F8534F7814D7F882BA4210FB6FE1FCD0588494EF40B0FE58504397B7A5EB97C
+	E933818B4379A9E4DB8BDF1EBD76D0A9F82361CDC7C2F60F456976DC4A1E42A1
+	302D2D0DDED47260BF8101F3A000D8327EB0C525AE46A5EEF272B36E6EFC6B73
+	0D968D2311EE33D9A75A8CD5909AE00CF0ED36F574747656554A737372131393
+	13E29312E213E3E312C243C37C7D7CF97C01CFC5853D7E97E7E1E1A9D7EBF076
+	867A1A92A41E8979442BCCE103273FAD8DFF0378FE7F7EA3ABCB5AC4DCD2C2CC
+	8D91EE1B2DD2A9B8A2B180D451475040F4C0A5E8812B8983D7E27A6D137BED12
+	FB6CE37BED62FB6CA2FBACA3FB6C62CDF61926418929A8DE98D8A9CA52C98A95
+	6DA54559D10911A28408AFF8485A2F2032C4EDFA75E70F8FBE76D7BD77DDFBC0
+	3DCF3CFBC4EA354F3FBBEA99E7D7ADFEF4DC47E72E9F758A3A1DD47A315C7539
+	C66493D8EF1065BE94D1EFFD5B811F766349395F156CFE24BCF75474DFD9EBE6
+	2F030C5F8A3A8F5ECD7FE344C86B9FDAEEFFFAEA072E6E97E2A3BC4B73631B25
+	D99DB5B9AD3579CDD519D5624BEF20C702141414C41653BF602C5440495E4C5A
+	927F58083F38D0D15B74E5CAA54FDCF92E15E5E20B97CF7EE670845FF6A97BFD
+	179E1DC7BC526CBD3C7DD1F4535252206E2D87F41BD84A7CFE94198D3A44E796
+	8D5FDB105E4C4E4FD39CC286868C8C8CA0A0200F77373E9FEFE62EF4F1F5F1F0
+	F4107912F2B127F3F2D41701B493CE985F001D8062907E12FAB7C1FFEB1B2E36
+	125DF4C59E2545D7B4583A139D33E69E34641B317029BCEF1C8440CA9053D280
+	43CA807362BF3D8820A1CF2EAEEF5A549F4D72AF735EAF57656F74BD3631AF38
+	2429C12B2E421413258CCF12844AAE7D23F860EF7BDB9FDFFCECA34F3D78E71D
+	7FB9EBDE3B1F7BFCC14FBE3D7AF1CA05D7E473C11D97E37BEC52079D92071D11
+	71E40E052CDCF87BA736FEA4DD5832CEB784F69D09EC3B1AD0F76978FFB7D1FD
+	17E247AE268D5D8D1FBA106E3CE55CFDD13731873E76DDFDA5DD1B171DBEF0F4
+	BC961C13585190DC5E5BA86A2B6D6BC8AE16A75414C797167241412CBB4B32BA
+	B4203E3B25242C14B2DFD1CBD3FAD2C54F3DDC7855E2EA8B3697BE71FD8057F1
+	A967D397A2AECF7C52EC798E2EC9C98933D3BF21F26FB165B7FC8FB7650E9A99
+	9B33994C2D2D2DF9F9F9911111FEFEFE06238D73711E9EE4FDC20DD64F41F9CF
+	B1DBE0FFCD6C050B4C2E0CF72DC85A667224135129A34E9103E7E306AC53879D
+	D3875DD3879CD3079C53079D93FA1CE3079CE207EC63FAAE260D3B640FBAA7AA
+	F8896DFC24192FC9EC983AC6CB9B17668FBBC5C99CF869674F38BFBBEFBD6DCF
+	BFF8EC27C73F3B73EABC20156ADF0E1F9836C44B19E6C50F5C2E1F8B5A4038F2
+	9BD98DC579F382B27926AB743C386ED426A8EFD390FE53517DE76307AC1386ED
+	9247AC93276CA07A3CDA3EB992F7F657D75FFF8C77F0A4CDDB368EA7027C78F9
+	A9111DB585CAB6E2D6DAECAA8A144949120D7694D084C8C2ACB0A8707E5010DD
+	C870E5D2A75E1EC286BA065B87ABA7DD8E79559F14B57CEDAF3CC98BBC141F97
+	F49BFAFC7F7E9B9AA6E70BA3408A132D8CABE5CA2B36FFBADD06FF6F6F1C0B30
+	32BE7163667051AF9B69AC9949C81A13260DD8250ED9C35703B469432EC85387
+	F828A02669C4396DDC257582973AE69C368A7A173045C6A46BEE9C7BD19267D1
+	A2774A2F3FACD1C637FF1A3FDC3AB4D13E739C9F3E22481D71C5C7C60C5AD7CE
+	A4B1EFFE2D0D4D8C82D5F9A11B3AFD5C7DD574349C7F64FF79A498BE8BB1FD17
+	217692C6AEA58EDBC50E5E0C519FE2551FBB90F2F649EF839FDABEFEF5A50F79
+	FC4B1989A135E5E96DB5F9CD3599756CB040529A1813E51EE8EF20125DBE78E1
+	135F2F8FAED60E5B279B735E9FFAD49D0A6CFFD6A3E39374C9F5F161BA83EBB6
+	FD9D761BFCFF4063F8BF698B0B8BB3C337748DD3992523C199A302628161C7B4
+	61C7E451D78C513EA09E36CC4B1FE3678E09D2C70419A36E1923AE4859E3C2AC
+	3141E6845BEE8C7BFEAC67F6A4306DD415FB648C523DF2EC7161ECD0D5E6A942
+	CBF7FCD6F6DD492DCE2D4EF52DCA6AA6927347BC13866CA27ACF84F59E8D1EB8
+	14DF6F933870152961E05A8CF94AA0F2345FF2C999E8231F3BEDFBE4C2616B87
+	93C101FCDCB488FA8AECAE8682C2DC88EB418E3E5ED6D657BE080F0DE8D174DB
+	395FBBE8FFB94FE369BFCE537EF2D3FA49D9F7AFE46DFB1BED36F8FFBD8DF9CF
+	D125936EA619449037E905A8278FDAA58E3A648CB902C95963EE59E3EE99636E
+	5C0EE59F312ECC997003ECB3273CC0052002EC963DE19635E94EA430E91E3970
+	4935FDBD05BCFEA146A2737E70D1A098AA924C44240D3AC6F65F09EB3F1BD677
+	21AEEF7262BF6DC2A01DE29A9411FBD8011B9FCEAFAFA4BFF599C7DE633607BF
+	BEFC1E8F7F3126DC2BD88FE721B874E9FC6759E9695363D3F6AE36D7AE7F19D4
+	722E58793A5C6FDD3BABBB0DFE5FC56E83FFDFDFA825E33F0BD4666F4C0CDCD0
+	B5CFE7574EC7E74DFBA44CB8A430F19F36EE9A3D25CC9D24D8674D79E64C7BE4
+	4D79644D12D4914004407ECEA467E68430774A143D74C930FD1BDEE9F4B30CA7
+	43035A8BD337C68C0B8DB553899C1C881CB8106D3E1FD97739AECF1A449032E4
+	9036E69434EA10AC3BEF2C3E763AFA8DCF78073FBBF8DA7B9F1DD8BB6FBBB494
+	86D06C5D6CADAF7F11223B1FDE7331AEC7AE6F467B1BFCBF8ADD06FF3FA5B1C6
+	3DB26436CEB775CCE7164E07674F79244EDA254ED822EC473967DA3377C6336F
+	1A2CE0963F0DFC0B81FF9C29B75C94674531C397F5534DEC83FE398C51DBE2D2
+	AC79BEB373BAB47422346D88173760CD460ACF27F45D4B1D74491B71CA98A06E
+	8EF8BE2B81B29336F9EF9D0A3D5CDA9931383978D5E9A243DC37097DF671BD97
+	E3CD8E7DB3BFF1AD1CFFDBD86DF0FF13DB4D393073636A6CB15BB920699CCD2A
+	9DF54F99B64B9D7240CC9F37EB4114304B5C8054489BA2FC39AFA8E14BEAA97F
+	6FCFFFA366910373137303BA85A6FAC9CCFC31FFD8C1CBE1BD67E3FAAE260FD8
+	250FDAA70C39658EBBE4CCB864CE3A232E883738FAD79E8FD0D8A60E3BC7F65D
+	4CEEE38DCCF7DEF6FCBF8ADD06FF7F04435BE7D2E2D2E4D240FFA25CB1505CB6
+	18943B2DC89AE2A5CF097308F6EE403E88A0705E143766AB9FFE4D96EEFC750C
+	14C0A17771697A69B26F41A59C95164E04260CD8410EC40D5E4B18B896061618
+	754A1EB68B1FBC9236E148E511C7B8814B19036EA30BFDF409B7EDEFB6DBE0FF
+	0F652B3CDEE2D2C2F4D2A87AA9B26E21B17C3E30735E9036E39A35CBCF9E738B
+	1FB96A9CEEB0ECF7CF6C374F077F17966ECC2E4D6AE66BA5E3313963EE09C376
+	B143576207AF240F5F4B1DA20EC2F451276884EC61CF49C4432BAEC36DFB9BED
+	36F8FF831B7CE002FCE770EF0DB972A1A26A313277CE3379DCD534A7B1ECF01F
+	CB80EA455A1ADC342FEB982D2B9E0CC8187101972190491CBE1A3D74296FC867
+	FAC69865E7DBF6F7D96DF0FFA7308619E4F34B73E3378CE61BB27920E83FAEE1
+	74589A5D5A1859EC952F4AAAA6E2F2263CAF0F9DC919F699FBEDA62DFF6F66B7
+	C1FF9FCE3822F84F6337796D7269583B5BDF33D3FA9FEBF4FE3DED36F86FDB7F
+	10BBC902B7EDD7B2DBE0BF6DB7ED7F4B5B5AFAFF0378E61A6243AC6F6B000000
+	0049454E44AE426082
+	]]>
+</GDLPict>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["FM_types_BA_WMCC"]]></MName>
+		<MainGUID>5262F922-2643-4DD2-84C4-399F798448C6</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+actualGUID = FROM_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+	_startID	= "FF38A20A-6702-4A91-AE6C-55FA234E80BD"
+	_endID		= "A10ABE84-B590-4DFB-AFB4-BCC44C22261C"
+gosub "BathroomAccessories_fwm"
+
+	_startID	= "A10ABE84-B590-4DFB-AFB4-BCC44C22261C"
+	_endID		= "69581F67-D2A9-46FD-B29A-B9C173C0A659"
+gosub "fmtypes_fwm"
+
+! ==============================================================================
+! Set Migration GUID
+! ==============================================================================
+
+setmigrationguid actualGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+"BathroomAccessories_fwm":
+	if actualGuid = _startID then
+		bHas = DELETED_PAR_VALUE ("gs_detlevel_3D_m", gs_detlevel_3D_m)
+		if gs_detlevel_3D_m = 2 then iDetlevel3D = DETLEVEL3D_DETAILED
+		if gs_detlevel_3D_m = 1 then iDetlevel3D = DETLEVEL3D_SIMPLE
+		if gs_detlevel_3D_m = 0 then iDetlevel3D = DETLEVEL3D_OFF
+		parameters iDetlevel3D = iDetlevel3D
+
+		bHas = DELETED_PAR_VALUE ("iStyle", iStyle)
+		if iStyle = 1 then iDispenserstyle = DISPENSERSTYLE_WALLMOUNTED
+		if iStyle = 2 then iDispenserstyle = DISPENSERSTYLE_BUILTIN1
+		if iStyle = 3 then iDispenserstyle = DISPENSERSTYLE_BUILTIN2
+		if iStyle = 4 then iDispenserstyle = DISPENSERSTYLE_COMMERCIAL
+		parameters iDispenserstyle = iDispenserstyle
+
+		bHas = DELETED_PAR_VALUE ("iSymbType", iSymbType)
+		if iSymbType = 2 then iSymbolType = SYMBTYPE_DETAILED
+		if iSymbType = 1 then iSymbolType = SYMBTYPE_SIMPLE
+		parameters iSymbolType = iSymbolType
+
+		actualGuid = _endID
+	endif
+return
+
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_fwm":
+	if actualGuid = _startID then
+		bHas = DELETED_PAR_VALUE ("FM_Type", FM_Type)
+
+	!INT
+		iFMType = 999
+		if FM_Type = `Default Objects` then iFMType = 1
+		if FM_Type = `Default Lamps` then iFMType = 2
+		if FM_Type = `People` then iFMType = 3
+		if FM_Type = `Elevators` then iFMType = 4
+		if FM_Type = `Security and Escapes` then iFMType = 5
+		if FM_Type = `Stairs` then iFMType = 6
+		if FM_Type = `Work Spaces` then iFMType = 7
+		if FM_Type = `Electric Facilities` then iFMType = 8
+		if FM_Type = `Distribution Panels` then iFMType = 9
+		if FM_Type = `Measuring Places` then iFMType = 10
+		if FM_Type = `Lamps` then iFMType = 11
+		if FM_Type = `HVAC Equipment` then iFMType = 12
+		if FM_Type = `Sanitation` then iFMType = 13
+		if FM_Type = `Locks` then iFMType = 14
+		if FM_Type = `Built-in Wardrobes` then iFMType = 15
+		if FM_Type = `Furniture` then iFMType = 16
+		if FM_Type = `Ceilings` then iFMType = 17
+		if FM_Type = `Floors` then iFMType = 18
+		if FM_Type = `Outdoor Objects` then iFMType = 19
+		if FM_Type = `Computers` then iFMType = 20
+		if FM_Type = `Monitors` then iFMType = 21
+		if FM_Type = `Software` then iFMType = 22
+		if FM_Type = `Phones` then iFMType = 23
+		if FM_Type = `Containers` then iFMType = 24
+		if FM_Type = `Others` then iFMType = 25
+
+	!AUT
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaugarderoben" then iFMType = 15
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!BRA
+		if FM_Type = "Objetos padrão" then iFMType = 1
+		if FM_Type = "Lâmpadas padrão" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos elétricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechamentos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tetos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objetos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!CHE
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Fussböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!CHI
+		if FM_Type = "默认对象" then iFMType = 1
+		if FM_Type = "默认灯" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "电梯" then iFMType = 4
+		if FM_Type = "保安与逃生" then iFMType = 5
+		if FM_Type = "楼梯" then iFMType = 6
+		if FM_Type = "工作空间" then iFMType = 7
+		if FM_Type = "电气设备" then iFMType = 8
+		if FM_Type = "分布面板" then iFMType = 9
+		if FM_Type = "测量地点" then iFMType = 10
+		if FM_Type = "灯" then iFMType = 11
+		if FM_Type = "HVAC设备" then iFMType = 12
+		if FM_Type = "卫生设施" then iFMType = 13
+		if FM_Type = "锁" then iFMType = 14
+		if FM_Type = "内置衣橱" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外对象" then iFMType = 19
+		if FM_Type = "计算机" then iFMType = 20
+		if FM_Type = "监视器" then iFMType = 21
+		if FM_Type = "软件" then iFMType = 22
+		if FM_Type = "电话" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!CZE
+		if FM_Type = "Výchozí objekty" then iFMType = 1
+		if FM_Type = "výchozí lampy" then iFMType = 2
+		if FM_Type = "lidé" then iFMType = 3
+		if FM_Type = "výtahy" then iFMType = 4
+		if FM_Type = "bezpečnost a úniky" then iFMType = 5
+		if FM_Type = "schodiště" then iFMType = 6
+		if FM_Type = "pracovní prostory" then iFMType = 7
+		if FM_Type = "Elektrická zařízení" then iFMType = 8
+		if FM_Type = "rozvaděče" then iFMType = 9
+		if FM_Type = "měřiče" then iFMType = 10
+		if FM_Type = "Svítidla" then iFMType = 11
+		if FM_Type = "lampy" then iFMType = 11
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "TZB vybavení" then iFMType = 12
+		if FM_Type = "Sanitární vybavení" then iFMType = 13
+		if FM_Type = "zámky" then iFMType = 14
+		if FM_Type = "zabudované skříně" then iFMType = 15
+		if FM_Type = "Nábytek" then iFMType = 16
+		if FM_Type = "stropy" then iFMType = 17
+		if FM_Type = "podlahy" then iFMType = 18
+		if FM_Type = "Venkovní objekty" then iFMType = 19
+		if FM_Type = "počítače" then iFMType = 20
+		if FM_Type = "monitory" then iFMType = 21
+		if FM_Type = "software" then iFMType = 22
+		if FM_Type = "telefony" then iFMType = 23
+		if FM_Type = "obaly" then iFMType = 24
+		if FM_Type = "jiné" then iFMType = 25
+		if FM_Type = "Jiné" then iFMType = 25
+
+	!FIN
+		if FM_Type = "Oletusobjektit" then iFMType = 1
+		if FM_Type = "Oletuslamput" then iFMType = 2
+		if FM_Type = "Ihminen" then iFMType = 3
+		if FM_Type = "Hissit" then iFMType = 4
+		if FM_Type = "Turvallisuus ja poistumistiet" then iFMType = 5
+		if FM_Type = "Portaat" then iFMType = 6
+		if FM_Type = "Työtilat" then iFMType = 7
+		if FM_Type = "Sähkölaitteet" then iFMType = 8
+		if FM_Type = "Jakelutaulut" then iFMType = 9
+		if FM_Type = "Mittauspaikat" then iFMType = 10
+		if FM_Type = "Lamput" then iFMType = 11
+		if FM_Type = "LVI-laite" then iFMType = 12
+		if FM_Type = "Saniteettikalusteet" then iFMType = 13
+		if FM_Type = "Viemäröinti" then iFMType = 13
+		if FM_Type = "Lukot" then iFMType = 14
+		if FM_Type = "Kiinteät komerot" then iFMType = 15
+		if FM_Type = "Kalustus" then iFMType = 16
+		if FM_Type = "Sisäkattopinnat" then iFMType = 17
+		if FM_Type = "Lattiat" then iFMType = 18
+		if FM_Type = "Ulkotilan objektit" then iFMType = 19
+		if FM_Type = "Ulkotilojen objektit" then iFMType = 19
+		if FM_Type = "Tietokoneet" then iFMType = 20
+		if FM_Type = "Näytöt" then iFMType = 21
+		if FM_Type = "Ohjelmat" then iFMType = 22
+		if FM_Type = "Puhelimet" then iFMType = 23
+		if FM_Type = "Säilytys" then iFMType = 24
+		if FM_Type = "Muut" then iFMType = 25
+
+	!FLA
+
+	!FRA
+		if FM_Type = "Objets par défaut" then iFMType = 1
+		if FM_Type = "Lampes par défaut" then iFMType = 2
+		if FM_Type = "Personnages" then iFMType = 3
+		if FM_Type = "Ascenseurs" then iFMType = 4
+		if FM_Type = "Sécurité et sorties de secours" then iFMType = 5
+		if FM_Type = "Escaliers" then iFMType = 6
+		if FM_Type = "Espaces de travail" then iFMType = 7
+		if FM_Type = "Services électriques" then iFMType = 8
+		if FM_Type = "Panneaux de distribution" then iFMType = 9
+		if FM_Type = "Armoires de contrôle" then iFMType = 10
+		if FM_Type = "Lampes" then iFMType = 11
+		if FM_Type = "Equipement CVCA" then iFMType = 12
+		if FM_Type = "Sanitaires" then iFMType = 13
+		if FM_Type = "Serrurerie" then iFMType = 14
+		if FM_Type = "Penderies Encastrées" then iFMType = 15
+		if FM_Type = "Ameublement" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Planchers" then iFMType = 18
+		if FM_Type = "Objets extérieurs" then iFMType = 19
+		if FM_Type = "Ordinateurs" then iFMType = 20
+		if FM_Type = "Ecrans" then iFMType = 21
+		if FM_Type = "Logiciels" then iFMType = 22
+		if FM_Type = "Téléphones" then iFMType = 23
+		if FM_Type = "Conteneurs" then iFMType = 24
+		if FM_Type = "Autres" then iFMType = 25
+
+	!GER
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!GRE
+		if FM_Type = "Αρχικά Αντικείμενα" then iFMType = 1
+		if FM_Type = "Αρχικά Φωτιστικά" then iFMType = 2
+		if FM_Type = "Άνθρωποι" then iFMType = 3
+		if FM_Type = "Ανελκυστήρες" then iFMType = 4
+		if FM_Type = "Ασφάλεια και Διαφυγή" then iFMType = 5
+		if FM_Type = "Σκάλες" then iFMType = 6
+		if FM_Type = "Χώροι Εργασίας" then iFMType = 7
+		if FM_Type = "Ηλεκτρολ. Εγκαταστάσεις" then iFMType = 8
+		if FM_Type = "Πίνακες Διανομής" then iFMType = 9
+		if FM_Type = "Θέσεις Μετρήσεων" then iFMType = 10
+		if FM_Type = "Φωτιστικά" then iFMType = 11
+		if FM_Type = "Λάμπα" then iFMType = 11
+		if FM_Type = "Εξαρτήματα HVAC" then iFMType = 12
+		if FM_Type = "Υγιεινή" then iFMType = 13
+		if FM_Type = "Κλειδαριές" then iFMType = 14
+		if FM_Type = "Εντοιχισμένες Ντουλάπες" then iFMType = 15
+		if FM_Type = "Εντοιχισμένη Ντουλάπα" then iFMType = 15
+		if FM_Type = "Επίπλωση" then iFMType = 16
+		if FM_Type = "Οροφές" then iFMType = 17
+		if FM_Type = "Δάπεδα" then iFMType = 18
+		if FM_Type = "Υπαίθρια Αντικείμενα" then iFMType = 19
+		if FM_Type = "Υπολογιστές" then iFMType = 20
+		if FM_Type = "Οθόνες" then iFMType = 21
+		if FM_Type = "Λογισμικό" then iFMType = 22
+		if FM_Type = "Τηλέφωνα" then iFMType = 23
+		if FM_Type = "Κιβώτια" then iFMType = 24
+		if FM_Type = "Άλλα" then iFMType = 25
+
+	!HUN
+		if FM_Type = "Alapértelmezett tárgy" then iFMType = 1
+		if FM_Type = "Alapértelmezett lámpa" then iFMType = 2
+		if FM_Type = "Személy" then iFMType = 3
+		if FM_Type = "Felvonó" then iFMType = 4
+		if FM_Type = "Biztonság- és menekülésjelző" then iFMType = 5
+		if FM_Type = "Lépcsők" then iFMType = 6
+		if FM_Type = "Lépcső" then iFMType = 6
+		if FM_Type = "Lépcsö" then iFMType = 6
+		if FM_Type = "Munkaterület" then iFMType = 7
+		if FM_Type = "Elektromos berendezés" then iFMType = 8
+		if FM_Type = "Elosztó" then iFMType = 9
+		if FM_Type = "Mérőhely" then iFMType = 10
+		if FM_Type = "Lámpa" then iFMType = 11
+		if FM_Type = "Légtechnikai berendezés" then iFMType = 12
+		if FM_Type = "Szaniter berendezés" then iFMType = 13
+		if FM_Type = "Zár" then iFMType = 14
+		if FM_Type = "Beépített szekrény" then iFMType = 15
+		if FM_Type = "Bútor" then iFMType = 16
+		if FM_Type = "Mennyezet" then iFMType = 17
+		if FM_Type = "Padló" then iFMType = 18
+		if FM_Type = "Kültéri tárgy" then iFMType = 19
+		if FM_Type = "Számítógép" then iFMType = 20
+		if FM_Type = "Monitor" then iFMType = 21
+		if FM_Type = "Szoftver" then iFMType = 22
+		if FM_Type = "Telefon" then iFMType = 23
+		if FM_Type = "Konténer" then iFMType = 24
+		if FM_Type = "Egyéb" then iFMType = 25
+
+	!ITA
+		if FM_Type = "Oggetti predefiniti" then iFMType = 1
+		if FM_Type = "Lampade predefinite" then iFMType = 2
+		if FM_Type = "Persone" then iFMType = 3
+		if FM_Type = "Ascensori" then iFMType = 4
+		if FM_Type = "Sicurezza e Fughe" then iFMType = 5
+		if FM_Type = "Scale" then iFMType = 6
+		if FM_Type = "Spazi di Lavoro" then iFMType = 7
+		if FM_Type = "Funzioni Elettriche" then iFMType = 8
+		if FM_Type = "Pannelli di Distribuzione" then iFMType = 9
+		if FM_Type = "Posti di Misurazione" then iFMType = 10
+		if FM_Type = "Lampade" then iFMType = 11
+		if FM_Type = "Apparecchiatura HVAC" then iFMType = 12
+		if FM_Type = "Risanamento" then iFMType = 13
+		if FM_Type = "Serrature" then iFMType = 14
+		if FM_Type = "Armadi a muro" then iFMType = 15
+		if FM_Type = "Armadi Incassati" then iFMType = 15
+		if FM_Type = "Armadi Incorporati" then iFMType = 15
+		if FM_Type = "Arredo" then iFMType = 16
+		if FM_Type = "Soffitti" then iFMType = 17
+		if FM_Type = "Pavimenti" then iFMType = 18
+		if FM_Type = "Oggetti Esterni" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitors" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoni" then iFMType = 23
+		if FM_Type = "Contenitori" then iFMType = 24
+		if FM_Type = "Altri" then iFMType = 25
+
+	!JPN
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ " then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ" then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄﾗﾝﾌﾟ" then iFMType = 2
+		if FM_Type = "人物" then iFMType = 3
+		if FM_Type = "ｴﾚﾍﾞｰﾀ" then iFMType = 4
+		if FM_Type = "防犯と非常用" then iFMType = 5
+		if FM_Type = "階段" then iFMType = 6
+		if FM_Type = "ﾜｰｸｽﾍﾟｰｽ" then iFMType = 7
+		if FM_Type = "電気設備" then iFMType = 8
+		if FM_Type = "配電盤" then iFMType = 9
+		if FM_Type = "測定場所" then iFMType = 10
+		if FM_Type = "ﾗﾝﾌﾟ" then iFMType = 11
+		if FM_Type = "設備機器" then iFMType = 12
+		if FM_Type = "HVAC機器" then iFMType = 12
+		if FM_Type = "排水設備" then iFMType = 13
+		if FM_Type = "下水設備" then iFMType = 13
+		if FM_Type = "ﾛｯｸ" then iFMType = 14
+		if FM_Type = "造り付けﾜｰﾄﾞﾛｰﾌﾞ" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天井" then iFMType = 17
+		if FM_Type = "ﾌﾛｱ" then iFMType = 18
+		if FM_Type = "屋外ｵﾌﾞｼﾞｪｸﾄ" then iFMType = 19
+		if FM_Type = "ｺﾝﾋﾟｭｰﾀ" then iFMType = 20
+		if FM_Type = "ﾓﾆﾀ" then iFMType = 21
+		if FM_Type = "ｿﾌﾄｳｪｱ" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "ｺﾝﾃﾅ" then iFMType = 24
+		if FM_Type = "その他" then iFMType = 25
+
+	!KOR
+		if FM_Type = "기본 객체" then iFMType = 1
+		if FM_Type = "기본값 객체" then iFMType = 1
+		if FM_Type = "기본 조명" then iFMType = 2
+		if FM_Type = "사람들" then iFMType = 3
+		if FM_Type = "엘리베이터" then iFMType = 4
+		if FM_Type = "보안과 피난" then iFMType = 5
+		if FM_Type = "계단" then iFMType = 6
+		if FM_Type = "작업 공간" then iFMType = 7
+		if FM_Type = "전기 설비" then iFMType = 8
+		if FM_Type = "분배 패널" then iFMType = 9
+		if FM_Type = "측정 장소" then iFMType = 10
+		if FM_Type = "조명" then iFMType = 11
+		if FM_Type = "공조설비" then iFMType = 12
+		if FM_Type = "위생설비" then iFMType = 13
+		if FM_Type = "잠금장치" then iFMType = 14
+		if FM_Type = "붙박이 장" then iFMType = 15
+		if FM_Type = "가구" then iFMType = 16
+		if FM_Type = "천장" then iFMType = 17
+		if FM_Type = "바닥" then iFMType = 18
+		if FM_Type = "실외 객체" then iFMType = 19
+		if FM_Type = "컴퓨터" then iFMType = 20
+		if FM_Type = "모니터" then iFMType = 21
+		if FM_Type = "소프트웨어" then iFMType = 22
+		if FM_Type = "전화기" then iFMType = 23
+		if FM_Type = "콘테이너" then iFMType = 24
+		if FM_Type = "기타" then iFMType = 25
+
+	!NED
+		if FM_Type = "Standaardobjecten" then iFMType = 1
+		if FM_Type = "Standaardlampen" then iFMType = 2
+		if FM_Type = "Mensen" then iFMType = 3
+		if FM_Type = "Liften" then iFMType = 4
+		if FM_Type = "Beveiliging en vluchtwegen" then iFMType = 5
+		if FM_Type = "Trappen" then iFMType = 6
+		if FM_Type = "Werkplekken" then iFMType = 7
+		if FM_Type = "ET installatie" then iFMType = 8
+		if FM_Type = "Schakelkasten" then iFMType = 9
+		if FM_Type = "Meetgebieden" then iFMType = 10
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "W-installatie" then iFMType = 12
+		if FM_Type = "Afvalverwerking" then iFMType = 13
+		if FM_Type = "Sloten" then iFMType = 14
+		if FM_Type = "Inbouwkasten" then iFMType = 15
+		if FM_Type = "Meubilair" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Vloeren" then iFMType = 18
+		if FM_Type = "Buitenobjecten" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitoren" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoon" then iFMType = 23
+		if FM_Type = "Containers" then iFMType = 24
+		if FM_Type = "Anders" then iFMType = 25
+		if FM_Type = "Overig" then iFMType = 25
+
+	!NOR
+		if FM_Type = "Standard objekter" then iFMType = 1
+		if FM_Type = "Andre" then iFMType = 25
+
+	!POL
+		if FM_Type = "Obiekty domyślne" then iFMType = 1
+		if FM_Type = "Domyślne lampy" then iFMType = 2
+		if FM_Type = "Ludzie" then iFMType = 3
+		if FM_Type = "Windy" then iFMType = 4
+		if FM_Type = "Bezpieczeństwo i ewakuacja" then iFMType = 5
+		if FM_Type = "Schody" then iFMType = 6
+		if FM_Type = "Przestrzenie robocze" then iFMType = 7
+		if FM_Type = "Urządzenia elektryczne" then iFMType = 8
+		if FM_Type = "Panele rozdzielające" then iFMType = 9
+		if FM_Type = "Stanowiska pomiarowe" then iFMType = 10
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "Wyposażenie grzewczo-klimatyzac." then iFMType = 12
+		if FM_Type = "Sanitarne" then iFMType = 13
+		if FM_Type = "Zamki" then iFMType = 14
+		if FM_Type = "Garderoby" then iFMType = 15
+		if FM_Type = "Umeblowanie" then iFMType = 16
+		if FM_Type = "Sufity" then iFMType = 17
+		if FM_Type = "Podłogi" then iFMType = 18
+		if FM_Type = "Obiekty zewnętrzne" then iFMType = 19
+		if FM_Type = "Komputery" then iFMType = 20
+		if FM_Type = "Monitory" then iFMType = 21
+		if FM_Type = "Oprogramowanie" then iFMType = 22
+		if FM_Type = "Telefony" then iFMType = 23
+		if FM_Type = "Pojemniki" then iFMType = 24
+		if FM_Type = "Inne" then iFMType = 25
+
+	!POR
+		if FM_Type = "Objectos por defeito" then iFMType = 1
+		if FM_Type = "Lâmpadas por defeito" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos eléctricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tectos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objectos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!RUS
+		if FM_Type = "Объекты по умолчанию" then iFMType = 1
+		if FM_Type = "Ист.света по умолчанию" then iFMType = 2
+		if FM_Type = "Люди" then iFMType = 3
+		if FM_Type = "Лифты" then iFMType = 4
+		if FM_Type = "Безопасность и эвакуация" then iFMType = 5
+		if FM_Type = "Лестницы" then iFMType = 6
+		if FM_Type = "Рабочее пространство" then iFMType = 7
+		if FM_Type = "Электрические устройства" then iFMType = 8
+		if FM_Type = "Распределительные щиты" then iFMType = 9
+		if FM_Type = "Измеряемые места" then iFMType = 10
+		if FM_Type = "Лампы" then iFMType = 11
+		if FM_Type = "Источники света" then iFMType = 11
+		if FM_Type = "Механическое оборудование" then iFMType = 12
+		if FM_Type = "Санитария" then iFMType = 13
+		if FM_Type = "Замки" then iFMType = 14
+		if FM_Type = "Встроенные гардеробы" then iFMType = 15
+		if FM_Type = "Гардеробы встроенные" then iFMType = 15
+		if FM_Type = "Мебель" then iFMType = 16
+		if FM_Type = "Потолки" then iFMType = 17
+		if FM_Type = "Полы" then iFMType = 18
+		if FM_Type = "Объекты снаружи" then iFMType = 19
+		if FM_Type = "Компьютеры" then iFMType = 20
+		if FM_Type = "Мониторы" then iFMType = 21
+		if FM_Type = "Программное обеспечение" then iFMType = 22
+		if FM_Type = "Телефоны" then iFMType = 23
+		if FM_Type = "Контейнеры" then iFMType = 24
+		if FM_Type = "Другой" then iFMType = 25
+		if FM_Type = "Другие" then iFMType = 25
+
+	!SPA
+		if FM_Type = "Objetos por Defecto" then iFMType = 1
+		if FM_Type = "Lámparas por Defecto" then iFMType = 2
+		if FM_Type = "Personas" then iFMType = 3
+		if FM_Type = "Ascensores" then iFMType = 4
+		if FM_Type = "Seguridad y Evacuaciones" then iFMType = 5
+		if FM_Type = "Escaleras" then iFMType = 6
+		if FM_Type = "Espacios de Trabajo" then iFMType = 7
+		if FM_Type = "Cuartos Eléctricos" then iFMType = 8
+		if FM_Type = "Paneles de División" then iFMType = 9
+		if FM_Type = "Lugares de Medidas" then iFMType = 10
+		if FM_Type = "Lámparas" then iFMType = 11
+		if FM_Type = "Control de Atmósfera" then iFMType = 12
+		if FM_Type = "Saneamiento" then iFMType = 13
+		if FM_Type = "Cerraduras" then iFMType = 14
+		if FM_Type = "Armarios Empotrados" then iFMType = 15
+		if FM_Type = "Mobiliario" then iFMType = 16
+		if FM_Type = "Falsos Techos" then iFMType = 17
+		if FM_Type = "Suelos" then iFMType = 18
+		if FM_Type = "Objetos de Exterior" then iFMType = 19
+		if FM_Type = "Ordenadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Teléfonos" then iFMType = 23
+		if FM_Type = "Contenedores" then iFMType = 24
+		if FM_Type = "Otros" then iFMType = 25
+
+	!SWE
+		if FM_Type = "Standardelement" then iFMType = 1
+		if FM_Type = "Standardarmatur" then iFMType = 2
+		if FM_Type = "Människor" then iFMType = 3
+		if FM_Type = "Hissar" then iFMType = 4
+		if FM_Type = "Säkerhet & Utrymning" then iFMType = 5
+		if FM_Type = "Trappor" then iFMType = 6
+		if FM_Type = "Arbetsutrymmen" then iFMType = 7
+		if FM_Type = "Elektrisk Utrustning" then iFMType = 8
+		if FM_Type = "Distributionspaneler" then iFMType = 9
+		if FM_Type = "Måttenhetsuppgifter" then iFMType = 10
+		if FM_Type = "Armatur" then iFMType = 11
+		if FM_Type = "VVS-utrustning" then iFMType = 12
+		if FM_Type = "Sanitärt" then iFMType = 13
+		if FM_Type = "Lås" then iFMType = 14
+		if FM_Type = "Inbyggda Utrymmen" then iFMType = 15
+		if FM_Type = "Möbler" then iFMType = 16
+		if FM_Type = "Innertak" then iFMType = 17
+		if FM_Type = "Golv" then iFMType = 18
+		if FM_Type = "Element för Utomhusbruk" then iFMType = 19
+		if FM_Type = "Datorer" then iFMType = 20
+		if FM_Type = "Bildskärmar" then iFMType = 21
+		if FM_Type = "Mjukvaror" then iFMType = 22
+		if FM_Type = "Telefoner" then iFMType = 23
+		if FM_Type = "Behållare" then iFMType = 24
+		if FM_Type = "Annat" then iFMType = 25
+
+	!TAI
+		if FM_Type = "默認對象" then iFMType = 1
+		if FM_Type = "默認燈" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "電梯" then iFMType = 4
+		if FM_Type = "保安與逃生" then iFMType = 5
+		if FM_Type = "樓梯" then iFMType = 6
+		if FM_Type = "工作空間" then iFMType = 7
+		if FM_Type = "電氣設備" then iFMType = 8
+		if FM_Type = "分佈面板" then iFMType = 9
+		if FM_Type = "測量地點" then iFMType = 10
+		if FM_Type = "燈" then iFMType = 11
+		if FM_Type = "HVAC設備" then iFMType = 12
+		if FM_Type = "衛生設施" then iFMType = 13
+		if FM_Type = "鎖" then iFMType = 14
+		if FM_Type = "內置衣櫥" then iFMType = 15
+		if FM_Type = "傢具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外對象" then iFMType = 19
+		if FM_Type = "計算機" then iFMType = 20
+		if FM_Type = "監視器" then iFMType = 21
+		if FM_Type = "軟件" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!TUR
+		if FM_Type = "Geçerli Objeler" then iFMType = 1
+		if FM_Type = "Geçerli Aydınlatma Elemanları" then iFMType = 2
+		if FM_Type = "İnsanlar" then iFMType = 3
+		if FM_Type = "Asansörler" then iFMType = 4
+		if FM_Type = "Güvenlik ve Çıkışlar" then iFMType = 5
+		if FM_Type = "Merdivenler" then iFMType = 6
+		if FM_Type = "Çalışma Alanları" then iFMType = 7
+		if FM_Type = "Elektrik Hizmetleri" then iFMType = 8
+		if FM_Type = "Dağıtım Levhalleri" then iFMType = 9
+		if FM_Type = "Dağıtım Panelleri" then iFMType = 9
+		if FM_Type = "Mekan Ölçme" then iFMType = 10
+		if FM_Type = "Aydınlatma Elemanları" then iFMType = 11
+		if FM_Type = "HVAC Ekipmanı" then iFMType = 12
+		if FM_Type = "Banyo-Wc" then iFMType = 13
+		if FM_Type = "Kilitler" then iFMType = 14
+		if FM_Type = "Ankastre Dolaplar" then iFMType = 15
+		if FM_Type = "Mobilya" then iFMType = 16
+		if FM_Type = "Tavanlar" then iFMType = 17
+		if FM_Type = "Zeminler" then iFMType = 18
+		if FM_Type = "Dış Mekan Objeleri" then iFMType = 19
+		if FM_Type = "Bilgisayarlar" then iFMType = 20
+		if FM_Type = "Monitörler" then iFMType = 21
+		if FM_Type = "Yazılım" then iFMType = 22
+		if FM_Type = "Telefonlar" then iFMType = 23
+		if FM_Type = "Konteynerler" then iFMType = 24
+		if FM_Type = "Diğerleri" then iFMType = 25
+		if FM_Type = "Diğer" then iFMType = 25
+
+		parameters iFMType = iFMType
+
+		actualGuid = _endID
+	endif
+return
+
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+targetGUID = TO_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+gosub "fmtypes_bwm"
+
+gosub "BathroomAccessories_bwm"
+
+! ==============================================================================
+! Set Migration GUID
+! ==============================================================================
+
+setmigrationguid targetGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+"BathroomAccessories_bwm":
+	if targetGUID # "" then
+		newparameter "gs_detlevel_3d", "String"
+		newparameter "gs_detlevel_3D_m", "Integer"
+
+		gs_detlevel_3d = typRes[2]
+		gs_detlevel_3D_m = 1
+
+		if iDetlevel3D = DETLEVEL3D_DETAILED then
+			gs_detlevel_3d = typRes[1]
+			gs_detlevel_3D_m = 2
+		endif
+
+		if iDetlevel3D = DETLEVEL3D_OFF then
+			gs_detlevel_3d = typRes[3]
+			gs_detlevel_3D_m = 0
+		endif
+
+		parameters gs_detlevel_3D_m = gs_detlevel_3D_m
+		parameters gs_detlevel_3d = gs_detlevel_3d
+
+		newparameter "stStyle", "String"
+		newparameter "iStyle", "Integer"
+
+		iStyle = 1
+		stStyle = stStyles[1]
+
+		if iDispenserstyle = DISPENSERSTYLE_BUILTIN1 then
+			iStyle = 2
+			stStyle = stStyles[2]
+		endif
+
+		if iDispenserstyle = DISPENSERSTYLE_BUILTIN2 then
+			iStyle = 3
+			stStyle = stStyles[3]
+		endif
+
+		if iDispenserstyle = DISPENSERSTYLE_COMMERCIAL then
+			iStyle = 4
+			stStyle = stStyles[4]
+		endif
+
+		parameters iStyle = iStyle
+		parameters stStyle = stStyle
+
+		newparameter "stSymbType", "String"
+		newparameter "iSymbType", "Integer"
+
+		if iSymbolType = SYMBTYPE_DETAILED then
+			stSymbType = stSymbTypes[1]
+			iSymbType = 2
+		else
+			stSymbType = stSymbTypes[2]
+			iSymbType = 1
+		endif
+
+		parameters stSymbType = stSymbType
+		parameters iSymbType = iSymbType
+
+	endif
+return
+
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_bwm":
+	if targetGUID # "" then
+		if iFMType = 1 then FM_Type = `Default Objects`
+		if iFMType = 2 then FM_Type = `Default Lamps`
+		if iFMType = 3 then FM_Type = `People`
+		if iFMType = 4 then FM_Type = `Elevators`
+		if iFMType = 5 then FM_Type = `Security and Escapes`
+		if iFMType = 6 then FM_Type = `Stairs`
+		if iFMType = 7 then FM_Type = `Work Spaces`
+		if iFMType = 8 then FM_Type = `Electric Facilities`
+		if iFMType = 9 then FM_Type = `Distribution Panels`
+		if iFMType = 10 then FM_Type = `Measuring Places`
+		if iFMType = 11 then FM_Type = `Lamps`
+		if iFMType = 12 then FM_Type = `HVAC Equipment`
+		if iFMType = 13 then FM_Type = `Sanitation`
+		if iFMType = 14 then FM_Type = `Locks`
+		if iFMType = 15 then FM_Type = `Built-in Wardrobes`
+		if iFMType = 16 then FM_Type = `Furniture`
+		if iFMType = 17 then FM_Type = `Ceilings`
+		if iFMType = 18 then FM_Type = `Floors`
+		if iFMType = 19 then FM_Type = `Outdoor Objects`
+		if iFMType = 20 then FM_Type = `Computers`
+		if iFMType = 21 then FM_Type = `Monitors`
+		if iFMType = 22 then FM_Type = `Software`
+		if iFMType = 23 then FM_Type = `Phones`
+		if iFMType = 24 then FM_Type = `Containers`
+		if iFMType = 25 then FM_Type = `Others`
+		parameters FM_Type = FM_Type
+
+	endif
+return
+
+
+]]></Script_BWM>
+
+<MigrationTable SectVersion="1" SectionFlags="0" SubIdent="0">
+	<MigrationTableElement>
+		<MainGUID>FF38A20A-6702-4A91-AE6C-55FA234E80BD</MainGUID>
+		<Version>17</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+	<MigrationTableElement>
+		<MainGUID>A10ABE84-B590-4DFB-AFB4-BCC44C22261C</MainGUID>
+		<Version>0</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+</MigrationTable>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_UIDefault/>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>3</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Dimension 1"]]></Description>
+			<Value>0.16</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Dimension 2"]]></Description>
+			<Value>0.06</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>0.16</Value>
+		</Length>
+		<Integer Name="iDispenserstyle">
+			<Description><![CDATA["Style"]]></Description>
+			<Value>2</Value>
+		</Integer>
+		<Length Name="halfA">
+			<Description><![CDATA["Width/2"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.08</Value>
+		</Length>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.6</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.76</Value>
+		</Length>
+		<Length Name="RollRadius">
+			<Description><![CDATA["Radius of Roll"]]></Description>
+			<Value>0.06</Value>
+		</Length>
+		<Length Name="topHeight">
+			<Description><![CDATA["Top Height"]]></Description>
+			<Value>0.76</Value>
+		</Length>
+		<Length Name="defaultSizes">
+			<Description><![CDATA["Default Sizes for meaning"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="4" SecondDimension="3">
+				<AVal Column="1" Row="1">0.2</AVal>
+				<AVal Column="2" Row="1">0.16</AVal>
+				<AVal Column="3" Row="1">0.16</AVal>
+				<AVal Column="1" Row="2">0.16</AVal>
+				<AVal Column="2" Row="2">0.06</AVal>
+				<AVal Column="3" Row="2">0.16</AVal>
+				<AVal Column="1" Row="3">0.18</AVal>
+				<AVal Column="2" Row="3">0.1</AVal>
+				<AVal Column="3" Row="3">0.3</AVal>
+				<AVal Column="1" Row="4">0.525</AVal>
+				<AVal Column="2" Row="4">0.135</AVal>
+				<AVal Column="3" Row="4">0.29</AVal>
+			</ArrayValues>
+		</Length>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D Representation"]]></Description>
+		</Title>
+		<Integer Name="iSymbolType">
+			<Description><![CDATA["Symbol Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<LineType Name="CabinetLineType">
+			<Description><![CDATA["Cabinet Line Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</LineType>
+		<PenColor Name="gs_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_fill_pen">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="gs_back_pen">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+
+		<!-- gs_3d_representatrion: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_3d_representatrion">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Integer Name="iDetlevel3D">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="gs_shadow">
+			<Description><![CDATA["Shadow"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="gs_resol">
+			<Description><![CDATA["Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>8</Value>
+		</Integer>
+
+		<!-- materials: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="materials">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Material Name="CabinetMat">
+			<Description><![CDATA["Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="DoorMat">
+			<Description><![CDATA["Door"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>13</Value>
+		</Material>
+		<Material Name="FlangeMat">
+			<Description><![CDATA["Flange"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>13</Value>
+		</Material>
+		<Material Name="FlangeBracketMat">
+			<Description><![CDATA["Flange and Bracket"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>13</Value>
+		</Material>
+		<Material Name="HoodMat">
+			<Description><![CDATA["Hinged Hood"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>44</Value>
+		</Material>
+		<Material Name="AccMat">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="TissueMat">
+			<Description><![CDATA["Toilet Tissue"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>60</Value>
+		</Material>
+		<Material Name="matSteel">
+			<Description><![CDATA["Steel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="matDoorFrame">
+			<Description><![CDATA["Door Frame"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="matDoorPanel">
+			<Description><![CDATA["Door Panel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+		<RealNum Name="gs_list_cost">
+			<Description><![CDATA["Cost"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_manufacturer">
+			<Description><![CDATA["Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_note">
+			<Description><![CDATA["Note/Remarks"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_location">
+			<Description><![CDATA["Location"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_accessories">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_Type">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Sanitation"]]></Value>
+		</String>
+		<Integer Name="iFMType">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>13</Value>
+		</Integer>
+		<String Name="FM_InventoryNumber">
+			<Description><![CDATA["Inventory Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_SerialNumber">
+			<Description><![CDATA["Serial Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductionYear">
+			<Description><![CDATA["Production Year"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="FM_ObjectWeight">
+			<Description><![CDATA["Object Weight"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_ObjectWeightUnit">
+			<Description><![CDATA["Object Weight Unit"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["kg"]]></Value>
+		</String>
+		<String Name="gs_list_custom1">
+			<Description><![CDATA["User Defined 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom2">
+			<Description><![CDATA["User Defined 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom3">
+			<Description><![CDATA["User Defined 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom4">
+			<Description><![CDATA["User Defined 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom5">
+			<Description><![CDATA["User Defined 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+	</Parameters>
+</ParamSection>
+</Symbol>

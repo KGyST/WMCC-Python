@@ -1,0 +1,17 @@
+﻿Arial
+Times New Roman
+mm
+cm
+dm
+m
+km
+mm2
+cm2
+m2
+W/m2
+m3
+kg/m2
+kg/m3
+ID
+ArchiCAD
+

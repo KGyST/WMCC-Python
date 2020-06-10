@@ -1,0 +1,3021 @@
+<Symbol IsArchivable="no" IsPlaceable="yes" MainGUID="7297C295-8DC3-4AE8-87D3-1B6233D0D049" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>F938E33A-329D-4A36-BE3E-85E126820996</MainGUID>
+	<MainGUID>103E8D2C-8230-42E1-9597-46F84CCE28C0</MainGUID>
+	<MainGUID>C76BC373-89AE-4368-A490-BB2485825242</MainGUID>
+	<MainGUID>3FCE1BC2-9644-44D4-9D5F-4DBF6C762CA4</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["Resize_A_B_ZZYZX"]]></MName>
+		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["LibraryGlobals13_ME_WMCC"]]></MName>
+		<MainGUID>F6C25A16-295D-43C1-BB42-54B888A47B5F</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_minimalspace_ME_WMCC"]]></MName>
+		<MainGUID>056073E0-8629-4321-BADF-11D5CDF2ECCE</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["Resize_A_B_ZZYZX"]]></MName>
+		<MainGUID>33A17ABE-882E-11D6-95A3-00039318F8B6</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["fa_knobtyp_ME_WMCC"]]></MName>
+		<MainGUID>74B95F84-49FB-42AE-822A-8B5071C48987</MainGUID>
+	</Macro>
+	<Macro>
+		<MName><![CDATA["FM_types_ME_WMCC"]]></MName>
+		<MainGUID>3060F488-57F1-412D-84B8-5AC94CD8D3A6</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_3D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+if not(gs_shadow) then shadow off
+if gs_detlevel_3D_m = 2 then	! Detailed
+	resol gs_resol
+else
+	if gs_detlevel_3D_m = 1 then ! Simple
+		resol 3
+		gs_resol = 6
+	else
+		END	! Off
+	endif
+endif
+
+pen gs_cont_pen
+
+
+!-----Definitions-----
+unID = 1
+wheelPoz = 0.035
+bottomHeight = 0.035													! Cube Bottom Height
+shelvHeight = 0.015														! One shelves heigth
+shelvTotalHeight = baseHeight-drawerHeigth-2*panelWidth-bottomHeight	! Shelves summa height
+bottleRackColumn = 0.025												! Bottle Rack column
+overbedTableOffset = 0.02												! Overbed table
+
+
+!-----Hotspot-----
+call "Resize_A_B_ZZYZX" Parameters ALL
+
+hotspot a/2, b, ZZYZX, unID : unID = unID + 1
+hotspot a/2, b, 0, unID 	: unID = unID + 1
+
+
+!-----Leg-----
+gosub 25
+!-----Base-----
+gosub 30
+!-----Top-----
+gosub 60
+!-----Overbed Table-----
+if bTable then
+	gosub 210
+endif
+!-----Bottle Rack-----
+if bBottle then
+	rotz 90
+	add b/2, -realA, ZZYZX-topHeight
+	gosub 200
+	del 2
+endif
+
+
+END
+! ======================================================================
+! SubRoutines
+! ======================================================================
+!-----Wheel-----
+10:
+	if gs_detlevel_3D_m = 1 then resol 5		! Simple
+	rotz wheelAlpha
+	add -0.0225, -0.03, 0.03
+	rotx -17
+	addx -0.0025
+	material gs_wheel_mat
+	revolve 2,360,1+2+128,
+	0,0.03,1,
+	0.05,0.03,1
+	del 1
+
+	material gs_leg_mat
+		revolve 5,214,1+2+16+32+128,
+		0,0.035,1,
+		0.045,0.035,1,
+		0.045,0.031,1,
+		0,0.031,1,
+		0,0.035,-1
+	del 2
+
+	addz 0.040
+	cylind 0.03,0.005
+	del 2
+	if gs_detlevel_3D_m = 1 then resol 3		! Simple
+	return
+
+
+!-----LegTop-----
+15:
+	rotx 90
+	roty 90
+	add 0, 0.005, -0.02
+	prism_ 13, 0.04,
+		b/2-0.02, 0.055, 15,
+		b/2-0.02, 0.075, 15,
+		b/2-0.02-eps*2, 0.075, 79,
+		0.085-sin(13)*0.005, 0.095-cos(13)*0.005, 1079,
+		0.085, 0.095, 915,
+		0, -77, 4015,
+		b-0.08, 0.095, 79,
+		b-0.085, 0.095, 979,
+		0, -77, 4079,
+		b/2+0.02+2*eps, 0.075, 1079,
+		b/2+0.02, 0.075, 15,
+		b/2+0.02, 0.055, 15,
+		b/2-0.02, 0.055, -1
+	del 3
+	return
+
+
+!-----Leg-----
+20:
+	addz wheelHeight
+	material gs_leg_mat
+
+	if gs_detlevel_3D_m = 1 then resol 6		! Simple
+	addy wheelPoz
+	cylind 0.01, wheelPoz
+	addy b-2*wheelPoz
+	cylind 0.01, wheelPoz
+	del 2
+	if gs_detlevel_3D_m = 1 then resol 3		! Simple
+
+	if gs_detlevel_3D_m = 2 then		! Detailed
+		muly -1
+		addy -b
+		cutpolya 8, 2, 0,
+			-0.05, wheelpoz+0.02, 69,
+			-0.02, wheelpoz+0.02, 71,
+			0, wheelpoz+0.02, 905,
+			0, 180, 4005,
+			0.05, wheelpoz+0.02, 5,
+			0.05, 0, 5,
+			-0.05, 0, 5,
+			-0.05, wheelpoz+0.02, 1
+		del 2
+
+		cutpolya 8, 2, 0,
+			-0.05, wheelpoz+0.02, 69,
+			-0.02, wheelpoz+0.02, 71,
+			0, wheelpoz+0.02, 905,
+			0, 180, 4005,
+			0.05, wheelpoz+0.02, 5,
+			0.05, 0, 5,
+			-0.05, 0, 5,
+			-0.05, wheelpoz+0.02, 1
+	endif
+
+	rotx 90
+	roty 90
+	add 0, 0.005, -0.02
+	prism_ 14, 0.04,
+		b/2-0.02, 0.055, 15,
+		b/2-0.02, 0.035, 15,
+		b/2-0.02-eps*2, 0.035, 79,
+		wheelpoz, 0.015, 1079,
+		wheelpoz+0.0038, 0.0017, 979,
+		0, 81.1852, 4079,
+		wheelpoz-0.01, 0, 15,
+		b-wheelpoz+0.01, 0, 79,
+		b-wheelpoz-0.0038, 0.0017, 979,
+		0, 81.1852, 4079,
+		b/2+0.02+2*eps, 0.035, 1079,
+		b/2+0.02, 0.035, 15,
+		b/2+0.02, 0.055, 15,
+		b/2-0.02, 0.055, 1
+	del 3
+
+	if gs_detlevel_3D_m = 2 then		! Detailed
+		cutend
+		cutend
+	endif
+
+	if not(bLegOversize) then
+		addz 0.06
+		prism 4, 0.025,
+			-0.02, b/2-0.02,
+			 0.02, b/2-0.02,
+			 0.02, b/2+0.02,
+			-0.02, b/2+0.02
+		del 1
+		addx- 0.1
+		rotx 90
+		roty 90
+		addy 0.044
+		cutpolya 4, 2, 0,
+			b/2-0.015, 0, 7,
+			b/2-0.015, 0.035, 7,
+			b/2+0.015, 0.035, 7,
+			b/2+0.015, 0, 7
+		del 3
+		gosub 15
+		cutend
+		del 1
+	else
+		gosub 15
+	endif
+
+	del 1
+	addy wheelPoz+0.025
+	wheelAlpha=0
+	gosub 10
+	addy b-2*(wheelPoz+0.025)
+	wheelAlpha=180
+	gosub 10
+	del 2
+	return
+
+
+!-----LegControl-----
+25:
+	addx wheelPoz
+	bLegOversize=1
+	gosub 20
+	del 1
+
+	addx a-wheelPoz
+	if bTable then
+		bLegOversize = 0
+	else
+		bLegOversize = 1
+	endif
+	gosub 20
+	del 1
+
+	material gs_leg_mat
+	addz wheelHeight+0.044
+	prism 4, 0.035,
+		wheelPoz +0.02, b/2-0.015,
+		a-wheelPoz-0.02, b/2-0.015,
+		a-wheelPoz-0.02, b/2+0.015,
+		wheelPoz +0.02, b/2+0.015
+	del 1
+	return
+
+
+!-----Base-----
+30:
+	material gs_cabinet_mat
+	add 0, reducerB/2, 0.17
+
+	group "base"
+		rotx 90
+		if bDoor then
+			cutpolya 5, 1, -b+reducerB+panelWidth-bDouble,
+				panelDepth, -bottomHeight, 7,
+				realA-panelDepth, -bottomHeight, 7,
+				realA-panelDepth, baseHeight-panelWidth,7,
+				panelDepth, baseHeight-panelWidth, 7,
+				panelDepth, -bottomHeight, 1
+		else
+			cutpolya 5, 1, -b+reducerB+panelWidth-bDouble,
+				panelDepth, -bottomHeight, 7,
+				realA-panelDepth, -bottomHeight, 7,
+				realA-panelDepth, baseHeight-2*panelWidth-drawerHeigth,7,
+				panelDepth, baseHeight-2*panelWidth-drawerHeigth, 7,
+				panelDepth, -bottomHeight, 1
+
+			cutpolya 5, 1, -b+reducerB+panelWidth-bDouble,
+				panelDepth, baseHeight-panelWidth-drawerHeigth, 7,
+				realA-panelDepth, baseHeight-panelWidth-drawerHeigth, 7,
+				realA-panelDepth, baseHeight-panelWidth,7,
+				panelDepth, baseHeight-panelWidth, 7,
+				panelDepth, baseHeight-panelWidth-drawerHeigth, 7
+		endif
+		del 1
+
+		if gs_detlevel_3D_m = 2 then		! Detailed
+			tableRadius = 0.01
+			prism_  14, baseHeight,
+				tableRadius, 0, 79,
+				realA-tableRadius, 0, 79,
+				realA-tableRadius, tableRadius, 979,
+				realA, tableRadius, 3079,
+				realA, b-reducerB-tableRadius, 79,
+				realA-tableRadius, b-reducerB-tableRadius, 979,
+				realA-tableRadius, b-reducerB, 3079,
+				tableRadius, b-reducerB, 79,
+				tableRadius, b-reducerB-tableRadius, 979,
+				0, b-reducerB-tableRadius, 3079,
+				0, tableRadius, 79,
+				tableRadius, tableRadius, 979,
+				tableRadius, 0, 3079,
+				tableRadius, 0, -1
+		else			! Simple
+			block realA, b-reducerB, baseHeight
+		endif
+
+		if not(bDoor) then cutend
+		cutend
+	endgroup
+
+	group "cutter"
+		gosub 100
+	endgroup
+
+	placegroup subgroup ("base", "cutter")
+	killgroup "base"
+	killgroup "cutter"
+
+	material gs_knob_mat
+	rotz -90
+	roty -90
+	add ZZYZX-0.3, 0.01, reducerB-towelRadius
+	cylind b-2*reducerB, 0.005
+	del 3
+
+
+	material gs_cabinet_mat
+
+	if not(bDouble) then
+		if bDoor then
+			lin_ panelDepth, b-reducerB-panelWidth, 0, panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth
+			lin_ realA-panelDepth, b-reducerB-panelWidth, 0, realA-panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth
+			lin_ realA-panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth, panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth
+		else
+			lin_ panelDepth, b-reducerB-panelWidth, 0, panelDepth, b-reducerB-panelWidth, baseHeight-2*panelWidth-drawerHeigth
+			lin_ realA-panelDepth, b-reducerB-panelWidth, 0, realA-panelDepth, b-reducerB-panelWidth, baseHeight-2*panelWidth-drawerHeigth
+			lin_ realA-panelDepth, b-reducerB-panelWidth, baseHeight-2*panelWidth-drawerHeigth, panelDepth, b-reducerB-panelWidth, baseHeight-2*panelWidth-drawerHeigth
+
+			lin_ realA-panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth-drawerHeigth, panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth-drawerHeigth
+
+			lin_ panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth, panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth-drawerHeigth
+			lin_ realA-panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth, realA-panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth-drawerHeigth
+			lin_ realA-panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth, panelDepth, b-reducerB-panelWidth, baseHeight-panelWidth
+		endif
+	endif
+
+	! Bottom shelves
+	prism 4, bottomHeight,
+		panelDepth, panelWidth+panelEps,
+		realA-panelDepth, panelWidth+panelEps,
+		realA-panelDepth, b-reducerB-panelWidth-panelEps*bDouble,
+		panelDepth,  b-reducerB-panelWidth-panelEps*bDouble
+
+	! Shelves
+	if not(bDoor) then
+		sHeigth = (shelvTotalHeight-(iShelv*shelvHeight)) / (iShelv+1)
+		for i= 1 to iShelv
+			addz bottomHeight + sHeigth * i
+			prism 4, shelvHeight,
+				panelDepth, panelWidth+panelEps,
+				realA-panelDepth, panelWidth+panelEps,
+				realA-panelDepth, b-reducerB-panelWidth-panelEps*bDouble,
+				panelDepth,  b-reducerB-panelWidth-panelEps*bDouble
+			del 1
+			addz shelvHeight
+		next i
+		del iShelv
+	else
+		addz baseHeight-2*panelWidth-drawerHeigth
+		prism 4, panelWidth,
+			panelDepth, panelWidth+panelEps,
+			realA-panelDepth, panelWidth+panelEps,
+			realA-panelDepth, b-reducerB-panelWidth-panelEps*bDouble,
+			panelDepth,  b-reducerB-panelWidth-panelEps*bDouble
+		del 1
+
+		drawerH = drawerHeightBottom
+		add panelDepth+panelEps, 0, panelEps
+		doorMat = gs_door_mat
+		knobNumber = 1
+		gosub 50
+
+		material gs_knob_mat
+		addz drawerH+panelEps
+		prism 4, 0.007,
+			0, 0,
+			drawerWidth, 0,
+			drawerWidth, panelWidth+panelEps,
+			0, panelWidth+panelEps
+		del 1
+
+		if bDouble then
+			muly -1
+			addy -b+reducerB
+			gosub 50
+
+			material gs_knob_mat
+			addz drawerH+panelEps
+			prism 4, 0.007,
+				0, 0,
+				drawerWidth, 0,
+				drawerWidth, panelWidth+panelEps,
+				0, panelWidth+panelEps
+			del 3
+		endif
+		del 1
+	endif
+
+	! Drawer
+	if bDrawer then
+		drawerH = drawerHeightTop
+		add panelDepth+panelEps, 0, baseHeight-panelWidth-drawerHeigth+panelEps
+		doorMat = gs_drawer_mat
+		knobNumber = 2
+		gosub 50
+		if bDouble then
+			muly -1
+			addy -b+reducerB
+			gosub 50
+			del 2
+		endif
+		del 1
+	endif
+
+	del 1
+	return
+
+
+!-----Front-----
+50:
+	material doorMat
+	prism 4, drawerH,
+		0, 0,
+		drawerWidth, 0,
+		drawerWidth, panelWidth,
+		0, panelWidth
+
+	vert 0, 0, 0
+	vert 1, 0, 0
+	vert 0, 1, 0
+	vert 0, 0, 1
+
+	coor 2, -1, -2, -3, -4
+	body 1
+
+	! --- Knob ---
+	if gs_knob_type_m then
+		add drawerWidth/2, 0, drawerH - drawerHeigth/2-panelEps + 0.005
+
+		hotspot  knob_pl[knobNumber][1], 0,  0, unID, knob_pl[knobNumber][2], 1+128					: unID=unID+1
+		hotspot  knob_pl[knobNumber][1], 0, -1, unID, knob_pl[knobNumber][2], 3 					: unID=unID+1
+		hotspot  knob_pl[knobNumber][1], 0, knob_pl[knobNumber][2], unID, knob_pl[knobNumber][2],2 	: unID=unID+1
+
+		hotspot  0, 0, knob_pl[knobNumber][2], unID, knob_pl[knobNumber][1], 1+128					: unID=unID+1
+		hotspot -1, 0, knob_pl[knobNumber][2], unID, knob_pl[knobNumber][1], 3 						: unID=unID+1
+		hotspot  knob_pl[knobNumber][1], 0, knob_pl[knobNumber][2], unID, knob_pl[knobNumber][1],2 	: unID=unID+1
+
+		add	knob_pl[knobNumber][1], 0, knob_pl[knobNumber][2]
+
+		_knob_size=0.2
+
+		if gs_knob_type_m=4 or gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 then
+			roty 90
+			addz _knob_size/2
+		endif
+
+		if gs_knob_type_m=8 then
+			roty 270
+			addz _knob_size/2
+		endif
+
+		CALL "fa_knobtyp_ME_WMCC" PARAMETERS gs_detlevel_3D_m=gs_detlevel_3D_m,
+				gs_knob_type_m=gs_knob_type_m, gs_resol=gs_resol,
+					gs_shadow=gs_shadow,gs_cont_pen=gs_cont_pen,
+					gs_knob_mat=gs_knob_mat, knob_size=_knob_size
+
+		if gs_knob_type_m=4 or gs_knob_type_m=5 or gs_knob_type_m=6 or gs_knob_type_m=7 then
+			del 2
+		endif
+		if gs_knob_type_m=8 then
+			del 2
+		endif
+
+		del 2
+	endif
+	return
+
+
+!-----Top-----
+60:
+	material gs_cabinet_mat
+	tableB = reducerB - 0.02
+	add 0, tableB/2, ZZYZX-topHeight
+	if gs_detlevel_3D_m = 2 then		! Detailed
+		tableRadius = 0.01
+		beta = atn(0.005/tableOffsetx)
+
+		cutpolya 4, 2, 0,
+			tableOffsetx, tableOffsety, 7,
+			realA-tableOffsetx, tableOffsety, 7,
+			realA-tableOffsetx, b-tableB-tableOffsety, 7,
+			tableOffsetx, b-tableB-tableOffsety, 7
+
+		fprism_  gs_cabinet_mat, gs_cabinet_mat, gs_cabinet_mat, gs_cabinet_mat,
+			14, topHeight, beta, 0.005,
+			tableRadius, 0, 79,
+			realA-tableRadius, 0, 79,
+			realA-tableRadius, tableRadius, 979,
+			realA, tableRadius, 3079,
+			realA, b-tableB-tableRadius, 79,
+			realA-tableRadius, b-tableB-tableRadius, 979,
+			realA-tableRadius, b-tableB, 3079,
+			tableRadius, b-tableB, 79,
+			tableRadius, b-tableB-tableRadius, 979,
+			0, b-tableB-tableRadius, 3079,
+			0, tableRadius, 79,
+			tableRadius, tableRadius, 979,
+			tableRadius, 0, 3079,
+			tableRadius, 0, -1
+
+		cutend
+		prism_  5, topHeight-0.005,
+			tableOffsetx, tableOffsety, 15,
+			realA-tableOffsetx, tableOffsety, 15,
+			realA-tableOffsetx, b-tableB-tableOffsety, 15,
+			tableOffsetx, b-tableB-tableOffsety, 15,
+			tableOffsetx, tableOffsety, -1
+
+	else			! Simple
+		block realA, b-tableB, topHeight
+	endif
+	del 1
+	return
+
+
+!-----Towels-----
+100:
+	towelRadius = 0.02
+	towelDepth = 0.04
+	towelHeigth = baseHeight-2*panelWidth
+	uLenght = b-2*reducerB-2*towelDepth-2*towelRadius
+	iRes = int(gs_resol/2)
+	iAlpha = 90/iRes
+
+	rotz -90
+	add -uLenght/2-(b-reducerB)/2, -towelRadius, panelWidth
+
+	put  0, -1, 0, 0
+	put  0, 0, 0, 0
+	for i=1 to iRes-1
+		put towelRadius-cos(i*iAlpha)*towelRadius, sin(i*iAlpha)*towelRadius, 0, 0
+	next i
+	put towelRadius , towelRadius,0,0
+	put uLenght-towelRadius , towelRadius,0,0
+	for i=1 to iRes-1
+		put uLenght-towelRadius+sin(i*iAlpha)*towelRadius, cos(i*iAlpha)*towelRadius, 0,0
+	next i
+	put uLenght, 0, 0, 0
+	put uLenght, -1, 0, 0
+
+	tube 6, NSP/4, 1+2+16+32+128,
+		0, 0, 1,
+		0, towelDepth, 901,
+		towelDepth,	towelDepth, 3001,
+		towelDepth, towelHeigth-towelDepth, 1,
+		0, towelHeigth-towelDepth, 901,
+		0 , towelHeigth, 3001,
+		GET (NSP)
+
+	del 2
+	return
+
+
+!-----Bottle Rack-----
+200:
+	material gs_bottlerack_mat
+	rotx 90
+	if gs_detlevel_3D_m = 2 then	! Detailed
+		toler 0.001
+	else
+		toler 0.01 ! Simple
+	endif
+
+	!board
+	prism_ 7, 0.002,
+	   -0.18,            0,      15,
+	   -0.18, -0.3916364982832,      79,
+		   0,      -0.2075,    979,
+		   0, 88.69832493657,   4015,
+		0.18, -0.3916364982832,      15,
+		0.18,            0,      15,
+	   -0.18,            0,      1
+
+	group "baseVer2"
+		addx -0.03
+		cutpolya 21, 2, 0,
+			0.075, -9.184850993605E-018,      7,
+			0.165, -2.020667218593E-017,      7,
+			0.1650053657122, -0.211338878857,      5,
+			0.1176453524063, -0.211338878857,    905,
+			0, -37.92697759127,   4005,
+			0.1550026828561, -0.24044902695,      5,
+			0.1923600133059, -0.2695591750431,   905,
+			0, 37.92697759127,   4005,
+			0.145, -0.2695591750431,      5,
+			0.145, -0.3450054295484,      5,
+			0.1200026828561, -0.3450027147747,    905,
+			0, -179.9875550562,   4005,
+			0.09500536571218, -0.3450054295494,      5,
+			0.09500536571218, -0.2695591750431,      5,
+			0.04764535240626, -0.2695591750431,    905,
+			0, 37.92697759127,   4005,
+			0.08500268285609, -0.24044902695,      5,
+			0.1223600133059, -0.211338878857,    905,
+			0, -37.92697759127,   4005,
+			0.075, -0.211338878857,      7,
+			0.075, -9.184850993605E-018,      1
+		del 1
+
+		mulx -1
+		addx -0.03
+		cutpolya 21, 2, 0,
+			0.075, -9.184850993605E-018,      7,
+			0.165, -2.020667218593E-017,      7,
+			0.1650053657122, -0.211338878857,      5,
+			0.1176453524063, -0.211338878857,    905,
+			0, -37.92697759127,   4005,
+			0.1550026828561, -0.24044902695,      5,
+			0.1923600133059, -0.2695591750431,   905,
+			0, 37.92697759127,   4005,
+			0.145, -0.2695591750431,      5,
+			0.145, -0.3450054295484,      5,
+			0.1200026828561, -0.3450027147747,    905,
+			0, -179.9875550562,   4005,
+			0.09500536571218, -0.3450054295494,      5,
+			0.09500536571218, -0.2695591750431,      5,
+			0.04764535240626, -0.2695591750431,    905,
+			0, 37.92697759127,   4005,
+			0.08500268285609, -0.24044902695,      5,
+			0.1223600133059, -0.211338878857,    905,
+			0, -37.92697759127,   4005,
+			0.075, -0.211338878857,      7,
+			0.075, -9.184850993605E-018,      1
+		del 2
+
+		rotx 90
+		cutpolya 4, 2, 0,
+			-bottleRackColumn, 0.01, 7,
+			 bottleRackColumn, 0.01, 7,
+			 bottleRackColumn, 1, 7,
+			-bottleRackColumn, 1, 7
+		del 1
+
+		addz 0.002
+		prism_ 7, 0.05,
+		   -0.16, 3.469446951954E-018,      15,
+		   -0.16, -0.3830170931847,      79,
+			   0,      -0.2075,    979,
+			   0, 84.70410953288,   4079,
+			0.16, -0.3830170931847,      79,
+			0.16, 3.469446951954E-018,      15,
+		   -0.16, 3.469446951954E-018,      1
+		del 1
+
+		cutend
+		cutend
+		cutend
+	endgroup
+
+	group "glassRack2"
+		addz 0.002
+		addx -0.03
+		prism_ 5, 0.04,
+			0.075, -0.39,      15,
+			0.075, 0,      15,
+			0.1650053657122, 0,      15,
+			0.1650053657122, -0.39,      15,
+			0.075, -0.39,      1
+		del 1
+		mulx -1
+		addx -0.03
+		prism_ 5, 0.04,
+			0.075, -0.39,      15,
+			0.075, 0,      15,
+			0.1650053657122, 0,      15,
+			0.1650053657122, -0.39,      15,
+			0.075, -0.39,      1
+		del 2
+	endgroup
+
+	group "depthCutter"
+		rotx 90
+		roty 90
+		add 0, 0.002, -0.5
+		prism_   9, 1,
+			-0.445, 0,      77,
+			 0,            0,      79,
+			-0.05, 0,    979,
+			 0,           90,   4079,
+			-0.05,         0.05,      77,
+			-0.395,         0.05,      77,
+			-0.395, 	0,    979,
+			 0,           90,   4079,
+			-0.445, 0,      1
+		del 3
+	endgroup
+
+	base2 = isectgroup ("baseVer2", "depthCutter")
+	placegroup subgroup (base2, "glassRack2")
+	killgroup base2
+	killgroup "glassRack2"
+	killgroup "baseVer2"
+	killgroup "depthCutter"
+	del 1
+	return
+
+
+!-----Overhead Table-----
+210:
+	material gs_cabinet_mat
+	addz 0.17
+	prism 4, ZZYZX-0.17+0.02,
+		realA+0.02, b/2-0.02,
+		realA+0.06, b/2-0.02,
+		realA+0.06, b/2+0.02,
+		realA+0.02, b/2+0.02
+	del 1
+
+	add realA+0.04, b/2, ZZYZX+0.02
+	cylind 0.03, 0.02
+	addz 0.03
+	cylind tableHeight-0.09-ZZYZX, 0.01
+	del 1
+	addz tableHeight-0.06-ZZYZX
+	cylind 0.025, 0.015
+	del 2
+
+
+	roty 90
+	add -0.25, b/2, realA
+	cylind 0.02, 0.015
+	del 2
+
+	material gs_table_mat
+	overbedTabRadius = 0.05
+	flangeWidth = 0.005
+	overbedTableplusSize = 0.06
+	add	0, reducerB/2, tableHeight-0.02
+	if gs_detlevel_3D_m = 2 then		! Detailed
+		hprism_  gs_table_mat, gs_table_mat, gs_table_mat, gs_table_mat,
+			28, 0.02, 0, flangeWidth/2-EPS, 1,
+			overbedTabRadius, 0, 79,
+			realA-overbedTabRadius+overbedTableplusSize, 0, 79,
+			realA-overbedTabRadius+overbedTableplusSize, overbedTabRadius, 979,
+			realA+overbedTableplusSize, overbedTabRadius, 3079,
+			realA+overbedTableplusSize, b-reducerB-overbedTabRadius, 79,
+			realA-overbedTabRadius+overbedTableplusSize, b-reducerB-overbedTabRadius, 979,
+			realA-overbedTabRadius+overbedTableplusSize, b-reducerB, 3079,
+			overbedTabRadius, b-reducerB, 79,
+			overbedTabRadius, b-reducerB-overbedTabRadius, 979,
+			0, b-reducerB-overbedTabRadius, 3079,
+			0, overbedTabRadius, 79,
+			overbedTabRadius, overbedTabRadius, 979,
+			overbedTabRadius, 0, 3079,
+			overbedTabRadius, 0, -1,
+
+			overbedTabRadius, flangeWidth, 79,
+			realA-overbedTabRadius+overbedTableplusSize, flangeWidth, 79,
+			realA-overbedTabRadius+overbedTableplusSize, overbedTabRadius, 979,
+			realA+overbedTableplusSize-flangeWidth, overbedTabRadius, 3079,
+			realA+overbedTableplusSize-flangeWidth, b-reducerB-overbedTabRadius, 79,
+			realA-overbedTabRadius+overbedTableplusSize, b-reducerB-overbedTabRadius, 979,
+			realA-overbedTabRadius+overbedTableplusSize, b-reducerB-flangeWidth, 3079,
+			overbedTabRadius, b-reducerB-flangeWidth, 79,
+			overbedTabRadius, b-reducerB-overbedTabRadius, 979,
+			flangeWidth, b-reducerB-overbedTabRadius, 3079,
+			flangeWidth, overbedTabRadius, 79,
+			overbedTabRadius, overbedTabRadius, 979,
+			overbedTabRadius, flangeWidth, 3079,
+			overbedTabRadius, flangeWidth, -1
+
+		addz 0.01
+		prism_  14, 0.005,
+			overbedTabRadius, flangeWidth, 79,
+			realA-overbedTabRadius+overbedTableplusSize, flangeWidth, 79,
+			realA-overbedTabRadius+overbedTableplusSize, overbedTabRadius, 979,
+			realA+overbedTableplusSize-flangeWidth, overbedTabRadius, 3079,
+			realA+overbedTableplusSize-flangeWidth, b-reducerB-overbedTabRadius, 79,
+			realA-overbedTabRadius+overbedTableplusSize, b-reducerB-overbedTabRadius, 979,
+			realA-overbedTabRadius+overbedTableplusSize, b-reducerB-flangeWidth, 3079,
+			overbedTabRadius, b-reducerB-flangeWidth, 79,
+			overbedTabRadius, b-reducerB-overbedTabRadius, 979,
+			flangeWidth, b-reducerB-overbedTabRadius, 3079,
+			flangeWidth, overbedTabRadius, 79,
+			overbedTabRadius, overbedTabRadius, 979,
+			overbedTabRadius, flangeWidth, 3079,
+			overbedTabRadius, flangeWidth, -1
+		del 1
+
+		material gs_cabinet_mat
+		addz 0.005
+		wO = 0.01
+		iRes = gs_resol
+		iAlpha = 90/iRes
+
+		put  wO, 1, 0, 0
+		put  wO, overbedTabRadius, 0, 0
+		for i=1 to iRes-1
+			put overbedTabRadius-cos(i*iAlpha)*(overbedTabRadius-wO), overbedTabRadius-sin(i*iAlpha)*(overbedTabRadius-wO), 0, 0
+		next i
+		put overbedTabRadius , wO,0,0
+		put realA+overbedTableplusSize-overbedTabRadius , wO, 0, 0
+		for i=1 to iRes-1
+			put realA+overbedTableplusSize-overbedTabRadius+sin(i*iAlpha)*(overbedTabRadius-wO), overbedTabRadius-cos(i*iAlpha)*(overbedTabRadius-wO), 0,0
+		next i
+		put realA+overbedTableplusSize-wO, overbedTabRadius, 0, 0
+		put realA+overbedTableplusSize-wO, b-reducerB-overbedTabRadius, 0, 0
+		for i=1 to iRes-1
+			put realA+overbedTableplusSize-overbedTabRadius+cos(i*iAlpha)*(overbedTabRadius-wO), b-reducerB-overbedTabRadius+sin(i*iAlpha)*(overbedTabRadius-wO), 0,0
+		next i
+		put realA+overbedTableplusSize-overbedTabRadius, b-reducerB-wO, 0, 0
+		put overbedTabRadius, b-reducerB-wO, 0, 0
+		for i=1 to iRes-1
+			put overbedTabRadius-sin(i*iAlpha)*(overbedTabRadius-wO), b-reducerB-overbedTabRadius+cos(i*iAlpha)*(overbedTabRadius-wO), 0, 0
+		next i
+		put wO, b-reducerB-overbedTabRadius, 0, 0
+		put wO, overbedTabRadius, 0, 0
+		put wO, -1, 0, 0
+
+		tube 2, NSP/4, 1+2+16+32+128,
+			0, 0, 901,
+			0.005 , 360, 4001,
+			GET (NSP)
+		del 1
+	else							! Simple
+		prism  4, 0.02,
+			0, 0,
+			realA+overbedTableplusSize, 0,
+			realA+overbedTableplusSize, b-reducerB,
+			0, b-reducerB
+	endif
+	del 1
+
+	hotspot realA+overbedTableplusSize, b/2, 0, unID, tableHeight,1+128 		: unID=unID+1
+	hotspot realA+overbedTableplusSize, b/2, -1, unID, tableHeight,3 			: unID=unID+1
+	hotspot realA+overbedTableplusSize, b/2, tableHeight, unID, tableHeight,2 	: unID=unID+1
+
+	hotspot 0, reducerB/2, tableHeight, unID : unID = unID + 1
+	hotspot realA+overbedTableplusSize, reducerB/2, tableHeight, unID : unID = unID + 1
+	hotspot realA+overbedTableplusSize, b-reducerB/2, tableHeight, unID : unID = unID + 1
+	hotspot 0, b-reducerB/2, tableHeight, unID : unID = unID + 1
+
+	return
+
+]]></Script_3D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+CALL "Resize_A_B_ZZYZX" Parameters ALL
+
+unID = 1
+pen gs_cont_pen
+
+hotspot2 a/2, b, unID : unID = unID + 1
+hotspot2 a/2, b/2, unID : unID = unID + 1
+
+fill gs_fill_type
+drawindex 20
+poly2_b 5, 1 + 2 + 4, gs_fill_pen, gs_back_pen,
+	0, 0, 1,
+	a, 0, 1,
+	a, b, 1,
+	0, b, 1,
+	0, 0, -1
+
+if gs_detlevel_2D_m = 2 then	! Detailed
+	if bTable then				! Overbed Table
+		overbedTableRadius = 0.05
+		overbedTableplusSize = 0.05
+		add2 overbedTableplusSize, reducerB/2
+		poly2_b 14, 1 + 2 + 4, gs_fill_pen, gs_back_pen,
+			overbedTableRadius, 0, 1,
+			realA-overbedTableRadius, 0, 1,
+			realA-overbedTableRadius, overbedTableRadius, 901,
+			realA, overbedTableRadius, 3001,
+			realA, b-reducerB-overbedTableRadius, 1,
+			realA-overbedTableRadius, b-reducerB-overbedTableRadius, 901,
+			realA-overbedTableRadius, b-reducerB, 3001,
+			overbedTableRadius, b-reducerB, 1,
+			overbedTableRadius, b-reducerB-overbedTableRadius, 901,
+			0, b-reducerB-overbedTableRadius, 3001,
+			0, overbedTableRadius, 1,
+			overbedTableRadius, overbedTableRadius, 901,
+			overbedTableRadius, 0, 3001,
+			overbedTableRadius, 0, -1
+		del 1
+		poly2_b 5, 1 + 2 + 4, gs_fill_pen, gs_back_pen,
+			realA+overbedTableplusSize, b/2+0.02, 1,
+			realA+overbedTableplusSize, b/2-0.02, 1,
+			realA+overbedTableplusSize+0.04, b/2-0.02, 1,
+			realA+overbedTableplusSize+0.04, b/2+0.02, 1,
+			realA+overbedTableplusSize, b/2+0.02, -1
+	else
+		poly2_b 5, 1 + 2 + 4, gs_fill_pen, gs_back_pen,
+			tableOffsetx, tableOffsety, 1,
+			realA-tableOffsetx, tableOffsety, 1,
+			realA-tableOffsetx, b-tableOffsety, 1,
+			tableOffsetx, b-tableOffsety, 1,
+			tableOffsetx, tableOffsety, -1
+	endif
+endif
+
+
+! === Minimal Space ====================================== [
+if MSFront> EPS then
+	reqBMinSpace = 0
+	drawindex 10
+	success = LIBRARYGLOBAL ("LibraryGlobals13_ME_WMCC", "showBMinSpace", reqBMinSpace)
+	if success > 0 and reqBMinSpace then
+		call "fa_minimalspace_ME_WMCC" parameters all 	MSType 	= 1,
+												unID 	= 3000,
+							returned_parameters reqBMinSpace,
+												MSFillType,
+												MSFillPen,
+												MSFillBackPen,
+												MSContLineType,
+												MSContLinePen
+	endif
+	if reqBMinSpace <> 0 then
+		fill MSFillType
+		line_type MSContLineType
+		pen MSContLinePen
+		unID = 3050
+		if bDouble and MSFront > EPS then		! Two-sided
+			poly2_b 5, 2+4,MSFillPen,MSFillBackPen,
+					0,      b,      1,
+					a,      b,      1,
+					a,      b+MSFront,    1,
+					0,      b+MSFront,    1,
+					0,      b,      1
+
+			hotspot2  0,	 b+MSFront,	unID : unID = unID + 1
+			hotspot2  a,	 b+MSFront,	unID : unID = unID + 1
+
+			line2 0, b, 0, b+MSFront
+			line2 a, b, a, b+MSFront
+			line2 0, b+MSFront, a, b+MSFront
+		endif
+	endif
+endif
+
+! === Minimal Space ====================================== ]
+]]></Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+!-----Definitions-----
+EPS=0.0001
+realA = a - bTable*0.1													! Base Cube Width
+tableOffsetx = 0.04														! Table flange X
+tableOffsety = 0.04														! Table flange Y
+reducerB = 0.07															! Reduced B
+wheelHeight = 0.07														! Wheel Total Height
+panelWidth = 0.02														! Door Weigth
+topHeight = 0.025														! Cube Table Height
+baseHeight = ZZYZX-0.17-topHeight										! Cube Height
+panelDepth = 0.08														! Side panel depth
+panelEps = 0.002														! Drawer and door reducer
+drawerHeigth = 0.13														! Top drawer heigth base
+drawerWidth = realA-2*panelDepth-2*panelEps								! Door and Drawer Width
+drawerHeightTop = drawerHeigth-2*panelEps								! Top drawer heigth reduced
+drawerHeightBottom = baseHeight-drawerHeigth-2*panelWidth-panelEps*2	! Door heigth reduced
+
+]]></Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_PR SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_PR>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+]]></Script_UI>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_VL SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+dim stDetlevel3D[3]
+	stDetlevel3D[1] = `Detailed`
+	stDetlevel3D[2] = `Simple`
+	stDetlevel3D[3] = `Off`
+
+dim stDetlevel2D[2]
+	stDetlevel2D[1] = `Detailed`
+	stDetlevel2D[2] = `Simple`
+
+dim st_knobtypes[9]
+	st_knobtypes[1]=`None`
+	st_knobtypes[2]=`Style 1`
+	st_knobtypes[3]=`Style 2`
+	st_knobtypes[4]=`Style 3`
+	st_knobtypes[5]=`Style 4`
+	st_knobtypes[6]=`Style 5`
+	st_knobtypes[7]=`Style 6`
+	st_knobtypes[8]=`Style 7`
+	st_knobtypes[9]=`Style 8`
+
+
+call "FM_types_ME_WMCC" parameters all
+
+values "a" range [0.35, ]
+values "b" range [0.35, ]
+values "zzyzx" range [0.5, ]
+values "tableHeight" range [zzyzx+0.1, ]
+values "iShelv" range [1, 5]
+
+if bDoor then
+	lock "iShelv"
+	hideparameter "iShelv"
+else
+	lock "gs_door_mat"
+	hideparameter "gs_door_mat"
+endif
+
+if not(bDrawer) then
+	lock "gs_drawer_mat"
+	hideparameter "gs_drawer_mat"
+endif
+
+if not(bDrawer) then
+	lock "gs_drawer_mat"
+	hideparameter "gs_drawer_mat"
+endif
+
+if not(bTable) then
+	lock "gs_table_mat", "tableHeight"
+	hideparameter "gs_table_mat", "tableHeight"
+endif
+
+if not(bBottle) then
+	lock "gs_bottlerack_mat"
+	hideparameter "gs_bottlerack_mat"
+endif
+
+! ----- Knob -----
+values "gs_knob_type_m" 0,1,2,3,4,5,6,7,8
+values "gs_knob_type" st_knobtypes
+if GLOB_MODPAR_NAME = "gs_knob_type" then
+	gs_knob_type_m = 6
+	for iKnob = 1 to vardim1(st_knobtypes)
+		if gs_knob_type = st_knobtypes[iKnob] then gs_knob_type_m = iKnob - 1
+	next iKnob
+	parameters gs_knob_type_m = gs_knob_type_m
+else
+	gs_knob_type_m = max(min(gs_knob_type_m,8),0)
+	parameters gs_knob_type = st_knobtypes[gs_knob_type_m+1]
+endif
+
+if gs_knob_type_m=0 or (not(bDoor) and not(bDrawer))then
+	if not(bDoor) and not(bDrawer) then
+		lock "gs_knob_type"
+		hideparameter "gs_knob_type"
+	endif
+	if not(bDoor) then
+		lock "gs_door_mat"
+		hideparameter "gs_door_mat"
+	endif
+	if not(bDrawer) then
+		lock "gs_drawer_mat"
+		hideparameter "gs_drawer_mat"
+	endif
+	lock "gs_knob_mat"
+	hideparameter "gs_knob_mat"
+endif
+
+knobSizeBig=0.07
+knobSizeSmall=0.02
+dim knobOffset[8][2]
+knobOffset[1][1] = knobSizeSmall
+knobOffset[1][2] = knobSizeSmall
+knobOffset[2][1] = knobSizeSmall
+knobOffset[2][2] = knobSizeSmall
+knobOffset[3][1] = knobSizeSmall
+knobOffset[3][2] = knobSizeSmall
+knobOffset[4][1] = knobSizeBig
+knobOffset[4][2] = knobSizeSmall
+knobOffset[5][1] = knobSizeBig*1.5
+knobOffset[5][2] = knobSizeSmall
+knobOffset[6][1] = knobSizeBig*1.5
+knobOffset[6][2] = knobSizeSmall
+knobOffset[7][1] = knobSizeBig*1.5
+knobOffset[7][2] = knobSizeSmall
+knobOffset[8][1] = knobSizeBig*1.5
+knobOffset[8][2] = knobSizeSmall
+
+if (GLOB_MODPAR_NAME = "knob_pl" or GLOB_MODPAR_NAME = "gs_knob_type") and gs_knob_type_m<>0 then
+	for knobNumber=1 to 2
+		if knob_pl[knobNumber][1] > drawerWidth/2-knobOffset[gs_knob_type_m][1] then
+			parameters knob_pl[knobNumber][1] = drawerWidth/2-knobOffset[gs_knob_type_m][1]
+		endif
+		if knob_pl[knobNumber][1] < -drawerWidth/2+knobOffset[gs_knob_type_m][1] then
+			parameters knob_pl[knobNumber][1] = -drawerWidth/2+knobOffset[gs_knob_type_m][1]
+		endif
+		if knob_pl[knobNumber][2] > drawerHeightTop/2-knobOffset[gs_knob_type_m][2] then
+			parameters knob_pl[knobNumber][2] = drawerHeightTop/2-knobOffset[gs_knob_type_m][2]
+		endif
+
+		! Door
+		if knob_pl[1][2] < -drawerHeightBottom+drawerHeightTop/2+knobOffset[gs_knob_type_m][2] then
+			parameters knob_pl[1][2] = -drawerHeightBottom+drawerHeightTop/2+knobOffset[gs_knob_type_m][2]
+		endif
+
+		! Top Drawer
+		if knob_pl[2][2] < -drawerHeightTop/2+knobOffset[gs_knob_type_m][2] then
+			parameters knob_pl[2][2] = -drawerHeightTop/2+knobOffset[gs_knob_type_m][2]
+		endif
+
+	next knobNumber
+endif
+
+
+! ----- 3D Representation -----
+values "gs_detlevel_3D" stDetlevel3D		! Off(0), Simple(1), Detailed(2)
+values "gs_detlevel_3D_m" 0, 1, 2
+if GLOB_MODPAR_NAME = "gs_detlevel_3D" then
+	gs_detlevel_3D_m = 2
+	for i = 1 to vardim1(stDetlevel3D)
+		if gs_detlevel_3D = stDetlevel3D[i] then	gs_detlevel_3D_m = 3-i
+	next i
+	parameters gs_detlevel_3D_m = gs_detlevel_3D_m
+else
+	gs_detlevel_3D_m = max(min(gs_detlevel_3D_m,2),0)
+	parameters gs_detlevel_3D = stDetlevel3D[3-gs_detlevel_3D_m]
+endif
+
+values "gs_resol" range [3, )
+
+if gs_detlevel_3D_m = 1 then	! Simple
+	lock "gs_resol"
+else
+	if gs_detlevel_3D_m = 0 then ! Off
+		lock "gs_resol", "gs_shadow"
+	endif
+endif
+
+! ----- 2D Representation -----
+values "gs_detlevel_2D" stDetlevel2D		! Simple(1), Detailed(2)
+values "gs_detlevel_2D_m" 1, 2
+if GLOB_MODPAR_NAME = "gs_detlevel_2D" then
+	gs_detlevel_2D_m = 1
+	for i = 1 to vardim1(stDetlevel2D)
+		if gs_detlevel_2D = stDetlevel2D[i] then	gs_detlevel_2D_m = 3-i
+	next i
+	parameters gs_detlevel_2D_m = gs_detlevel_2D_m
+else
+	gs_detlevel_2D_m = max(min(gs_detlevel_2D_m,2),1)
+	parameters gs_detlevel_2D = stDetlevel2D[3-gs_detlevel_2D_m]
+endif
+
+! ----- Minimal Space -----
+values "MSFront" range [0, ]
+
+]]></Script_VL>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Comment SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[Hospital bedside cabinet.]]>
+</Comment>
+
+<Keywords SectVersion="1" SectionFlags="0" SubIdent="0">
+<![CDATA[Two-sided, over bed table, drawer, door, knob style, bottle rack, minimal space]]>
+</Keywords>
+
+<Picture MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="0" length_in_bytes="16350" platform="Win">
+	<![CDATA[
+	696D6167652F706E670089504E470D0A1A0A0000000D49484452000000800000
+	008008020000004C5CF69C000000097048597300002E2300002E230178A53F76
+	0000000467414D410000B18E7CFB5193000000206348524D00007A2500008083
+	0000F9FF000080E9000075300000EA6000003A980000176F925FC54600003F4A
+	4944415478DA62FCF5FB0F2323C37F0610C1C8C0C80002FF8198919919483331
+	32FC630089FE07B381E01F8C310AA8020002B047C64800803008A3E0FF7F2CB4
+	E7E4031CCD9A2D5988276E91B17309A2320E90E4ED127DD6FCFA6F6901C404A1
+	FEFDFBC7C0C40C6103230388C0891E94F6FFFDFD0B8C89FF7FFFFDFBF317A412
+	9C094601B500400031FD07063624E8FFFD05873B03A42082943C0CA07C0056C7
+	CC04E2838546330115014000313132824A7846A4E40F6580029DF93F28764052
+	7FFFFE6560405411A399805A0020809880A50BB0FC0155C3B038F8CF000D5D60
+	E1C304AF2B98998131C10896661CCD04D403000104AA8481C91E540F830B1B50
+	31038E897FFFFE42E3E3EF3F603DFCE7EF5F166666B8363AB4857EFFFDF3E7F7
+	6F48DCB3B2B20DD7080008201650A0430A7B70B307C4638417388CFFC1D1006C
+	05014BA27F903C018B867FA09612F5C1A3C70F1E3EB8F7F5FBD7FFFFFF031B03
+	A0E2EEEF1F60A398838383979B879B97879B9307083839B9B9B8B88641040004
+	E0BD0C7200046120284663A0C0FFFF66F4A23E404EA41070C1C80B883DF5D864
+	3BEDAEE018B1EDEDFDE69A06DA1512250F8C587F08805355CCE88742AAD9A117
+	06CEDDDBBE5EE791452252D65A60F786935CCCB060EF3906E6003423240182C3
+	38CD8B54D268A308D2584D1A4DBFA1FEA8470031FEFAF50B8907AC931920653D
+	A89A05B54D99C095345C0195BB027FFFFF7DFCE8E1FD07773F7E78CFC1C92920
+	C0CFC9C909EE970083FE3F2323CC2630FB3F23B81D06CC1A20FC0F087F83C1CF
+	9F3F81851538D732026B33162656A0213C5C3CDCDCDC3C3CBC40C0C9C5CDCAC2
+	3A3823002080A011004AE048691F98D8995958C15DB3FF105948E8A3953994D4
+	041F3EBCBF7BF7F6F3E74FFF31FC111410E0E317003507203D725070830A1F26
+	68171D68D15F4650D908EE9DFC07D755907A0B2CC00869BCFD6700752919FE01
+	A304E82950CC80883FA0C29211E87E464E760E4E6E50F105CC28C0B20C183BC0
+	626DC0230020002F669702200804E1D6EC2530E9FE678B7E2E103E67DAEC6CD4
+	05227C114558FD6666413972AE8C20DCD01AAFEF3A5C0451F358196900DB7BDF
+	7E20F933AFDB32CF534A3B227D8C11214245137F2DAA747B75ADA7C8ED402198
+	A6755C7C435227AA0F1C77A200ED1F45C8AB9A8904FCD0C68E4C2EA48232B827
+	70460F8310CA80110228B91F015C02D062052900C2306CED2E2258BD0AFEFF69
+	E2C13D60079D49B7E103C45B47A187A6499BBD12D41C80468123E3F7C3D52FD5
+	A8FDFEFF223E299D1CF96387AA2FB3D934D16794D0054E42D3BA9B93EEE6C4DF
+	6CA3273924C529000CE04FFC3CD38A01BB7D1345D68475974A12A984A1D7F450
+	9D289E11608218A8E45C958C2B06A2CB622AC3806D320214B3795DB7FF4EBE47
+	0081230092CC10E53CD0054CC0DC004D68A04E302C90C0A51049ED1F60827BF4
+	F0DEBDFB77BF7CFDCCC9C9212828C8CECE010C2FD0E00738A943D3382CD983B2
+	2323BCB481A465B0203899C3BA82A0FE3BB82E80560F0C8CE052EB1F246E18A1
+	0D3B502BEE1FD83F8CD06C011E5D6182E885A53B602C02FDF90F22076E7FFF01
+	36808115CBAF5F3F7FFDFCF6EDC7B76FDFCC4C2D951494691101000168B1621C
+	0041185810FC00AEC6FFFFC0C9F8254398442AD7960738B8414219DAEBB577C1
+	6C38E01F140498C9AA43A28F09E46B9E68ABCF242CE4BF10FD71EE1D9A292D5B
+	5A7D0802C9C60A510FB6214B23FCA8CE724C0A73E52226F3685104A75285C7FC
+	21BB69391D0630924B6EA84939A0966CBE96FED9D02B2469C7837A577412229A
+	E0C1C7AE3BE22C4B6E5F85DD75E552F24F1DF00A408B95E3000CC230D1B25089
+	0EFCFF85155F20696C037B87CE481C8EED04E7D54FCD65410002617490876128
+	F33859D1F71ED0FB53EBDD5A43A46AE0E7F432427690E63C1989083AC0B0B47E
+	25121C3196112111DCCA080CB9E7505A355D8B6B2A98FC9FCD59354ABE25054A
+	B91E2629381888316B4E58BC002A1C6A30CF67BA4AF9A900AF00B459CB0E8030
+	0863E03F2C31D183FFFF8B3A4BCB8C472FEEB464174629E5B18C7713403678EA
+	5AC076F000219F9B000D41410BEAC1F7E207758746ADC1D6A1798D9E806CB83F
+	5F35D52FF4F699C0E084297BF0ADD98C7C2490044FB25DAB0A9283594599FE1A
+	8A769B372163A901641E15FB4CB0D320F95CDE2FC8694631C546EFEBBE1D3F01
+	700B409B95E3000802410EAD890FD0F8FF9799D0AA9DACB33B80B1B2B2A1E108
+	C7CEB14B15E1571DB45CF49D64A7DAC6D075B86800C26E7FAF0EB791F3769C3B
+	22092A07DDEB8AEA3C3D4FB0C30B298841E9980878C2D23AF5CA22FD105F4D85
+	49A453B9B1903CC6C735F2316F8B4951055FA1264DEE8986F617455C125EBA31
+	E47A1896D2B4CCEB38FC5808B905A0CD0C76000461182A7A91F80B1AFFFF0B35
+	2060D7BAA85713132EDC6074DDDB700A32A3E4BCC1A3DF6E1B7D4FEFFCA7EC03
+	80662CD43534B5FB9632BAA7643C78E4206576AAB7024A937F2B10394E845D19
+	8C0B1427C28C9FD9BB4362131FE05163C365A176B55EB35F09ABD20C39EA68CA
+	CC4A0958DED392629C96798DE3F437869E02F066253700C2308CA35F10EF8AFD
+	4744449486C44E580089052A35878F381A10020EB18CFA6F6742EF7B9F60DDE9
+	C57AEEC1F76CE06AB44DD69343E46CDE0E697707FB391519EE53970DF4BE3028
+	549CCE51581A427CB874541FF4AEA998725D0CF73CD7D351490291FAF96B867B
+	A54C98009BF75AF775D9FEF1018F000245C07F682282257760E8A34ECEC0C7A8
+	4199032CF4173C2A47A30E0B3093FCFEFDF3C7CF1FBF800858700123E5EF6F60
+	2106E9EE0283185CA80019C0220E1C29A0D21A0CFF81720CA83407B75EE09980
+	019C69FE828614991821851AB4590A2DD09841A32F207D3FBF7FD7D232E0E2E4
+	66A0170008C09B19E40008C24050B1C241E3FF1F8A9260A46EB724BC4009871E
+	3810BA5D3A206AED731B5683BAF61750871D7E17B82939E3C08B75F6982B3E20
+	941413E6BE1DE32E69CF6D59A9A55CA81635BCA8306AC841E2423FD1BE79F816
+	B362EC6B8119183B6C75CC403AA19CCE10135514C22A72E60C2D820FFF3C7D8C
+	5700B1800B3E06702833812606FEFE6160660196C1CCB0590170E8FF87CECF80
+	07A5819DC8FFB049341A0D4AA3BB92899985838B93830BB96400766281790354
+	9DFCFA012AC9FEFEF90BAE2E98D9A04D38C88004A4E70C6A763243CB29709503
+	CC107F4063ABFFFF0909084B49CA5DBB7EE5F3D7E77C7C82741E0B0208201650
+	53049C1F21ED6150C606D76CFF203503A41101198901A73450DA8754C5D01935
+	3ACDCF600260610D4468F5E4AF3FC0020C88BE036B14606C80C67C80899F9999
+	9599898D8D8D8595151237C0D8023606D8D93925246458994103A540597E3E3E
+	6E2E6E3AFB02208058FE43065320AD69266644304266C4C02305A07C0C9402D7
+	0AD031229072D058C53F68CF73B0AC17626361072206A4E20B588DFF020DBFFD
+	824C7B809B43408FB28094210166D0BC1B2B1333139D1D0C10402C0CB09633A4
+	4D0C6B3AC0475340CD0650B600C6076CC494091C4FF0D1A1FFF42A88C86C6630
+	32B3B331B333101879FE03AC1B5898999898E9EC3C800062F98F98F4000D4300
+	D3F93F688F12DCCFFCFF1732590F1A1702B7C319C135335413B04102AE0F9860
+	73644377B21E3406069D7EA22B00082050250C6A368307BD201D4526C8300803
+	13A2990FAD2798182023EEFF41ED50B0F05F8449E0662C75E729E909FE8293D7
+	3FBADB0B10402C0CF0B128F0E43BA4970FE9E0407A8CE0C144684C809481BB8B
+	C8F3C6E0C6DD3FC8C4086CC49752F0E6EDEB470FEF83A6E6FFFD13101012E017
+	E4E5E3E3E4E0E4E0A0D5A01868C00AD8D8A27B110410402CE04E00B0D9F9075C
+	3F81421C58E3C21A45E0E6F23F48A3083C56011989831546A07A1834A0C50C09
+	7D70730F5451FC830D68921113AF5EBFBC7FFF0E90FCF0F1C3CB172FBF7DF9C6
+	C9C5C9C606AC1E5978B8B8854484F978F90405040504047979F9B9B8B93838B8
+	A892E180F99D19D6A0A027000820500B1BBEE00DB24C175AFA83CAFFBF8CD079
+	7090247448111C19E0320B52DE406BEEBF90211D489DF11F513F13EFA3972F9E
+	DD7B70F7E5CBE79FBF7C7AFBF63D30DE85048514151480AD809FDF7F001B32DF
+	7FFEB87FFF1EB0B684F448808D1660A7494844081C2542C2C222BCBCBC3C3CBC
+	E4E592DF7FFF32FF67A17F250C10402C9056D93FE8D82F24E9328127B721A35A
+	F045BA0C90CE0178E2E9DF7FA842508DCD0C1AF5FC075E4B01EA1D3343E60899
+	98FF403A15FFA1950A9E9878FEFCE9DD7BB75FBF79F9E9D3E7F7EFDF0363964F
+	809F8F9717320303D4C8C1C1C1CEF19F9B971B5CDC016DF9F3EB27643DC48F47
+	8F1E827AC5A0F5DBC0C63E33370FAFB0B0101F1F308F080A0A090BF20970F1F0
+	721231F90E1A8B60024F3BD0170004100B78050828F7FD83373D41E10719CB65
+	80CC4A8002FA2F64500CAC065C5201CB4B70F1051D5964800D10FD038F393342
+	073098A093578CD0891DE4D62A90FBECC9A3BBF7EEBC79F7EAD3878FEFDE7F04
+	3A854F40800F18D0E0ECC8881870068FF28367E4216D4B367636760E766E1E6E
+	C8F8F13F603BFF3710FDFAF9E3E783FB0F7EFDF90DE9DBB3B3B271F1F2080363
+	02080404858444F8F9F8B97978D8D9383072C03FD6FF8835B274030001783597
+	1C84611888822180F8A86D7AFF93B5A25DA0EE22282C2A7065E30F111207601B
+	6511C9B2E379336BC8D01F2C7263494573C43E460A783A42ED27CE848BE99BE1
+	5528B97079E939868CB94CAB219AF6F95D5245880EC3A53B3729A5FB63BC5D47
+	B95EC54A268891036B1A73538895222864939ACA94D01A187FF331C79E4FD103
+	95C521D09EC1F1C34C4833BEF0394D7DDFB56D23EF92453F6CB632B2EA5A7E75
+	ED9158C6A22C8E879368E615EC967F5F43DF0288F10FB0F800F5AD98603528B4
+	7903F23E784C023649C0F41FD1DA844D31019BA1F0E90F58AB88891145197C78
+	1558660323EDC78F9FCF5F3C7DF0E0EE9B77AFBF000B9C8F1F80F601CB0B60D9
+	0D9EAAFA0799B2050AFE850C52815B01FFFF4387FEA06D364829F7FF3F626E19
+	2C066CCAFF053A1534ADCB089B2D668474E681E8D76FD064FBDFBFA099A13FE0
+	417060579E8D85859585155879484B4B6AE9687FFAF00558AFF0F10BF070F3D0
+	67412A4000DAAD250720208AC57F21E1001CC5CAFD4FC05E24C848FC3612DA57
+	DCC04E3241786FDA97B613D22D62068B3F4867319E053AC0943CAD2A97222444
+	7C9B143828E19638A6E6F5BAE09FBB49CB5B1EEC132FB9C228DA8FADEF3BB0A8
+	73D3B2AFF3E4B08AE132CF33F18A3A5B8C4F514DFE8B9193ED1E5FB1253E3C60
+	15D03A62294F78C5EBD3BC45D30D5906C52988AEC03EECE6244915BB97FC856A
+	A121C025C33880428AB26CDA166FC7B763E4ADAA1A38F777016E0178B7621C00
+	412006E49CF5394EFEFF15468DBB1017C0201E14097EC08590C0021C77A52D32
+	D4DBDCE88EE26B046A7F03B4EF2CE4F4FB1BF0EA1DAA7DEBECBE6FCB3A6B739C
+	86CBACE6C9FD3070C28138082F49805125F19417BC913147842A1C2623AC28E4
+	AB04A3240410E9852C04CF238A7F1176144849BC344A1468D2B421E2F32E7719
+	7F271B80F78E7201E736036B4544E338FD70008F00626180AD3A81CCAF20071C
+	224C1971B69DA1242376A9EF3F7E3C7DF2F0D1E3079F3E7F0226B4674F9FFDFD
+	F357505890879B9B998505B2340A6995C9FFBFC09613C35F06E80A06E8AE35D0
+	7C2F645416BE72113257FC0FB667043AA90B69C2FC83B4E620890ABCA68C11DC
+	3286CE19FF853A98E9EF9F3FFF21CB58FEFF071641EAEAEA4282823F7FFDBC71
+	E3D6C70F1F252524E910FA400010402C4CC8218E2334C903C070BF7DE7E6E72F
+	9F9940B51F68D44F4252829D8D0D180C7F80210DEEC481D65D33C2D7BF01932B
+	64CAF33F6C9D08B868024FA7304176718227D121D50478FA05A218BC44EE3F78
+	711C7854073A76025A94083418349F0C5EA3025B52C7C8084C0DC0660524BD03
+	AB03C61F903531C01CF7EFFDBB772F5FBD161214A64F250C10402CB433FAE3A7
+	F7BCA025FD9C3FC12B32FFFC052D77022D45FD0FA9D841990D1C04C0EA1D1A1F
+	CCE04522C0C2FB2FE31F60CB1218C8C0B0FB0B592F084CAA7F21B1049EAF87AE
+	9286CF9A82C607E16D3306F8F82E0374BD09747A155C37034B3A6082002D02FB
+	070A742E2E60779A0D58273F7EF418580F898A89BD0376463EBEBD74F99C9EAE
+	11AD23002080681801DC5C3CC0D6391B3B3B0F64A91B687604D804F9FD033461
+	028C11D02A5990D0DFFFC070073604C0A5F87FE8221446967FA09A1E5C334156
+	2DC03A86D0557CA095E8FF21AB51200338D01E03B46FCEC400894BF0823FE8B2
+	46481E63620656754008E962BC79F356414E46524A1AE81060CC73B07200BBDC
+	3F7F7CFFF4E9CB8B174F816D072D0D5D9A46004000DACD6005401008A299D1A1
+	2E2608FDFF3745D7A0CE8175B283D8CEA89F20081E3DECBA33CBBE6D1800E7D6
+	F33AA8ED7A24EC278E6F9A41EDE74C640C802C7FD2D186808D2470CB91609602
+	CB457D8E283779E68E897B9FD515D810176A2BF7990AFE46EFA055E583E4D2A9
+	F86948EBC08626F11B3DFEDDB7DDDA05445E97A4B9931228CF607C4330D4FB5B
+	8E310DCBD12F00AD6697032008C3E0F81324CAFD4F48820FEA2B1048B45DBD02
+	47D83ED2ADAC0301A0581A1C9403C96FBDE40A31E05D0DFB07051838C0630FE1
+	5096C422CA1D2C32EF89C5648B40F8ECD1F6456356C399BB1B5AF99A5FFBA35A
+	E230D94A211A96FDE29FCA34AF76ED92210057EF37608F319E29B5CA5C8CECA2
+	739BF669BAC5460CF7730D05F00940BBB5EB0008C2C0410B4EBAABFFFF5DB891
+	3869001F41E35DC54FB07B07AECDB557DA1F0340A8456ADE1BDC3AA8C86847FC
+	ECF172C0CE1E03582C2BE940735344AC2DD305F8A24B39A16377B543418274E2
+	5E3F273785D28B5ED3F2AA0C7391A96A9EB96546A6D29F5483CAFFB5CA48F3AE
+	6D21C59D9B52DAFA610C31A414AD69DE3D7CB8BD8B49302AB77CFE4A418F00A2
+	650480DBAFA0E139D002D3FFC0720898CA2EDFBEF4E0E36D0136114E566E012E
+	7E7161717656760E764E2E0ECE6F0CDF21EBD24199839905280A1AEF141684AC
+	0502164DA0BAFC173083FC0022D0B0CF4F60FEF8CDF80F3C7104EC4B42A69118
+	204BB880410FE2827658B2B182EB125093941BD82AE0E6FEFEEDFBEB576F8041
+	ABAEAA0A74DEA7CFEF5EBF7A2B262E0A4C040C6CA09007E659F060D43F68B4D2
+	120004A0DD0A5218068160538C6EAABB4A21FFFF5B0F2934AD1402F690947464
+	A53F88078F1E76766645670E04407D2E1AAAD0AB378421268618BDBBE9B9EEB7
+	FC5DEFBBB8E44DA0F345288ED7310C013CC05E4AD1772414D1584C11DB9B5E44
+	524CFA1581F604249F5240946A4EA9786CCD61DF0CD29A1580AE77CE5B9608AA
+	E55706824484F3027B165E1679CC335AC0398B7A57D36E4B869CFEF6BAE3D64F
+	00DAAD7607411806BA2F3A916E2426C8FB3F9D281112358C0598EDF0157880FE
+	BADC5DAEBD1E0900A74E91AB80627F5249F96E76DA94D4B65089C26902A2481C
+	D63B47B02843174A8508359AAA34D85C1B5739D0E01027398BBCF561FB301AC0
+	E67BC0992D84B55EB05A2CCB5FAF02A111B97ABAAD4427EF1D89FB380ECFFE65
+	0B9E7A7F3FC4A029CC17876D7B238D7A747DED3D57138D2628F61E64B68C6321
+	F80940BBB5EC200803414B7191A4055FF0FF3FC55D8C9890E88584926C109DDD
+	E227706F7AD8C74CBB3BB36102E4B927415729FE5F36AB16D7C5A88030CE1774
+	BF931B65597219E876985F03F73B36CD9BB3C415E4F3BD4705D7A7FA529E2925
+	E73DF02711738B6096559C41DF208E28ED386698655BC0849FC76701AD3FBBC7
+	ADBD23C4D61ED001610C6A14631C03CE54D515F016A6E9F85D195B2D5126DEBE
+	69027E02D06A063908834014AD290AA2C559B4E1FE37EAD623D48544A34E9376
+	1AFF8CF608DD13123E0CFC791FB7E9EC8AA97F7ED0D27CA3CCCA6370880DE988
+	75BC6E81E15000A7A948A5BF13B07E940F940E30372F298FA9ECA4BA3EFB7A71
+	E4DBE8CEF170EAA8C395B5AF3DA50662328F62111E44F7214047EC47BA10DED8
+	DB30BC9973CE44A4A07A9ECABDC0E360BCA8D39A8F31A626F167FC03540B9CD6
+	FE6EDB0AF80A40BBB5E30008C250881A25316AE2A27770F2FE67F133B8B91831
+	1113C4D7C2ECA48C8C94F4F57DFA770182691F98A970F8A67E27003C4B58F20F
+	A87B5F86F4010E6A469CFF45E7BFF1E4B432828AA4A04DB8A6744F2C0FBB6BBB
+	BA530E8B14B328B33A4FF244AAB66EFAAE079062EA3DB4F6422C80A42A0BCE5A
+	63D08AC07963927E1DDAD4384D96E5072F41644A19B3315A07BFC1C3EF27BBA1
+	2FE71180966BCB611004826255ECA7F6A71EC2FB9FA71F4DFCA4A19120ACEBEC
+	EE19E4022433EC8361877B09905714D3F159E7C24FAD064A00D5E63C4A8A75FB
+	7C63880058AAAF5846FDF014A5006C74432F37B2D6043980FF4087D82136D4BF
+	E5A4ABE2CCFF9D028E730ABF9556940430596974B21B6B3478F5DD15247740DB
+	4B7A71CB7B794D73C96468B3CE1B989D4F35926AF62667FF88DDB92E0168B996
+	140041201A6916096D7223B4EEFE578A82A255458254466F46AFD00504676478
+	9F79FEDB80B848CA8A3C058F703F94364906786B57AECFB637E66E1F7F7BE7DC
+	7E6CF3B202CC88426AADA81F4D254AB2BAC89B2B044E540035D90B48C489194C
+	E8172C1B734DC932A78F1524C37FC9CA521603F244AF43F475085AA21375AD6D
+	67C7612276CDB42B44B393F3074F8AB2718649FC5BA24F00D1BA0882ECC3FB0F
+	DBAB021933F80799AC02C6CBC3BB0F81650CB079CEC1C129C62D262324FD0BD8
+	23FEF3FBD7DF1FDFBE7F7EF7FED3BB972F409385ACACA0795C5E0E6003869D97
+	8D839303640A387B3043363981471DC09B38FF83F71A4116D180EA1BF0910BC0
+	C0FFCB04DDA106D9D1C7042CF4C1E31B7F909637FD870E66FC856D12046D48A1
+	6D0E0008201AE7007025CC02D9E705CECCC0360CD09FA090626461E2FE23692E
+	F4FBFBCF5F1F7F7FFAF4F5ED9B3FFFBE30001B32EC9CC0628343845B5242501E
+	98857EFCF9F5FDD7B7AF5F3F7D7CFFE9C9F317C094CAC9CBAEA022C12F2EC8C2
+	C40C197C001F46C00099CF846CC1001F3AF81F3273F9EF0F789200BAD10CA401
+	D83E03C62230B1FFFD073D7E0ADCE36284ECBAF9FBFF2F64FB2C3002985968BB
+	EA152000ED668FC3200C436187542D03450C0C952AEE7F3324964888A2346012
+	FCC7119823658A9F5F9EFDDD5C01954CFB6D9F512336D26D528F0A1DC7D34DF7
+	C86FBF75988F674939A50208698E4B8C6142F8031B7EAA8E57FD69876F4FCFF9
+	58F7187EE38E6214BDED4FF264CCF3B50AE31523FDA4DF08575514803738998F
+	C8FD28A8048A26E72BDD3085042FFF40E7EE6DC2A700B49BCB0D80300C434941
+	A51C00F5CCFECB71AC0081FA234E903A012BF4E33889DFBF17D02B6D205B710D
+	5DB06547C78FEC1697619C1D1B1FE76442698B9D21C1931FC01EC554A2494F89
+	C715CE730F89EE8E6BAA5D46BFF97165F127D136185A5D46665DA2A1F1C0CF33
+	F5E3DCAA62AD923036F2061A10D8206425F429B328418B7AC16EE86F17F40A20
+	1AB78220479530C2775CFE6765627B76FCFD8F7FBF25E58504C4F9993919FFB1
+	7EFFF9E72F6477022BB0B1C4CCC2C8CAF017D61A041506A2A0656B3CBF80B984
+	89E117C3AFEFBF5978381859210BC020FB1AC14336B09DC09038806DB4879743
+	B02CC908ED62C10F810435899940AB43E027F380D70380566680C752681B0100
+	0144E31C002E41212BBE20751930E3BF7DF6E1CDEBB74F6F3F0296AF5C3C2CBC
+	7C82C2E2FCC252829CFC1CFFD8FE8017C3FC63F8FD13349DF29FF52F3368CB26
+	1B74A10C786B24B00A616581742BC0E34B205B800D1DC8A03F7486187CF40A13
+	746DD97F58EA06AF7305898352FF1FD0DC1C78D2181C5FC0C006664DA0A5A0A2
+	09BADDFB3F64E52B4D83082080685F0441430AD42A6705ADE86414331016F8C6
+	FBF5C3CFEF6FBEFEF9FAF7CDC777AF9EBC61BEC00C2C9778F85878050405C505
+	84C4053878D9FE32FFFACBF8F72F303EFEFD65FCCFC2009D15068D5A8037F043
+	D78941A6DBC123FD8C88F948F0E4017C9112B893CC04DE740EEAE73233C23749
+	32816B02D0315CA0FA830132B0FD1F760E05D40BB403000144E3561030F93031
+	C2D7B2806651D858C515C5D8D8597EFDFA0D2C4CFEFCF8FBF5C3D71F1F7F7C7F
+	FF1358D27F79FDEBCBEB27CFEEBD04758BD99879F9D904450504C585F9447899
+	38803DAF3FBF404BC140653FA83DC304EC58FD019B0F59C00D2B73C06B55C08B
+	0CC14712FCFB07DDDB0D19DD6484AEFAFEFB0F3246028A5FF80E6FA03E60CEF8
+	035E1F0539388F89C611001040B42E82C047294126D0C113E9A011B4FFA08406
+	DA8BCA0E2C5AFEF38BF102A57E7CFBF9F7F7DF1F9F7FFEF8F4F3D3DB2FDF3F01
+	DBA6BF3EBFFEFEF9F5977B571F83AA6D362E41211E0131012109015E616E06B6
+	7FFF98FFFC61FA0F5D1B092D9018C1834BCCE0955AD0733EC0470F4236958327
+	F341E512B0BC62F90B6A0430C2CF0103CF584077B9024BA16FDFBE03B38B8C34
+	68B69AA641041040341F8C831EF103F226C8A32CA00151A6BFD0021D7A520930
+	E57170B1034386878F8B4116585CFCFBFDEDD74F608C7CFDFDF9DDE7EF1FBE7F
+	79FFE3EF97BF6F9EBC7D03EC279F66FEF9E7270F3F87808880A88490989C1827
+	3FFB5FD69FA0E62A3B27F49026B0A5A0F9772646489B9E890969ED102368B809
+	762805F40C3A70879D093253FDF3C7AFD7AF5E73717131B3B0D07AD3154000D1
+	3807803C00A9FFA013E9A05A8099EDEFFF1FC010600656AEA0660EE88002D0C6
+	5DF069348CE0E5A69CDCDCDCFCA0F68CB09CE0DFDFC09ED8EF9FDFFE7CFDF485
+	E517BBA480A4209F102717D7FBD7EF5EBC7C79E9C0F5272F9E72F37268686A06
+	580542629D991132C000DAA2FD073CB3F51B74483C746531282FFC67FCF3EB0F
+	E49C2DC8225260C103761FE3EF9FBFBE7EFB0A5AA7CDCB0BAC96693D1A0A1040
+	B42F8218A0E310F0E36498204D0BD0B2B8BFE09D374CA0E529FF7E33824E2462
+	849C7F05ECA681A4C07D5716D05274765E01062149016022FDFDF3FB0FF6AF6C
+	6CCC0A62B2DA465A6CCC6E3FBF033BD21F1F3F7AF2EBF71F60BF0D72980D64A1
+	DF7F78FD035BB10D3D75017A6230E434967FB06353982099F2F3E7CF3CDC3C22
+	22C2A0A10C1AB782000288E64510B4B3F51F7A2A0C13682D042BE3DF1FC0D208
+	3C1DF2FBD593B72F5FBCE060E5E0E0E3E4E06667E50086371B0B681336336809
+	CA3FF0581A0B13E4885F6020B2B0B37EFBFFF9FBCFCF2F7E3E0156966C0CECC2
+	3C2202FC021A46EAC8AB192187134147D9C0EB0FC1FB3BE1076D414E9F034F40
+	3242E62FC17B3418190404047EFEFC29262AC2C9C9C1085910464B001080962B
+	48421086819440A1D08E72F0C2F0052FFEFF2F9E38811ED451A1066CB6FA04BE
+	90CC6CB2D9CD6EDB805044244E8A2D4264F13C8B0799E4838F6FE6E93AD35B37
+	E6F07ADC2FB761F6AC88CBCA54AE2E6C595BA375E847AE3CB188C31987158845
+	D3212D30226C8C92D10FFDF3DC9AEE941EFFC97FF08252FA33AAC3E90E76106F
+	B2C2CB63062C039DB047617A2FEBBED939671562639127B72D047D05A0E56C92
+	180461286C449912ACDDB49B7AFFABB9E8CFB8B02D53256202B9821C80192684
+	C9E37BF38E56C250AC80E51499D03656608B102F7E4F7A7345432F7A7AEC6E97
+	14286C71F9FED7DFFBF31827A8881BE2EC9DED85FD3AE43E69AD69B94552AC21
+	A786F0F42902A171E246110EAD7135626AA04DAFBC7E5154197695DAF0081573
+	A641980186E19E249A8C774CEE84E8BB5A6D93A06AEEB0B50B201A470068389D
+	0572161578AD1B33C33F6811CC003A1A8D41454741844B1C5817FCFAF6EB3D10
+	BC7BFFFEF3FB4F1F3EFCF8F9ED17B088FAF1F507B04DF8EDF7576067EDCF6B60
+	8390930718389C5C223C4242025CDC9CACCCECC01C06CC194CD0F313A05B12A0
+	FB6D41250F6CA7061313F47439D84C1DE800E43F7F5EBD7E2B21015A92F4E7F7
+	0F06C8701164453524A730D2FC00008000A27104FC834E6EFF872D2C67022F4A
+	66FA095A0DCFC8CE7EEBD5B51BFFAEF373F2F3B1F30B8A8BC8A9C9B232B232FD
+	67FAF3EBEF9B376F5EBD7AF5F6DDDB57EF5FFCF8FDFDDBEFEF7F80B9E3D78F4F
+	EFBF7F7AFDF9AFC27F291516166049F41FBA240E98F4211BFCFF41CE0785CF40
+	404730A08D7DE8F929FFFF7FFFF1FDDBB76F7FFE7E91579065636503158CA00D
+	D2A07E1BA855C6CC05194EA77504000410AD87A319C087114277D8436A4046E8
+	8C37303298D818398061F1F5EF974FEFDF3F7873E7CFBF7F9C2C9CC2BC62223C
+	2212D212F2EAF2A08AF837C3E74F9F9F3D7FF6FCE58B976F5EBCFFF28191FB0F
+	8F200FF37F56F0A21F46C8982764870D1364D81572182323641D3523F45A1646
+	E81275261616C8BEC48F9F3E013B83A26222C002F137A8290C1DC2F8F9E79710
+	E40827069A038000A271370F5C8C42CB05D08E21D082115666F0FE2570BF0CBC
+	E2F92FD35F6626603FEC3F2BC77F26603DF1E6CB8B27EF1F333C06CDDB0B718B
+	4A0A498809496AE8AB1BB0E903EBE0776FDF6F39BD91990BD8C667FE0739190B
+	B2F80ADC92819E4509DA31C002DDE3F9F72F64700E7E322364B6808787F7C7D7
+	EFC0DE1668A51764E013BC3104B418F1FB2F483949EB7108200008201A17418C
+	F0D311211352A08CFEEF1F1374C29E11BCE41FB45A085CA182B78301ABE8FFC0
+	8A9A9D1D54183002ABE52F375F5CBBFEF432B0BDC2CBC5272B2AC7C301A4397E
+	33FC024DDB43F6DF81031492ADFE42F68C4136D23231C2572A42A6B7A0DB09C0
+	BB38646565185998D941CD5D5054FDF9F7F73F7442E6FFCF1F3F9941B9849189
+	F6878F0004E0ED8C6E000461205AC14F1361FFE9D8C01F62225AB477D40D748B
+	DEEBBDF66B1A6A4186EA1F064241DF21806906EC3B8CDFD301432125C0BCB404
+	2B71E0346B33080F506AD9CAD98E27984599857509A155FE5E651DD98BF6C0E4
+	7874FCE8F20B54FDD294D39A175567251D8382B57A5BDD2BD7473F68C3B700BC
+	5D0B0E402108D23E6BDDFFBA6F2D053C42AF23B8860648C3FE38745A5AED5C36
+	45426B6657D168AC8D5BE990464079B20EA452D33A14E035FB2CB754920A48BA
+	80788BB08A0A5E177E4B9C04F6B89119551A7B9A4DFB42A7756E44F3BF887816
+	9C2F86D19DCAD9FBADE12B006D677403300884D010FBA75DC0EE3F66EF1A79D7
+	A60BB883220181ED18C73F83E0585AEF3DDC8CF95B85008EF4A92E9537F69884
+	5CE4839DDB848A516B3732A5A24174654EEFF4BD42F74EBD75AC11D50A9E8E3F
+	D6401A90B49C81C6CB0C530D13857E8E794D3BD8DBA3C28F0062A2BD05A06003
+	6FA2030F8331434E60871DB60A0EC97FB0F38999C1D3B8A0550BCC90F5714CE0
+	C9C47F4CE04CC30C2EBF40CB73416B82C0478B8377A142A30ABCA10C36F1F01F
+	B6521D660B646B1FE41C05C80E19D04E989FFFFEFC015A03AD9FC1BBC980D5B2
+	97A79B82BC3C509FB89804ADC30720006D5790032008C3D04940E36BF0FFDF32
+	8688B8B5E309DC49484868A1DBDAE910A4D0DEDF1E1C1CA0056FD61BBAE283D0
+	30BE12A02E409E167A098F5806E58C48E19ACC61C5AFA8EB9B3EA5ACC8453F5C
+	B1CC839492054D7C9C7275436A545A48413E33B3B0671DA68BF753F7E394E1F2
+	CA2BA8DC5EAEA25BE66C0902B3CFE71780B733BA011804A1A0C010A6DD7F45FB
+	59D477B88226AE00C9F138FC42FDCF3A0AD31C3EF643A75DC79958AF08622324
+	17CDAD0E07441164AFB15A6A9A8EC73E03996F2AF128F640BE04AFD1F1BC3496
+	EF77B5B1E2A3A861D6DF441AEBEBEA018ADAE579637C4F7F2FB4C729006F5790
+	033008C29CDCCD16FFFF4CBC894B29E80FFC01E1D2DAD67205036887C1160647
+	77EFDB6A18044BF8FE4158AA3CA94C56FEFD82A260A48619964D9405718DEB26
+	E65493EB254AEC604459447EA700A790CC8F33998DA173B2951A83853E25A2AA
+	DFDB5BBBD15EFC0B207A4400F86C06F8DD2F8CA0463F780D1A6492E6EF3F68C3
+	F13FACA6845EABC104A92CA0B505248D439B9DA0B8FC0B3B4D0832D9C900BD24
+	0052C3C20EF286CA4117AD407323B832021DADFBF5FB3760C207DD8BF0FF3FF4
+	C0F8FFFF7FFDFCC9C3C3A7A9A14397F621034000D13E02C0E90B72FE31A47903
+	D9FE00BEC382017A630338C98357283042F63381AA83BFFF18612BABA0272981
+	BAAAFF207D3BE88501D0656D8C8CB0A589FF61AB132127D9409AA27FC1CD5F90
+	A1FF20336220F0E7D76F6027594458840976E83D682208942DBE494BCA30D00B
+	0004E0ED0C6C00004118A6261C42FCFF4483B00D4FD023260BA4FD81FBA4B2A4
+	C83FAAACB5085C6CBE733C502F4D1781A4101F33B031566788D5760510BB5406
+	10590337CE5498CC86EE08D8A17FFEED605AB49149E8F9B69B192F2472E83A90
+	27FE34275E0144F3561064C305F4F47FF0EA20D051E5A0C929E8750B90A522A0
+	1062865E8DC1005D49CA00DDE1F70F761BD55FE858266C94F83F74700D14C04C
+	D081A5FFE0F3AE917A15E0DA1FDE1764805E8EF69F81938B2B2A325C50901F9C
+	75601732C11618D10D000410EDFB01E0A6CF5FD86A2726F01601C8421EC8B24C
+	F08026A8C8818C1680276961C7E430C02E184374D6A00706C2F2D63F06E8F129
+	D083B298E07741400F51F907B9AC06BCA48B1992CFC07788812A157149095636
+	0E6001F5F5F317D0CE19C84005F29913B407000178BBB623002018A6FDD2FD17
+	C5008E366937C008EE10691EFAFE04302B1E8291CDBA2FCD7636C92B38F71452
+	9E482B15C6C0C64F8DDC66B8D84BFF9C54857AF0CA06D5E323204220A22A9803
+	E3F1002850B83520299D77AD61D6AB59A57D4CEE3B02F07646370084200C0512
+	13F75FEFE20EE2AF064EA5ACE00E9494E6853E704112CB1D34421CAB76A91CCB
+	2630CFC6B57CF160A83E22825FCA6C9EC155807391137C3AE022C15D8D6F9B84
+	3A37E65A4FE6D355D79C21A398F16D3B878EF6B5AD8372091A47A5D33B05FC02
+	88F63D61E880226C4C0DD4A76581B6E7E143128C90A60B648B0A621AE43F6C55
+	3F6CA800BC8A049C21FEFF87F5CE602347D0C8848E7A424E3385DE6C026C8009
+	0A083E79F2F4EDEB37824282C2C2228282829C9C9C77EFDE7DFCF8B190901030
+	86604510BDCF5E060820DA57C2E0F57EE0E62638DD81B691B24126CA18A0A360
+	D015BC9085217FFFFF63860DDA43DA2CD05A00BAB894017E491B647D3F28FE98
+	C143A7D0FB7918619D36C8DD94FF59D84047A4FC62661013170536313F7FFAF2
+	E5CB7760B8FFF8F1F3FAB51B6AEA2ADCDC3C6CA0520B6223F8E60A3A16410001
+	448F8E187C26FC3F745A9C11B1FC18723235B8686166845F2889389812395142
+	062620479EC04EA90135811841ABA7FFC3CEF883DC79C5041FE90356DB9C5C9C
+	DC9CDC6CAC2CBCBC3CA262A282827C4005A073331F3C60049FEA023A4B850976
+	B31E74C70C9D004000DECE2507401804A251A43BA3F7BF6A4BD061C6F40475CD
+	AE84347CDECCF20AC06020E3D85D94165F90DC0FB788DF5237949FA9B55B7F06
+	FD8FB250CB14EBA15E8D26C339F9834DF7B9259628053380F366ADF979DD9DB7
+	4060B3C3CC470C88E6D40482D97A038E92F9CF7CF81140B49F90813410A19715
+	83AF20040D7CFEF9CFC8CE041EE881F4D018A0977C415AF98CB0595CA4FD9590
+	BB78C0E1CDC400DEF60449A8A0428CF91FACFBF00FBCB38619BC2CE22FF46C51
+	F0A543A030FDC3C4CE005A51FD0F741F0827079BBE811E17172738D3FD032D0A
+	FAFF8F8B934B4D558B3EC7F541004000D1672802DA448114B3E03BA3986163F5
+	903D1490ABCB61374AC36EF284DEB78938401C3CFBCE04597F05BFD8137C9CDF
+	FFBFA043B9D8D821A3A6C0F8005FC30EDB46C30CDA260F3E7A053C25033E9F1C
+	74D4F1CFDF90FBD1C003B1A093FC9495D4040404FF42176ED3030004E0EDCA51
+	000061185604FFFFDF7A34C7137473100703D5D4983C0460998825A3D7B4E381
+	DFA4AA40F69A64F3B29ED4218BC2BDB4C991548EBDD0946BE592EF6CFA119188
+	F15010A508B7BB154F6461760F0D31FBA23547551B4A56C2DAB10B03C3AC337F
+	C4391C0178BB8223004010643DDA7FE1321174831AA04754A69CC27C873EBB81
+	72AB2BC2AE63E00485147BB30E355895EED78F69EDD9A9810E8A55B25018E234
+	AD72791564497403AFCA5619F94E4B6DB89705BAB8237473C59B88689FA60944
+	DFDA4E118B716BF68703B802D07676270002310CF64E700E7D72FFDD1444A139
+	DB2423DC10FD0BC9D7293300B4C3969CFFDF38C77E2620E6BEDEEF211E77EB6B
+	DA6CEB676E16443675481ED29B0E5860EEF0800D83F89A09D7606B72C2DD40DD
+	A61F938E2309DC9E18B4456A12F173A19D8A4799EA12E26257CA3C669BE38600
+	A2490480F79FFFFFFBE72FEC4271166E6E3E60531074F702685510EBD757BF3E
+	FFFBC02FC20F3AD09B09364409DE41074980B00B3921D52CFC080170FB155C01
+	FF6784DD72C9089FEF850E4A404E44640497F4A81BEEE0875A420F69FDF3E737
+	681BF07FC8FE4848330DB4350C6236A2B5464B0010402C542F79C097A0FC8577
+	51FFFDFDFD1F7C0C1EE40C7C60F767F5AA351B166C02FA59555BD9C4DCEC3FC7
+	EF5FCC3F99D959BEFFFE02AE5241CBA7A12D71489314B201EC1F649B1123BC9B
+	C504E9EE82472F7FFF43141EB05A80017E4B3A0374EFE33FF82E0D200DACB275
+	75F47879F9E0D338FFFFC36EA404AF5F626466011FE0F893017CD41F0727172D
+	F2024000513B02C0472382CE2406DD6802391E1771DFE997AF5F67CE98317BF6
+	1C6E6E6E51515133030B7E0E5E60D9A3A7AD2B2625F6EEE3DB67EF9E3C7BF7EC
+	E5E7E77FFEFD064D153342969D408EE360840D4B436F79FA073A1A1A7C8F3CE4
+	120750E9066DB8424A1DD8AD6C901B3F203B23FF80AFF4045D61CACEC6656161
+	F9E2D5336034B380AB7E760E2E56F0F9B18CE09B3F1F3EB875E5CAD5F7EFDE71
+	7173090A0A8B8989C8C9C90B0B53F9084B8000A2720480E7717F43CA1DF0A183
+	D00DEFE07D48BFAF5CBEF2F3C72F2323A3D7AF5F3BBA3809080A7072709A999A
+	0A090B01333EBB108708AF98B298DAD7EF5FDE7F7EFFE2D3F3773FDEBCFFF69E
+	81E91F689D0A230B23EC866D06A40948C85A68E80E234690D2FF882949F0581E
+	58396C2B3D68DEF7D38F1F7B761FDCB963D78EED3B1595E4B4B5356464648092
+	9C1C3CFC7CA04B827E7EFB76F5CAD5478F1EFEFE031AD77BF7FEC3F367CF79B8
+	CD1E3E7C48F5080008C0DAD9A4200C0351B8FE428D15A182EE5414A93BE30D3C
+	825E3E5D5A9076512DB469FA9309E84CDA237883F066327924E17B83EFFFB88C
+	9D6BC4DEA72053DA0A4EFF0C600B13454F29254A981745180AECEDED6E7F0E82
+	196340044A0396F06A08D70A785610F40DDADA542594997AA76D5A6BD57D6AB4
+	837BD8F3EAED6D7563DAF574F3B8DD6D76F3880C1281EF515337CF0B1C2336FA
+	87C22A0074F24AD99C61C1841059F6519502AD2763C765DECAF78F8793B75896
+	52767E17579EC431EACEAFBCA99B0BE7FF2DC04F00D6CE2607411888C286401B
+	36F81783821BD7A8E8FD6FA09EA21B2A0926968A16303A6FF4082CBB993493F4
+	7531F3DE37E40BF0983BCB52CB0E69B0393069B2D62AA578088CF593DAD64204
+	87FC98AE536A56EB5E58C9E72F9194A1E70463B66E8D7CCF8FE43892D1225C6E
+	7AD77D9C69CDAD29ABA672EF87EF05242701F0BA7F271208369C41F6DB49E728
+	21D40186009819DC683E8BA793988EA4FEDB2C43D0A2436A72A1CB52EBE669CD
+	DD0812FC30A44A0EA8D64E48B94A92F3E9A2AF7AB7CF87E5287F0510958B20C8
+	3026788FC35FC8FAE44B172FCD9C35EBC993274E4E4E2ACA2A3F7E7E7BF5EAB5
+	BBBB8790901038C87F02D5FD0187FAAF9FE0B38A81FD20707508B91618D2F601
+	06303B0B3B0723071F1BBF04A7C45FE1BFDFFE7C7BFFEDEDDBEF6FDEFF7CFFEF
+	3F30C3FCFE0F1A8FF807BDEC01B62D065212FE075D15F99B83838B8D8D93939D
+	03723C3EE4BA10601EE2E1E6012A131511FB2CAFB077FF5E60C44076A7026BE0
+	DFBF40A7DCBF7BFB6ECB962DBDBDBD6969693F7FFDE0E2E4A26288010410B5EB
+	0058930F72E41A30EFAFDFB461D1A2458A8A8A3366CC888F8F7FFEEAB988A088
+	80003FF84000502CFD025F6A0E2A7D4027A9FFFD8738F904B20805C4FD0BE955
+	FD879C38046C33B2707070087208C9FD53FCFDEF1730325E7C7ECE02DEF3F41F
+	B4EC8B09D2A6015DD1C0C60A6970B2B172B2327300B314C47CA0DB80152F7864
+	09545E02C3FBE9D3A793264F969490929290FA074AFB3F80A1CFCAC62A282878
+	ED1AB03E78C4C7C7272222C2021A5BA4E695990001449BC138F0B4DF9FDFA09E
+	A48F978FB6A6F6EB37AF81694E5C544CDF405F584808748A1EA8D0F90B39D71B
+	7C44F31F8818B8A1FF0F76D2F37FF83A6748B032C0AEF763042F640106282B33
+	2B372B8F30A72850DDBBB71FD93980FD6ED0EC1674150C3845B0B2B0333230FF
+	86F442C0EBE3FF834E29855CC0C10834E4E6AD5BEBD7ADFEFAE533172707E4AC
+	45607319E83E7E017E0E76765757B7172F5E7EFAF409988C409B16808D6C6666
+	6AC501400051390240638AA0D620286DFF07777080C5BA9AAAAAB1B1213044DE
+	BD7FB77FDF01397910FC033914037C9F11B0D2853499A0D3E9FF209359B06557
+	D0134FFE2366AA18A1A3C7D0D90226C8C213C68F1F3E8346E99899D881A53817
+	3B072707E49E94DFBFFE4297A2426E42F90B99256601A66460BBF3D0A183070E
+	EFE760E7E4171200C627D040A09B8584048045E5DAB56BC5C5C5D5D4D4805919
+	9803A4A4A5BF7EF9C2CDC707EA69B3B052250E0002888506A91F7C4803A8D5FE
+	E7F3E72FEBD6AF7FFBE60DB09D07F4D5F6EDDBEFDDBB179B1867A06F008C1B70
+	BD0B4A9590C321A1AD49C82D23E0E525D0A9957FB0131D18606315FF19A1EBDD
+	604B1FFF413A5990D5477F19BE7F079D60CCC4F419B2280F3C31F78FE12F68AC
+	0DBC428F11722B170B03CB850BE78F1C3BC2C5C105B44F5A425249511958F8F0
+	0B00DBC71CFCFCFCC024FFE0C1835BB76F03E3B5BDBD5D4A52E2D7EF5FAC3F7F
+	3273728216BF50E3505D8000A27E04B0B0B0024B75D05A2066E65FBF7E8A8A88
+	DCBF77EFD8F1E33CDCDCAF5EBF06F53CFF3200F3383B3BEB3FF8D1FFD00BC220
+	E77C33817B0EE06860002F0F65859E2000DBEAC4009DA264848C5D43D63E802F
+	198094FEFF20476432403A21902105D0625E46E6BF0C7FC10BB798404343FF19
+	EEDCB9B56FDF6E6029C8CEC6CACBC3A7A6A6012C9F040405F9F94067BD0AB330
+	9B9A991A181A00D3132F0F8FA8A8081717173B3BE84C7746F0B83655820B2080
+	685207B0B0B280CEA3FAF78F8787372535253A3AEAE58B17CB96AFDCBB772F30
+	2303FBC0A03DF23FFF83BBFB4C90C92D2616C8520758EFED3FA4870B3AF015D4
+	8F63815C34C60CE9F632C16E2E838E4580B7B83041772B3140572DFE838EE6FC
+	0397F7A08A05D84BFB0F2C8518C1230DCC4F1E3FDEBA751330157FFFF615582D
+	18A96A707070025B07428282A0E289097CC70FE80A04709D029AB36406D6FC90
+	3BC860D3185400000144A3D1504660520296EE5F3E7F7AF0F0110F0F37B0F4D4
+	D1D682C8CACAC9FEFDF78785998D11540433C3EEBE80EED1801EF700BB45121A
+	1BA0480055BB0CD07545FFC0AB7AFF41D7544096B6436718C0EBBCA03B9FA003
+	430CD0B32D19C07B574105D18777EF4E9C3A0AECFF29A9C8018B787E5E414E2E
+	6E010141214101567636F039C72CE0C3C0D9999921C3E7A0CD21C00865055FC4
+	C242BD13BD010288565392E0A33C99B97878BE7DFDB660C1026003EEE3C78FBA
+	BABACE2ECEF2F20AC0AA8F8D83830D9A97614394B070879C1B06394B0636A209
+	C912C03C009BAA074D2BFE875D860CBDFD900176BB2174C5D77FF8EA22E84805
+	6455D6CF9F3F6EDFBDF91FB42DF2FFDB776F15E5958001CD0F06A05D024C4CAC
+	A096142BE8DA1B5670603343839E0972270855CF53070840DB15240104C3405A
+	D449EB09CA2BF0937E5F1D3972D14A93181FE0094D32697676B3F92501A8D394
+	68C45FDBC13AE7BC5FF66D9FE6B1EF6C634CEAA4F0B2B2C863CCDE6D3D3E5A81
+	6A7D3ADB131F7681C04160315B42D851301B93F1F01A2E268F113AE4CFDFF2BA
+	4093EE3104BF2EC77940C381310C6A5F55AAD1BA351A428C858E862E948474CA
+	430AB287151220F1E76B7BB700A2E65810CAB81038BC80953064A40572FE1A6C
+	8D0923E4424748EA064FFC3242778F8267A218A1C76B40029B0172650FEC4473
+	E8227FE8A5B90C8C90BE1B74421ED2C785AC1965402CD0850EA282DB056FDFBD
+	B9FFF02E30E83F7FFC046CFEAAA968888A89F1F2F182421B0CC0010F3A328799
+	0572AC0213A8D685640216EAA7578000B49D5112C0100C440D35E3A37E4BEF7F
+	B2CEB8069ADDD5E9093842C28A48F2764910C1E6E02521C24B896652B65DF02F
+	65E73D87193AFEF07A15461D247CC36173CDEF1C7DD5D6F54534941BC2F7A6C5
+	1562918CE35DCBD340C8F4FC5B62D4226576B58DDFDA83E1431ECD78E5BA6BA9
+	67CE918CA518A53B264868370B62ED99E0C00701B5D91BD62B80689503E0E0F7
+	9FDFE0D9B13F90DB51219B35A0338EE05E16B8C8F98BD8D0026B8382C6822095
+	ED5FE8CE46789DFCEFEFBFFFB099AE7FD068F9071304EFC800671A48A680CC61
+	025BF7B7EEDCBD77F79684A418371737B09DC3CDC9272C24CCCDC30D0C70D0D1
+	A4A0B60E0BB895C906DAFD0ABE6D8B055C2231822B011A850F4000D17A5DD03F
+	167067145885816EA082AD4F812E6303CFFF81F747C2A65C403B8FFE420E1403
+	9F95C40CA98DE109197C8D15B087CD08894890054CFFE0F504681D03D004D0E2
+	4616C83585CCD03D787FCF9DBF70E0E081F367CFE9E8EBBA38B9009DF1E6E57B
+	116111606A07A57D50C9C30A5992C50A5E2507B9A90674B402957ABCB8004000
+	D13A02408E07B6A981ED4E0666166038830EE70735605818A07B5A9899E08BCC
+	C1B3C2C0CA157E2D3768F60A3CD40C9D2A040D6EB3FF8755CE9072EC1FACA286
+	5421D00C06CE348CC06C073E36E2E78FDF5FBE7CB97EED92988CF8EF1F3F3F7E
+	FAF4E3C7F7AF5FBF98999981CA77460636508393831974E3183CF459C177D4D0
+	7CB33C4000D1BC0882255E5839022949405B7C19C165CC3FD8F00FA8DA041FB4
+	043BF019E6BC7FD0D5EB0CFF600B0E21653D64F12D7C22187ADEC13F701C03CD
+	054D3EFE838C38816E2D7CFFE1FBCFEFC092107C373B03071B1B03E84E2D010E
+	F06D651C9C9CA09E172BA8F1031A9E03650260A665A1C379410001449FB322C0
+	BB4AFFFF861CEC0F3EB68909B2B219322603DA97CA045EB3CE044AF50C8CD041
+	21C8481B33240E40F52E383898A1B7B2814FF6F807E9EBC20F88066A02361D41
+	753E33280A1861FDE4376FDF01634752524A4848F0F79F3FE7CE9E7DF5EAB58B
+	8B33B8F06107D601E09A00B2760BD8806606DF67438F55EA000144A708000256
+	265606F04195E0E103D0AC21685C177AD62DA4D8F90FBE2F8119DA8385EC1B06
+	D5A8FF59200BD9FFC3FA5AA09166F05A6946D0B53090BB54214D4DC866584841
+	076C0443AC7EF7EEDD962D9B81B1222121C1C2C67CEAC4E99D3B778687873B3A
+	3982CF048434F6C1DB68806C46261666FA050B4000D1CF26484E6006EF8686AC
+	C7FD07BE6C0172E403A4B8018D7D8222E32F13EC6669F0B41A78A324E4CE5AF0
+	C20BE85401A447015923CA08396E89811972EC066854FC2FA452F8FDFB37504E
+	5656F6D4A953172E5C9096967EF7EE2D1F1F1FA8FD03AE6F21D76A41AA625042
+	6165A567880004109DEA005C1503641D11E4304366F0A91DF0E38421AB592077
+	EB304232C47FE865DB907D30B073CD19A16B1B21ED1F26E63FA0F500A072E9EF
+	EFDF5F81E0DB37602312D8BEFCF6FDFBEBD7AF8F1E3D5A52520A8C8FA4A4A4B8
+	B8384E4ED0C998C0BA9711A4860334E043DF4000082026868103E07B8EFEB382
+	3CCD0C2E7F2187D980C60DC097C38019C052013C3409396B86153250C0021AA6
+	011D420DBAA998057C780AB0E46601F6A1400919AC1E72590C78FA8BE9E5AB57
+	B76FDF01460030F9FBF8F800ADFEF8F1A3BA9A1A6CDD2EF8AE24B0B9F40F0E80
+	0062611850C0C4C8022B9AC0AE01CDBEFC65866D1E833742A0D7928356B53382
+	27DAC0773443EF4F02954D905DBED05A1374FA0AA885F50754AA80BAB6DC3C3C
+	274E9C04963FAA6AAA027CFC4A4A4A2EAEAE3232328CA05B0B41630FE0E06786
+	4DBED1150004D0401641240C6F931E32C01EF83FD0E222D0C28BAFDFBF3D7FF6
+	FCDEBDFB0F1F3C78FDE68D8080A08DB595BC823C17170F687B1E681408540F33
+	5075B69D48001040432202C8047FC18780426E59FDFDEBD7F71F3F80FD006039
+	C6C5C50DEE7F3142F6EC834A1E2666FA073D040004D0708E003800DF88C10039
+	BF123E95085932C408BDE075C00040008D880840199C822E80875F9D31C00020
+	80465C040C3600106000FAE7E3B38EDB9FF80000000049454E44AE426082
+	]]>
+</Picture>
+
+<MigrationTable SectVersion="1" SectionFlags="0" SubIdent="0">
+	<MigrationTableElement>
+		<MainGUID>CD743E3C-FFFB-4773-9CBE-23D36957D857</MainGUID>
+		<Version>17</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+	<MigrationTableElement>
+		<MainGUID>38814977-7EB7-44CC-A34E-008A5E0C9042</MainGUID>
+		<Version>0</Version>
+		<Name><![CDATA[""]]></Name>
+		<AutoMigration>no</AutoMigration>
+	</MigrationTableElement>
+</MigrationTable>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_FWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+actualGUID = FROM_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+    _startID	= "CD743E3C-FFFB-4773-9CBE-23D36957D857"
+    _endID      = "38814977-7EB7-44CC-A34E-008A5E0C9042"
+gosub "Knob_pos_FWM"
+
+	_startID	= "38814977-7EB7-44CC-A34E-008A5E0C9042"
+	_endID		= "ACA8B2C2-91B4-4456-8580-D56018DF4ABA"
+gosub "fmtypes_fwm"
+
+! ==============================================================================
+! Set Migration GUID
+! ==============================================================================
+
+setmigrationguid actualGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+
+
+! ==============================================================================
+! --- Correcting the Knob position
+! ==============================================================================
+"Knob_pos_FWM":
+
+    if actualGUID = _startID then
+		nnn = STORED_PAR_VALUE ("gs_knob_type_m", _gs_knob_type_m)
+		nnn = STORED_PAR_VALUE ("knob_pl", knob_pl)
+		if _gs_knob_type_m = 4 then
+			_knob_size=0.2
+			knob_pl[1][1] = knob_pl[1][1] -_knob_size/4
+			knob_pl[2][1] = knob_pl[2][1] -_knob_size/4
+			parameters knob_pl = knob_pl
+		endif
+		actualGUID = _endID
+    endif
+return
+
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_fwm":
+	if actualGuid = _startID then
+		bHas = DELETED_PAR_VALUE ("FM_Type", FM_Type)
+
+	!INT
+		iFMType = 999
+		if FM_Type = `Default Objects` then iFMType = 1
+		if FM_Type = `Default Lamps` then iFMType = 2
+		if FM_Type = `People` then iFMType = 3
+		if FM_Type = `Elevators` then iFMType = 4
+		if FM_Type = `Security and Escapes` then iFMType = 5
+		if FM_Type = `Stairs` then iFMType = 6
+		if FM_Type = `Work Spaces` then iFMType = 7
+		if FM_Type = `Electric Facilities` then iFMType = 8
+		if FM_Type = `Distribution Panels` then iFMType = 9
+		if FM_Type = `Measuring Places` then iFMType = 10
+		if FM_Type = `Lamps` then iFMType = 11
+		if FM_Type = `HVAC Equipment` then iFMType = 12
+		if FM_Type = `Sanitation` then iFMType = 13
+		if FM_Type = `Locks` then iFMType = 14
+		if FM_Type = `Built-in Wardrobes` then iFMType = 15
+		if FM_Type = `Furniture` then iFMType = 16
+		if FM_Type = `Ceilings` then iFMType = 17
+		if FM_Type = `Floors` then iFMType = 18
+		if FM_Type = `Outdoor Objects` then iFMType = 19
+		if FM_Type = `Computers` then iFMType = 20
+		if FM_Type = `Monitors` then iFMType = 21
+		if FM_Type = `Software` then iFMType = 22
+		if FM_Type = `Phones` then iFMType = 23
+		if FM_Type = `Containers` then iFMType = 24
+		if FM_Type = `Others` then iFMType = 25
+
+	!AUT
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaugarderoben" then iFMType = 15
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!BRA
+		if FM_Type = "Objetos padrão" then iFMType = 1
+		if FM_Type = "Lâmpadas padrão" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos elétricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechamentos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tetos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objetos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!CHE
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Fussböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!CHI
+		if FM_Type = "默认对象" then iFMType = 1
+		if FM_Type = "默认灯" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "电梯" then iFMType = 4
+		if FM_Type = "保安与逃生" then iFMType = 5
+		if FM_Type = "楼梯" then iFMType = 6
+		if FM_Type = "工作空间" then iFMType = 7
+		if FM_Type = "电气设备" then iFMType = 8
+		if FM_Type = "分布面板" then iFMType = 9
+		if FM_Type = "测量地点" then iFMType = 10
+		if FM_Type = "灯" then iFMType = 11
+		if FM_Type = "HVAC设备" then iFMType = 12
+		if FM_Type = "卫生设施" then iFMType = 13
+		if FM_Type = "锁" then iFMType = 14
+		if FM_Type = "内置衣橱" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外对象" then iFMType = 19
+		if FM_Type = "计算机" then iFMType = 20
+		if FM_Type = "监视器" then iFMType = 21
+		if FM_Type = "软件" then iFMType = 22
+		if FM_Type = "电话" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!CZE
+		if FM_Type = "Výchozí objekty" then iFMType = 1
+		if FM_Type = "výchozí lampy" then iFMType = 2
+		if FM_Type = "lidé" then iFMType = 3
+		if FM_Type = "výtahy" then iFMType = 4
+		if FM_Type = "bezpečnost a úniky" then iFMType = 5
+		if FM_Type = "schodiště" then iFMType = 6
+		if FM_Type = "pracovní prostory" then iFMType = 7
+		if FM_Type = "Elektrická zařízení" then iFMType = 8
+		if FM_Type = "rozvaděče" then iFMType = 9
+		if FM_Type = "měřiče" then iFMType = 10
+		if FM_Type = "Svítidla" then iFMType = 11
+		if FM_Type = "lampy" then iFMType = 11
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "TZB vybavení" then iFMType = 12
+		if FM_Type = "Sanitární vybavení" then iFMType = 13
+		if FM_Type = "zámky" then iFMType = 14
+		if FM_Type = "zabudované skříně" then iFMType = 15
+		if FM_Type = "Nábytek" then iFMType = 16
+		if FM_Type = "stropy" then iFMType = 17
+		if FM_Type = "podlahy" then iFMType = 18
+		if FM_Type = "Venkovní objekty" then iFMType = 19
+		if FM_Type = "počítače" then iFMType = 20
+		if FM_Type = "monitory" then iFMType = 21
+		if FM_Type = "software" then iFMType = 22
+		if FM_Type = "telefony" then iFMType = 23
+		if FM_Type = "obaly" then iFMType = 24
+		if FM_Type = "jiné" then iFMType = 25
+		if FM_Type = "Jiné" then iFMType = 25
+
+	!FIN
+		if FM_Type = "Oletusobjektit" then iFMType = 1
+		if FM_Type = "Oletuslamput" then iFMType = 2
+		if FM_Type = "Ihminen" then iFMType = 3
+		if FM_Type = "Hissit" then iFMType = 4
+		if FM_Type = "Turvallisuus ja poistumistiet" then iFMType = 5
+		if FM_Type = "Portaat" then iFMType = 6
+		if FM_Type = "Työtilat" then iFMType = 7
+		if FM_Type = "Sähkölaitteet" then iFMType = 8
+		if FM_Type = "Jakelutaulut" then iFMType = 9
+		if FM_Type = "Mittauspaikat" then iFMType = 10
+		if FM_Type = "Lamput" then iFMType = 11
+		if FM_Type = "LVI-laite" then iFMType = 12
+		if FM_Type = "Saniteettikalusteet" then iFMType = 13
+		if FM_Type = "Viemäröinti" then iFMType = 13
+		if FM_Type = "Lukot" then iFMType = 14
+		if FM_Type = "Kiinteät komerot" then iFMType = 15
+		if FM_Type = "Kalustus" then iFMType = 16
+		if FM_Type = "Sisäkattopinnat" then iFMType = 17
+		if FM_Type = "Lattiat" then iFMType = 18
+		if FM_Type = "Ulkotilan objektit" then iFMType = 19
+		if FM_Type = "Ulkotilojen objektit" then iFMType = 19
+		if FM_Type = "Tietokoneet" then iFMType = 20
+		if FM_Type = "Näytöt" then iFMType = 21
+		if FM_Type = "Ohjelmat" then iFMType = 22
+		if FM_Type = "Puhelimet" then iFMType = 23
+		if FM_Type = "Säilytys" then iFMType = 24
+		if FM_Type = "Muut" then iFMType = 25
+
+	!FLA
+
+	!FRA
+		if FM_Type = "Objets par défaut" then iFMType = 1
+		if FM_Type = "Lampes par défaut" then iFMType = 2
+		if FM_Type = "Personnages" then iFMType = 3
+		if FM_Type = "Ascenseurs" then iFMType = 4
+		if FM_Type = "Sécurité et sorties de secours" then iFMType = 5
+		if FM_Type = "Escaliers" then iFMType = 6
+		if FM_Type = "Espaces de travail" then iFMType = 7
+		if FM_Type = "Services électriques" then iFMType = 8
+		if FM_Type = "Panneaux de distribution" then iFMType = 9
+		if FM_Type = "Armoires de contrôle" then iFMType = 10
+		if FM_Type = "Lampes" then iFMType = 11
+		if FM_Type = "Equipement CVCA" then iFMType = 12
+		if FM_Type = "Sanitaires" then iFMType = 13
+		if FM_Type = "Serrurerie" then iFMType = 14
+		if FM_Type = "Penderies Encastrées" then iFMType = 15
+		if FM_Type = "Ameublement" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Planchers" then iFMType = 18
+		if FM_Type = "Objets extérieurs" then iFMType = 19
+		if FM_Type = "Ordinateurs" then iFMType = 20
+		if FM_Type = "Ecrans" then iFMType = 21
+		if FM_Type = "Logiciels" then iFMType = 22
+		if FM_Type = "Téléphones" then iFMType = 23
+		if FM_Type = "Conteneurs" then iFMType = 24
+		if FM_Type = "Autres" then iFMType = 25
+
+	!GER
+		if FM_Type = "Standard Objekte" then iFMType = 1
+		if FM_Type = "Standard Leuchten" then iFMType = 2
+		if FM_Type = "Standard Lampen" then iFMType = 2
+		if FM_Type = "Menschen" then iFMType = 3
+		if FM_Type = "Fahrstühle" then iFMType = 4
+		if FM_Type = "Sicherheit und Fluchtwege" then iFMType = 5
+		if FM_Type = "Treppen" then iFMType = 6
+		if FM_Type = "Arbeitsplätze" then iFMType = 7
+		if FM_Type = "Elektrische Ausstattung" then iFMType = 8
+		if FM_Type = "Verteilung Paneele" then iFMType = 9
+		if FM_Type = "Verteilerfeld" then iFMType = 9
+		if FM_Type = "Vermessungsstandorte" then iFMType = 10
+		if FM_Type = "Leuchten" then iFMType = 11
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "HKLSE Ausstattung" then iFMType = 12
+		if FM_Type = "Sanitäre Anlagen" then iFMType = 13
+		if FM_Type = "Schlösser" then iFMType = 14
+		if FM_Type = "Einbaukleiderschränke" then iFMType = 15
+		if FM_Type = "Möbel" then iFMType = 16
+		if FM_Type = "Decken" then iFMType = 17
+		if FM_Type = "Fußböden" then iFMType = 18
+		if FM_Type = "Objekte im Freien" then iFMType = 19
+		if FM_Type = "Computer" then iFMType = 20
+		if FM_Type = "Monitore" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefone" then iFMType = 23
+		if FM_Type = "Container" then iFMType = 24
+		if FM_Type = "Andere" then iFMType = 25
+
+	!GRE
+		if FM_Type = "Αρχικά Αντικείμενα" then iFMType = 1
+		if FM_Type = "Αρχικά Φωτιστικά" then iFMType = 2
+		if FM_Type = "Άνθρωποι" then iFMType = 3
+		if FM_Type = "Ανελκυστήρες" then iFMType = 4
+		if FM_Type = "Ασφάλεια και Διαφυγή" then iFMType = 5
+		if FM_Type = "Σκάλες" then iFMType = 6
+		if FM_Type = "Χώροι Εργασίας" then iFMType = 7
+		if FM_Type = "Ηλεκτρολ. Εγκαταστάσεις" then iFMType = 8
+		if FM_Type = "Πίνακες Διανομής" then iFMType = 9
+		if FM_Type = "Θέσεις Μετρήσεων" then iFMType = 10
+		if FM_Type = "Φωτιστικά" then iFMType = 11
+		if FM_Type = "Λάμπα" then iFMType = 11
+		if FM_Type = "Εξαρτήματα HVAC" then iFMType = 12
+		if FM_Type = "Υγιεινή" then iFMType = 13
+		if FM_Type = "Κλειδαριές" then iFMType = 14
+		if FM_Type = "Εντοιχισμένες Ντουλάπες" then iFMType = 15
+		if FM_Type = "Εντοιχισμένη Ντουλάπα" then iFMType = 15
+		if FM_Type = "Επίπλωση" then iFMType = 16
+		if FM_Type = "Οροφές" then iFMType = 17
+		if FM_Type = "Δάπεδα" then iFMType = 18
+		if FM_Type = "Υπαίθρια Αντικείμενα" then iFMType = 19
+		if FM_Type = "Υπολογιστές" then iFMType = 20
+		if FM_Type = "Οθόνες" then iFMType = 21
+		if FM_Type = "Λογισμικό" then iFMType = 22
+		if FM_Type = "Τηλέφωνα" then iFMType = 23
+		if FM_Type = "Κιβώτια" then iFMType = 24
+		if FM_Type = "Άλλα" then iFMType = 25
+
+	!HUN
+		if FM_Type = "Alapértelmezett tárgy" then iFMType = 1
+		if FM_Type = "Alapértelmezett lámpa" then iFMType = 2
+		if FM_Type = "Személy" then iFMType = 3
+		if FM_Type = "Felvonó" then iFMType = 4
+		if FM_Type = "Biztonság- és menekülésjelző" then iFMType = 5
+		if FM_Type = "Lépcsők" then iFMType = 6
+		if FM_Type = "Lépcső" then iFMType = 6
+		if FM_Type = "Lépcsö" then iFMType = 6
+		if FM_Type = "Munkaterület" then iFMType = 7
+		if FM_Type = "Elektromos berendezés" then iFMType = 8
+		if FM_Type = "Elosztó" then iFMType = 9
+		if FM_Type = "Mérőhely" then iFMType = 10
+		if FM_Type = "Lámpa" then iFMType = 11
+		if FM_Type = "Légtechnikai berendezés" then iFMType = 12
+		if FM_Type = "Szaniter berendezés" then iFMType = 13
+		if FM_Type = "Zár" then iFMType = 14
+		if FM_Type = "Beépített szekrény" then iFMType = 15
+		if FM_Type = "Bútor" then iFMType = 16
+		if FM_Type = "Mennyezet" then iFMType = 17
+		if FM_Type = "Padló" then iFMType = 18
+		if FM_Type = "Kültéri tárgy" then iFMType = 19
+		if FM_Type = "Számítógép" then iFMType = 20
+		if FM_Type = "Monitor" then iFMType = 21
+		if FM_Type = "Szoftver" then iFMType = 22
+		if FM_Type = "Telefon" then iFMType = 23
+		if FM_Type = "Konténer" then iFMType = 24
+		if FM_Type = "Egyéb" then iFMType = 25
+
+	!ITA
+		if FM_Type = "Oggetti predefiniti" then iFMType = 1
+		if FM_Type = "Lampade predefinite" then iFMType = 2
+		if FM_Type = "Persone" then iFMType = 3
+		if FM_Type = "Ascensori" then iFMType = 4
+		if FM_Type = "Sicurezza e Fughe" then iFMType = 5
+		if FM_Type = "Scale" then iFMType = 6
+		if FM_Type = "Spazi di Lavoro" then iFMType = 7
+		if FM_Type = "Funzioni Elettriche" then iFMType = 8
+		if FM_Type = "Pannelli di Distribuzione" then iFMType = 9
+		if FM_Type = "Posti di Misurazione" then iFMType = 10
+		if FM_Type = "Lampade" then iFMType = 11
+		if FM_Type = "Apparecchiatura HVAC" then iFMType = 12
+		if FM_Type = "Risanamento" then iFMType = 13
+		if FM_Type = "Serrature" then iFMType = 14
+		if FM_Type = "Armadi a muro" then iFMType = 15
+		if FM_Type = "Armadi Incassati" then iFMType = 15
+		if FM_Type = "Armadi Incorporati" then iFMType = 15
+		if FM_Type = "Arredo" then iFMType = 16
+		if FM_Type = "Soffitti" then iFMType = 17
+		if FM_Type = "Pavimenti" then iFMType = 18
+		if FM_Type = "Oggetti Esterni" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitors" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoni" then iFMType = 23
+		if FM_Type = "Contenitori" then iFMType = 24
+		if FM_Type = "Altri" then iFMType = 25
+
+	!JPN
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ " then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄｵﾌﾞｼﾞｪｸﾄ" then iFMType = 1
+		if FM_Type = "ﾃﾞﾌｫﾙﾄﾗﾝﾌﾟ" then iFMType = 2
+		if FM_Type = "人物" then iFMType = 3
+		if FM_Type = "ｴﾚﾍﾞｰﾀ" then iFMType = 4
+		if FM_Type = "防犯と非常用" then iFMType = 5
+		if FM_Type = "階段" then iFMType = 6
+		if FM_Type = "ﾜｰｸｽﾍﾟｰｽ" then iFMType = 7
+		if FM_Type = "電気設備" then iFMType = 8
+		if FM_Type = "配電盤" then iFMType = 9
+		if FM_Type = "測定場所" then iFMType = 10
+		if FM_Type = "ﾗﾝﾌﾟ" then iFMType = 11
+		if FM_Type = "設備機器" then iFMType = 12
+		if FM_Type = "HVAC機器" then iFMType = 12
+		if FM_Type = "排水設備" then iFMType = 13
+		if FM_Type = "下水設備" then iFMType = 13
+		if FM_Type = "ﾛｯｸ" then iFMType = 14
+		if FM_Type = "造り付けﾜｰﾄﾞﾛｰﾌﾞ" then iFMType = 15
+		if FM_Type = "家具" then iFMType = 16
+		if FM_Type = "天井" then iFMType = 17
+		if FM_Type = "ﾌﾛｱ" then iFMType = 18
+		if FM_Type = "屋外ｵﾌﾞｼﾞｪｸﾄ" then iFMType = 19
+		if FM_Type = "ｺﾝﾋﾟｭｰﾀ" then iFMType = 20
+		if FM_Type = "ﾓﾆﾀ" then iFMType = 21
+		if FM_Type = "ｿﾌﾄｳｪｱ" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "ｺﾝﾃﾅ" then iFMType = 24
+		if FM_Type = "その他" then iFMType = 25
+
+	!KOR
+		if FM_Type = "기본 객체" then iFMType = 1
+		if FM_Type = "기본값 객체" then iFMType = 1
+		if FM_Type = "기본 조명" then iFMType = 2
+		if FM_Type = "사람들" then iFMType = 3
+		if FM_Type = "엘리베이터" then iFMType = 4
+		if FM_Type = "보안과 피난" then iFMType = 5
+		if FM_Type = "계단" then iFMType = 6
+		if FM_Type = "작업 공간" then iFMType = 7
+		if FM_Type = "전기 설비" then iFMType = 8
+		if FM_Type = "분배 패널" then iFMType = 9
+		if FM_Type = "측정 장소" then iFMType = 10
+		if FM_Type = "조명" then iFMType = 11
+		if FM_Type = "공조설비" then iFMType = 12
+		if FM_Type = "위생설비" then iFMType = 13
+		if FM_Type = "잠금장치" then iFMType = 14
+		if FM_Type = "붙박이 장" then iFMType = 15
+		if FM_Type = "가구" then iFMType = 16
+		if FM_Type = "천장" then iFMType = 17
+		if FM_Type = "바닥" then iFMType = 18
+		if FM_Type = "실외 객체" then iFMType = 19
+		if FM_Type = "컴퓨터" then iFMType = 20
+		if FM_Type = "모니터" then iFMType = 21
+		if FM_Type = "소프트웨어" then iFMType = 22
+		if FM_Type = "전화기" then iFMType = 23
+		if FM_Type = "콘테이너" then iFMType = 24
+		if FM_Type = "기타" then iFMType = 25
+
+	!NED
+		if FM_Type = "Standaardobjecten" then iFMType = 1
+		if FM_Type = "Standaardlampen" then iFMType = 2
+		if FM_Type = "Mensen" then iFMType = 3
+		if FM_Type = "Liften" then iFMType = 4
+		if FM_Type = "Beveiliging en vluchtwegen" then iFMType = 5
+		if FM_Type = "Trappen" then iFMType = 6
+		if FM_Type = "Werkplekken" then iFMType = 7
+		if FM_Type = "ET installatie" then iFMType = 8
+		if FM_Type = "Schakelkasten" then iFMType = 9
+		if FM_Type = "Meetgebieden" then iFMType = 10
+		if FM_Type = "Lampen" then iFMType = 11
+		if FM_Type = "W-installatie" then iFMType = 12
+		if FM_Type = "Afvalverwerking" then iFMType = 13
+		if FM_Type = "Sloten" then iFMType = 14
+		if FM_Type = "Inbouwkasten" then iFMType = 15
+		if FM_Type = "Meubilair" then iFMType = 16
+		if FM_Type = "Plafonds" then iFMType = 17
+		if FM_Type = "Vloeren" then iFMType = 18
+		if FM_Type = "Buitenobjecten" then iFMType = 19
+		if FM_Type = "Computers" then iFMType = 20
+		if FM_Type = "Monitoren" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefoon" then iFMType = 23
+		if FM_Type = "Containers" then iFMType = 24
+		if FM_Type = "Anders" then iFMType = 25
+		if FM_Type = "Overig" then iFMType = 25
+
+	!NOR
+		if FM_Type = "Standard objekter" then iFMType = 1
+		if FM_Type = "Andre" then iFMType = 25
+
+	!POL
+		if FM_Type = "Obiekty domyślne" then iFMType = 1
+		if FM_Type = "Domyślne lampy" then iFMType = 2
+		if FM_Type = "Ludzie" then iFMType = 3
+		if FM_Type = "Windy" then iFMType = 4
+		if FM_Type = "Bezpieczeństwo i ewakuacja" then iFMType = 5
+		if FM_Type = "Schody" then iFMType = 6
+		if FM_Type = "Przestrzenie robocze" then iFMType = 7
+		if FM_Type = "Urządzenia elektryczne" then iFMType = 8
+		if FM_Type = "Panele rozdzielające" then iFMType = 9
+		if FM_Type = "Stanowiska pomiarowe" then iFMType = 10
+		if FM_Type = "Lampy" then iFMType = 11
+		if FM_Type = "Wyposażenie grzewczo-klimatyzac." then iFMType = 12
+		if FM_Type = "Sanitarne" then iFMType = 13
+		if FM_Type = "Zamki" then iFMType = 14
+		if FM_Type = "Garderoby" then iFMType = 15
+		if FM_Type = "Umeblowanie" then iFMType = 16
+		if FM_Type = "Sufity" then iFMType = 17
+		if FM_Type = "Podłogi" then iFMType = 18
+		if FM_Type = "Obiekty zewnętrzne" then iFMType = 19
+		if FM_Type = "Komputery" then iFMType = 20
+		if FM_Type = "Monitory" then iFMType = 21
+		if FM_Type = "Oprogramowanie" then iFMType = 22
+		if FM_Type = "Telefony" then iFMType = 23
+		if FM_Type = "Pojemniki" then iFMType = 24
+		if FM_Type = "Inne" then iFMType = 25
+
+	!POR
+		if FM_Type = "Objectos por defeito" then iFMType = 1
+		if FM_Type = "Lâmpadas por defeito" then iFMType = 2
+		if FM_Type = "Pessoas" then iFMType = 3
+		if FM_Type = "Elevadores" then iFMType = 4
+		if FM_Type = "Segurança e Fuga" then iFMType = 5
+		if FM_Type = "Escadas" then iFMType = 6
+		if FM_Type = "Espaços de trabalho" then iFMType = 7
+		if FM_Type = "Equipamentos eléctricos" then iFMType = 8
+		if FM_Type = "Painéis de distribuição" then iFMType = 9
+		if FM_Type = "Medição Lugares" then iFMType = 10
+		if FM_Type = "Lâmpadas" then iFMType = 11
+		if FM_Type = "Equipamento AVAC" then iFMType = 12
+		if FM_Type = "Instalações Sanitárias" then iFMType = 13
+		if FM_Type = "Fechos" then iFMType = 14
+		if FM_Type = "Armários Embutidos" then iFMType = 15
+		if FM_Type = "Mobiliário" then iFMType = 16
+		if FM_Type = "Tectos" then iFMType = 17
+		if FM_Type = "Pavimentos" then iFMType = 18
+		if FM_Type = "Objectos Exteriores" then iFMType = 19
+		if FM_Type = "Computadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Telefones" then iFMType = 23
+		if FM_Type = "Recipientes" then iFMType = 24
+		if FM_Type = "Outros" then iFMType = 25
+
+	!RUS
+		if FM_Type = "Объекты по умолчанию" then iFMType = 1
+		if FM_Type = "Ист.света по умолчанию" then iFMType = 2
+		if FM_Type = "Люди" then iFMType = 3
+		if FM_Type = "Лифты" then iFMType = 4
+		if FM_Type = "Безопасность и эвакуация" then iFMType = 5
+		if FM_Type = "Лестницы" then iFMType = 6
+		if FM_Type = "Рабочее пространство" then iFMType = 7
+		if FM_Type = "Электрические устройства" then iFMType = 8
+		if FM_Type = "Распределительные щиты" then iFMType = 9
+		if FM_Type = "Измеряемые места" then iFMType = 10
+		if FM_Type = "Лампы" then iFMType = 11
+		if FM_Type = "Источники света" then iFMType = 11
+		if FM_Type = "Механическое оборудование" then iFMType = 12
+		if FM_Type = "Санитария" then iFMType = 13
+		if FM_Type = "Замки" then iFMType = 14
+		if FM_Type = "Встроенные гардеробы" then iFMType = 15
+		if FM_Type = "Гардеробы встроенные" then iFMType = 15
+		if FM_Type = "Мебель" then iFMType = 16
+		if FM_Type = "Потолки" then iFMType = 17
+		if FM_Type = "Полы" then iFMType = 18
+		if FM_Type = "Объекты снаружи" then iFMType = 19
+		if FM_Type = "Компьютеры" then iFMType = 20
+		if FM_Type = "Мониторы" then iFMType = 21
+		if FM_Type = "Программное обеспечение" then iFMType = 22
+		if FM_Type = "Телефоны" then iFMType = 23
+		if FM_Type = "Контейнеры" then iFMType = 24
+		if FM_Type = "Другой" then iFMType = 25
+		if FM_Type = "Другие" then iFMType = 25
+
+	!SPA
+		if FM_Type = "Objetos por Defecto" then iFMType = 1
+		if FM_Type = "Lámparas por Defecto" then iFMType = 2
+		if FM_Type = "Personas" then iFMType = 3
+		if FM_Type = "Ascensores" then iFMType = 4
+		if FM_Type = "Seguridad y Evacuaciones" then iFMType = 5
+		if FM_Type = "Escaleras" then iFMType = 6
+		if FM_Type = "Espacios de Trabajo" then iFMType = 7
+		if FM_Type = "Cuartos Eléctricos" then iFMType = 8
+		if FM_Type = "Paneles de División" then iFMType = 9
+		if FM_Type = "Lugares de Medidas" then iFMType = 10
+		if FM_Type = "Lámparas" then iFMType = 11
+		if FM_Type = "Control de Atmósfera" then iFMType = 12
+		if FM_Type = "Saneamiento" then iFMType = 13
+		if FM_Type = "Cerraduras" then iFMType = 14
+		if FM_Type = "Armarios Empotrados" then iFMType = 15
+		if FM_Type = "Mobiliario" then iFMType = 16
+		if FM_Type = "Falsos Techos" then iFMType = 17
+		if FM_Type = "Suelos" then iFMType = 18
+		if FM_Type = "Objetos de Exterior" then iFMType = 19
+		if FM_Type = "Ordenadores" then iFMType = 20
+		if FM_Type = "Monitores" then iFMType = 21
+		if FM_Type = "Software" then iFMType = 22
+		if FM_Type = "Teléfonos" then iFMType = 23
+		if FM_Type = "Contenedores" then iFMType = 24
+		if FM_Type = "Otros" then iFMType = 25
+
+	!SWE
+		if FM_Type = "Standardelement" then iFMType = 1
+		if FM_Type = "Standardarmatur" then iFMType = 2
+		if FM_Type = "Människor" then iFMType = 3
+		if FM_Type = "Hissar" then iFMType = 4
+		if FM_Type = "Säkerhet & Utrymning" then iFMType = 5
+		if FM_Type = "Trappor" then iFMType = 6
+		if FM_Type = "Arbetsutrymmen" then iFMType = 7
+		if FM_Type = "Elektrisk Utrustning" then iFMType = 8
+		if FM_Type = "Distributionspaneler" then iFMType = 9
+		if FM_Type = "Måttenhetsuppgifter" then iFMType = 10
+		if FM_Type = "Armatur" then iFMType = 11
+		if FM_Type = "VVS-utrustning" then iFMType = 12
+		if FM_Type = "Sanitärt" then iFMType = 13
+		if FM_Type = "Lås" then iFMType = 14
+		if FM_Type = "Inbyggda Utrymmen" then iFMType = 15
+		if FM_Type = "Möbler" then iFMType = 16
+		if FM_Type = "Innertak" then iFMType = 17
+		if FM_Type = "Golv" then iFMType = 18
+		if FM_Type = "Element för Utomhusbruk" then iFMType = 19
+		if FM_Type = "Datorer" then iFMType = 20
+		if FM_Type = "Bildskärmar" then iFMType = 21
+		if FM_Type = "Mjukvaror" then iFMType = 22
+		if FM_Type = "Telefoner" then iFMType = 23
+		if FM_Type = "Behållare" then iFMType = 24
+		if FM_Type = "Annat" then iFMType = 25
+
+	!TAI
+		if FM_Type = "默認對象" then iFMType = 1
+		if FM_Type = "默認燈" then iFMType = 2
+		if FM_Type = "人" then iFMType = 3
+		if FM_Type = "電梯" then iFMType = 4
+		if FM_Type = "保安與逃生" then iFMType = 5
+		if FM_Type = "樓梯" then iFMType = 6
+		if FM_Type = "工作空間" then iFMType = 7
+		if FM_Type = "電氣設備" then iFMType = 8
+		if FM_Type = "分佈面板" then iFMType = 9
+		if FM_Type = "測量地點" then iFMType = 10
+		if FM_Type = "燈" then iFMType = 11
+		if FM_Type = "HVAC設備" then iFMType = 12
+		if FM_Type = "衛生設施" then iFMType = 13
+		if FM_Type = "鎖" then iFMType = 14
+		if FM_Type = "內置衣櫥" then iFMType = 15
+		if FM_Type = "傢具" then iFMType = 16
+		if FM_Type = "天花板" then iFMType = 17
+		if FM_Type = "地板" then iFMType = 18
+		if FM_Type = "室外對象" then iFMType = 19
+		if FM_Type = "計算機" then iFMType = 20
+		if FM_Type = "監視器" then iFMType = 21
+		if FM_Type = "軟件" then iFMType = 22
+		if FM_Type = "電話" then iFMType = 23
+		if FM_Type = "容器" then iFMType = 24
+		if FM_Type = "其它" then iFMType = 25
+
+	!TUR
+		if FM_Type = "Geçerli Objeler" then iFMType = 1
+		if FM_Type = "Geçerli Aydınlatma Elemanları" then iFMType = 2
+		if FM_Type = "İnsanlar" then iFMType = 3
+		if FM_Type = "Asansörler" then iFMType = 4
+		if FM_Type = "Güvenlik ve Çıkışlar" then iFMType = 5
+		if FM_Type = "Merdivenler" then iFMType = 6
+		if FM_Type = "Çalışma Alanları" then iFMType = 7
+		if FM_Type = "Elektrik Hizmetleri" then iFMType = 8
+		if FM_Type = "Dağıtım Levhalleri" then iFMType = 9
+		if FM_Type = "Dağıtım Panelleri" then iFMType = 9
+		if FM_Type = "Mekan Ölçme" then iFMType = 10
+		if FM_Type = "Aydınlatma Elemanları" then iFMType = 11
+		if FM_Type = "HVAC Ekipmanı" then iFMType = 12
+		if FM_Type = "Banyo-Wc" then iFMType = 13
+		if FM_Type = "Kilitler" then iFMType = 14
+		if FM_Type = "Ankastre Dolaplar" then iFMType = 15
+		if FM_Type = "Mobilya" then iFMType = 16
+		if FM_Type = "Tavanlar" then iFMType = 17
+		if FM_Type = "Zeminler" then iFMType = 18
+		if FM_Type = "Dış Mekan Objeleri" then iFMType = 19
+		if FM_Type = "Bilgisayarlar" then iFMType = 20
+		if FM_Type = "Monitörler" then iFMType = 21
+		if FM_Type = "Yazılım" then iFMType = 22
+		if FM_Type = "Telefonlar" then iFMType = 23
+		if FM_Type = "Konteynerler" then iFMType = 24
+		if FM_Type = "Diğerleri" then iFMType = 25
+		if FM_Type = "Diğer" then iFMType = 25
+
+		parameters iFMType = iFMType
+
+		actualGuid = _endID
+	endif
+return
+
+
+]]></Script_FWM>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_BWM SectVersion="20" SectionFlags="0" SubIdent="0"><![CDATA[
+
+
+targetGUID = TO_GUID
+
+! ==============================================================================
+! Subroutines
+! ==============================================================================
+
+gosub "fmtypes_bwm"
+
+gosub "Knob_pos_BWM"
+
+! ==============================================================================
+! Set Migration GUID
+! ==============================================================================
+
+setmigrationguid targetGUID
+
+! ==============================================================================
+end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! end ! en
+! ==============================================================================
+
+
+
+! ==============================================================================
+! --- Correcting the Knob position
+! ==============================================================================
+"Knob_pos_BWM":
+    if targetGUID # "" then
+		if gs_knob_type_m = 4 then
+			_knob_size=0.2 
+			knob_pl[1][1] = knob_pl[1][1] +_knob_size/2
+			knob_pl[2][1] = knob_pl[2][1] +_knob_size/2
+			parameters knob_pl = knob_pl
+		endif
+    endif
+return
+
+! ==============================================================================
+! Change string parameter to integer
+! ==============================================================================
+"fmtypes_bwm":
+	if targetGUID # "" then
+		if iFMType = 1 then FM_Type = `Default Objects`
+		if iFMType = 2 then FM_Type = `Default Lamps`
+		if iFMType = 3 then FM_Type = `People`
+		if iFMType = 4 then FM_Type = `Elevators`
+		if iFMType = 5 then FM_Type = `Security and Escapes`
+		if iFMType = 6 then FM_Type = `Stairs`
+		if iFMType = 7 then FM_Type = `Work Spaces`
+		if iFMType = 8 then FM_Type = `Electric Facilities`
+		if iFMType = 9 then FM_Type = `Distribution Panels`
+		if iFMType = 10 then FM_Type = `Measuring Places`
+		if iFMType = 11 then FM_Type = `Lamps`
+		if iFMType = 12 then FM_Type = `HVAC Equipment`
+		if iFMType = 13 then FM_Type = `Sanitation`
+		if iFMType = 14 then FM_Type = `Locks`
+		if iFMType = 15 then FM_Type = `Built-in Wardrobes`
+		if iFMType = 16 then FM_Type = `Furniture`
+		if iFMType = 17 then FM_Type = `Ceilings`
+		if iFMType = 18 then FM_Type = `Floors`
+		if iFMType = 19 then FM_Type = `Outdoor Objects`
+		if iFMType = 20 then FM_Type = `Computers`
+		if iFMType = 21 then FM_Type = `Monitors`
+		if iFMType = 22 then FM_Type = `Software`
+		if iFMType = 23 then FM_Type = `Phones`
+		if iFMType = 24 then FM_Type = `Containers`
+		if iFMType = 25 then FM_Type = `Others`
+		parameters FM_Type = FM_Type
+
+	endif
+return
+
+
+]]></Script_BWM>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0"><Author>BIMobject</Author><License><Type>CC BY-ND</Type><Version>3.0</Version></License></Copyright><ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Cabinet Width"]]></Description>
+			<Value>0.6</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Cabinet Depth"]]></Description>
+			<Value>0.47</Value>
+		</Length>
+		<Length Name="ZZYZX">
+			<Description><![CDATA["Cabinet Height"]]></Description>
+			<Value>0.78</Value>
+		</Length>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		<Length Name="ac_bottomlevel">
+			<Description><![CDATA["Bottom Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		<Length Name="ac_toplevel">
+			<Description><![CDATA["Top Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		<String Name="gs_detlevel_3D">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Value><![CDATA["Detailed"]]></Value>
+		</String>
+		<Integer Name="gs_detlevel_3D_m">
+			<Description><![CDATA["3D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>2</Value>
+		</Integer>
+		<Boolean Name="bDouble">
+			<Description><![CDATA["Two-sided"]]></Description>
+			<Value>0</Value>
+		</Boolean>
+		<Boolean Name="bTable">
+			<Description><![CDATA["Overbed Table"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+		<Length Name="tableHeight">
+			<Description><![CDATA["Overbed Table Height"]]></Description>
+			<Value>1.01</Value>
+		</Length>
+		<Boolean Name="bDrawer">
+			<Description><![CDATA["Drawer"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+		<Boolean Name="bDoor">
+			<Description><![CDATA["Door"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+		<Integer Name="iShelv">
+			<Description><![CDATA["Number of Shelves"]]></Description>
+			<Value>2</Value>
+		</Integer>
+		<String Name="gs_knob_type">
+			<Description><![CDATA["Knob Style"]]></Description>
+			<Value><![CDATA["Style 6"]]></Value>
+		</String>
+		<Integer Name="gs_knob_type_m">
+			<Description><![CDATA["Knob Style"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>6</Value>
+		</Integer>
+		<Length Name="knob_pl">
+			<Description><![CDATA["Knob Position"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="2" SecondDimension="2">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="1" Row="2">0</AVal>
+				<AVal Column="2" Row="2">0</AVal>
+			</ArrayValues>
+		</Length>
+		<Boolean Name="bBottle">
+			<Description><![CDATA["Bottle Rack"]]></Description>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- gs_2D_representation: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_2D_representation">
+			<Description><![CDATA["2D Representation"]]></Description>
+		</Title>
+		<String Name="gs_detlevel_2D">
+			<Description><![CDATA["2D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Simple"]]></Value>
+		</String>
+		<Integer Name="gs_detlevel_2D_m">
+			<Description><![CDATA["2D Detail Level"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<PenColor Name="gs_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</PenColor>
+		<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_fill_pen">
+			<Description><![CDATA["Fill Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+		<PenColor Name="gs_back_pen">
+			<Description><![CDATA["Fill Background Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>19</Value>
+		</PenColor>
+
+		<!-- gs_min_space: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_min_space">
+			<Description><![CDATA["Minimal Space"]]></Description>
+		</Title>
+		<Length Name="MSFront">
+			<Description><![CDATA["Minimal Space in Front"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0.6</Value>
+		</Length>
+
+		<!-- Medical_sp0: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="Medical_sp0">
+			<Description><![CDATA["3D Representation"]]></Description>
+		</Title>
+		<Integer Name="gs_resol">
+			<Description><![CDATA["Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>12</Value>
+		</Integer>
+		<Boolean Name="gs_shadow">
+			<Description><![CDATA["Shadow"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+
+		<!-- gs_material: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_material">
+			<Description><![CDATA["Surfaces"]]></Description>
+		</Title>
+		<Material Name="gs_cabinet_mat">
+			<Description><![CDATA["Cabinet"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>66</Value>
+		</Material>
+		<Material Name="gs_table_mat">
+			<Description><![CDATA["Overbed Table"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>66</Value>
+		</Material>
+		<Material Name="gs_drawer_mat">
+			<Description><![CDATA["Drawer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>100</Value>
+		</Material>
+		<Material Name="gs_door_mat">
+			<Description><![CDATA["Door"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>100</Value>
+		</Material>
+		<Material Name="gs_knob_mat">
+			<Description><![CDATA["Knob"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Material>
+		<Material Name="gs_leg_mat">
+			<Description><![CDATA["Leg"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>66</Value>
+		</Material>
+		<Material Name="gs_bottlerack_mat">
+			<Description><![CDATA["Bottle Rack"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>66</Value>
+		</Material>
+		<Material Name="gs_wheel_mat">
+			<Description><![CDATA["Wheel"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>49</Value>
+		</Material>
+		<String Name="LibraryLangCode">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value><![CDATA["INT"]]></Value>
+		</String>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+		<RealNum Name="gs_list_cost">
+			<Description><![CDATA["Cost"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="gs_list_manufacturer">
+			<Description><![CDATA["Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_note">
+			<Description><![CDATA["Note/Remarks"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_location">
+			<Description><![CDATA["Location"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_accessories">
+			<Description><![CDATA["Accessories"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_Type">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["Furniture"]]></Value>
+		</String>
+		<Integer Name="iFMType">
+			<Description><![CDATA["Group Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>16</Value>
+		</Integer>
+		<String Name="FM_InventoryNumber">
+			<Description><![CDATA["Inventory Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_SerialNumber">
+			<Description><![CDATA["Serial Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="FM_ProductionYear">
+			<Description><![CDATA["Production Year"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<RealNum Name="FM_ObjectWeight">
+			<Description><![CDATA["Object Weight"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<String Name="FM_ObjectWeightUnit">
+			<Description><![CDATA["Object Weight Unit"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["kg"]]></Value>
+		</String>
+		<String Name="gs_list_custom1">
+			<Description><![CDATA["User Defined 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom2">
+			<Description><![CDATA["User Defined 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom3">
+			<Description><![CDATA["User Defined 3"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom4">
+			<Description><![CDATA["User Defined 4"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_list_custom5">
+			<Description><![CDATA["User Defined 5"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+
+		<!-- gs_onorm_Title: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_onorm_Title">
+			<Description><![CDATA["ONORM Listing Parameters"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		<String Name="gs_onorm_dimensions">
+			<Description><![CDATA["Width/Depth/Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_manufacturer">
+			<Description><![CDATA["ONORM Manufacturer"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight_value">
+			<Description><![CDATA["Base Height Value"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_baseheight">
+			<Description><![CDATA["Onorm Base Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_assemblydate">
+			<Description><![CDATA["Assembly Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext1">
+			<Description><![CDATA["Additional Information 1"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_customtext2">
+			<Description><![CDATA["Additional Information 2"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_aks">
+			<Description><![CDATA["AKS Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_product">
+			<Description><![CDATA["Product Name"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_leistungbuch">
+			<Description><![CDATA["Collection of Specifications ID"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_description">
+			<Description><![CDATA["ONORM Description"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_number">
+			<Description><![CDATA["Onorm Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_id">
+			<Description><![CDATA["ID Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_admission">
+			<Description><![CDATA["Admission Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_modification">
+			<Description><![CDATA["Modification Date"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		<String Name="gs_onorm_tozonenumber">
+			<Description><![CDATA["To Zone Number"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+	</Parameters>
+</ParamSection>
+</Symbol>
