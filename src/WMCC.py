@@ -1975,6 +1975,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
 
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
     logging.debug(r"x2l Command being executed...\n%s" % x2lCommand)
+    print(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:
         logging.debug("ac command:")
@@ -1998,6 +1999,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
+        print(f"Success: {_out} (error: {_err}) ")
 
         if "rror" in str(_out):
             logging.error(f"While compiling: {_out}")
