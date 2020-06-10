@@ -45,7 +45,6 @@ with open(APP_CONFIG, "r") as ac:
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
     CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
-    # TEST_CATEGORIES             = appJSON["TEST_CATEGORIES"]    # categories' name not for real use but for testing
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,

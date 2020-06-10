@@ -23,6 +23,7 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
     for cat in categoryData:
         if TEST == (cat in ("tests", )):
             logging.info(f"Building category: {cat}")
+            print(f"Building category: {cat}")
             data["category"] = cat
 
             category = categoryData[cat]
