@@ -15,7 +15,7 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
     categoryData = json.load(cD)
 
     for cat in categoryData:
-        if cat not in ("tests", ):
+        if cat in ("tests", ):
             logging.info(f"Building category: {cat}")
             data["category"] = cat
 
