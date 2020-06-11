@@ -36,13 +36,16 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
                 data['path'] = mainVersion["macro_folders"]
 
                 for macroFolder in mainVersion["macro_folders"]:
+                    _macroFolderPath = os.path.join(CONTENT_DIR_NAME, macroFolder)
                     if TEST:
-                        shutil.copytree(os.path.join(CONTENT_DIR_NAME, macroFolder), os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)) )
+                        shutil.copytree(_macroFolderPath, os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)))
 
-                    shutil.rmtree(os.path.join(CONTENT_DIR_NAME, macroFolder))
+                    shutil.rmtree(_macroFolderPath)
+                    print(f"Removed macro folder: {_macroFolderPath}")
 
                     if TEST:
-                        shutil.move(os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)), os.path.join(CONTENT_DIR_NAME, macroFolder))
+                        shutil.move(os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)),
+                                    _macroFolderPath)
                 result = WMCC.buildMacroSet(data)
         else:
             print(f"Not built category: {cat}")
