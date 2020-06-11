@@ -7,10 +7,8 @@
       "materialParameters": [],
       "materials": [],
       "ARCHICAD_template": {
-		"minor_version": "20200529",
         "category": "tests",
         "main_macroset_version": "19",
-		"current_minor_version": "20200501",
         "source_file": "test_placeable",
         "parameters": [
           {

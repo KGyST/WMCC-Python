@@ -1665,8 +1665,6 @@ def createBrandedProduct(inData):
     os.makedirs(tempGDLDirName)
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
-    minor_version = datetime.date.today().strftime("%Y%m%d")
-
     with open(CATEGORY_DATA_JSON, "r") as categoryData:
         settingsJSON = json.load(categoryData)
         AC_templateData = inData["template"]["ARCHICAD_template"]
@@ -1675,6 +1673,7 @@ def createBrandedProduct(inData):
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
         imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
+        minor_version = subCategory["current_minor_version"]
         if "minor_version" in AC_templateData:
             minor_version = AC_templateData["minor_version"]
 
@@ -1825,13 +1824,7 @@ def createBrandedProduct(inData):
     _paceableName = fileName + ".lcf"
     _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + macro_lib_version + ".lcf" if int(macro_lib_version) > 0 else None
 
-    # if category in TEST_CATEGORIES:
-    #     _macrosetName = None
-
     returnDict =  createResponeFiles(_paceableName, _macrosetName, )
-
-    # if category in TEST_CATEGORIES:
-    #     returnDict.update({"md5sums": {dest_dict[key].name.upper():dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
