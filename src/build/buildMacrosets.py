@@ -4,7 +4,7 @@ import json
 import datetime
 import logging
 
-TEST  = bool(os.environ['TEST']) if "TEST" in os.environ else False
+TEST  = bool(int(os.environ['TEST'])) if "TEST" in os.environ else False
 
 if "CONTENT_DIR_NAME" in os.environ:
     CONTENT_DIR_NAME = os.environ["CONTENT_DIR_NAME"]
