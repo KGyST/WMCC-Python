@@ -144,15 +144,15 @@ class TestCase_BigBang(unittest.TestCase):
                                 originalRelPath = relPath
                             originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
                             try:
-                                try:
+                                # try:
                                     with open(originalTestFile, "rb") as originalTest:
                                         with open(os.path.join(root, receivedTestFile), "rb") as receivedTest:
                                             inObj.assertEqual(originalTest.read(), receivedTest.read())
-                                except AssertionError:
-                                    "Newlines don't stop us"
-                                    with open(originalTestFile, "r") as originalTest:
-                                        with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
-                                                inObj.assertEqual(originalTest.read(), receivedTest.read())
+                                # except AssertionError:
+                                #     "Newlines don't stop us"
+                                #     with open(originalTestFile, "r") as originalTest:
+                                #         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
+                                #                 inObj.assertEqual(originalTest.read(), receivedTest.read())
 
                             except (AssertionError, FileNotFoundError) as a:
                                 targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folder, originalRelPath)
