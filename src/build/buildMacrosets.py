@@ -33,5 +33,12 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
                 data["minor_version"] = datetime.date.today().strftime("%Y%m%d")
                 data['path'] = mainVersion["macro_folders"]
 
-            result = WMCC.buildMacroSet(data)
+                for macroFolder in mainVersion["macro_folders"]:
+                    if not TEST:
+                        os.rmdir(os.path.join(CONTENT_DIR_NAME, macroFolder))
+                    else:
+                        print(f"macroFolder absolute path: {os.path.join(CONTENT_DIR_NAME, macroFolder)}")
+                result = WMCC.buildMacroSet(data)
+        else:
+            print(f"Not built category: {cat}")
 
