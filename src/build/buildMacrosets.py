@@ -3,8 +3,10 @@ import os
 import json
 import datetime
 import logging
+import shutil
 
 TEST  = bool(int(os.environ['TEST'])) if "TEST" in os.environ else False
+TEST_CATS = ["tests", ]
 
 if "CONTENT_DIR_NAME" in os.environ:
     CONTENT_DIR_NAME = os.environ["CONTENT_DIR_NAME"]
@@ -21,7 +23,7 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
     categoryData = json.load(cD)
 
     for cat in categoryData:
-        if TEST == (cat in ("tests", )):
+        if TEST == (cat in TEST_CATS):
             logging.info(f"Building category: {cat}")
             print(f"Building category: {cat}")
             data["category"] = cat
@@ -34,10 +36,13 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
                 data['path'] = mainVersion["macro_folders"]
 
                 for macroFolder in mainVersion["macro_folders"]:
-                    if not TEST:
-                        os.rmdir(os.path.join(CONTENT_DIR_NAME, macroFolder))
-                    else:
-                        print(f"macroFolder absolute path: {os.path.join(CONTENT_DIR_NAME, macroFolder)}")
+                    if TEST:
+                        shutil.copytree(os.path.join(CONTENT_DIR_NAME, macroFolder), os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)) )
+
+                    shutil.rmtree(os.path.join(CONTENT_DIR_NAME, macroFolder))
+
+                    if TEST:
+                        shutil.move(os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)), os.path.join(CONTENT_DIR_NAME, macroFolder))
                 result = WMCC.buildMacroSet(data)
         else:
             print(f"Not built category: {cat}")
