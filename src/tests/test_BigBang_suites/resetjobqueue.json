@@ -1,5 +1,5 @@
 {
-  "description": "resetjobqueue: tests",
+  "description": "Resetjobqueue: tests",
   "endpoint": "/resetjobqueue",
   "request": {
   },

@@ -1,5 +1,5 @@
 {
-  "description": "createmacroset: tests",
+  "description": "Createmacroset: a basic test",
   "endpoint": "/createmacroset",
   "request": {
     "category": "tests",

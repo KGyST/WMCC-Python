@@ -7,6 +7,7 @@ import shutil
 
 TEST  = bool(int(os.environ['TEST'])) if "TEST" in os.environ else False
 TEST_CATS = ["tests", ]
+CLEANUP = False
 
 if "CONTENT_DIR_NAME" in os.environ:
     CONTENT_DIR_NAME = os.environ["CONTENT_DIR_NAME"]
@@ -42,8 +43,9 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
                     if TEST:
                         shutil.copytree(_macroFolderPath, os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)))
 
-                    shutil.rmtree(_macroFolderPath)
-                    print(f"Removed macro folder: {_macroFolderPath}")
+                    if CLEANUP:
+                        shutil.rmtree(_macroFolderPath)
+                        print(f"Removed macro folder: {_macroFolderPath}")
 
                     if TEST:
                         shutil.move(os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)),

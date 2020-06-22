@@ -1,5 +1,5 @@
 {
-  "description": "Placeable: logo",
+  "description": "Placeable: with a logo",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",

@@ -1,5 +1,5 @@
 {
-  "description": "create basic placeable: tests",
+  "description": "Placeable: create basic",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",

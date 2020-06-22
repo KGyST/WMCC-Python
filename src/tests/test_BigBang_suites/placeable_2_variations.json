@@ -1,5 +1,5 @@
 {
-  "description": "2 placeables with generic translations using parameters",
+  "description": "Placeables: 2 variations with generic translations using parameters",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",

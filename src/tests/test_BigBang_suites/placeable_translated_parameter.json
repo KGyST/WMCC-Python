@@ -1,5 +1,5 @@
 {
-  "description": "Placeable: Translations overwriting translations.json",
+  "description": "Placeable: Translated parameters",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",

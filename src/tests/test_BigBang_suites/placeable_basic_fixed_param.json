@@ -1,5 +1,5 @@
 {
-  "description": "create_basic_placeable_fixed_param: static param overwriting with iVersionNumber array writing",
+  "description": "Placeable: static param overwriting with iVersionNumber array writing",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",

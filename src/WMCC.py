@@ -19,6 +19,8 @@ from PIL import Image
 import io
 from time import sleep
 import hashlib
+from werkzeug.exceptions import HTTPException
+from azure.servicebus import ServiceBusClient, QueueClient, Message
 
 #------------------ External modules------------------
 
@@ -30,7 +32,7 @@ from lxml import etree
 
 
 OUTPUT_XML                  = True      # To retain xmls
-_SRC                        = r".\src"
+_SRC                        = r"..\src"
 APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 
 with open(APP_CONFIG, "r") as ac:
@@ -52,7 +54,7 @@ with open(APP_CONFIG, "r") as ac:
                     'info':     20,
                     'warning':  30,
                     'error':    40,
-                    'critical':    50, }[LOGLEVEL]
+                    'critical': 50, }[LOGLEVEL]
 
 ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
 TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
@@ -85,6 +87,10 @@ SCRIPT_NAMES_LIST = ["Script_1D",
                      "Script_FWM",
                      "Script_BWM",]
 
+#Macros' names that are burnt in .apx files and thus can't be renamed
+BURNT_IN_MACRO_NAMES = ["Resize_A_B_ZZYZX",
+                        "ui_tabcontrol",]
+
 PAR_UNKNOWN     = 0
 PAR_LENGTH      = 1
 PAR_ANGLE       = 2
@@ -99,6 +105,23 @@ PAR_PEN         = 10
 PAR_SEPARATOR   = 11
 PAR_TITLE       = 12
 PAR_COMMENT     = 13
+
+PAR_TYPELIST = [
+    "PAR_UNKNOWN",
+    "PAR_LENGTH",
+    "PAR_ANGLE",
+    "PAR_REAL",
+    "PAR_INT",
+    "PAR_BOOL",
+    "PAR_STRING",
+    "PAR_MATERIAL",
+    "PAR_LINETYPE",
+    "PAR_FILL",
+    "PAR_PEN",
+    "PAR_SEPARATOR",
+    "PAR_TITLE",
+    "PAR_COMMENT",
+    ]
 
 PARFLG_CHILD    = 1
 PARFLG_BOLDNAME = 2
@@ -575,6 +598,9 @@ class ParamSection:
                      inValue=inParValue,
                      inAVals=arrayValues)
 
+    def returnParamsAsDict(self):
+        return self.__paramDict
+
 
 class ResizeableGDLDict(dict):
     """
@@ -710,7 +736,8 @@ class Param(object):
 
     def __setitem__(self, key, value):
         if key == 0:
-            logging.error(f"0 indexing in {self.name}, NOT done")
+            raise WMCCException(WMCCException.ERR_ARRAY_ZERO_INDEXING, additional_data={"variableName": self.name})
+            # logging.error(f"0 indexing in {self.name}, NOT done")
             return
         if isinstance(value, list):
             self._aVals[key] = self.__toFormat(value)
@@ -1096,7 +1123,10 @@ class SourceXML (XMLFile, SourceFile):
         self.parentSubTypes = []
         self.scripts        = {}
 
-        mroot = etree.parse(self.fullPath, etree.XMLParser(strip_cdata=False))
+        try:
+            mroot = etree.parse(self.fullPath, etree.XMLParser(strip_cdata=False))
+        except OSError:
+            raise WMCCException(WMCCException.ERR_NONEXISTING_OBJECT)
         self.iVersion = int(mroot.getroot().attrib['Version'])
 
         global ID
@@ -1267,6 +1297,44 @@ class StrippedDestXML:
 
 # -------------------/data classes -------------------------------------------------------------------------------------
 
+class WMCCException(HTTPException):
+    #FIXME constants to be reorganized
+    """
+     Exception for handling error messages.
+    """
+    ERR_NO_ERROR                = 0 # Just technically
+    ERR_NONEXISTING_CATEGORY    = 1
+    ERR_NONEXISTING_VERSION     = 2
+    ERR_NONEXISTING_OBJECT      = 3
+    ERR_GSM_COMPILATION_ERROR   = 4
+    ERR_ARRAY_ZERO_INDEXING     = 5
+
+    with open(os.path.join(_SRC, "error_codes.json"), "r") as error_codes:
+        _j = json.load(error_codes)
+
+        error_codes_dict = {int(k): v for k, v in _j.items()}
+
+    def __init__(self,
+                 inErrorCode    = 0,
+                 inErrorMessage = "", **kwargs):
+        super().__init__()
+
+        self.description = {}
+        self.description["code"] = inErrorCode
+
+        if "description" in kwargs:
+            self.description = {"description": kwargs["description"]}
+
+        self.description["error_message"] = inErrorMessage if inErrorMessage else WMCCException.error_codes_dict[inErrorCode]
+
+        self.description["additional_data"] = kwargs["additional_data"] if "additional_data" in kwargs else None
+
+        #FIXME
+        self.logLevel = kwargs["logLevel"] if "logLevel" in kwargs else logging.CRITICAL
+
+        logging.critical(self.description)
+
+
 def resetAll():
     dest_sourcenames.clear()
     dest_guids.clear()
@@ -1401,6 +1469,9 @@ def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
 
     destItem = addFile(inFile, **kwargs)
 
+    if not destItem:
+        raise WMCCException(WMCCException.ERR_NONEXISTING_OBJECT)
+
     return destItem
 
 
@@ -1472,12 +1543,29 @@ def unitConvert(inParameterName,
 
 
 def extractParams(inData):
-    logging.debug("extractParams")
     global projectPath
-    projectPath = inData["path"] if "path" in inData else ""
-    sf = SourceXML(inData["fileName"])
-    return {"result": "not implemented yet"}
-    # return sf.parameters.returnParamsAsDict()
+
+    logging.debug("extractParams")
+
+    category = inData["category"]
+    main_version = inData["main_version"]
+
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
+        try:
+            settingsJSON = json.load(categoryData)
+            subCategory = settingsJSON[category][main_version]
+            projectPath = subCategory["path"]
+        except KeyError:
+            if category     not in settingsJSON:            raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY)
+            if main_version not in settingsJSON[category]:  raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION)
+
+    params = SourceXML(os.path.join(CONTENT_DIR_NAME, projectPath, inData["object_path"])).parameters.returnParamsAsDict()
+    return {p: {
+        "name": params[p].name,
+        "type": PAR_TYPELIST[params[p].iType],
+        "value": params[p].value,
+        "description": params[p].desc.strip('\"'),
+                } for p in params.keys()}
 
 
 def createMasterGDL(**kwargs):
@@ -1533,6 +1621,7 @@ def buildMacroSet(inData):
     # --------------------------------------------------------
 
     for rootFolder in subCategory['macro_folders']:
+        # source_image_dir_name
         scanFolders(os.path.join(CONTENT_DIR_NAME, rootFolder), source_xml_dir_name, library_images=False)
 
         for folder, subFolderS, fileS in os.walk(os.path.join(CONTENT_DIR_NAME, rootFolder)):
@@ -1665,17 +1754,21 @@ def createBrandedProduct(inData):
     os.makedirs(tempGDLDirName)
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
-    with open(CATEGORY_DATA_JSON, "r") as categoryData:
-        settingsJSON = json.load(categoryData)
-        AC_templateData = inData["template"]["ARCHICAD_template"]
-        main_version = AC_templateData["main_macroset_version"]
-        category = AC_templateData["category"]
-        subCategory = settingsJSON[category][main_version]
-        projectPath = subCategory["path"]
-        imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
-        minor_version = subCategory["current_minor_version"]
-        if "minor_version" in AC_templateData:
-            minor_version = AC_templateData["minor_version"]
+    try:
+        with open(CATEGORY_DATA_JSON, "r") as categoryData:
+            settingsJSON = json.load(categoryData)
+            AC_templateData = inData["template"]["ARCHICAD_template"]
+            main_version = AC_templateData["main_macroset_version"]
+            category = AC_templateData["category"]
+            subCategory = settingsJSON[category][main_version]
+            projectPath = subCategory["path"]
+            imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
+            minor_version = subCategory["current_minor_version"]
+            if "minor_version" in AC_templateData:
+                minor_version = AC_templateData["minor_version"]
+    except KeyError:
+        if category not in settingsJSON:                raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY)
+        if main_version not in settingsJSON[category]:  raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION)
 
     source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
@@ -1737,12 +1830,24 @@ def createBrandedProduct(inData):
         placeableS = []
 
         try:
-            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
+            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read(), classes=(StrippedSourceXML, StrippedDestXML))
             macro_lib_version = inputJson["minor_version"]
             _dest_dict = inputJson["objects"]
         except FileNotFoundError:
             macro_lib_version = -1
             _dest_dict = {}
+
+        #Forrest, why did this happen?
+        for k, v in _dest_dict.items():
+            if isinstance(v, dict):
+                v = StrippedDestXML(v['name'],
+                                    v['guid'],
+                                    v['relPath'],
+                                    v['md5'],
+                                    StrippedSourceXML(v['sourceFile']['name'],
+                                                      v['sourceFile']['fullPath'],
+                                                      v['sourceFile']['guid'], ))
+                _dest_dict[k] = v
 
         dest_dict.update(_dest_dict)
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
@@ -1988,12 +2093,16 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     logging.debug("x2l")
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
         _out, _err = proc.communicate()
-        logging.info(f"Success: {_out} (error: {_err}) ")
-        print(f"Success: {_out} (error: {_err}) ")
 
         if "rror" in str(_out):
-            logging.error(f"While compiling: {_out}")
+            #FIXME bullshit errors
+            # raise WMCCException(WMCCException.ERR_GSM_COMPILATION_ERROR, additional_data={"x2lCommand": x2lCommand,
+            #                                                                           "std_out": _out,
+            #                                                                           "std_err": _err})
+            pass
         else:
+            logging.info(f"Success: {_out} (error: {_err}) ")
+            print(f"Success: {_out} (error: {_err}) ")
             logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
     # cleanup ops
@@ -2040,7 +2149,8 @@ def processOneXML(inData):
             m.find(dest.sourceFile.ID).text = d.guid
             _calledMacroSet.add(d.name.upper())
         except KeyError:
-            if not os.path.exists(os.path.join(CONTENT_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")):
+            if not os.path.exists(os.path.join(CONTENT_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")) and \
+                    key not in BURNT_IN_MACRO_NAMES:
                 if not MULTIPROCESS:
                     logging.warning("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
 
@@ -2049,16 +2159,17 @@ def processOneXML(inData):
         section = mdp.find(sect)
         if section is not None:
             t = section.text
+            tUpper = section.text.upper()
             for dI in _calledMacroSet:
                 t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
-                # t = ireplace(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t)
 
             for pr in sorted(pict_dict.keys(), key=lambda x: -len(x)):
                 # Replacing images
                 fromRE = pict_dict[pr].sourceFile.fileNameWithOutExt
-                if family_name:
-                    fromRE += '(?!' + family_name + ')'
-                t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+                if fromRE.upper() in tUpper:
+                    if family_name:
+                        fromRE += '(?!' + family_name + ')'
+                    t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
             section.text = etree.CDATA(t)
 
     if dest.bPlaceable:
@@ -2137,112 +2248,89 @@ def processOneXML(inData):
 
 # ---------------------Job queue--------------------
 
+connectionstring = 'Endpoint=sb://sb-wmmc-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PpeIClSmS6S615ul5wv0Nos6+HM2SuJOcbmvbb5afRA='
+SERVICEBUS_QUEUE_NAME = "taskqueue_local"
 
 def enQueueJob(inEndPoint, inData, inPID):
-    jobQueue = {
-        "isJobActive": False,
-        "jobList": []}
+    queue_client = QueueClient.from_connection_string(connectionstring, SERVICEBUS_QUEUE_NAME)
+
+    # jobQueue = {
+    #     "isJobActive": False,
+    #     "jobList": [],
+    #     "worker_pid": 0}
 
     jobData = {"endPoint":  inEndPoint,
                "data":      inData,
                "PID":       inPID}
 
-    if os.path.exists(JOBDATA_PATH):
-        while not os.access(JOBDATA_PATH, os.R_OK):
-            sleep(1)
+    queue_client.send(Message(json.dumps(jobData)))
 
-        jobFile = open(JOBDATA_PATH, "r")
-        jobQueue = json.load(jobFile)
-        jobFile.close()
-
-    jobQueue["jobList"].append(jobData)
-
-    if os.path.exists(JOBDATA_PATH):
-        while not os.access(JOBDATA_PATH, os.W_OK):
-            sleep(1)
-
-    with open(JOBDATA_PATH, "w") as jobFile:
-        json.dump(jobQueue, jobFile, indent=4)
-
-    if not jobQueue["isJobActive"]:
-        deQueueJob()
-    else:
-        logging.debug("A deQueue is ACTIVE")
+    # if not isWorkerRunning():
+    #     dQ = mp.Process(target=deQueueJob)
+    #     dQ.start()
+    #     while not os.access(JOBDATA_PATH, os.R_OK):
+    #         sleep(1)
+    #
+    #     jobQueue = json.load(open(JOBDATA_PATH, "r"))
+    #
+    #     jobQueue["worker_pid"] = dQ.pid
+    #
+    #     with open(JOBDATA_PATH, "w") as resultFile:
+    #         json.dump(jobQueue, resultFile, indent=4)
+    #     return dQ
+    # else:
+    #     logging.debug("A deQueue is ACTIVE")
 
 
 def deQueueJob():
-    result = None
+    queue_client = QueueClient.from_connection_string(connectionstring, SERVICEBUS_QUEUE_NAME)
 
-    if not checkIfReady():
-        # Another process must be busy
-        return
+    with queue_client.get_receiver() as queue_receiver:
+        message = queue_receiver.next()
 
-    jobFile = open(JOBDATA_PATH, "r")
-    jobQueue = json.load(jobFile)
+        while True:
+            job = json.loads(str(message))
 
-    jobList = jobQueue["jobList"]
+            logging.debug(f"**** Job started: {job['PID']} ****")
 
-    if jobList and not jobQueue["isJobActive"]:
-        job = jobList[0]
-        jobQueue["jobList"] = jobList[1:]
-        jobQueue["isJobActive"] = True
-        jobQueue["activeJobPID"] = job['PID']
-        logging.debug(f"Job started: {job['PID']}")
+            endPoint = job['endPoint']
 
-        while not os.access(JOBDATA_PATH, os.W_OK):
-            sleep(1)
-
-        with open(JOBDATA_PATH, "w") as jobFile:
-            json.dump(jobQueue, jobFile, indent=4)
-
-        endPoint = job['endPoint']
-        try:
             if endPoint == "/":
                 result = createBrandedProduct(job['data'])
             elif endPoint == "/createmacroset":
+                #FIXME remove this since not called anymore through web
                 result = buildMacroSet(job['data'])
-        except Exception as e:
-            if not DEBUG:
-                result = {"result": f"An unspecified server error occured: {e}"}
-                logging.error(result["result"])
-                # from signal import SIGTERM
-                jobQueue["isJobActive"] = False
-                jobQueue["activeJobPID"] = ''
-                while not os.access(JOBDATA_PATH, os.W_OK):
-                    sleep(1)
 
-                with open(JOBDATA_PATH, "w") as jobFile:
-                    json.dump(jobQueue, jobFile, indent=4)
-            else:
-                raise
-                # os.kill(job['PID'], SIGTERM)
+            resultDict = {}
 
-        resultDict = {}
+            if os.path.exists(RESULTDATA_PATH):
+                resultDict = json.load(open(RESULTDATA_PATH, "r"))
 
-        if os.path.exists(RESULTDATA_PATH):
-            resultDict = json.load(open(RESULTDATA_PATH, "r"))
+            resultDict.update({str(job["PID"]): result})
 
-        resultDict[job["PID"]] = result
+            with open(RESULTDATA_PATH, "w") as resultFile:
+                json.dump(resultDict, resultFile, indent=4)
 
-        with open(RESULTDATA_PATH, "w") as resultFile:
-            json.dump(resultDict, resultFile, indent=4)
-
-    jobFile = open(JOBDATA_PATH, "r")
-    jobQueue = json.load(jobFile)
-
-    jobQueue["isJobActive"] = False
-    del jobQueue["activeJobPID"]
-
-    with open(JOBDATA_PATH, "w") as jobFile:
-        json.dump(jobQueue, jobFile, indent=4)
-
-    if jobQueue["jobList"]:
-        deQueueJob()
+            message.complete()
+            message = queue_receiver.next()
 
 
-def checkIfReady():
-    while not os.access(JOBDATA_PATH, os.R_OK):
-        sleep(1)
+def isWorkerRunning():
+    return False
+    # while not os.access(JOBDATA_PATH, os.R_OK):
+    #     sleep(1)
+    #
+    # jobData = json.load(open(JOBDATA_PATH, "r"))
+    # pid = jobData["worker_pid"]
+    #
+    # # getting matching PID by running windows' tasklist command
+    # _gotPID = 0
+    # p = os.popen(f'tasklist /FI "pid eq {pid}" /FI "imagename eq python.exe"')
+    # for _p in p:
+    #     try:
+    #         _gotPID = int(_p[29:34])
+    #     except:
+    #         pass
+    # return pid != 0 and pid == p
 
-    jobData = json.load(open(JOBDATA_PATH, "r"))
-    return not jobData["isJobActive"]
+
