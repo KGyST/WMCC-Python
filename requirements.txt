@@ -1,0 +1,14 @@
+flask
+flask-restful
+lxml
+requests
+jsonpickle
+Pillow
+
+click
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
+
+azure-servicebus
