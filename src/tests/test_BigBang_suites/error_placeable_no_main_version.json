@@ -1,0 +1,33 @@
+{
+    "description": "Expected error: placeable: bad version",
+    "endpoint": "/",
+    "request": {
+        "productName": "Placeable_LCF_name",
+        "template": {
+            "materialParameters": [],
+            "materials": [],
+            "ARCHICAD_template": {
+                "category": "tests",
+                "main_macroset_version": "bad_version",
+                "source_file": "test_placeable",
+                "parameters": []
+            }
+        },
+        "variationsData": [
+            {
+                "variationName": "test_placeable1",
+                "parameters": [],
+                "materialParameters": [],
+                "dataParameters": []
+            }
+        ]
+    },
+    "result": {
+        "code": 2,
+        "error_message": {
+            "title": "Nonexisting main version",
+            "description": ""
+        },
+        "additional_data": null
+    }
+}

@@ -1,0 +1,77 @@
+{
+  "description": "Extract placeable's params",
+  "endpoint": "/extractparams",
+  "request": {
+	"category": "tests",
+    "main_version": "19",
+    "object_path": "test_placeable.xml"
+},
+  "result": {
+    "A": {
+        "name": "A",
+        "type": "PAR_LENGTH",
+        "value": 1.2,
+        "description": "Width"
+    },
+    "B": {
+        "name": "B",
+        "type": "PAR_LENGTH",
+        "value": 0.6,
+        "description": "Depth"
+    },
+    "zzyzx": {
+        "name": "zzyzx",
+        "type": "PAR_LENGTH",
+        "value": 0.5,
+        "description": "Height"
+    },
+    "sMaterialS": {
+        "name": "sMaterialS",
+        "type": "PAR_STRING",
+        "value": null,
+        "description": ""
+    },
+    "sMaterialValS": {
+        "name": "sMaterialValS",
+        "type": "PAR_STRING",
+        "value": null,
+        "description": "Material values' string array"
+    },
+    "sLogoName": {
+        "name": "sLogoName",
+        "type": "PAR_STRING",
+        "value": "\"Default_logo\"",
+        "description": ""
+    },
+    "wCompLogo": {
+        "name": "wCompLogo",
+        "type": "PAR_INT",
+        "value": 69,
+        "description": ""
+    },
+    "iMacroLibVersion": {
+        "name": "iMacroLibVersion",
+        "type": "PAR_INT",
+        "value": 0,
+        "description": ""
+    },
+    "iVersionNumber": {
+        "name": "iVersionNumber",
+        "type": "PAR_INT",
+        "value": null,
+        "description": ""
+    },
+    " gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ": {
+        "name": " gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ",
+        "type": "PAR_COMMENT",
+        "value": null,
+        "description": ""
+    },
+    "gs_list": {
+        "name": "gs_list",
+        "type": "PAR_TITLE",
+        "value": null,
+        "description": "Parameters for Listing"
+    }
+}
+}

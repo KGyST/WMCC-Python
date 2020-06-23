@@ -1,0 +1,36 @@
+{
+  "description": "Placeable: material with simple RGB values",
+  "endpoint": "/",
+  "request": {
+    "productName": "Placeable_LCF_name",
+    "template": {
+      "materialParameters": [],
+      "materials": [{
+                "name": "Test material",
+                "RGB": [
+                    255,
+                    0,
+                    0
+                ]
+            }],
+      "ARCHICAD_template": {
+        "category": "tests",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable",
+        "parameters": []
+      }
+    },
+    "variationsData": [
+      {
+        "variationName": "test_placeable1",
+        "parameters": [],
+        "materialParameters": [],
+        "dataParameters": []
+      }
+    ]
+  },
+  "result": {
+    "macroset_name": "macroset_tests_19_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+}
+}

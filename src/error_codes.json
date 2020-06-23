@@ -1,0 +1,26 @@
+{
+  "0": {
+    "title": "No error",
+    "description": ""
+  },
+  "1": {
+    "title": "Nonexisting category",
+    "description": ""
+  },
+  "2": {
+    "title": "Nonexisting main version",
+    "description": ""
+  },
+  "3": {
+    "title": "Nonexisting source object",
+    "description": ""
+  },
+  "4": {
+    "title": "An error occured during gsm compilation",
+    "description": ""
+  },
+  "5": {
+    "title": "0 indexing in array, NOT done",
+    "description": ""
+  }
+}

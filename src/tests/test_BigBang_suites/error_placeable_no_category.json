@@ -1,0 +1,33 @@
+{
+    "description": "Expected error: placeable: bad category",
+    "endpoint": "/",
+    "request": {
+        "productName": "Placeable_LCF_name",
+        "template": {
+            "materialParameters": [],
+            "materials": [],
+            "ARCHICAD_template": {
+                "category": "bad_category",
+                "main_macroset_version": "19",
+                "source_file": "test_placeable",
+                "parameters": []
+            }
+        },
+        "variationsData": [
+            {
+                "variationName": "test_placeable1",
+                "parameters": [],
+                "materialParameters": [],
+                "dataParameters": []
+            }
+        ]
+    },
+    "result": {
+        "code": 1,
+        "error_message": {
+            "title": "Nonexisting category",
+            "description": ""
+        },
+        "additional_data": null
+    }
+}
