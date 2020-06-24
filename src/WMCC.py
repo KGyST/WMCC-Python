@@ -32,7 +32,6 @@ from lxml import etree
 
 
 OUTPUT_XML                  = True      # To retain xmls
-# _SRC                        = r"."
 APP_CONFIG                  = "appconfig.json"
 
 with open(APP_CONFIG, "r") as ac:
@@ -1315,7 +1314,7 @@ class WMCCException(HTTPException):
     ERR_GSM_COMPILATION_ERROR   = 4
     ERR_ARRAY_ZERO_INDEXING     = 5
 
-    with open(os.path.join(_SRC, "error_codes.json"), "r") as error_codes:
+    with open("error_codes.json", "r") as error_codes:
         _j = json.load(error_codes)
 
         error_codes_dict = {int(k): v for k, v in _j.items()}
