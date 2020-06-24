@@ -40,9 +40,9 @@ with open(APP_CONFIG, "r") as ac:
     DEBUG                       = appJSON["DEBUG"]
     MULTIPROCESS                = appJSON["MULTIPROCESS"]
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
-    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
+    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]                            #FIXME remove .. from json
+    ARCHICAD_LOCATION           = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")      #FIXME remove .. from json
     CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
-    ARCHICAD_LOCATION           = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
