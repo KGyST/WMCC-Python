@@ -68,8 +68,8 @@ dictConfig({
 
 
 def testWorker():
-    with open("test.txt", "w") as f:
-        f.write(str(datetime.now()))
+    # with open("test.txt", "w") as f:
+    #     f.write(str(datetime.now()))
     logging.info("testWorker started")
 
     queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
