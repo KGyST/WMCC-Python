@@ -12,3 +12,4 @@ MarkupSafe
 Werkzeug
 
 azure-servicebus
+azure-common
