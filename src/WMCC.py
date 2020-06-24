@@ -32,21 +32,27 @@ from lxml import etree
 
 
 OUTPUT_XML                  = True      # To retain xmls
-_SRC                        = r"..\src"
-APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
+# _SRC                        = r"."
+APP_CONFIG                  = "appconfig.json"
 
 with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     DEBUG                       = appJSON["DEBUG"]
     MULTIPROCESS                = appJSON["MULTIPROCESS"]
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
-    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]                            #FIXME remove .. from json
-    ARCHICAD_LOCATION           = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")      #FIXME remove .. from json
-    CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
     LOGLEVEL                    = appJSON["LOGLEVEL"]
+    WMCC_PATH                   = appJSON["WMCC_PATH"]
+    CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
+    TARGET_GDL_DIR_NAME         = os.path.join(WMCC_PATH, appJSON["TARGET_GDL_DIR_NAME"])
+    ARCHICAD_LOCATION           = os.path.join(WMCC_PATH, appJSON["ARCHICAD_LOCATION"])
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
     CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
+    APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
+    WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
+    CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
+    SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
+
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -56,8 +62,8 @@ with open(APP_CONFIG, "r") as ac:
                     'error':    40,
                     'critical': 50, }[LOGLEVEL]
 
-ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
-TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
+ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(WMCC_PATH, "src", "_IMAGES_GENERIC_")
+TRANSLATIONS_JSON           = os.path.join(WMCC_PATH, "src", r"translations.json")
 WMCC_BRAND_NAME             = "WMCC"
 MATERIAL_BASE_OBJECT        = "_dev_material"       # Maybe can be changed per project and goes to a json
 

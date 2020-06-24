@@ -9,20 +9,31 @@ import json
 import logging
 from logging.config import dictConfig
 
-_SRC                        = r"..\src"
+_SRC                        = r".."
 APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 
 
 
-with open(APP_CONFIG, "r") as ac:
-    appJSON                     = json.load(ac)
-    APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
-    LOGLEVEL                    = appJSON["LOGLEVEL"]
-    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
-    JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
-    RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
-    CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
-    SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
+# with open(APP_CONFIG, "r") as ac:
+#     appJSON                     = json.load(ac)
+#     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
+#     LOGLEVEL                    = appJSON["LOGLEVEL"]
+#     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
+#     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
+#     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+#     CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
+#     SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
+
+from src.WMCC import (
+    createBrandedProduct,
+    buildMacroSet,
+    RESULTDATA_PATH,
+    LOGLEVEL,
+    WORKER_LOG_FILE_LOCATION,
+    CONNECTION_STRING,
+    SERVICEBUS_QUEUE_NAME,
+    WMCCException
+)
 
 if isinstance(LOGLEVEL, str):
     LOGLEVEL = {'notset': 0,
@@ -45,7 +56,7 @@ dictConfig({
         'custom_handler': {
             'class': 'logging.FileHandler',
             'formatter': 'default',
-            'filename': APP_LOG_FILE_LOCATION
+            'filename': WORKER_LOG_FILE_LOCATION
         }
     },
     'root': {
@@ -54,12 +65,7 @@ dictConfig({
     }
 })
 
-from src.WMCC import (
-    createBrandedProduct,
-    buildMacroSet,
-    RESULTDATA_PATH,
-    WMCCException
-)
+
 
 def testWorker():
     with open("test.txt", "w") as f:
