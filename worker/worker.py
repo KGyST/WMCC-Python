@@ -12,11 +12,7 @@ from logging.config import dictConfig
 _SRC                        = r"..\src"
 APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 
-CONNECTION_STRING = 'Endpoint=sb://sb-wmmc-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PpeIClSmS6S615ul5wv0Nos6+HM2SuJOcbmvbb5afRA='
-SERVICEBUS_QUEUE_NAME = "taskqueue_local"
-#
-# CONNECTION_STRING       = os.getenv("CONNECTION_STRING")
-# SERVICEBUS_QUEUE_NAME   = os.getenv("SERVICEBUS_QUEUE_NAME")
+
 
 with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
@@ -25,6 +21,8 @@ with open(APP_CONFIG, "r") as ac:
     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+    CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
+    SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
 
 if isinstance(LOGLEVEL, str):
     LOGLEVEL = {'notset': 0,
@@ -115,9 +113,9 @@ class MyApp():
 
 
 app = MyApp(__name__)
-# api = Api(app)
+api = Api(app)
 
-# api.add_resource(testResponse, '/')
-#
-# if __name__ == '__main__':
-#     app.run(debug=True, host='0.0.0.0')
+api.add_resource(testResponse, '/')
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')

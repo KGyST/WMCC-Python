@@ -9,5 +9,7 @@
   "LOGLEVEL": 10,
   "JOBDATA": "jobQueue.json",
   "RESULTDATA":"resultQueue.json",
-  "CONTENT_DIR_NAME": "D:\\Git\\WMCC ARCHICAD content"
+  "CONTENT_DIR_NAME": "D:\\Git\\WMCC ARCHICAD content",
+  "CONNECTION_STRING": "Endpoint=sb://sb-wmmc-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PpeIClSmS6S615ul5wv0Nos6+HM2SuJOcbmvbb5afRA=",
+  "SERVICEBUS_QUEUE_NAME": "taskqueue_local"
 }
