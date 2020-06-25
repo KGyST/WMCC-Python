@@ -14,8 +14,7 @@
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
 <Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
-<![CDATA[
-    
+<![CDATA[    
 	
 text2 0, 0, str(iVersionNumber[1][1], 8, 0)
 
@@ -23,22 +22,19 @@ for _i = 1 to vardim1(sMaterialS)
 	text2 0, _i, sMaterialS[_i]
 next _i
 
-
 ]]>
 </Script_2D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
 <Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
-<![CDATA[
-    
+<![CDATA[    
 	
 LOGO_HEIGHT = 30
 
 if sLogoName <> "Default_logo" then
 	ui_pict sLogoName, 50, LOGO_HEIGHT + 50, wCompLogo, LOGO_HEIGHT
 endif
-
 
 ]]>
 </Script_UI>

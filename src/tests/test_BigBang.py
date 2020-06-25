@@ -69,7 +69,7 @@ class TestSuite_BigBang(unittest.TestSuite):
         self._fileList = sorted([FileName(f) for f in os.listdir(FOLDER + "_suites")])
         for fileName in self._fileList:
             split = TEST_ONLY.split(";")
-            if TEST_ONLY != "" and fileName not in split:
+            if TEST_ONLY != "" and fileName [:-5] not in split:
                 continue
             if not fileName.startswith('_') and os.path.splitext(fileName)[1] == '.json':
                 try:

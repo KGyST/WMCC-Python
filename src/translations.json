@@ -16,6 +16,12 @@
         "Measurement": "m"
       }
     },
+    "Test Material Parameter": {
+      "ARCHICAD": {
+        "Name": "mTest",
+        "Type": "PAR_MAT"
+      }
+    },
     "Interior Frame Material": {
       "ARCHICAD": {
         "Name": "sui_MatIn",

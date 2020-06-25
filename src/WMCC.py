@@ -1242,6 +1242,7 @@ class DestXML (XMLFile, DestFile):
         self.proDatURL              = ''
         self.bOverWrite             = False
         self.bRetainCalledMacros    = False
+        self.firstLineMacro         = None
 
         if not self.sourceFile.guid.endswith('7E57'):
             self.guid               = str(uuid.uuid4()).upper()
@@ -1338,6 +1339,53 @@ class WMCCException(HTTPException):
         self.logLevel = kwargs["logLevel"] if "logLevel" in kwargs else logging.CRITICAL
 
         logging.critical(self.description)
+
+
+# ------------------- GDL classes --------------------------------------------------------------------------------------
+
+
+class GDLMacro:
+    def __init__(self):
+        self._commandList = []
+
+    def append(self, inCommand):
+        self._commandList.append(inCommand)
+
+    def __str__(self):
+        return '\n'.join([c.__str__() for c in self._commandList])
+
+    def __bool__(self):
+        return len(self._commandList) > 0
+
+
+class GDLCommand:
+    iTab = 4
+    def __init__(self):
+        self._iTabs = 0
+        self.isCommented = False
+        self._values = []
+        self._quotChar = '"'
+
+
+class GDL_values(GDLCommand):
+    def __init__(self, inParName, inValueS):
+        super().__init__()
+        self._Parname = inParName
+        self._values = inValueS
+        self._command = "values"
+
+    def __str__(self):
+        import math
+        result = self._iTabs * "\t" + self._command + "\t"
+        _iTab= math.floor((len(result) + (self._iTabs + 1) * (GDLCommand.iTab - 1)) / GDLCommand.iTab)
+        result += self._quotChar + self._Parname + self._quotChar + "\\\n"
+        result += _iTab * "\t" + self._quotChar
+        result += (self._quotChar + ",\n" + _iTab * "\t" + self._quotChar).join(self._values) + self._quotChar
+        return result
+
+
+# -------------------/GDL classes --------------------------------------------------------------------------------------
+
 
 
 def resetAll():
@@ -1891,9 +1939,12 @@ def createBrandedProduct(inData):
 
                 # ------Material parameters --------------------------------------------------
 
+                destItem.firstLineMacro = GDLMacro()
+
                 for translatedParameterName in family['materialParameters']:
                     translatedParameter = translation["parameters"][translatedParameterName['name']]['ARCHICAD']["Name"]
                     destItem.parameters[translatedParameter] = translatedParameterName['value']
+                    destItem.firstLineMacro.append(GDL_values(translatedParameter, availableMaterials))
 
                 # ------Manufacturer parameters --------------------------------------------------
 
@@ -2164,6 +2215,9 @@ def processOneXML(inData):
         section = mdp.find(sect)
         if section is not None:
             t = section.text
+            if t [0] == "\n" and t[-1] == "\n":
+                # Bug in etree?
+                t = t[1:-1]
             tUpper = section.text.upper()
             for dI in _calledMacroSet:
                 t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
@@ -2175,6 +2229,11 @@ def processOneXML(inData):
                     if family_name:
                         fromRE += '(?!' + family_name + ')'
                     t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+
+            if sect =="./Script_1D":
+                if dest.firstLineMacro:
+                    str__ = dest.firstLineMacro.__str__()
+                    t = str__ + t
             section.text = etree.CDATA(t)
 
     if dest.bPlaceable:
@@ -2286,56 +2345,56 @@ def enQueueJob(inEndPoint, inData, inPID):
     # else:
     #     logging.debug("A deQueue is ACTIVE")
 
-
-def deQueueJob():
-    queue_client = QueueClient.from_connection_string(connectionstring, SERVICEBUS_QUEUE_NAME)
-
-    with queue_client.get_receiver() as queue_receiver:
-        message = queue_receiver.next()
-
-        while True:
-            job = json.loads(str(message))
-
-            logging.debug(f"**** Job started: {job['PID']} ****")
-
-            endPoint = job['endPoint']
-
-            if endPoint == "/":
-                result = createBrandedProduct(job['data'])
-            elif endPoint == "/createmacroset":
-                #FIXME remove this since not called anymore through web
-                result = buildMacroSet(job['data'])
-
-            resultDict = {}
-
-            if os.path.exists(RESULTDATA_PATH):
-                resultDict = json.load(open(RESULTDATA_PATH, "r"))
-
-            resultDict.update({str(job["PID"]): result})
-
-            with open(RESULTDATA_PATH, "w") as resultFile:
-                json.dump(resultDict, resultFile, indent=4)
-
-            message.complete()
-            message = queue_receiver.next()
-
-
-def isWorkerRunning():
-    return False
-    # while not os.access(JOBDATA_PATH, os.R_OK):
-    #     sleep(1)
-    #
-    # jobData = json.load(open(JOBDATA_PATH, "r"))
-    # pid = jobData["worker_pid"]
-    #
-    # # getting matching PID by running windows' tasklist command
-    # _gotPID = 0
-    # p = os.popen(f'tasklist /FI "pid eq {pid}" /FI "imagename eq python.exe"')
-    # for _p in p:
-    #     try:
-    #         _gotPID = int(_p[29:34])
-    #     except:
-    #         pass
-    # return pid != 0 and pid == p
-
+#
+# def deQueueJob():
+#     queue_client = QueueClient.from_connection_string(connectionstring, SERVICEBUS_QUEUE_NAME)
+#
+#     with queue_client.get_receiver() as queue_receiver:
+#         message = queue_receiver.next()
+#
+#         while True:
+#             job = json.loads(str(message))
+#
+#             logging.debug(f"**** Job started: {job['PID']} ****")
+#
+#             endPoint = job['endPoint']
+#
+#             if endPoint == "/":
+#                 result = createBrandedProduct(job['data'])
+#             elif endPoint == "/createmacroset":
+#                 #FIXME remove this since not called anymore through web
+#                 result = buildMacroSet(job['data'])
+#
+#             resultDict = {}
+#
+#             if os.path.exists(RESULTDATA_PATH):
+#                 resultDict = json.load(open(RESULTDATA_PATH, "r"))
+#
+#             resultDict.update({str(job["PID"]): result})
+#
+#             with open(RESULTDATA_PATH, "w") as resultFile:
+#                 json.dump(resultDict, resultFile, indent=4)
+#
+#             message.complete()
+#             message = queue_receiver.next()
+#
+#
+# def isWorkerRunning():
+#     return False
+#     # while not os.access(JOBDATA_PATH, os.R_OK):
+#     #     sleep(1)
+#     #
+#     # jobData = json.load(open(JOBDATA_PATH, "r"))
+#     # pid = jobData["worker_pid"]
+#     #
+#     # # getting matching PID by running windows' tasklist command
+#     # _gotPID = 0
+#     # p = os.popen(f'tasklist /FI "pid eq {pid}" /FI "imagename eq python.exe"')
+#     # for _p in p:
+#     #     try:
+#     #         _gotPID = int(_p[29:34])
+#     #     except:
+#     #         pass
+#     # return pid != 0 and pid == p
+#
 
