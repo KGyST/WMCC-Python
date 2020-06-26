@@ -3,7 +3,6 @@ import os
 
 from flask_restful import Resource, Api
 from azure.servicebus import ServiceBusClient, QueueClient, Message
-from  datetime import datetime
 
 import json
 import logging
@@ -12,17 +11,6 @@ from logging.config import dictConfig
 _SRC                        = r".."
 APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
 
-
-
-# with open(APP_CONFIG, "r") as ac:
-#     appJSON                     = json.load(ac)
-#     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
-#     LOGLEVEL                    = appJSON["LOGLEVEL"]
-#     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
-#     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
-#     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
-#     CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
-#     SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
 
 from src.WMCC import (
     createBrandedProduct,
@@ -68,8 +56,6 @@ dictConfig({
 
 
 def testWorker():
-    # with open("test.txt", "w") as f:
-    #     f.write(str(datetime.now()))
     logging.info("testWorker started")
 
     queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)

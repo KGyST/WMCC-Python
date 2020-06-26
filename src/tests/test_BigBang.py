@@ -132,9 +132,11 @@ class TestCase_BigBang(unittest.TestCase):
                 if "base64_encoded_object" in responseJSON:
                     placeableTempGSMDir = tempfile.mkdtemp()
                     placeableTempXMLDir = tempfile.mkdtemp()
-                    tasks += [("extractcontainer", os.path.join(tempDir, responseJSON['object_name']), placeableTempGSMDir, ),
-                              ("l2x", placeableTempGSMDir, placeableTempXMLDir,), ]
+                    placeableTempImgDir = tempfile.mkdtemp()
+                    tasks += [(f'extractcontainer "{os.path.join(tempDir, responseJSON["object_name"])}" "{placeableTempGSMDir}"'),
+                              (f'l2x -img "{placeableTempImgDir}" "{placeableTempGSMDir}" "{placeableTempXMLDir}"'), ]
                     foldersToExtract.update({"placeables": placeableTempXMLDir})
+                    foldersToExtract.update({"placeables_images": placeableTempImgDir})
 
                     with open(os.path.join(tempDir, responseJSON['object_name']), 'wb') as objectFile:
                         decode = base64.urlsafe_b64decode(responseJSON['base64_encoded_object'])
@@ -144,9 +146,11 @@ class TestCase_BigBang(unittest.TestCase):
                 if "base64_encoded_macroset" in responseJSON:
                     macrosetTempGSMDir = tempfile.mkdtemp()
                     macrosetTempXMLDir = tempfile.mkdtemp()
-                    tasks += [("extractcontainer", os.path.join(tempDir, responseJSON['macroset_name']), macrosetTempGSMDir,),
-                              ("l2x", macrosetTempGSMDir, macrosetTempXMLDir,), ]
+                    macrosetTempImgDir = tempfile.mkdtemp()
+                    tasks += [(f'extractcontainer "{os.path.join(tempDir, responseJSON["macroset_name"])}" "{macrosetTempGSMDir}"'),
+                              (f'l2x -img "{macrosetTempImgDir}" "{macrosetTempGSMDir}" "{macrosetTempXMLDir}"'), ]
                     foldersToExtract.update({"macroset": macrosetTempXMLDir})
+                    foldersToExtract.update({"macroset_images": macrosetTempImgDir})
 
                     with open(os.path.join(tempDir, responseJSON['macroset_name']), 'wb') as objectFile:
                         decode = base64.urlsafe_b64decode(responseJSON['base64_encoded_macroset'])
@@ -154,7 +158,7 @@ class TestCase_BigBang(unittest.TestCase):
                     del responseJSON['base64_encoded_macroset']
 
                 for _dir in tasks:
-                    with Popen(f'"{os.path.join(ARCHICAD_LOCATION, "LP_XMLConverter.exe")}" {_dir[0]} "{_dir[1]}" "{_dir[2]}"',
+                    with Popen(f'"{os.path.join(ARCHICAD_LOCATION, "LP_XMLConverter.exe")}" {_dir}',
                                stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
                         _out, _err = proc.communicate()
 
@@ -165,11 +169,11 @@ class TestCase_BigBang(unittest.TestCase):
                     for root, subfolders, files, in os.walk(foldersToExtract[folderToExtract]):
                         for receivedTestFile in files:
                             relPath = os.path.relpath(root, foldersToExtract[folderToExtract])
-                            if folderToExtract == "macroset":
-                                originalRelPath = os.path.join(*relPath.split(os.sep)[1:])
-                            else:
-                                originalRelPath = relPath
-                            originalTestFile = os.path.join(path_join, originalRelPath, receivedTestFile)
+                            # if folderToExtract in ("macroset", "macroset_images", ):
+                            #     originalRelPath = os.path.join(*relPath.split(os.sep)[1:])
+                            # else:
+                            #     originalRelPath = relPath
+                            originalTestFile = os.path.join(path_join, relPath, receivedTestFile)
                             try:
                                 try:
                                     with open(originalTestFile, "rb") as originalTest:
@@ -180,13 +184,12 @@ class TestCase_BigBang(unittest.TestCase):
                                     with open(originalTestFile, "r") as originalTest:
                                         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
                                                 inObj.assertEqual(originalTest.read(), receivedTest.read())
-
                             except (AssertionError, FileNotFoundError) as a:
-                                targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folderToExtract, originalRelPath)
+                                targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folderToExtract, relPath)
 
                                 if not os.path.exists(targetFolderPath):
                                     os.makedirs(targetFolderPath)
-                                shutil.copyfile(os.path.join(foldersToExtract[folderToExtract], relPath, receivedTestFile), os.path.join(FOLDER + "_errors", inFileName[:-5], folderToExtract, originalRelPath, receivedTestFile))
+                                shutil.copyfile(os.path.join(foldersToExtract[folderToExtract], relPath, receivedTestFile), os.path.join(FOLDER + "_errors", inFileName[:-5], folderToExtract, relPath, receivedTestFile))
                                 assErr = a
                 if assErr:
                     raise assErr

@@ -1,0 +1,29 @@
+{
+  "description": "Placeable: with library_images",
+  "endpoint": "/",
+  "request": {
+    "productName": "Placeable_LCF_name",
+    "template": {
+      "materialParameters": [],
+      "materials": [],
+      "ARCHICAD_template": {
+        "category": "tests",
+        "main_macroset_version": "18",
+        "source_file": "test_placeable",
+        "parameters": []
+      }
+    },
+    "variationsData": [
+      {
+        "variationName": "test_placeable1",
+        "parameters": [],
+        "materialParameters": [],
+        "dataParameters": []
+      }
+    ]
+  },
+  "result": {
+   "macroset_name": "macroset_tests_18_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+  }
+}

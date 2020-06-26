@@ -1669,7 +1669,7 @@ def buildMacroSet(inData):
     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
     source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath) if imagePath else ""
     if source_image_dir_name:
-        scanFolders(CONTENT_DIR_NAME, source_image_dir_name, library_images=True)
+        scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
 
@@ -1693,7 +1693,8 @@ def buildMacroSet(inData):
     if "LIBRARY_VERSION_WMCC" in dest_sourcenames:
         dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = minor_version
 
-    tempGDLDirName = tempfile.mkdtemp()
+    #"library" will be mentioned in the code instead of actual temp dir name
+    tempGDLDirName = os.path.join(tempfile.mkdtemp(), "library")
 
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
@@ -2076,6 +2077,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     # tempdir = os.path.join(tempfile.mkdtemp(), "library")
     tempdir = tempfile.mkdtemp()
     tempPicDir = tempfile.mkdtemp()
+    # tempPicDir = os.path.join(tempfile.mkdtemp(), "library_images")
 
     logging.debug("tempdir: %s" % tempdir)
     logging.debug("tempPicDir: %s" % tempPicDir)
@@ -2151,10 +2153,10 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
         _out, _err = proc.communicate()
 
         if "rror" in str(_out):
-            #FIXME bullshit errors
-            # raise WMCCException(WMCCException.ERR_GSM_COMPILATION_ERROR, additional_data={"x2lCommand": x2lCommand,
-            #                                                                           "std_out": _out,
-            #                                                                           "std_err": _err})
+            # FIXME bullshit errors
+            raise WMCCException(WMCCException.ERR_GSM_COMPILATION_ERROR, additional_data={"x2lCommand": x2lCommand,
+                                                                                      "std_out": _out,
+                                                                                      "std_err": _err})
             pass
         else:
             logging.info(f"Success: {_out} (error: {_err}) ")

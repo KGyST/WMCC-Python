@@ -8,6 +8,7 @@ import shutil
 TEST  = bool(int(os.environ['TEST'])) if "TEST" in os.environ else False
 TEST_CATS = ["tests", ]
 CLEANUP = False
+ONLY_CAT    = os.environ["ONLY_CAT"] if "ONLY_CAT" in os.environ else None
 
 if "CONTENT_DIR_NAME" in os.environ:
     CONTENT_DIR_NAME = os.environ["CONTENT_DIR_NAME"]
@@ -24,7 +25,7 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
     categoryData = json.load(cD)
 
     for cat in categoryData:
-        if TEST == (cat in TEST_CATS):
+        if TEST == (cat in TEST_CATS) and (cat == ONLY_CAT or not ONLY_CAT):
             logging.info(f"Building category: {cat}")
             print(f"Building category: {cat}")
             data["category"] = cat

@@ -1,0 +1,16 @@
+{
+  "description": "Createmacroset: with library_images",
+  "endpoint": "/createmacroset",
+  "request": {
+    "category": "tests",
+    "main_version": "18",
+	"minor_version": "20200518"
+  },
+  "result": {
+    "LCFName": "macroset_tests_18.json",
+    "category": "tests",
+    "main_version": "18",
+    "minor_version ": "20200518",
+	"macroset_name": "macroset_tests_18_20200518"
+}
+}
