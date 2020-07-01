@@ -197,7 +197,7 @@ class TestCase_BigBang(unittest.TestCase):
                                             receivedString = receivedTest.read()
                                             if re.search(MAINGUID_RE, receivedString):
                                                 receivedString = re.sub(MAINGUID_RE, 'MainGUID="00000000-0000-0000-0000-000000007E57"', receivedString)
-                                                receivedString = re.sub(MAINGUID_RE2, '<MainGUID><MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>', receivedString)
+                                                receivedString = re.sub(MAINGUID_RE2, '<MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>', receivedString)
                                                 with open(os.path.join(root, receivedTestFile), "w") as f:
                                                     f.write(receivedString)
                                         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
