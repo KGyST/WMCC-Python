@@ -5,6 +5,7 @@ import datetime
 import logging
 import shutil
 
+# Test builds test_cats and moves them to
 TEST  = bool(int(os.environ['TEST'])) if "TEST" in os.environ else False
 TEST_CATS = ["tests", ]
 CLEANUP = False
@@ -14,8 +15,9 @@ if "CONTENT_DIR_NAME" in os.environ:
     CONTENT_DIR_NAME = os.environ["CONTENT_DIR_NAME"]
 else:
     with open(WMCC.APP_CONFIG, "r") as ac:
-        appJSON                     = json.load(ac)
-        CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
+        appJSON = json.load(ac)
+
+        CONTENT_DIR_NAME = appJSON["CONTENT_DIR_NAME"]
 
 CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
 
@@ -23,6 +25,7 @@ data = {}
 
 with open(CATEGORY_DATA_JSON, "r") as cD:
     categoryData = json.load(cD)
+    del categoryData["commons"]
 
     for cat in categoryData:
         if TEST == (cat in TEST_CATS) and (cat == ONLY_CAT or not ONLY_CAT):

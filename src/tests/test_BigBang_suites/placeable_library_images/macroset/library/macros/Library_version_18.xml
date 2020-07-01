@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="8EF319E2-0000-0000-0000-000000007E57" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="00000000-0000-0000-0000-000000007E57" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 </Ancestry>
 
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["LibraryGlobals13_test18"]]></MName>
-		<MainGUID>FADBED7E-0000-0000-0000-000000007E57</MainGUID>
+		MainGUID="00000000-0000-0000-0000-000000007E57"
 	</Macro>
 </CalledMacros>
 

@@ -192,10 +192,12 @@ class TestCase_BigBang(unittest.TestCase):
                                     with open(originalTestFile, "r") as originalTest:
                                         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
                                             MAINGUID_RE = r'MainGUID\=\"[0-9A-F]{8}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{12}\"'
+                                            MAINGUID_RE2= r'\<MainGUID\>[0-9A-F]{8}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{12}\<\/MainGUID\>'
+
                                             receivedString = receivedTest.read()
                                             if re.search(MAINGUID_RE, receivedString):
                                                 receivedString = re.sub(MAINGUID_RE, 'MainGUID="00000000-0000-0000-0000-000000007E57"', receivedString)
-
+                                                receivedString = re.sub(MAINGUID_RE2, 'MainGUID="00000000-0000-0000-0000-000000007E57"', receivedString)
                                                 with open(os.path.join(root, receivedTestFile), "w") as f:
                                                     f.write(receivedString)
                                         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:

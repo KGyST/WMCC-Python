@@ -45,8 +45,8 @@ with open(APP_CONFIG, "r") as ac:
     CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
     TARGET_GDL_DIR_NAME         = os.path.join(WMCC_PATH, appJSON["TARGET_GDL_DIR_NAME"])
     ARCHICAD_LOCATION           = os.path.join(WMCC_PATH, appJSON["ARCHICAD_LOCATION"])
-    JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
-    RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+    JOBDATA_PATH                = appJSON["JOBDATA"]
+    RESULTDATA_PATH             = appJSON["RESULTDATA"]
     CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
@@ -1598,94 +1598,6 @@ def unitConvert(inParameterName,
         return inParameterValue + "_" + family_name
     else:
         return inParameterValue
-
-##Not needed
-#
-# def createMaterials(inData):
-#     """
-#     Builds an lcf containing surface definition macros
-#     :inData:
-#     :return:
-#     """
-#     global projectPath, imagePath
-#
-#     family_name = inData["productData"][0]["materialIdentity"]["manufacturer"]
-#
-#     logging.debug("*** Materials creation started ***")
-#
-#     with open(CATEGORY_DATA_JSON, "r") as categoryData:
-#         settingsJSON = json.load(categoryData)
-#         subCategory = settingsJSON["commons"]["18"]
-#         projectPath = subCategory["path"]
-#     resetAll()
-#
-#     tempGDLDirName = tempfile.mkdtemp()
-#     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
-#
-#     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
-#
-#     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=[])
-#
-#     # --------------------------------------------------------
-#
-#     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
-#         translation = json.loads(translatorJSON.read())
-#
-#         # ------ surfaces ------
-#         #FIXME organize it into a factory class
-#         availableMaterials = []
-#         for material in inData["productData"]:
-#             availableMaterials += [material["name"]]
-#             materialMacro = addFile(MATERIAL_BASE_OBJECT,
-#                                     targetFileName=material["name"])
-#             if materialMacro:
-#                 material["materialGraphics"].update(material["materialAppearance"])
-#                 for parameter in material["materialGraphics"]:
-#                     try:
-#                         translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-#                         materialMacro.parameters[translatedParameter] = unitConvert(
-#                             parameter,
-#                             material["materialGraphics"][parameter],
-#                             translation
-#                         )
-#                     except KeyError:
-#                         # For now, too much problem with translations
-#                         # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
-#                         pass
-#                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
-#
-#                 # --------- textures -----------
-#                 if 'base64_encoded_texture' in material:
-#                     if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
-#                         os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
-#                     with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
-#                         textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
-#                     materialMacro.parameters['sTextureName'] = os.path.splitext(material['name'] + "_texture.png")[0]
-#
-#     # --------------------------------------------------------
-#
-#     startConversion(targetGDLDirName=tempGDLDirName)
-#
-#     if availableMaterials:
-#         masterGDL = createMasterGDL(surfaces=availableMaterials)
-#         if not os.path.exists(os.path.join(tempGDLDirName, "surfaces")):
-#             os.mkdir(os.path.join(tempGDLDirName, "surfaces"))
-#         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
-#             f.write(masterGDL)
-#
-#     fileName = "materials_" + family_name
-#
-#     targetLCFFullPath = createLCF(tempGDLDirName, fileName)
-#
-#     _paceableName = fileName + ".lcf"
-#
-#     returnDict =  createResponeFiles(_paceableName, )
-#
-#     if CLEANUP:
-#         shutil.rmtree(tempGDLDirName)
-#         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
-#
-#     return returnDict
 
 
 def extractParams(inData):
