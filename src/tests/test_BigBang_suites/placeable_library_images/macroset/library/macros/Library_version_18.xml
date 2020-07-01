@@ -6,7 +6,7 @@
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
 		<MName><![CDATA["LibraryGlobals13_test18"]]></MName>
-		MainGUID="00000000-0000-0000-0000-000000007E57"
+		<MainGUID><MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>
 	</Macro>
 </CalledMacros>
 
