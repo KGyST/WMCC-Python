@@ -1,26 +1,30 @@
 {
   "0": {
-    "title": "No error",
-    "description": ""
+    "title": "Unspecified error",
+    "description": "An unspecified error occured"
   },
   "1": {
     "title": "Nonexisting category",
-    "description": ""
+    "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name"
   },
   "2": {
     "title": "Nonexisting main version",
-    "description": ""
+    "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name"
   },
   "3": {
     "title": "Nonexisting source object",
-    "description": ""
+    "description": "The Source object Object refers to doesn't exist or there is a typo in Source object name in category data file or the associated filename"
   },
   "4": {
     "title": "An error occured during gsm compilation",
-    "description": ""
+    "description": "LP_XMLConverter.exe printed out some kind of error"
   },
   "5": {
     "title": "0 indexing in array, NOT done",
-    "description": ""
-  }
+    "description": "Call and/or associated database entry wants to write an array[0] while GDL arrays' indexing starts from 1"
+  },
+  "6": {
+    "title": "Nonexisting translator",
+    "description": "Call contains a parameter that cannot be translated into an ARCHICAD parameter or there is a typo in translation file"
+  } 
 }

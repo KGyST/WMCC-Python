@@ -1,0 +1,7 @@
+﻿
+	call "Material 1" parameters  sSurfaceName = "Material 1"
+	call "Material 2" parameters  sSurfaceName = "Material 2"
+
+file_dependence \
+	"Material 1",
+	"Material 2"

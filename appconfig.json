@@ -6,7 +6,7 @@
   "TARGET_GDL_DIR_NAME": "src\\Target",
   "ARCHICAD_LOCATION": "src\\archicad\\LP_XMLConverter_18",
   "APP_LOG_FILE_LOCATION": "D:\\Git\\WMCC Python\\myapp.log",
-  "WORKER_LOG_FILE_LOCATION": "D:\\Git\\WMCC Python\\worker.log",
+  "WORKER_LOG_FILE_LOCATION": "D:\\Git\\WMCC Python\\worker\\worker.log",
   "LOGLEVEL": 10,
   "JOBDATA": "jobQueue.json",
   "RESULTDATA":"resultQueue.json",

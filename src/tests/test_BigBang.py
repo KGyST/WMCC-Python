@@ -3,15 +3,15 @@ import os
 import json
 import http.client
 import ssl
-# import datetime
 import shutil
 import tempfile
 import base64
 from subprocess import Popen, PIPE, DEVNULL
+import re
 
 FOLDER      = "test_BigBang"
 SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
-TEST_ONLY = os.environ['TEST_ONLY'] if "TEST_ONLY" in os.environ else ""
+TEST_ONLY   = os.environ['TEST_ONLY']  if "TEST_ONLY"  in os.environ else ""
 print(f"Server URL: {SERVER_URL}")
 
 _SRC        = r".."
@@ -65,6 +65,14 @@ class FileName(str):
 
 class TestSuite_BigBang(unittest.TestSuite):
     def __init__(self):
+        try:
+            shutil.rmtree(FOLDER + "_errors")
+            os.mkdir(FOLDER + "_errors")
+        except PermissionError:
+            pass
+        except OSError:
+            pass
+
         self._tests = []
         self._fileList = sorted([FileName(f) for f in os.listdir(FOLDER + "_suites")])
         for fileName in self._fileList:
@@ -125,7 +133,7 @@ class TestCase_BigBang(unittest.TestCase):
             # if "minor_version" in req:
             #     minor_version = req["minor_version"]
 
-            if inTestData["endpoint"] in ("/", "/createmacroset"):
+            if inTestData["endpoint"] in ("/", "/createmacroset", "/creatematerials"):
                 tasks = []
                 foldersToExtract = {}
                 tempDir = tempfile.mkdtemp()
@@ -183,7 +191,15 @@ class TestCase_BigBang(unittest.TestCase):
                                     "Newlines don't stop us"
                                     with open(originalTestFile, "r") as originalTest:
                                         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
-                                                inObj.assertEqual(originalTest.read(), receivedTest.read())
+                                            MAINGUID_RE = r'MainGUID\=\"[0-9A-F]{8}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{12}\"'
+                                            receivedString = receivedTest.read()
+                                            if re.search(MAINGUID_RE, receivedString):
+                                                receivedString = re.sub(MAINGUID_RE, 'MainGUID="00000000-0000-0000-0000-000000007E57"', receivedString)
+
+                                                with open(os.path.join(root, receivedTestFile), "w") as f:
+                                                    f.write(receivedString)
+                                        with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
+                                            inObj.assertEqual(originalTest.read(), receivedTest.read())
                             except (AssertionError, FileNotFoundError) as a:
                                 targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folderToExtract, relPath)
 

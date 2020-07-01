@@ -1,5 +1,5 @@
 import os.path
-from os import listdir
+from os import listdir, chdir
 import uuid
 import re
 import tempfile
@@ -17,10 +17,11 @@ import http.client, http.server, urllib.request, urllib.parse, urllib.error, os,
 import logging
 from PIL import Image
 import io
-from time import sleep
+# from time import sleep
 import hashlib
 from werkzeug.exceptions import HTTPException
 from azure.servicebus import ServiceBusClient, QueueClient, Message
+# import sys
 
 #------------------ External modules------------------
 
@@ -61,8 +62,8 @@ with open(APP_CONFIG, "r") as ac:
                     'error':    40,
                     'critical': 50, }[LOGLEVEL]
 
-ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(WMCC_PATH, "src", "_IMAGES_GENERIC_")
-TRANSLATIONS_JSON           = os.path.join(WMCC_PATH, "src", r"translations.json")
+ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(CONTENT_DIR_NAME, "_commons", "_IMAGES_GENERIC_")
+TRANSLATIONS_JSON           = os.path.join(CONTENT_DIR_NAME, r"translations.json")
 WMCC_BRAND_NAME             = "WMCC"
 MATERIAL_BASE_OBJECT        = "_dev_material"       # Maybe can be changed per project and goes to a json
 
@@ -1308,12 +1309,13 @@ class WMCCException(HTTPException):
     """
      Exception for handling error messages.
     """
-    ERR_NO_ERROR                = 0 # Just technically
+    ERR_UNSPECIFIED             = 0
     ERR_NONEXISTING_CATEGORY    = 1
     ERR_NONEXISTING_VERSION     = 2
     ERR_NONEXISTING_OBJECT      = 3
     ERR_GSM_COMPILATION_ERROR   = 4
     ERR_ARRAY_ZERO_INDEXING     = 5
+    ERR_NONEXISTING_TRANSLATOR  = 6
 
     with open("error_codes.json", "r") as error_codes:
         _j = json.load(error_codes)
@@ -1326,7 +1328,7 @@ class WMCCException(HTTPException):
         super().__init__()
 
         self.description = {}
-        self.description["code"] = inErrorCode
+        # self.description["code"] = inErrorCode
 
         if "description" in kwargs:
             self.description = {"description": kwargs["description"]}
@@ -1571,7 +1573,10 @@ def unitConvert(inParameterName,
     """
     _UnitLib = {"m": 1,
                 "cm": 0.01,
-                "mm" : 0.001}
+                "mm" : 0.001,
+                "percent": 0.01,
+                "normal": 1,
+                "byte": 1.00/255.0, }
 
     if not inTranslationLib:
         #No translation needed
@@ -1593,6 +1598,94 @@ def unitConvert(inParameterName,
         return inParameterValue + "_" + family_name
     else:
         return inParameterValue
+
+##Not needed
+#
+# def createMaterials(inData):
+#     """
+#     Builds an lcf containing surface definition macros
+#     :inData:
+#     :return:
+#     """
+#     global projectPath, imagePath
+#
+#     family_name = inData["productData"][0]["materialIdentity"]["manufacturer"]
+#
+#     logging.debug("*** Materials creation started ***")
+#
+#     with open(CATEGORY_DATA_JSON, "r") as categoryData:
+#         settingsJSON = json.load(categoryData)
+#         subCategory = settingsJSON["commons"]["18"]
+#         projectPath = subCategory["path"]
+#     resetAll()
+#
+#     tempGDLDirName = tempfile.mkdtemp()
+#     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
+#
+#     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
+#
+#     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=[])
+#
+#     # --------------------------------------------------------
+#
+#     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
+#         translation = json.loads(translatorJSON.read())
+#
+#         # ------ surfaces ------
+#         #FIXME organize it into a factory class
+#         availableMaterials = []
+#         for material in inData["productData"]:
+#             availableMaterials += [material["name"]]
+#             materialMacro = addFile(MATERIAL_BASE_OBJECT,
+#                                     targetFileName=material["name"])
+#             if materialMacro:
+#                 material["materialGraphics"].update(material["materialAppearance"])
+#                 for parameter in material["materialGraphics"]:
+#                     try:
+#                         translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+#                         materialMacro.parameters[translatedParameter] = unitConvert(
+#                             parameter,
+#                             material["materialGraphics"][parameter],
+#                             translation
+#                         )
+#                     except KeyError:
+#                         # For now, too much problem with translations
+#                         # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
+#                         pass
+#                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
+#
+#                 # --------- textures -----------
+#                 if 'base64_encoded_texture' in material:
+#                     if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
+#                         os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
+#                     with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
+#                         textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
+#                     materialMacro.parameters['sTextureName'] = os.path.splitext(material['name'] + "_texture.png")[0]
+#
+#     # --------------------------------------------------------
+#
+#     startConversion(targetGDLDirName=tempGDLDirName)
+#
+#     if availableMaterials:
+#         masterGDL = createMasterGDL(surfaces=availableMaterials)
+#         if not os.path.exists(os.path.join(tempGDLDirName, "surfaces")):
+#             os.mkdir(os.path.join(tempGDLDirName, "surfaces"))
+#         with open(os.path.join(tempGDLDirName, "surfaces", "master_gdl_%s.gdl" % family_name), "w") as f:
+#             f.write(masterGDL)
+#
+#     fileName = "materials_" + family_name
+#
+#     targetLCFFullPath = createLCF(tempGDLDirName, fileName)
+#
+#     _paceableName = fileName + ".lcf"
+#
+#     returnDict =  createResponeFiles(_paceableName, )
+#
+#     if CLEANUP:
+#         shutil.rmtree(tempGDLDirName)
+#         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
+#
+#     return returnDict
 
 
 def extractParams(inData):
@@ -1727,14 +1820,8 @@ def buildMacroSet(inData):
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
 
-    # if category in TEST_CATEGORIES:
-    #     returnDict.update({"md5sums": {dest_dict[key].name.upper(): dest_dict[key].md5 for key in dest_dict.keys() if not isinstance(dest_dict[key], StrippedDestXML)}})
-
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
-
-    # with open(CATEGORY_DATA_JSON, "w") as categoryData:
-    #     json.dump(settingsJSON, categoryData, indent=4)
 
     return returnDict
 
@@ -1832,8 +1919,9 @@ def createBrandedProduct(inData):
 
     # --------------------------------------------------------
 
-    if 'materials' in inData:
-        addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
+    #FIXME for doors/windows
+    # if 'materials' in inData:
+    #     addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
     JSONFileName = "macroset_" + category + "_" + main_version + ".json"
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
@@ -1848,7 +1936,11 @@ def createBrandedProduct(inData):
                                     targetFileName=material["name"]) #  + "_" + family_name
             if materialMacro:
                 for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
-                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                    try:
+                        translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                    except KeyError:
+                        # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
+                        continue
                     materialMacro.parameters[translatedParameter] = unitConvert(
                         parameter,
                         material[parameter],
@@ -1996,7 +2088,7 @@ def createBrandedProduct(inData):
 
 
 def createResponeFiles(inFileName,
-                       inMacrosetName, ):
+                       inMacrosetName = "", ):
     """
     Creates finished objects
     """
@@ -2248,6 +2340,8 @@ def processOneXML(inData):
                 if n:
                     section.attrib['path'] = os.path.join(os.path.dirname(n), os.path.basename(n))
 
+    # ---------------------Copyright---------------------
+
     if dest.iVersion >= AC_18:
         for cr in mdp.getroot().findall("Copyright"):
             mdp.getroot().remove(cr)
@@ -2311,92 +2405,13 @@ def processOneXML(inData):
 
     return macroMD5
 
-
 # ---------------------Job queue--------------------
 
-connectionstring = 'Endpoint=sb://sb-wmmc-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PpeIClSmS6S615ul5wv0Nos6+HM2SuJOcbmvbb5afRA='
-SERVICEBUS_QUEUE_NAME = "taskqueue_local"
-
 def enQueueJob(inEndPoint, inData, inPID):
-    queue_client = QueueClient.from_connection_string(connectionstring, SERVICEBUS_QUEUE_NAME)
-
-    # jobQueue = {
-    #     "isJobActive": False,
-    #     "jobList": [],
-    #     "worker_pid": 0}
+    queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
 
     jobData = {"endPoint":  inEndPoint,
                "data":      inData,
                "PID":       inPID}
 
     queue_client.send(Message(json.dumps(jobData)))
-
-    # if not isWorkerRunning():
-    #     dQ = mp.Process(target=deQueueJob)
-    #     dQ.start()
-    #     while not os.access(JOBDATA_PATH, os.R_OK):
-    #         sleep(1)
-    #
-    #     jobQueue = json.load(open(JOBDATA_PATH, "r"))
-    #
-    #     jobQueue["worker_pid"] = dQ.pid
-    #
-    #     with open(JOBDATA_PATH, "w") as resultFile:
-    #         json.dump(jobQueue, resultFile, indent=4)
-    #     return dQ
-    # else:
-    #     logging.debug("A deQueue is ACTIVE")
-
-#
-# def deQueueJob():
-#     queue_client = QueueClient.from_connection_string(connectionstring, SERVICEBUS_QUEUE_NAME)
-#
-#     with queue_client.get_receiver() as queue_receiver:
-#         message = queue_receiver.next()
-#
-#         while True:
-#             job = json.loads(str(message))
-#
-#             logging.debug(f"**** Job started: {job['PID']} ****")
-#
-#             endPoint = job['endPoint']
-#
-#             if endPoint == "/":
-#                 result = createBrandedProduct(job['data'])
-#             elif endPoint == "/createmacroset":
-#                 #FIXME remove this since not called anymore through web
-#                 result = buildMacroSet(job['data'])
-#
-#             resultDict = {}
-#
-#             if os.path.exists(RESULTDATA_PATH):
-#                 resultDict = json.load(open(RESULTDATA_PATH, "r"))
-#
-#             resultDict.update({str(job["PID"]): result})
-#
-#             with open(RESULTDATA_PATH, "w") as resultFile:
-#                 json.dump(resultDict, resultFile, indent=4)
-#
-#             message.complete()
-#             message = queue_receiver.next()
-#
-#
-# def isWorkerRunning():
-#     return False
-#     # while not os.access(JOBDATA_PATH, os.R_OK):
-#     #     sleep(1)
-#     #
-#     # jobData = json.load(open(JOBDATA_PATH, "r"))
-#     # pid = jobData["worker_pid"]
-#     #
-#     # # getting matching PID by running windows' tasklist command
-#     # _gotPID = 0
-#     # p = os.popen(f'tasklist /FI "pid eq {pid}" /FI "imagename eq python.exe"')
-#     # for _p in p:
-#     #     try:
-#     #         _gotPID = int(_p[29:34])
-#     #     except:
-#     #         pass
-#     # return pid != 0 and pid == p
-#
-

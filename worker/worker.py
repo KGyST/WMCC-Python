@@ -1,16 +1,11 @@
-from flask import Flask
 import os
-
-from flask_restful import Resource, Api
 from azure.servicebus import ServiceBusClient, QueueClient, Message
 
 import json
 import logging
 from logging.config import dictConfig
 
-_SRC                        = r".."
-APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
-
+os.chdir(r"..")
 
 from src.WMCC import (
     createBrandedProduct,
@@ -54,7 +49,6 @@ dictConfig({
 })
 
 
-
 def testWorker():
     logging.info("testWorker started")
 
@@ -77,8 +71,10 @@ def testWorker():
                 if endPoint == "/":
                     result = createBrandedProduct(job['data'])
                 elif endPoint == "/createmacroset":
-                    #FIXME remove this since not called anymore through web
+                    #FIXME remove this since not called anymore through web, now only for tests
                     result = buildMacroSet(job['data'])
+                elif endPoint == "/creatematerials":
+                    result = createBrandedProduct(job['data'])
             except WMCCException as e:
                 result = e.description
 
@@ -93,21 +89,6 @@ def testWorker():
             resultFile.close()
             message = queue_receiver.next()
 
-class testResponse(Resource):
-    def get(self):
-        return {"test": "Testresponse from testWorker"}
-
-
-class MyApp():
-    def __init__(self, *o,  **options):
-        testWorker()
-        # super(MyApp, self).__init__(*o, **options)
-
-
-app = MyApp(__name__)
-api = Api(app)
-
-api.add_resource(testResponse, '/')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    testWorker()

@@ -13,16 +13,7 @@ import time
 import signal
 import uuid
 
-# _SRC                        = r"src"
-# APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
-#
-# with open(APP_CONFIG, "r") as ac:
-#     appJSON                     = json.load(ac)
-#     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
-#     LOGLEVEL                    = appJSON["LOGLEVEL"]
-#     TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
-#     JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
-#     RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+from azure.servicebus import ServiceBusClient, QueueClient, Message
 
 from src.WMCC import (
     extractParams,
@@ -157,7 +148,6 @@ class ReceiveFile_Test(Resource):
         return ({"result": "00, OK, 00, 00"})
 
 
-
 class ResetJobQueue(Resource):
     def post(self):
         if not os.path.exists(JOBDATA_PATH):
@@ -211,7 +201,41 @@ class ResetJobQueue(Resource):
         return {'result': 'OK',
                 'jobs_killed': ' '.join(jobsToKill)}
 
+
+class CreateMaterials(Resource):
+    def post(self):
+        data = request.get_json()
+
+        pid = str(uuid.uuid4()).upper()
+        logging.debug("".join(["/creatematerials ", "PID: ", str(pid)]))
+
+        #-----------------------------------
+
+        data = {
+            "productName": "Placeable_LCF_name",
+            "template": {
+                "materialParameters": [],
+                "materials": [{"name": m["name"],
+                               **m["materialGraphics"],
+                               **m["materialAppearance"],
+                               }  for m in data["productData"]],
+                "ARCHICAD_template": {
+                    "category": "commons",
+                    "main_macroset_version": "18",
+                }
+            },
+            "variationsData": []
+        }
+
+        #-----------------------------------
+
+        enQueueJob("/creatematerials", data, pid)
+
+        return getResult(pid)
+
+
 api.add_resource(ArchicadEngine, '/')
+api.add_resource(CreateMaterials, '/creatematerials')
 api.add_resource(CreateLCFEngine, '/createmacroset')
 api.add_resource(ParameterExtractorEngine, '/extractparams')
 api.add_resource(ReceiveFile_Test, '/setfile')

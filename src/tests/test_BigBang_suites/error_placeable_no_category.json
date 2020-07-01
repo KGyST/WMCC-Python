@@ -23,10 +23,9 @@
         ]
     },
     "result": {
-        "code": 1,
         "error_message": {
             "title": "Nonexisting category",
-            "description": ""
+            "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name"
         },
         "additional_data": null
     }
