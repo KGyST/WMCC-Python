@@ -1316,6 +1316,7 @@ class WMCCException(HTTPException):
     ERR_GSM_COMPILATION_ERROR   = 4
     ERR_ARRAY_ZERO_INDEXING     = 5
     ERR_NONEXISTING_TRANSLATOR  = 6
+    ERR_MALFORMED_REQUEST       = 7
 
     with open("error_codes.json", "r") as error_codes:
         _j = json.load(error_codes)
@@ -1807,8 +1808,8 @@ def createBrandedProduct(inData):
     os.makedirs(tempGDLDirName)
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
-    try:
-        with open(CATEGORY_DATA_JSON, "r") as categoryData:
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
+        try:
             settingsJSON = json.load(categoryData)
             AC_templateData = inData["template"]["ARCHICAD_template"]
             main_version = AC_templateData["main_macroset_version"]
@@ -1819,9 +1820,11 @@ def createBrandedProduct(inData):
             minor_version = subCategory["current_minor_version"]
             if "minor_version" in AC_templateData:
                 minor_version = AC_templateData["minor_version"]
-    except KeyError:
-        if category not in settingsJSON:                raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY)
-        if main_version not in settingsJSON[category]:  raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION)
+        except KeyError:
+            if "template" not in inData:                        raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": inData})
+            if "ARCHICAD_template" not in inData["template"]:   raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": inData})
+            if category not in AC_templateData:                 raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY, additional_data={"category": category, "request": inData})
+            if main_version not in category:                    raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION,  additional_data={"main_version": main_version, "request": inData})
 
     source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)

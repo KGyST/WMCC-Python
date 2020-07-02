@@ -22,6 +22,7 @@ from src.WMCC import (
     LOGLEVEL,
     APP_LOG_FILE_LOCATION,
     JOBDATA_PATH,
+    WMCCException
 )
 
 if isinstance(LOGLEVEL, str):

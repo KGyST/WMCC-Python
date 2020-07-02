@@ -27,6 +27,29 @@
             "title": "Nonexisting category",
             "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name"
         },
-        "additional_data": null
+        "additional_data": {
+            "category": "bad_category",
+            "request": {
+                "productName": "Placeable_LCF_name",
+                "template": {
+                    "materialParameters": [],
+                    "materials": [],
+                    "ARCHICAD_template": {
+                        "category": "bad_category",
+                        "main_macroset_version": "19",
+                        "source_file": "test_placeable",
+                        "parameters": []
+                    }
+                },
+                "variationsData": [
+                    {
+                        "variationName": "test_placeable1",
+                        "parameters": [],
+                        "materialParameters": [],
+                        "dataParameters": []
+                    }
+                ]
+            }
+        }
     }
 }

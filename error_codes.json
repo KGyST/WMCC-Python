@@ -26,5 +26,9 @@
   "6": {
     "title": "Nonexisting translator",
     "description": "Call contains a parameter that cannot be translated into an ARCHICAD parameter or there is a typo in translation file"
+  },
+  "7": {
+    "title": "Malformed request",
+    "description": "At least one required field is missing from request"
   } 
 }

@@ -77,6 +77,9 @@ def testWorker():
                     result = createBrandedProduct(job['data'])
             except WMCCException as e:
                 result = e.description
+            except Exception as e:
+                we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data=e.args)
+                result = we.description
 
             if os.path.exists(RESULTDATA_PATH):
                 resultDict = json.load(open(RESULTDATA_PATH, "r"))

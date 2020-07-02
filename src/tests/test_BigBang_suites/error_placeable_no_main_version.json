@@ -24,9 +24,32 @@
     },
     "result": {
         "error_message": {
-            "title": "Nonexisting main version",
-            "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name"
+            "title": "Nonexisting category",
+            "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name"
         },
-        "additional_data": null
+        "additional_data": {
+            "category": "tests",
+            "request": {
+                "productName": "Placeable_LCF_name",
+                "template": {
+                    "materialParameters": [],
+                    "materials": [],
+                    "ARCHICAD_template": {
+                        "category": "tests",
+                        "main_macroset_version": "bad_version",
+                        "source_file": "test_placeable",
+                        "parameters": []
+                    }
+                },
+                "variationsData": [
+                    {
+                        "variationName": "test_placeable1",
+                        "parameters": [],
+                        "materialParameters": [],
+                        "dataParameters": []
+                    }
+                ]
+            }
+        }
     }
 }
