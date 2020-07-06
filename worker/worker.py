@@ -78,7 +78,8 @@ def testWorker():
             except WMCCException as e:
                 result = e.description
             except Exception as e:
-                we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data=e.args)
+                we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"error_message": e.args,
+                                                                                   "request": job['data']})
                 result = we.description
 
             if os.path.exists(RESULTDATA_PATH):

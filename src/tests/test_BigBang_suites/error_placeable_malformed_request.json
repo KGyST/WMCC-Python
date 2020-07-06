@@ -1,0 +1,42 @@
+{
+    "description": "Expected error: placeable: malformed request",
+    "endpoint": "/",
+    "request": {
+        "productName": "Placeable_LCF_name",
+        "template": {
+            "materialParameters": [],
+            "materials": []
+        },
+        "variationsData": [
+            {
+                "variationName": "test_placeable1",
+                "parameters": [],
+                "materialParameters": [],
+                "dataParameters": []
+            }
+        ]
+    },
+    "result": {
+        "error_message": {
+            "title": "Malformed request",
+            "description": "At least one required field is missing from request"
+        },
+        "additional_data": {
+            "request": {
+                "productName": "Placeable_LCF_name",
+                "template": {
+                    "materialParameters": [],
+                    "materials": []
+                },
+                "variationsData": [
+                    {
+                        "variationName": "test_placeable1",
+                        "parameters": [],
+                        "materialParameters": [],
+                        "dataParameters": []
+                    }
+                ]
+            }
+        }
+    }
+}

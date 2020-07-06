@@ -211,7 +211,7 @@ class CreateMaterials(Resource):
         logging.debug("".join(["/creatematerials ", "PID: ", str(pid)]))
 
         #-----------------------------------
-
+        #FIXME some better productName; main_macroset_version
         data = {
             "productName": "Placeable_LCF_name",
             "template": {
