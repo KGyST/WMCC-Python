@@ -15,7 +15,7 @@
 
 <Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
 <![CDATA[    
-	
+
 text2 0, 0, str(iVersionNumber[1][1], 8, 0)
 
 for _i = 1 to vardim1(sMaterialS)
@@ -24,6 +24,13 @@ next _i
 
 ]]>
 </Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[values	"mTest"\
+		"Test material"]]>
+</Script_1D>
 
 <!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
 
@@ -70,7 +77,7 @@ endif
 		</Length>
 		<Length Name="B">
 			<Description><![CDATA["Depth"]]></Description>
-			<Value>5.08</Value>
+			<Value>0.6</Value>
 		</Length>
 		<Length Name="zzyzx">
 			<Description><![CDATA["Height"]]></Description>
@@ -78,40 +85,39 @@ endif
 		</Length>
 		<String Name="sMaterialS">
 			<Description><![CDATA[""]]></Description>
-			<ArrayValues FirstDimension="14" SecondDimension="0">
-				<AVal Row="1"><![CDATA[""]]></AVal>
-				<AVal Row="2"><![CDATA[""]]></AVal>
-				<AVal Row="3"><![CDATA[""]]></AVal>
-				<AVal Row="4"><![CDATA[""]]></AVal>
-				<AVal Row="5"><![CDATA[""]]></AVal>
-				<AVal Row="6"><![CDATA[""]]></AVal>
-				<AVal Row="7"><![CDATA[""]]></AVal>
-				<AVal Row="8"><![CDATA[""]]></AVal>
-				<AVal Row="9"><![CDATA[""]]></AVal>
-				<AVal Row="10"><![CDATA[""]]></AVal>
-				<AVal Row="11"><![CDATA[""]]></AVal>
-				<AVal Row="12"><![CDATA[""]]></AVal>
-				<AVal Row="13"><![CDATA[""]]></AVal>
-				<AVal Row="14"><![CDATA[""]]></AVal>
+			<ArrayValues FirstDimension="13" SecondDimension="0">
+				<AVal Row="1"><![CDATA["Test material"]]></AVal>
+				<AVal Row="2"><![CDATA["Test material"]]></AVal>
+				<AVal Row="3"><![CDATA["Test material"]]></AVal>
+				<AVal Row="4"><![CDATA["Test material"]]></AVal>
+				<AVal Row="5"><![CDATA["Test material"]]></AVal>
+				<AVal Row="6"><![CDATA["Test material"]]></AVal>
+				<AVal Row="7"><![CDATA["Test material"]]></AVal>
+				<AVal Row="8"><![CDATA["Test material"]]></AVal>
+				<AVal Row="9"><![CDATA["Test material"]]></AVal>
+				<AVal Row="10"><![CDATA["Test material"]]></AVal>
+				<AVal Row="11"><![CDATA["Test material"]]></AVal>
+				<AVal Row="12"><![CDATA["Test material"]]></AVal>
+				<AVal Row="13"><![CDATA["Test material"]]></AVal>
 			</ArrayValues>
 		</String>
 		<String Name="sMaterialValS">
 			<Description><![CDATA["Material values' string array"]]></Description>
 			<ArrayValues FirstDimension="14" SecondDimension="0">
-				<AVal Row="1"><![CDATA[""]]></AVal>
-				<AVal Row="2"><![CDATA[""]]></AVal>
-				<AVal Row="3"><![CDATA[""]]></AVal>
-				<AVal Row="4"><![CDATA[""]]></AVal>
-				<AVal Row="5"><![CDATA[""]]></AVal>
-				<AVal Row="6"><![CDATA[""]]></AVal>
-				<AVal Row="7"><![CDATA[""]]></AVal>
-				<AVal Row="8"><![CDATA[""]]></AVal>
-				<AVal Row="9"><![CDATA[""]]></AVal>
-				<AVal Row="10"><![CDATA[""]]></AVal>
-				<AVal Row="11"><![CDATA[""]]></AVal>
-				<AVal Row="12"><![CDATA[""]]></AVal>
-				<AVal Row="13"><![CDATA[""]]></AVal>
-				<AVal Row="14"><![CDATA[""]]></AVal>
+				<AVal Row="1"><![CDATA["Test material"]]></AVal>
+				<AVal Row="2"><![CDATA["Test material"]]></AVal>
+				<AVal Row="3"><![CDATA["Test material"]]></AVal>
+				<AVal Row="4"><![CDATA["Test material"]]></AVal>
+				<AVal Row="5"><![CDATA["Test material"]]></AVal>
+				<AVal Row="6"><![CDATA["Test material"]]></AVal>
+				<AVal Row="7"><![CDATA["Test material"]]></AVal>
+				<AVal Row="8"><![CDATA["Test material"]]></AVal>
+				<AVal Row="9"><![CDATA["Test material"]]></AVal>
+				<AVal Row="10"><![CDATA["Test material"]]></AVal>
+				<AVal Row="11"><![CDATA["Test material"]]></AVal>
+				<AVal Row="12"><![CDATA["Test material"]]></AVal>
+				<AVal Row="13"><![CDATA["Test material"]]></AVal>
+				<AVal Row="14"><![CDATA["Test material"]]></AVal>
 			</ArrayValues>
 		</String>
 		<String Name="sLogoName">
@@ -142,6 +148,10 @@ endif
 		<Title Name="gs_list">
 			<Description><![CDATA["Parameters for Listing"]]></Description>
 		</Title>
+		<String Name="mTest">
+			<Description><![CDATA[""]]></Description>
+			<Value><![CDATA["Test material"]]></Value>
+		</String>
 	</Parameters>
 </ParamSection>
 

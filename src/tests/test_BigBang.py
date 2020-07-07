@@ -12,7 +12,7 @@ import re
 FOLDER      = "test_BigBang"
 SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
 TEST_ONLY   = os.environ['TEST_ONLY']  if "TEST_ONLY"  in os.environ else ""
-print(f"Server URL: {SERVER_URL}")
+print(f"Server URL: {SERVER_URL} \n")
 
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
@@ -82,11 +82,11 @@ class TestSuite_BigBang(unittest.TestSuite):
             if not fileName.startswith('_') and os.path.splitext(fileName)[1] == '.json':
                 try:
                     testData = json.load(open(os.path.join(FOLDER + "_suites", fileName), "r"))
+
+                    test_case = TestCase_BigBang(testData, FOLDER, fileName)
+                    self.addTest(test_case)
                 except json.decoder.JSONDecodeError:
                     print(fileName)
-
-                test_case = TestCase_BigBang(testData, FOLDER, fileName)
-                self.addTest(test_case)
 
         super(TestSuite_BigBang, self).__init__(self._tests)
 

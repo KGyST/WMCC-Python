@@ -11,7 +11,7 @@
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
-        "parameters": []
+        "parameters": {}
       }
     },
     "variationsData": [

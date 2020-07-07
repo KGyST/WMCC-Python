@@ -1,5 +1,5 @@
 {
-  "description": "Placeable: static param overwriting with iVersionNumber array writing",
+  "description": "Placeable: static parameter 'A' overwriting to 1",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",
@@ -10,13 +10,13 @@
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
-        "parameters": [
-          {
+        "parameters": {"1":          
+			{
             "name": "A",
             "Type": "PAR_LENGTH",
             "value": 1.00
           }
-        ]
+        }
       }
     },
     "variationsData": [

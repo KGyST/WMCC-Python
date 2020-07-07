@@ -1,5 +1,5 @@
 {
-  "description": "Placeables: 2 variations with generic translations using parameters",
+  "description": "Placeables: 2 variations with generic translations using parameters, one given in mm, one in inches",
   "endpoint": "/",
   "request": {
     "productName": "Placeable_LCF_name",
@@ -10,7 +10,7 @@
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
-        "parameters": []
+        "parameters": {}
       }
     },
     "variationsData": [
@@ -28,8 +28,8 @@
         "variationName": "test_placeable2",
         "parameters": [{
                     "name": "Height",
-                    "value": "2000.0",
-                    "selectedUnit": "mm"
+                    "value": "200.0",
+                    "selectedUnit": "in"
                 }],
         "materialParameters": [],
         "dataParameters": []

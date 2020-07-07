@@ -10,7 +10,7 @@
                 "category": "bad_category",
                 "main_macroset_version": "19",
                 "source_file": "test_placeable",
-                "parameters": []
+                "parameters": {}
             }
         },
         "variationsData": [
@@ -38,7 +38,7 @@
                         "category": "bad_category",
                         "main_macroset_version": "19",
                         "source_file": "test_placeable",
-                        "parameters": []
+                        "parameters": {}
                     }
                 },
                 "variationsData": [

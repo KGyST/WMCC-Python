@@ -42,12 +42,15 @@ with open(APP_CONFIG, "r") as ac:
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     WMCC_PATH                   = appJSON["WMCC_PATH"]
-    CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
     TARGET_GDL_DIR_NAME         = os.path.join(WMCC_PATH, appJSON["TARGET_GDL_DIR_NAME"])
     ARCHICAD_LOCATION           = os.path.join(WMCC_PATH, appJSON["ARCHICAD_LOCATION"])
+
+    CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
+    COMMONS_DIR_PATH            = os.path.join(CONTENT_DIR_NAME, appJSON["COMMONS_DIR_NAME"])
+    CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
+
     JOBDATA_PATH                = appJSON["JOBDATA"]
     RESULTDATA_PATH             = appJSON["RESULTDATA"]
-    CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
     CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
@@ -1344,7 +1347,7 @@ class WMCCException(HTTPException):
         logging.critical(self.description)
 
 
-# ------------------- GDL classes --------------------------------------------------------------------------------------
+# ------------------- GDL writer classes --------------------------------------------------------------------------------------
 
 
 class GDLMacro:
@@ -1387,7 +1390,7 @@ class GDL_values(GDLCommand):
         return result
 
 
-# -------------------/GDL classes --------------------------------------------------------------------------------------
+# -------------------/GDL writer classes --------------------------------------------------------------------------------------
 
 
 
@@ -1572,9 +1575,11 @@ def unitConvert(inParameterName,
     :inSecondPosition:  position if in array
     :return:            float; NOT string
     """
+    #FIXME into a separate json
     _UnitLib = {"m": 1,
                 "cm": 0.01,
                 "mm" : 0.001,
+                "in" : 0.0254,
                 "percent": 0.01,
                 "normal": 1,
                 "byte": 1.00/255.0, }
@@ -1586,18 +1591,23 @@ def unitConvert(inParameterName,
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
 
-    if "Measurement" in inTranslationLib['parameters'][inParameterName]:
-        if "Measurement" in inTranslationLib['parameters'][inParameterName]["ARCHICAD"]:
-            return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
-                   _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
-    elif inParameterName in {"Inner frame material",
-                             "Outer frame material",
-                             "Glazing",
-                             "Available inner frame materials",
-                             "Available outer frame materials",
-                             }:
-        return inParameterValue + "_" + family_name
-    else:
+    try:
+        if "Measurement" in inTranslationLib:
+            if "Measurement" in inTranslationLib["ARCHICAD"]:
+                return float(inParameterValue) \
+                       * _UnitLib[inTranslationLib["Measurement"]] \
+                       / _UnitLib[inTranslationLib["ARCHICAD"]["Measurement"]]
+        elif inParameterName in {"Inner frame material",
+                                 "Outer frame material",
+                                 "Glazing",
+                                 "Available inner frame materials",
+                                 "Available outer frame materials",
+                                 }:
+            return inParameterValue + "_" + family_name
+        else:
+            return inParameterValue
+    except KeyError:
+        #FIXME an exception, maybe
         return inParameterValue
 
 
@@ -1753,7 +1763,9 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
 
         if parameterName in inTranslationDict["parameters"]:
             translatedParameterName = inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]
-            translationDict = inTranslationDict
+            translationDict = inTranslationDict["parameters"][parameterName]
+            if 'selectedUnit' in parameter:
+                translationDict["Measurement"] = parameter['selectedUnit']
         else:
             translatedParameterName = parameterName
             translationDict = None
@@ -1815,6 +1827,7 @@ def createBrandedProduct(inData):
             main_version = AC_templateData["main_macroset_version"]
             category = AC_templateData["category"]
             subCategory = settingsJSON[category][main_version]
+            commonsDir = os.path.join(COMMONS_DIR_PATH, main_version)
             projectPath = subCategory["path"]
             imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
             minor_version = subCategory["current_minor_version"]
@@ -1829,6 +1842,8 @@ def createBrandedProduct(inData):
     source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
 
+    #FIXME putting common files (mostly materials) to a separate dir
+    # scanFolders(commonsDir, commonsDir, library_images=False)
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'] if 'macro_folders' in subCategory else [])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
@@ -1852,15 +1867,19 @@ def createBrandedProduct(inData):
             if materialMacro:
                 for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
                     try:
-                        translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
+                        translationDict = translation["parameters"][parameter]
+                        translatedParameter = translationDict['ARCHICAD']["Name"]
+
+                        materialMacro.parameters[translatedParameter] = unitConvert(
+                            parameter,
+                            material[parameter],
+                            translationDict
+                        )
                     except KeyError:
                         # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
                         continue
-                    materialMacro.parameters[translatedParameter] = unitConvert(
-                        parameter,
-                        material[parameter],
-                        translation
-                    )
+
+
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
                 # --------- textures -----------
@@ -1914,6 +1933,9 @@ def createBrandedProduct(inData):
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
         dest_sourcenames    = {d.sourceFile.name.upper(): d         for d in dest_dict.values()}
 
+        if 'parameters' in AC_templateData:
+            AC_templateData['parameters'] = [AC_templateData['parameters'][_index] for _index in AC_templateData['parameters'].keys()]
+
         for family in inData['variationsData']:
             sourceFile = AC_templateData["source_file"]
             destItem = addFileUsingMacroset(sourceFile, dest_dict,
@@ -1936,6 +1958,9 @@ def createBrandedProduct(inData):
 
                 destItem.parameters["iVersionNumber"][1]  = [int(minor_version), 0]
                 # destItem.parameters["iMacroLibVersion"]  = int(macro_lib_version)
+            else:
+                #FIXME Incompatible placeables with a need fro 1st line macro
+                pass
 
             if "translations" in AC_templateData:
                 translation["parameters"].update(AC_templateData["translations"])
@@ -1943,16 +1968,21 @@ def createBrandedProduct(inData):
             setParameter(family, destItem, translation)
 
             if 'parameters' in AC_templateData:
+                # Server passes this data in a dict form instead of list like in VariableData
                 setParameter(AC_templateData, destItem, translation)
 
                 # ------Material parameters --------------------------------------------------
 
                 destItem.firstLineMacro = GDLMacro()
 
-                for translatedParameterName in family['materialParameters']:
-                    translatedParameter = translation["parameters"][translatedParameterName['name']]['ARCHICAD']["Name"]
-                    destItem.parameters[translatedParameter] = translatedParameterName['value']
-                    destItem.firstLineMacro.append(GDL_values(translatedParameter, availableMaterials))
+                for materialToTranslate in family['materialParameters']:
+                    materialToTranslateName = materialToTranslate['name']
+                    if materialToTranslateName in translation["parameters"]:
+                        translatedParameter = translation["parameters"][materialToTranslateName]['ARCHICAD']["Name"]
+                        destItem.parameters[translatedParameter] = materialToTranslate['value']
+                        destItem.firstLineMacro.append(GDL_values(translatedParameter, availableMaterials))
+                    else:
+                        logging.error(f"Missing material parameter in destination object {destItem.name}: {materialToTranslateName}")
 
                 # ------Manufacturer parameters --------------------------------------------------
 

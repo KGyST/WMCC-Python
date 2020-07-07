@@ -10,7 +10,7 @@
                 "category": "tests",
                 "main_macroset_version": "19",
                 "source_file": "nonexisting_placeable",
-                "parameters": []
+                "parameters": {}
             }
         },
         "variationsData": [
