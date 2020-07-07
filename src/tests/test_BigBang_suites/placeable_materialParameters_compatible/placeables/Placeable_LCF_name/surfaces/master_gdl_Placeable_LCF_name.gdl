@@ -1,0 +1,5 @@
+﻿
+	call "Test material" parameters  sSurfaceName = "Test material"
+
+file_dependence \
+	"Test material"
