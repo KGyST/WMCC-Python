@@ -12,7 +12,7 @@
                 "title": "Nonexisting main version",
                 "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name"
             },
-            "additional_data": null
+            "additional_data": {}
         }
     }
 }
