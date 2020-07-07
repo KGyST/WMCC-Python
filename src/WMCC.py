@@ -22,6 +22,7 @@ import hashlib
 from werkzeug.exceptions import HTTPException
 from azure.servicebus import ServiceBusClient, QueueClient, Message
 # import sys
+import traceback
 
 #------------------ External modules------------------
 
@@ -1332,14 +1333,16 @@ class WMCCException(HTTPException):
         super().__init__()
 
         self.description = {}
-        # self.description["code"] = inErrorCode
 
         if "description" in kwargs:
             self.description = {"description": kwargs["description"]}
 
         self.description["error_message"] = inErrorMessage if inErrorMessage else WMCCException.error_codes_dict[inErrorCode]
 
-        self.description["additional_data"] = kwargs["additional_data"] if "additional_data" in kwargs else None
+        self.description["additional_data"] = kwargs["additional_data"] if "additional_data" in kwargs else {}
+
+        if inErrorCode == WMCCException.ERR_UNSPECIFIED:
+            self.description["traceback"] = traceback.format_exc()
 
         #FIXME
         self.logLevel = kwargs["logLevel"] if "logLevel" in kwargs else logging.CRITICAL
@@ -1933,8 +1936,8 @@ def createBrandedProduct(inData):
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
         dest_sourcenames    = {d.sourceFile.name.upper(): d         for d in dest_dict.values()}
 
-        if 'parameters' in AC_templateData:
-            AC_templateData['parameters'] = [AC_templateData['parameters'][_index] for _index in AC_templateData['parameters'].keys()]
+        # if 'parameters' in AC_templateData:
+        #     AC_templateData['parameters'] = [AC_templateData['parameters'][_index] for _index in AC_templateData['parameters'].keys()]
 
         for family in inData['variationsData']:
             sourceFile = AC_templateData["source_file"]
@@ -1959,7 +1962,7 @@ def createBrandedProduct(inData):
                 destItem.parameters["iVersionNumber"][1]  = [int(minor_version), 0]
                 # destItem.parameters["iMacroLibVersion"]  = int(macro_lib_version)
             else:
-                #FIXME Incompatible placeables with a need fro 1st line macro
+                #FIXME Incompatible placeables with a need for 1st line macro
                 pass
 
             if "translations" in AC_templateData:

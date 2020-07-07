@@ -27,6 +27,6 @@
             "title": "Nonexisting source object",
             "description": "The Source object Object refers to doesn't exist or there is a typo in Source object name in category data file or the associated filename"
         },
-        "additional_data": null
+        "additional_data": {}
     }
 }
