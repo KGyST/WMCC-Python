@@ -10,10 +10,10 @@ _SRC = "..\src"
 ARCHICAD_LOCATION = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")
 
 def extractLCF(inTempLcfPath, inOutputDirPath):
-    '''
+    """
     Builds up an LCF from a set of Folders
     :return:
-    '''
+    """
     output = '"%s" extractcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), inTempLcfPath, inOutputDirPath)
     print(output)
     with Popen(output, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
@@ -24,6 +24,9 @@ def extractLCF(inTempLcfPath, inOutputDirPath):
 
 
 def lcfWriter():
+    """
+    :return:
+    """
     with open(sys.argv[1], "r") as jF:
         jsonDict = json.load(jF)
 

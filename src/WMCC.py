@@ -794,37 +794,40 @@ class Param(object):
             return inData
 
     def _valueToString(self, inVal):
-        if self.iType in (PAR_STRING, ):
-            if inVal is not None:
-                if not inVal.startswith('"'):
-                    inVal = '"' + inVal
-                if not inVal.endswith('"') or len(inVal) == 1:
-                    inVal += '"'
-                return etree.CDATA(inVal)
-            else:
-                return etree.CDATA('""')
-        elif self.iType in (PAR_REAL, PAR_LENGTH, PAR_ANGLE):
-            nDigits = 0
-            eps = 1E-7
-            maxN = 1E12
-            # if maxN < abs(inVal) or eps > abs(inVal) > 0:
-            #     return "%E" % inVal
-            #FIXME 1E-012 and co
-            # if -eps < inVal < eps:
-            #     return 0
-            s = '%.' + str(nDigits) + 'f'
-            while nDigits < 8:
-                if (inVal - eps < float(s % inVal) < inVal + eps):
-                    break
-                nDigits += 1
+        try:
+            if self.iType in (PAR_STRING, ):
+                if inVal is not None:
+                    if not inVal.startswith('"'):
+                        inVal = '"' + inVal
+                    if not inVal.endswith('"') or len(inVal) == 1:
+                        inVal += '"'
+                    return etree.CDATA(inVal)
+                else:
+                    return etree.CDATA('""')
+            elif self.iType in (PAR_REAL, PAR_LENGTH, PAR_ANGLE):
+                nDigits = 0
+                eps = 1E-7
+                maxN = 1E12
+                # if maxN < abs(inVal) or eps > abs(inVal) > 0:
+                #     return "%E" % inVal
+                #FIXME 1E-012 and co
+                # if -eps < inVal < eps:
+                #     return 0
                 s = '%.' + str(nDigits) + 'f'
-            return s % inVal
-        elif self.iType in (PAR_BOOL, ):
-            return "0" if not inVal else "1"
-        elif self.iType in (PAR_SEPARATOR, ):
-            return None
-        else:
-            return str(inVal)
+                while nDigits < 8:
+                    if (inVal - eps < float(s % inVal) < inVal + eps):
+                        break
+                    nDigits += 1
+                    s = '%.' + str(nDigits) + 'f'
+                return s % inVal
+            elif self.iType in (PAR_BOOL, ):
+                return "0" if not inVal else "1"
+            elif self.iType in (PAR_SEPARATOR, ):
+                return None
+            else:
+                return str(inVal)
+        except AttributeError:
+            raise WMCCException(WMCCException.ERR_BAD_PARAM_TYPE, additional_data={"name": self.name})
 
     @property
     def eTree(self):
@@ -1311,7 +1314,7 @@ class StrippedDestXML:
 class WMCCException(HTTPException):
     #FIXME constants to be reorganized
     """
-     Exception for handling error messages.
+     Exception class for handling error messages.
     """
     ERR_UNSPECIFIED             = 0
     ERR_NONEXISTING_CATEGORY    = 1
@@ -1321,6 +1324,7 @@ class WMCCException(HTTPException):
     ERR_ARRAY_ZERO_INDEXING     = 5
     ERR_NONEXISTING_TRANSLATOR  = 6
     ERR_MALFORMED_REQUEST       = 7
+    ERR_BAD_PARAM_TYPE          = 8
 
     with open("error_codes.json", "r") as error_codes:
         _j = json.load(error_codes)
@@ -1532,7 +1536,7 @@ def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
     destItem = addFile(inFile, **kwargs)
 
     if not destItem:
-        raise WMCCException(WMCCException.ERR_NONEXISTING_OBJECT)
+        raise WMCCException(WMCCException.ERR_NONEXISTING_OBJECT, additional_data=inFile)
 
     return destItem
 
