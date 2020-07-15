@@ -19,7 +19,8 @@
     "result": {
         "error_message": {
             "title": "Malformed request",
-            "description": "At least one required field is missing from request"
+            "description": "At least one required field is missing from request",
+            "constant": "ERR_MALFORMED_REQUEST"
         },
         "additional_data": {
             "request": {

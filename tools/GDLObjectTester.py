@@ -112,6 +112,7 @@ def getObjects(inObjectNameS):
         if inObjectNameS:
             for objName in inObjectNameS:
                 objectData = posts.find_one({"name": objName})
+                # pprint.pprint(objectData)
                 print(objectData["name"])
                 getSingleObject(objectData)
         else:
@@ -121,9 +122,9 @@ def getObjects(inObjectNameS):
                 getSingleObject(objectData)
                 _i += 1
     except PermissionError:
-        pass
+        print("PermissionError")
     except OSError:
-        pass
+        print("OSError")
 
 if __name__ == "__main__":
     getObjects(sys.argv[1:])

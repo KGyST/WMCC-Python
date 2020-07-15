@@ -10,7 +10,8 @@
         "message": {
             "error_message": {
                 "title": "Nonexisting main version",
-                "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name"
+                "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name",
+                "constant": "ERR_NONEXISTING_VERSION"
             },
             "additional_data": {}
         }
