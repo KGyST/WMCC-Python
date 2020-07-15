@@ -64,7 +64,19 @@ with open(APP_CONFIG, "r") as ac:
                     'info':     20,
                     'warning':  30,
                     'error':    40,
-                    'critical': 50, }[LOGLEVEL]
+                    'critical': 50,
+                    'NOTSET':   0,
+                    'DEBUG':    10,
+                    'INFO':     20,
+                    'WARNING':  30,
+                    'ERROR':    40,
+                    'CRITICAL': 50,
+                    '0':        0,
+                    '10':       10,
+                    '20':       20,
+                    '30':       30,
+                    '40':       40,
+                    '50':       50, }[LOGLEVEL]
 
 ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(CONTENT_DIR_NAME, "_commons", "_IMAGES_GENERIC_")
 TRANSLATIONS_JSON           = os.path.join(CONTENT_DIR_NAME, r"translations.json")
