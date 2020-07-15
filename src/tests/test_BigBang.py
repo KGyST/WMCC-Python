@@ -84,6 +84,7 @@ class TestSuite_BigBang(unittest.TestSuite):
                     testData = json.load(open(os.path.join(FOLDER + "_suites", fileName), "r"))
 
                     test_case = TestCase_BigBang(testData, FOLDER, fileName)
+                    test_case.maxDiff = None
                     self.addTest(test_case)
                 except json.decoder.JSONDecodeError:
                     print(fileName)

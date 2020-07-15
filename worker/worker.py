@@ -50,7 +50,7 @@ dictConfig({
 
 
 def testWorker():
-    logging.info("testWorker started")
+    logging.info("worker started")
 
     queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
 
