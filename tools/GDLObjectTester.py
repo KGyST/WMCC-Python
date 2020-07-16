@@ -6,7 +6,6 @@ from subprocess import Popen, PIPE, DEVNULL
 
 CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
 SERVER_URL = "wmcc.ad.bimobject.com"
-SERVER_URL = "localhost"
 CLEANUP = True
 
 _SRC        = r"..\src"

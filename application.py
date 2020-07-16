@@ -87,7 +87,8 @@ def getResult(inPID):
 
 class ArchicadEngine(Resource):
     def get(self):
-        return {"test": "It's working!"}
+        logging.debug("ArchicadEngine was called with a GET message")
+        return {"GET": "It's working!"}
 
     def post(self):
         data = request.get_json()
@@ -150,6 +151,7 @@ class ReceiveFile_Test(Resource):
 
 
 class ResetJobQueue(Resource):
+    # To be REMOVED
     def post(self):
         if not os.path.exists(JOBDATA_PATH):
             jobQueue = {
