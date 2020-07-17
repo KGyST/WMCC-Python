@@ -1,7 +1,7 @@
 from flask import Flask
 app = Flask(__name__)
 
-from flask import Flask, request
+from flask import request, jsonify, Response
 from flask_restful import Resource, Api
 from logging.config import dictConfig
 import os
@@ -11,25 +11,27 @@ import logging
 
 import time
 import signal
+import uuid
 
-_SRC                        = r".\src"
-APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
+from azure.servicebus import ServiceBusClient, QueueClient, Message
 
-with open(APP_CONFIG, "r") as ac:
-    appJSON                     = json.load(ac)
-    APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
-    LOGLEVEL                    = appJSON["LOGLEVEL"]
-    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
-    JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
-    RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+from src.WMCC import (
+    extractParams,
+    enQueueJob,
+    RESULTDATA_PATH,
+    LOGLEVEL,
+    APP_LOG_FILE_LOCATION,
+    JOBDATA_PATH,
+    WMCCException
+)
 
-    if isinstance(LOGLEVEL, str):
-        LOGLEVEL = {'notset':   0,
-                    'debug':    10,
-                    'info':     20,
-                    'warning':  30,
-                    'error':    40,
-                    'critical': 50, }[LOGLEVEL]
+if isinstance(LOGLEVEL, str):
+    LOGLEVEL = {'notset':   0,
+                'debug':    10,
+                'info':     20,
+                'warning':  30,
+                'error':    40,
+                'critical': 50, }[LOGLEVEL]
 
 dictConfig({
     'version': 1,
@@ -54,10 +56,7 @@ dictConfig({
 })
 
 
-from src.WMCC import (
-    extractParams,
-    enQueueJob,
-)
+
 
 api = Api(app)
 
@@ -88,12 +87,13 @@ def getResult(inPID):
 
 class ArchicadEngine(Resource):
     def get(self):
-        return {"test": "It's working!"}
+        logging.debug("ArchicadEngine was called with a GET message")
+        return {"GET": "It's working!"}
 
     def post(self):
         data = request.get_json()
 
-        pid = os.getpid()
+        pid = str(uuid.uuid4()).upper()
         logging.debug("".join(["/", "PID: ", str(pid)]))
         enQueueJob("/", data, pid)
 
@@ -107,7 +107,7 @@ class CreateLCFEngine(Resource):
     def post(self):
         data = request.get_json()
 
-        pid = os.getpid()
+        pid = str(uuid.uuid4()).upper()
         logging.debug("".join(["/createmacroset", "PID: ", str(pid)]))
 
         enQueueJob("/createmacroset", data, pid)
@@ -151,11 +151,13 @@ class ReceiveFile_Test(Resource):
 
 
 class ResetJobQueue(Resource):
+    # To be REMOVED
     def post(self):
         if not os.path.exists(JOBDATA_PATH):
             jobQueue = {
                 "isJobActive": False,
-                "jobList": []
+                "jobList": [] ,
+                "worker_pid": 0
             }
             with open(JOBDATA_PATH, "w") as jobFile:
                 json.dump(jobQueue, jobFile, indent=4)
@@ -177,7 +179,8 @@ class ResetJobQueue(Resource):
 
         jobQueue = {
             "isJobActive": False,
-            "jobList": []}
+            "jobList": [],
+            "worker_pid": 0}
 
         while not os.access(JOBDATA_PATH, os.W_OK):
             time.sleep(1)
@@ -201,11 +204,47 @@ class ResetJobQueue(Resource):
         return {'result': 'OK',
                 'jobs_killed': ' '.join(jobsToKill)}
 
+
+class CreateMaterials(Resource):
+    def post(self):
+        data = request.get_json()
+
+        pid = str(uuid.uuid4()).upper()
+        logging.debug("".join(["/creatematerials ", "PID: ", str(pid)]))
+
+        #-----------------------------------
+        #FIXME some better productName; main_macroset_version
+        data = {
+            "productName": "Placeable_LCF_name",
+            "template": {
+                "materialParameters": [],
+                "materials": [{"name": m["name"],
+                               **m["materialGraphics"],
+                               **m["materialAppearance"],
+                               }  for m in data["productData"]],
+                "ARCHICAD_template": {
+                    "category": "commons",
+                    "main_macroset_version": "18",
+                }
+            },
+            "variationsData": []
+        }
+
+        #-----------------------------------
+
+        enQueueJob("/creatematerials", data, pid)
+
+        return getResult(pid)
+
+
 api.add_resource(ArchicadEngine, '/')
+api.add_resource(CreateMaterials, '/creatematerials')
 api.add_resource(CreateLCFEngine, '/createmacroset')
 api.add_resource(ParameterExtractorEngine, '/extractparams')
 api.add_resource(ReceiveFile_Test, '/setfile')
 api.add_resource(ResetJobQueue, '/resetjobqueue')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

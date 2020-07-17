@@ -1,5 +1,5 @@
 import os.path
-from os import listdir
+from os import listdir, chdir
 import uuid
 import re
 import tempfile
@@ -13,11 +13,16 @@ import copy
 import argparse
 
 import json
-import http.client, http.server, urllib.request, urllib.parse, urllib.error, urllib.parse, os, base64
+import http.client, http.server, urllib.request, urllib.parse, urllib.error, os, base64
 import logging
 from PIL import Image
 import io
-from time import sleep
+# from time import sleep
+import hashlib
+from werkzeug.exceptions import HTTPException
+from azure.servicebus import ServiceBusClient, QueueClient, Message
+# import sys
+import traceback
 
 #------------------ External modules------------------
 
@@ -29,20 +34,29 @@ from lxml import etree
 
 
 OUTPUT_XML                  = True      # To retain xmls
-_SRC                        = r".\src"
-APP_CONFIG                  = os.path.join(_SRC, r"appconfig.json")
+APP_CONFIG                  = "appconfig.json"
 
 with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     DEBUG                       = appJSON["DEBUG"]
     MULTIPROCESS                = appJSON["MULTIPROCESS"]
     CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
-    TARGET_GDL_DIR_NAME         = appJSON["TARGET_GDL_DIR_NAME"]
-    SOURCE_DIR_NAME             = os.path.join(_SRC, r"archicad")
-    ARCHICAD_LOCATION           = os.path.join(SOURCE_DIR_NAME, "LP_XMLConverter_18")
     LOGLEVEL                    = appJSON["LOGLEVEL"]
-    JOBDATA_PATH                = os.path.join(TARGET_GDL_DIR_NAME, appJSON["JOBDATA"])
-    RESULTDATA_PATH             = os.path.join(TARGET_GDL_DIR_NAME, appJSON["RESULTDATA"])
+    WMCC_PATH                   = appJSON["WMCC_PATH"]
+    TARGET_GDL_DIR_NAME         = os.path.join(WMCC_PATH, appJSON["TARGET_GDL_DIR_NAME"])
+    ARCHICAD_LOCATION           = os.path.join(WMCC_PATH, appJSON["ARCHICAD_LOCATION"])
+
+    CONTENT_DIR_NAME            = appJSON["CONTENT_DIR_NAME"]
+    COMMONS_DIR_PATH            = os.path.join(CONTENT_DIR_NAME, appJSON["COMMONS_DIR_NAME"])
+    CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
+
+    JOBDATA_PATH                = appJSON["JOBDATA"]
+    RESULTDATA_PATH             = appJSON["RESULTDATA"]
+    APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
+    WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
+    CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
+    SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
+
 
     if isinstance(LOGLEVEL, str):
         LOGLEVEL = {'notset':   0,
@@ -50,10 +64,22 @@ with open(APP_CONFIG, "r") as ac:
                     'info':     20,
                     'warning':  30,
                     'error':    40,
-                    'critical':    50, }[LOGLEVEL]
+                    'critical': 50,
+                    'NOTSET':   0,
+                    'DEBUG':    10,
+                    'INFO':     20,
+                    'WARNING':  30,
+                    'ERROR':    40,
+                    'CRITICAL': 50,
+                    '0':        0,
+                    '10':       10,
+                    '20':       20,
+                    '30':       30,
+                    '40':       40,
+                    '50':       50, }[LOGLEVEL]
 
-ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(_SRC, r"_IMAGES_GENERIC_")
-TRANSLATIONS_JSON           = os.path.join(_SRC, r"translations.json")
+ADDITIONAL_IMAGE_DIR_NAME   = os.path.join(CONTENT_DIR_NAME, "_commons", "_IMAGES_GENERIC_")
+TRANSLATIONS_JSON           = os.path.join(CONTENT_DIR_NAME, r"translations.json")
 WMCC_BRAND_NAME             = "WMCC"
 MATERIAL_BASE_OBJECT        = "_dev_material"       # Maybe can be changed per project and goes to a json
 
@@ -83,6 +109,10 @@ SCRIPT_NAMES_LIST = ["Script_1D",
                      "Script_FWM",
                      "Script_BWM",]
 
+#Macros' names that are burnt in .apx files and thus can't be renamed
+BURNT_IN_MACRO_NAMES = ["Resize_A_B_ZZYZX",
+                        "ui_tabcontrol",]
+
 PAR_UNKNOWN     = 0
 PAR_LENGTH      = 1
 PAR_ANGLE       = 2
@@ -97,6 +127,23 @@ PAR_PEN         = 10
 PAR_SEPARATOR   = 11
 PAR_TITLE       = 12
 PAR_COMMENT     = 13
+
+PAR_TYPELIST = [
+    "PAR_UNKNOWN",
+    "PAR_LENGTH",
+    "PAR_ANGLE",
+    "PAR_REAL",
+    "PAR_INT",
+    "PAR_BOOL",
+    "PAR_STRING",
+    "PAR_MATERIAL",
+    "PAR_LINETYPE",
+    "PAR_FILL",
+    "PAR_PEN",
+    "PAR_SEPARATOR",
+    "PAR_TITLE",
+    "PAR_COMMENT",
+    ]
 
 PARFLG_CHILD    = 1
 PARFLG_BOLDNAME = 2
@@ -213,30 +260,27 @@ class ParamSection:
         """
         inserting under a title
         :param inParentParName:
-        :param inEtree:
+        :param inPar:      Param or eTree
         :param inPos:      position, 0 is first, -1 is last #FIXME
         :return:
         """
         base = self.__getIndex(inParentParName)
         if self.__paramList[base].iType == PAR_TITLE:
+            if not isinstance(inPar, Param):
+                inPar = Param(inPar)
             i = 1
-            nP = self.__paramList[base + i]
             try:
+                nP = self.__paramList[base + i]
                 while   nP.iType != PAR_TITLE and \
                         nP.iType != PAR_COMMENT and \
                         PARFLG_CHILD in nP.flags:
                     i += 1
                     nP = self.__paramList[base + i]
-            except IndexError:
-                #FIXME testing inserting right at the end
-                pass
-            if isinstance(inPar, Param):
                 self.__paramList.insert(base + i, inPar)
-                self.__paramDict[inPar.name] = inPar
-            else:
-                #_element
-                self.__paramList.insert(base + i, Param(inPar))
-                self.__paramDict[inPar.attrib['Name']] = Param(inPar)
+            except IndexError:
+                self.__paramList.append(inPar)
+
+            self.__paramDict[inPar.name] = inPar
 
     def remove_param(self, inParName):
         if inParName in self.__paramDict:
@@ -576,6 +620,9 @@ class ParamSection:
                      inValue=inParValue,
                      inAVals=arrayValues)
 
+    def returnParamsAsDict(self):
+        return self.__paramDict
+
 
 class ResizeableGDLDict(dict):
     """
@@ -711,7 +758,8 @@ class Param(object):
 
     def __setitem__(self, key, value):
         if key == 0:
-            logging.error(f"0 indexing in {self.name}, NOT done")
+            raise WMCCException(WMCCException.ERR_ARRAY_ZERO_INDEXING, additional_data={"variableName": self.name})
+            # logging.error(f"0 indexing in {self.name}, NOT done")
             return
         if isinstance(value, list):
             self._aVals[key] = self.__toFormat(value)
@@ -758,37 +806,40 @@ class Param(object):
             return inData
 
     def _valueToString(self, inVal):
-        if self.iType in (PAR_STRING, ):
-            if inVal is not None:
-                if not inVal.startswith('"'):
-                    inVal = '"' + inVal
-                if not inVal.endswith('"') or len(inVal) == 1:
-                    inVal += '"'
-                return etree.CDATA(inVal)
-            else:
-                return etree.CDATA('""')
-        elif self.iType in (PAR_REAL, PAR_LENGTH, PAR_ANGLE):
-            nDigits = 0
-            eps = 1E-7
-            maxN = 1E12
-            # if maxN < abs(inVal) or eps > abs(inVal) > 0:
-            #     return "%E" % inVal
-            #FIXME 1E-012 and co
-            # if -eps < inVal < eps:
-            #     return 0
-            s = '%.' + str(nDigits) + 'f'
-            while nDigits < 8:
-                if (inVal - eps < float(s % inVal) < inVal + eps):
-                    break
-                nDigits += 1
+        try:
+            if self.iType in (PAR_STRING, ):
+                if inVal is not None:
+                    if not inVal.startswith('"'):
+                        inVal = '"' + inVal
+                    if not inVal.endswith('"') or len(inVal) == 1:
+                        inVal += '"'
+                    return etree.CDATA(inVal)
+                else:
+                    return etree.CDATA('""')
+            elif self.iType in (PAR_REAL, PAR_LENGTH, PAR_ANGLE):
+                nDigits = 0
+                eps = 1E-7
+                maxN = 1E12
+                # if maxN < abs(inVal) or eps > abs(inVal) > 0:
+                #     return "%E" % inVal
+                #FIXME 1E-012 and co
+                # if -eps < inVal < eps:
+                #     return 0
                 s = '%.' + str(nDigits) + 'f'
-            return s % inVal
-        elif self.iType in (PAR_BOOL, ):
-            return "0" if not inVal else "1"
-        elif self.iType in (PAR_SEPARATOR, ):
-            return None
-        else:
-            return str(inVal)
+                while nDigits < 8:
+                    if (inVal - eps < float(s % inVal) < inVal + eps):
+                        break
+                    nDigits += 1
+                    s = '%.' + str(nDigits) + 'f'
+                return s % inVal
+            elif self.iType in (PAR_BOOL, ):
+                return "0" if not inVal else "1"
+            elif self.iType in (PAR_SEPARATOR, ):
+                return None
+            else:
+                return str(inVal)
+        except AttributeError:
+            raise WMCCException(WMCCException.ERR_BAD_PARAM_TYPE, additional_data={"name": self.name})
 
     @property
     def eTree(self):
@@ -1010,7 +1061,7 @@ class SourceFile(GeneralFile):
     def __init__(self, relPath, **kwargs):
         global projectPath
         super(SourceFile, self).__init__(relPath, **kwargs)
-        self.fullPath = os.path.join(SOURCE_DIR_NAME, projectPath, relPath)
+        self.fullPath = os.path.join(CONTENT_DIR_NAME, projectPath, relPath)
 
 
 class DestFile(GeneralFile):
@@ -1097,7 +1148,10 @@ class SourceXML (XMLFile, SourceFile):
         self.parentSubTypes = []
         self.scripts        = {}
 
-        mroot = etree.parse(self.fullPath, etree.XMLParser(strip_cdata=False))
+        try:
+            mroot = etree.parse(self.fullPath, etree.XMLParser(strip_cdata=False))
+        except OSError:
+            raise WMCCException(WMCCException.ERR_NONEXISTING_OBJECT)
         self.iVersion = int(mroot.getroot().attrib['Version'])
 
         global ID
@@ -1203,12 +1257,18 @@ class DestXML (XMLFile, DestFile):
         self.warnings               = []
 
         self.sourceFile             = sourceFile
-        self.guid                   = str(uuid.uuid4()).upper()
         self.bPlaceable             = sourceFile.bPlaceable
         self.iVersion               = sourceFile.iVersion
         self.proDatURL              = ''
         self.bOverWrite             = False
         self.bRetainCalledMacros    = False
+        self.firstLineMacro         = None
+
+        if not self.sourceFile.guid.endswith('7E57'):
+            self.guid               = str(uuid.uuid4()).upper()
+        else:
+            # For testing purpoes, un-randomizing dest files. "7E57" ~ "TEST"
+            self.guid               = self.sourceFile.guid
 
         self.parameters             = copy.deepcopy(sourceFile.parameters)
 
@@ -1254,13 +1314,104 @@ class StrippedDestXML:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inName, inGUID, inRelPath, inSourceFile):
+    def __init__(self, inName, inGUID, inRelPath, inMD5, inSourceFile):
         self.name = inName
         self.guid = inGUID
         self.relPath = inRelPath
+        self.md5 = inMD5
         self.sourceFile = inSourceFile
 
 # -------------------/data classes -------------------------------------------------------------------------------------
+
+class WMCCException(HTTPException):
+    #FIXME constants to be reorganized
+    """
+     Exception class for handling error messages.
+    """
+    ERR_UNSPECIFIED             = 0
+    ERR_NONEXISTING_CATEGORY    = 1
+    ERR_NONEXISTING_VERSION     = 2
+    ERR_NONEXISTING_OBJECT      = 3
+    ERR_GSM_COMPILATION_ERROR   = 4
+    ERR_ARRAY_ZERO_INDEXING     = 5
+    ERR_NONEXISTING_TRANSLATOR  = 6
+    ERR_MALFORMED_REQUEST       = 7
+    ERR_BAD_PARAM_TYPE          = 8
+
+    with open("error_codes.json", "r") as error_codes:
+        _j = json.load(error_codes)
+
+        error_codes_dict = {int(k): v for k, v in _j.items()}
+
+    def __init__(self,
+                 inErrorCode    = 0,
+                 inErrorMessage = "", **kwargs):
+        super().__init__()
+
+        self.description = {}
+
+        if "description" in kwargs:
+            self.description = {"description": kwargs["description"]}
+
+        self.description["error_message"] = inErrorMessage if inErrorMessage else WMCCException.error_codes_dict[inErrorCode]
+
+        self.description["additional_data"] = kwargs["additional_data"] if "additional_data" in kwargs else {}
+
+        if inErrorCode == WMCCException.ERR_UNSPECIFIED:
+            self.description["traceback"] = traceback.format_exc()
+
+        #FIXME
+        self.logLevel = kwargs["logLevel"] if "logLevel" in kwargs else logging.CRITICAL
+
+        logging.critical(self.description)
+
+
+# ------------------- GDL writer classes --------------------------------------------------------------------------------------
+
+
+class GDLMacro:
+    def __init__(self):
+        self._commandList = []
+
+    def append(self, inCommand):
+        self._commandList.append(inCommand)
+
+    def __str__(self):
+        return '\n'.join([c.__str__() for c in self._commandList])
+
+    def __bool__(self):
+        return len(self._commandList) > 0
+
+
+class GDLCommand:
+    iTab = 4
+    def __init__(self):
+        self._iTabs = 0
+        self.isCommented = False
+        self._values = []
+        self._quotChar = '"'
+
+
+class GDL_values(GDLCommand):
+    def __init__(self, inParName, inValueS):
+        super().__init__()
+        self._Parname = inParName
+        self._values = inValueS
+        self._command = "values"
+
+    def __str__(self):
+        import math
+        result = self._iTabs * "\t" + self._command + "\t"
+        _iTab= math.floor((len(result) + (self._iTabs + 1) * (GDLCommand.iTab - 1)) / GDLCommand.iTab)
+        result += self._quotChar + self._Parname + self._quotChar + "\\\n"
+        result += _iTab * "\t" + self._quotChar
+        result += (self._quotChar + ",\n" + _iTab * "\t" + self._quotChar).join(self._values) + self._quotChar
+        return result
+
+
+# -------------------/GDL writer classes --------------------------------------------------------------------------------------
+
+
 
 def resetAll():
     dest_sourcenames.clear()
@@ -1305,7 +1456,7 @@ def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[])
                             #     sI.isEncodedImage = True
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
                             sI.isEncodedImage = library_images
-                elif os.path.relpath(src, SOURCE_DIR_NAME) not in folders_to_skip:
+                elif os.path.relpath(src, CONTENT_DIR_NAME) not in folders_to_skip:
                     scanFolders(src, inRootFolder, library_images=library_images, folders_to_skip=folders_to_skip)
             except KeyError:
                 logging.warning("KeyError %s" % f)
@@ -1396,6 +1547,9 @@ def addFileUsingMacroset(inFile, in_dest_dict, **kwargs):
 
     destItem = addFile(inFile, **kwargs)
 
+    if not destItem:
+        raise WMCCException(WMCCException.ERR_NONEXISTING_OBJECT, additional_data=inFile)
+
     return destItem
 
 
@@ -1406,13 +1560,14 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     '''
     global projectPath
 
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath, "library_images")
+    source_image_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath, "library_images")
     if not os.path.exists(source_image_dir_name):
         source_image_dir_name = ""
     else:
         source_image_dir_name = '"' + source_image_dir_name + '"'
 
-    output = r'"%s" createcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf'), tempGDLDirName)
+    targetLCFFullPath = os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf')
+    output = r'"%s" createcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), targetLCFFullPath, tempGDLDirName)
     if source_image_dir_name:
         output += '"' + source_image_dir_name + '"'
     logging.info("output: %s" % output)
@@ -1422,9 +1577,9 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
         _out, _err = proc.communicate()
         logging.info(f"Success: {_out} (error: {_err}) ")
 
-    # check_output(output, shell=True)
-
     logging.info("*****LCF CREATION FINISHED SUCCESFULLY******")
+
+    return targetLCFFullPath
 
 
 def unitConvert(inParameterName,
@@ -1439,9 +1594,14 @@ def unitConvert(inParameterName,
     :inSecondPosition:  position if in array
     :return:            float; NOT string
     """
+    #FIXME into a separate json
     _UnitLib = {"m": 1,
                 "cm": 0.01,
-                "mm" : 0.001}
+                "mm" : 0.001,
+                "in" : 0.0254,
+                "percent": 0.01,
+                "normal": 1,
+                "byte": 1.00/255.0, }
 
     if not inTranslationLib:
         #No translation needed
@@ -1450,26 +1610,50 @@ def unitConvert(inParameterName,
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
 
-    if "Measurement" in inTranslationLib['parameters'][inParameterName]:
-        if "Measurement" in inTranslationLib['parameters'][inParameterName]["ARCHICAD"]:
-            return float(inParameterValue) * _UnitLib[inTranslationLib['parameters'][inParameterName]["Measurement"]] / \
-                   _UnitLib[inTranslationLib['parameters'][inParameterName]["ARCHICAD"]["Measurement"]]
-    elif inParameterName in {"Inner frame material",
-                             "Outer frame material",
-                             "Glazing",
-                             "Available inner frame materials",
-                             "Available outer frame materials",
-                             }:
-        return inParameterValue + "_" + family_name
-    else:
+    try:
+        if "Measurement" in inTranslationLib:
+            if "Measurement" in inTranslationLib["ARCHICAD"]:
+                return float(inParameterValue) \
+                       * _UnitLib[inTranslationLib["Measurement"]] \
+                       / _UnitLib[inTranslationLib["ARCHICAD"]["Measurement"]]
+        elif inParameterName in {"Inner frame material",
+                                 "Outer frame material",
+                                 "Glazing",
+                                 "Available inner frame materials",
+                                 "Available outer frame materials",
+                                 }:
+            return inParameterValue + "_" + family_name
+        else:
+            return inParameterValue
+    except KeyError:
+        #FIXME an exception, maybe
         return inParameterValue
 
 
 def extractParams(inData):
     global projectPath
-    projectPath = inData["path"] if "path" in inData else ""
-    sf = SourceXML(inData["fileName"])
-    return sf.parameters.returnParamsAsDict()
+
+    logging.debug("extractParams")
+
+    category = inData["category"]
+    main_version = inData["main_version"]
+
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
+        try:
+            settingsJSON = json.load(categoryData)
+            subCategory = settingsJSON[category][main_version]
+            projectPath = subCategory["path"]
+        except KeyError:
+            if category     not in settingsJSON:            raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY)
+            if main_version not in settingsJSON[category]:  raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION)
+
+    params = SourceXML(os.path.join(CONTENT_DIR_NAME, projectPath, inData["object_path"])).parameters.returnParamsAsDict()
+    return {p: {
+        "name": params[p].name,
+        "type": PAR_TYPELIST[params[p].iType],
+        "value": params[p].value,
+        "description": params[p].desc.strip('\"'),
+                } for p in params.keys()}
 
 
 def createMasterGDL(**kwargs):
@@ -1493,9 +1677,9 @@ def createMasterGDL(**kwargs):
     return content
 
 
-def buildMacroSet(inData, main_version="19"):
+def buildMacroSet(inData):
     '''
-    :inFolderS: a list of foleder names to go through to build up macros
+    :inFolderS: a list of folder names to go through to build up macros
     :return:
     '''
     global projectPath, imagePath
@@ -1508,7 +1692,7 @@ def buildMacroSet(inData, main_version="19"):
     if "minor_version" in inData:
         minor_version = inData["minor_version"]
 
-    with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
         settingsJSON = json.load(categoryData)
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
@@ -1517,17 +1701,18 @@ def buildMacroSet(inData, main_version="19"):
 
     resetAll()
 
-    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath) if imagePath else ""
+    source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
+    source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath) if imagePath else ""
     if source_image_dir_name:
         scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
 
-    for rootFolder in inData['folder_names']:
-        scanFolders(os.path.join(source_xml_dir_name, rootFolder), source_xml_dir_name, library_images=False)
+    for rootFolder in subCategory['macro_folders']:
+        # source_image_dir_name
+        scanFolders(os.path.join(CONTENT_DIR_NAME, rootFolder), source_xml_dir_name, library_images=False)
 
-        for folder, subFolderS, fileS in os.walk(os.path.join(source_xml_dir_name, rootFolder)):
+        for folder, subFolderS, fileS in os.walk(os.path.join(CONTENT_DIR_NAME, rootFolder)):
             for file in fileS:
                 if os.path.splitext(file)[1].upper() == ".XML":
                     if os.path.splitext(file)[0].upper() not in dest_dict:
@@ -1543,7 +1728,8 @@ def buildMacroSet(inData, main_version="19"):
     if "LIBRARY_VERSION_WMCC" in dest_sourcenames:
         dest_sourcenames["LIBRARY_VERSION_WMCC"].parameters["iVersionLibrary"] = minor_version
 
-    tempGDLDirName = tempfile.mkdtemp()
+    #"library" will be mentioned in the code instead of actual temp dir name
+    tempGDLDirName = os.path.join(tempfile.mkdtemp(), "library")
 
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
@@ -1551,18 +1737,27 @@ def buildMacroSet(inData, main_version="19"):
 
     _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
+    targetLCFFullPath = createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
+
+    with open(targetLCFFullPath, "rb") as lcfFile:
+        encoded_lcf = base64.urlsafe_b64encode(lcfFile.read()).decode("utf-8")
 
     _stripped_dest_dict = {}
 
     for k, v in dest_dict.items():
-        # dest_dict[k].sourceFile.scripts = None
         _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, v.sourceFile.guid, )
-        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
+        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, v.md5, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
     jsonData = json.dumps(json.loads(jsonpickle.encode({  "minor_version": str(minor_version),
                                     "objects": _stripped_dest_dict}, )), indent=4)
+
+    returnDict = {'LCFName': _fileNameWithoutExtension + ".json",
+                 "category": category,
+                 "main_version": main_version,
+                 "minor_version ": minor_version,
+                 "base64_encoded_macroset": encoded_lcf,
+                 "macroset_name": os.path.splitext(os.path.split(targetLCFFullPath)[1])[0]}
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
@@ -1570,14 +1765,7 @@ def buildMacroSet(inData, main_version="19"):
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
 
-    # with open(os.path.join(_SRC, "categoryData.json"), "w") as categoryData:
-    #     json.dump(settingsJSON, categoryData, indent=4)
-
-    return {'LCFName':          _fileNameWithoutExtension + ".json",
-            "category":         category,
-            "main_version":     main_version,
-            "minor_version ":   minor_version,
-    }
+    return returnDict
 
 
 def setParameter(inJSONSection, inDestItem, inTranslationDict):
@@ -1594,7 +1782,9 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
 
         if parameterName in inTranslationDict["parameters"]:
             translatedParameterName = inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]
-            translationDict = inTranslationDict
+            translationDict = inTranslationDict["parameters"][parameterName]
+            if 'selectedUnit' in parameter:
+                translationDict["Measurement"] = parameter['selectedUnit']
         else:
             translatedParameterName = parameterName
             translationDict = None
@@ -1649,25 +1839,38 @@ def createBrandedProduct(inData):
     os.makedirs(tempGDLDirName)
     logging.debug("tempGDLDirName: %s" % tempGDLDirName)
 
-    with open(os.path.join(_SRC, "categoryData.json"), "r") as categoryData:
-        settingsJSON = json.load(categoryData)
-        AC_templateData = inData["template"]["ARCHICAD_template"]
-        main_version = AC_templateData["main_macroset_version"]
-        category  = AC_templateData["category"]
-        subCategory = settingsJSON[category][main_version]
-        projectPath = subCategory["path"]
-        imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
+    with open(CATEGORY_DATA_JSON, "r") as categoryData:
+        try:
+            settingsJSON = json.load(categoryData)
+            AC_templateData = inData["template"]["ARCHICAD_template"]
+            main_version = AC_templateData["main_macroset_version"]
+            category = AC_templateData["category"]
+            subCategory = settingsJSON[category][main_version]
+            commonsDir = os.path.join(COMMONS_DIR_PATH, main_version)
+            projectPath = subCategory["path"]
+            imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
+            minor_version = subCategory["current_minor_version"]
+            if "minor_version" in AC_templateData:
+                minor_version = AC_templateData["minor_version"]
+        except KeyError:
+            if "template" not in inData:                        raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": inData})
+            if "ARCHICAD_template" not in inData["template"]:   raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": inData})
+            if category not in AC_templateData:                 raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY, additional_data={"category": category, "request": inData})
+            if main_version not in category:                    raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION,  additional_data={"main_version": main_version, "request": inData})
 
-    source_image_dir_name = os.path.join(SOURCE_DIR_NAME, imagePath)
-    source_xml_dir_name = os.path.join(SOURCE_DIR_NAME, projectPath)
+    source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath)
+    source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
 
+    #FIXME putting common files (mostly materials) to a separate dir
+    # scanFolders(commonsDir, commonsDir, library_images=False)
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'] if 'macro_folders' in subCategory else [])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
     # --------------------------------------------------------
 
-    if 'materials' in inData:
-        addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
+    #FIXME for doors/windows
+    # if 'materials' in inData:
+    #     addFileRecursively("Glass", targetFileName="Glass" + "_" + family_name)
 
     JSONFileName = "macroset_" + category + "_" + main_version + ".json"
     with open(TRANSLATIONS_JSON, "r") as translatorJSON:
@@ -1682,12 +1885,20 @@ def createBrandedProduct(inData):
                                     targetFileName=material["name"]) #  + "_" + family_name
             if materialMacro:
                 for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
-                    translatedParameter = translation["parameters"][parameter]['ARCHICAD']["Name"]
-                    materialMacro.parameters[translatedParameter] = unitConvert(
-                        parameter,
-                        material[parameter],
-                        translation
-                    )
+                    try:
+                        translationDict = translation["parameters"][parameter]
+                        translatedParameter = translationDict['ARCHICAD']["Name"]
+
+                        materialMacro.parameters[translatedParameter] = unitConvert(
+                            parameter,
+                            material[parameter],
+                            translationDict
+                        )
+                    except KeyError:
+                        # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
+                        continue
+
+
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
                 # --------- textures -----------
@@ -1718,16 +1929,31 @@ def createBrandedProduct(inData):
         placeableS = []
 
         try:
-            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
-            minor_version = inputJson["minor_version"]
+            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read(), classes=(StrippedSourceXML, StrippedDestXML))
+            macro_lib_version = inputJson["minor_version"]
             _dest_dict = inputJson["objects"]
         except FileNotFoundError:
-            minor_version = None
+            macro_lib_version = -1
             _dest_dict = {}
+
+        #Forrest, why did this happen?
+        for k, v in _dest_dict.items():
+            if isinstance(v, dict):
+                v = StrippedDestXML(v['name'],
+                                    v['guid'],
+                                    v['relPath'],
+                                    v['md5'],
+                                    StrippedSourceXML(v['sourceFile']['name'],
+                                                      v['sourceFile']['fullPath'],
+                                                      v['sourceFile']['guid'], ))
+                _dest_dict[k] = v
 
         dest_dict.update(_dest_dict)
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
         dest_sourcenames    = {d.sourceFile.name.upper(): d         for d in dest_dict.values()}
+
+        # if 'parameters' in AC_templateData:
+        #     AC_templateData['parameters'] = [AC_templateData['parameters'][_index] for _index in AC_templateData['parameters'].keys()]
 
         for family in inData['variationsData']:
             sourceFile = AC_templateData["source_file"]
@@ -1740,14 +1966,20 @@ def createBrandedProduct(inData):
 
             if  "sMaterialValS"         in destItem.parameters \
             and "sMaterialS"            in destItem.parameters \
-            and "iVersionNumber"        in destItem.parameters \
-            and "current_minor_version" in subCategory:
-                for _i in range(1, 15):
-                    destItem.parameters["sMaterialValS"][_i]  = availableMaterials
+            and "iVersionNumber"        in destItem.parameters:
+            # and "iMacroLibVersion"      in destItem.parameters \
+                if availableMaterials:
+                    for _i in range(1, 15):
+                        destItem.parameters["sMaterialValS"][_i]  = availableMaterials
 
-                s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
-                destItem.parameters["sMaterialS"] = s_
-                destItem.parameters["iVersionNumber"][1] = [int(subCategory["current_minor_version"]), 0]
+                    s_ = [[availableMaterials[0]] for _ in destItem.parameters["sMaterialS"]]
+                    destItem.parameters["sMaterialS"] = s_
+
+                destItem.parameters["iVersionNumber"][1]  = [int(minor_version), 0]
+                # destItem.parameters["iMacroLibVersion"]  = int(macro_lib_version)
+            else:
+                #FIXME Incompatible placeables with a need for 1st line macro
+                pass
 
             if "translations" in AC_templateData:
                 translation["parameters"].update(AC_templateData["translations"])
@@ -1755,13 +1987,21 @@ def createBrandedProduct(inData):
             setParameter(family, destItem, translation)
 
             if 'parameters' in AC_templateData:
+                # Server passes this data in a dict form instead of list like in VariableData
                 setParameter(AC_templateData, destItem, translation)
 
                 # ------Material parameters --------------------------------------------------
 
-                for translatedParameterName in family['materialParameters']:
-                    translatedParameter = translation["parameters"][translatedParameterName['name']]['ARCHICAD']["Name"]
-                    destItem.parameters[translatedParameter] = translatedParameterName['value']
+                destItem.firstLineMacro = GDLMacro()
+
+                for materialToTranslate in family['materialParameters']:
+                    materialToTranslateName = materialToTranslate['name']
+                    if materialToTranslateName in translation["parameters"]:
+                        translatedParameter = translation["parameters"][materialToTranslateName]['ARCHICAD']["Name"]
+                        destItem.parameters[translatedParameter] = materialToTranslate['value']
+                        destItem.firstLineMacro.append(GDL_values(translatedParameter, availableMaterials))
+                    else:
+                        logging.error(f"Missing material parameter in destination object {destItem.name}: {materialToTranslateName}")
 
                 # ------Manufacturer parameters --------------------------------------------------
 
@@ -1778,7 +2018,7 @@ def createBrandedProduct(inData):
                         inChild=True,
                                 )
 
-                    destItem.parameters.insertAsChild("gs_list", par.eTree, )
+                    destItem.parameters.insertAsChild("gs_list", par, )
             if _logo:
                 if "sLogoName" in destItem.parameters and "wCompLogo" in destItem.parameters:
                     destItem.parameters["sLogoName"] = logo_name
@@ -1797,21 +2037,22 @@ def createBrandedProduct(inData):
 
     fileName = AC_templateData["category"] + "_" + family_name
 
-    createLCF(tempGDLDirName, fileName)
+    targetLCFFullPath = createLCF(tempGDLDirName, fileName)
 
     _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + minor_version + ".lcf" if minor_version else None
+    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + macro_lib_version + ".lcf" if int(macro_lib_version) > 0 else None
+
+    returnDict =  createResponeFiles(_paceableName, _macrosetName, )
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
         os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
 
-    return createResponesFiles(_paceableName, _macrosetName,
-                               )
+    return returnDict
 
 
-def createResponesFiles( inFileName,
-                         inMacrosetName,):
+def createResponeFiles(inFileName,
+                       inMacrosetName = "", ):
     """
     Creates finished objects
     """
@@ -1892,6 +2133,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     # tempdir = os.path.join(tempfile.mkdtemp(), "library")
     tempdir = tempfile.mkdtemp()
     tempPicDir = tempfile.mkdtemp()
+    # tempPicDir = os.path.join(tempfile.mkdtemp(), "library_images")
 
     logging.debug("tempdir: %s" % tempdir)
     logging.debug("tempPicDir: %s" % tempPicDir)
@@ -1906,15 +2148,17 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
                  "id_dict": id_dict,
                  } for k in dest_dict.keys() if isinstance(dest_dict[k], DestXML)]
 
-    ## If single processing is needed for debugging, disable this
+    _results = []
     if MULTIPROCESS:
         logging.debug(f"CPU count: {mp.cpu_count()}")
         _pool = mp.Pool(mp.cpu_count())
-        _pool.map(processOneXML, pool_map)
+        _results = _pool.map(processOneXML, pool_map)
     else:
-    ## ...and enable this
         for _p in pool_map:
-            processOneXML(_p)
+            _results.append(processOneXML(_p))
+
+    for _xml, _res in zip(pool_map, _results):
+        _xml["dest"].md5 = _res
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -1940,6 +2184,7 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
 
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
     logging.debug(r"x2l Command being executed...\n%s" % x2lCommand)
+    print(r"x2l Command being executed...\n%s" % x2lCommand)
 
     if DEBUG:
         logging.debug("ac command:")
@@ -1962,10 +2207,17 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     logging.debug("x2l")
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
         _out, _err = proc.communicate()
-        logging.info(f"Success: {_out} (error: {_err}) ")
 
-        # if "rror" in _out:
-        #     logging.error(f"While compiling: {_out}")
+        if "rror" in str(_out):
+            # FIXME bullshit errors
+            raise WMCCException(WMCCException.ERR_GSM_COMPILATION_ERROR, additional_data={"x2lCommand": x2lCommand,
+                                                                                      "std_out": _out,
+                                                                                      "std_err": _err})
+            pass
+        else:
+            logging.info(f"Success: {_out} (error: {_err}) ")
+            print(f"Success: {_out} (error: {_err}) ")
+            logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
     # cleanup ops
     if CLEANUP:
@@ -1977,8 +2229,6 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     else:
         logging.debug("tempdir: %s" % tempdir)
         logging.debug("tempPicDir: %s" % tempPicDir)
-
-    logging.info("*****GSM CREATION FINISHED SUCCESFULLY******")
 
 
 def processOneXML(inData):
@@ -2013,7 +2263,8 @@ def processOneXML(inData):
             m.find(dest.sourceFile.ID).text = d.guid
             _calledMacroSet.add(d.name.upper())
         except KeyError:
-            if not os.path.exists(os.path.join(SOURCE_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")):
+            if not os.path.exists(os.path.join(CONTENT_DIR_NAME, projectPath, "..", "library_additional", key + ".gsm")) and \
+                    key not in BURNT_IN_MACRO_NAMES:
                 if not MULTIPROCESS:
                     logging.warning("Missing called macro: %s (Might be in library_additional, called by: %s)" % (key, src.name,))
 
@@ -2022,16 +2273,25 @@ def processOneXML(inData):
         section = mdp.find(sect)
         if section is not None:
             t = section.text
+            if t [0] == "\n" and t[-1] == "\n":
+                # Bug in etree?
+                t = t[1:-1]
+            tUpper = section.text.upper()
             for dI in _calledMacroSet:
                 t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
-                # t = ireplace(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t)
 
             for pr in sorted(pict_dict.keys(), key=lambda x: -len(x)):
                 # Replacing images
                 fromRE = pict_dict[pr].sourceFile.fileNameWithOutExt
-                if family_name:
-                    fromRE += '(?!' + family_name + ')'
-                t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+                if fromRE.upper() in tUpper:
+                    if family_name:
+                        fromRE += '(?!' + family_name + ')'
+                    t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
+
+            if sect =="./Script_1D":
+                if dest.firstLineMacro:
+                    str__ = dest.firstLineMacro.__str__()
+                    t = str__ + t
             section.text = etree.CDATA(t)
 
     if dest.bPlaceable:
@@ -2043,6 +2303,8 @@ def processOneXML(inData):
                           os.path.basename(pict_dict[p].sourceFile.relPath).upper() == path), None)
                 if n:
                     section.attrib['path'] = os.path.join(os.path.dirname(n), os.path.basename(n))
+
+    # ---------------------Copyright---------------------
 
     if dest.iVersion >= AC_18:
         for cr in mdp.getroot().findall("Copyright"):
@@ -2098,117 +2360,22 @@ def processOneXML(inData):
     except WindowsError:
         pass
     with open(destPath, "wb") as file_handle:
-        file_handle.write(etree.tostring(mdp, pretty_print=True, encoding="UTF-8", ))
+        resultXML = etree.tostring(mdp, pretty_print=True, encoding="UTF-8", )
+        file_handle.write(resultXML)
 
+    m = hashlib.md5()
+    m.update(resultXML)
+    macroMD5 = m.hexdigest()
+
+    return macroMD5
 
 # ---------------------Job queue--------------------
 
-
 def enQueueJob(inEndPoint, inData, inPID):
-    jobQueue = {
-        "isJobActive": False,
-        "jobList": []}
+    queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
 
     jobData = {"endPoint":  inEndPoint,
                "data":      inData,
                "PID":       inPID}
 
-    if os.path.exists(JOBDATA_PATH):
-        while not os.access(JOBDATA_PATH, os.R_OK):
-            sleep(1)
-
-        jobFile = open(JOBDATA_PATH, "r")
-        jobQueue = json.load(jobFile)
-        jobFile.close()
-
-    jobQueue["jobList"].append(jobData)
-
-    if os.path.exists(JOBDATA_PATH):
-        while not os.access(JOBDATA_PATH, os.W_OK):
-            sleep(1)
-
-    with open(JOBDATA_PATH, "w") as jobFile:
-        json.dump(jobQueue, jobFile, indent=4)
-
-    if not jobQueue["isJobActive"]:
-        deQueueJob()
-    else:
-        logging.debug("A DeQueue is ACTIVE")
-
-
-def deQueueJob():
-    result = None
-
-    if not checkIfReady():
-        # Another process must be busy
-        return
-
-    jobFile = open(JOBDATA_PATH, "r")
-    jobQueue = json.load(jobFile)
-
-    jobList = jobQueue["jobList"]
-
-    if jobList and not jobQueue["isJobActive"]:
-        job = jobList[0]
-        jobQueue["jobList"] = jobList[1:]
-        jobQueue["isJobActive"] = True
-        jobQueue["activeJobPID"] = job['PID']
-        logging.debug(f"Job started: {job['PID']}")
-
-        while not os.access(JOBDATA_PATH, os.W_OK):
-            sleep(1)
-
-        with open(JOBDATA_PATH, "w") as jobFile:
-            json.dump(jobQueue, jobFile, indent=4)
-
-        endPoint = job['endPoint']
-        try:
-            if endPoint == "/":
-                result = createBrandedProduct(job['data'])
-            elif endPoint == "/createmacroset":
-                result = buildMacroSet(job['data'])
-        except Exception as e:
-            if not DEBUG:
-                result = {"result": f"An unspecified server error occured: {e}"}
-                logging.error(result["result"])
-                # from signal import SIGTERM
-                jobQueue["isJobActive"] = False
-                jobQueue["activeJobPID"] = ''
-                while not os.access(JOBDATA_PATH, os.W_OK):
-                    sleep(1)
-
-                with open(JOBDATA_PATH, "w") as jobFile:
-                    json.dump(jobQueue, jobFile, indent=4)
-            else:
-                raise
-                # os.kill(job['PID'], SIGTERM)
-
-        resultDict = {}
-
-        if os.path.exists(RESULTDATA_PATH):
-            resultDict = json.load(open(RESULTDATA_PATH, "r"))
-
-        resultDict[job["PID"]] = result
-
-        with open(RESULTDATA_PATH, "w") as resultFile:
-            json.dump(resultDict, resultFile, indent=4)
-
-    jobFile = open(JOBDATA_PATH, "r")
-    jobQueue = json.load(jobFile)
-
-    jobQueue["isJobActive"] = False
-    del jobQueue["activeJobPID"]
-
-    with open(JOBDATA_PATH, "w") as jobFile:
-        json.dump(jobQueue, jobFile, indent=4)
-
-    if jobQueue["jobList"]:
-        deQueueJob()
-
-
-def checkIfReady():
-    while not os.access(JOBDATA_PATH, os.R_OK):
-        sleep(1)
-
-    jobData = json.load(open(JOBDATA_PATH, "r"))
-    return not jobData["isJobActive"]
+    queue_client.send(Message(json.dumps(jobData)))

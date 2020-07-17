@@ -1,0 +1,173 @@
+{
+  "description": "Extract macro's params",
+  "endpoint": "/extractparams",
+  "request": {
+	"category": "tests",
+    "main_version": "19",
+    "object_path": "surfaces\\_dev_material.xml"
+},
+  "result": {
+    "sSurfaceName": {
+        "name": "sSurfaceName",
+        "type": "PAR_STRING",
+        "value": "\"Clad - White_My Lovely Window\"",
+        "description": "Surface name"
+    },
+    "iDiffuseColorS": {
+        "name": "iDiffuseColorS",
+        "type": "PAR_INT",
+        "value": null,
+        "description": ""
+    },
+    "rAmbient": {
+        "name": "rAmbient",
+        "type": "PAR_REAL",
+        "value": 0.67,
+        "description": ""
+    },
+    "rDiffuse": {
+        "name": "rDiffuse",
+        "type": "PAR_REAL",
+        "value": 0.62,
+        "description": ""
+    },
+    "rShining": {
+        "name": "rShining",
+        "type": "PAR_REAL",
+        "value": 0.19,
+        "description": ""
+    },
+    " WMCC_Texture: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ": {
+        "name": " WMCC_Texture: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ",
+        "type": "PAR_COMMENT",
+        "value": null,
+        "description": ""
+    },
+    "WMCC_Texture": {
+        "name": "WMCC_Texture",
+        "type": "PAR_TITLE",
+        "value": null,
+        "description": "Texture"
+    },
+    "sTextureName": {
+        "name": "sTextureName",
+        "type": "PAR_STRING",
+        "value": "\"\"",
+        "description": "Texture name"
+    },
+    "wTexture": {
+        "name": "wTexture",
+        "type": "PAR_LENGTH",
+        "value": 0.0001,
+        "description": ""
+    },
+    "hTexture": {
+        "name": "hTexture",
+        "type": "PAR_LENGTH",
+        "value": 0.0001,
+        "description": ""
+    },
+    "iTexture": {
+        "name": "iTexture",
+        "type": "PAR_INT",
+        "value": 0,
+        "description": ""
+    },
+    " WMCC_Transparency: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ": {
+        "name": " WMCC_Transparency: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ",
+        "type": "PAR_COMMENT",
+        "value": null,
+        "description": ""
+    },
+    "WMCC_Transparency": {
+        "name": "WMCC_Transparency",
+        "type": "PAR_TITLE",
+        "value": null,
+        "description": "Transparency"
+    },
+    "rTransparency": {
+        "name": "rTransparency",
+        "type": "PAR_REAL",
+        "value": 0.0,
+        "description": ""
+    },
+    "rTransparency_attenuation": {
+        "name": "rTransparency_attenuation",
+        "type": "PAR_REAL",
+        "value": 0.0,
+        "description": ""
+    },
+    " WMCC_Specular: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ": {
+        "name": " WMCC_Specular: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ",
+        "type": "PAR_COMMENT",
+        "value": null,
+        "description": ""
+    },
+    "WMCC_Specular": {
+        "name": "WMCC_Specular",
+        "type": "PAR_TITLE",
+        "value": null,
+        "description": "Specular"
+    },
+    "rSpecular": {
+        "name": "rSpecular",
+        "type": "PAR_REAL",
+        "value": 0.0,
+        "description": ""
+    },
+    "iSpecularColorS": {
+        "name": "iSpecularColorS",
+        "type": "PAR_INT",
+        "value": null,
+        "description": ""
+    },
+    " WMCC_Emission: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ": {
+        "name": " WMCC_Emission: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ",
+        "type": "PAR_COMMENT",
+        "value": null,
+        "description": ""
+    },
+    "WMCC_Emission": {
+        "name": "WMCC_Emission",
+        "type": "PAR_TITLE",
+        "value": null,
+        "description": "Emission"
+    },
+    "iEmissionColorS": {
+        "name": "iEmissionColorS",
+        "type": "PAR_INT",
+        "value": null,
+        "description": ""
+    },
+    "rEmission_attenuation": {
+        "name": "rEmission_attenuation",
+        "type": "PAR_REAL",
+        "value": 0.0,
+        "description": ""
+    },
+    " WMCC_Fill: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ": {
+        "name": " WMCC_Fill: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ",
+        "type": "PAR_COMMENT",
+        "value": null,
+        "description": ""
+    },
+    "WMCC_Fill": {
+        "name": "WMCC_Fill",
+        "type": "PAR_TITLE",
+        "value": null,
+        "description": "Fill"
+    },
+    "iFill": {
+        "name": "iFill",
+        "type": "PAR_INT",
+        "value": 0,
+        "description": ""
+    },
+    "iFillColor": {
+        "name": "iFillColor",
+        "type": "PAR_INT",
+        "value": 0,
+        "description": ""
+    }
+}
+}

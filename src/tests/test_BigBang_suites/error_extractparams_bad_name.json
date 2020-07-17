@@ -1,0 +1,19 @@
+{
+    "description": "Expected error: extractparams: nonexisting macro",
+    "endpoint": "/extractparams",
+    "request": {
+        "category": "tests",
+        "main_version": "19",
+        "object_path": "surfaces\\nonexisting_macro.xml"
+    },
+    "result": {
+        "message": {
+            "error_message": {
+                "title": "Nonexisting source object",
+                "description": "The Source object Object refers to doesn't exist or there is a typo in Source object name in category data file or the associated filename",
+                "constant": "ERR_NONEXISTING_OBJECT"
+            },
+            "additional_data": {}
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "description": "Expected error: extractparams: nonexisting category",
+    "endpoint": "/extractparams",
+    "request": {
+        "category": "nonexisting_category",
+        "main_version": "19",
+        "object_path": "surfaces\\nonexisting_macro.xml"
+    },
+    "result": {
+        "message": {
+            "error_message": {
+                "title": "Nonexisting category",
+                "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name",
+                "constant": "ERR_NONEXISTING_CATEGORY"
+            },
+            "additional_data": {}
+        }
+    }
+}

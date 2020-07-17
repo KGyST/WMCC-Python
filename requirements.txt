@@ -10,3 +10,6 @@ itsdangerous
 Jinja2
 MarkupSafe
 Werkzeug
+
+azure-servicebus
+azure-common

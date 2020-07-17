@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="no" IsPlaceable="no" MainGUID="8EF319E2-0000-0000-0000-000000007E57" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["LibraryGlobals13_test18_1"]]></MName>
+		<MainGUID>FADBED7E-0000-0000-0000-000000007E57</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<GDLPict MIME="image/png" SectVersion="19" SectionFlags="0" SubIdent="1" path="library/macros/_macros/Library_version_18/GDLPict_1.png">
+</GDLPict>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_1D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[
+
+LIBERR_NONE			= 0
+LIBERR_OLDMACRO		= 1
+LIBERR_OLDOBJECT	= 2
+LIBERR_DIFFLANG		= 3
+
+langID	= `_lang:_INT`
+
+if bUsAsMacro then
+	! ----- compatibility check / error code -----
+	iError = 0
+
+	! --- different language ---
+	if stLangString <> langID then iError = LIBERR_DIFFLANG
+
+	! --- old macro library ---
+	if iVersionLibrary < iObjectVersion then
+		iError = LIBERR_OLDMACRO
+	else
+!!		if iMinVersion > iObjectVersion then
+!!			iError = LIBERR_OLDOBJECT
+!!		endif
+	endif
+	
+	! --------------------------------------------
+		end iError
+	! --------------------------------------------
+endif
+
+
+]]>
+</Script_1D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[	
+ui_pict "Chessmate", 50, 50, 50, 50
+]]>
+</Script_UI>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Integer Name="iVersionLibrary">
+			<Description><![CDATA["Macro Library Version"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value>-1</Value>
+		</Integer>
+	</Parameters>
+</ParamSection>
+
+</Symbol>

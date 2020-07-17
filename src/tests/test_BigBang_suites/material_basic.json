@@ -1,0 +1,42 @@
+{
+    "description": "Material: 1 basic",
+    "endpoint": "/creatematerials",
+    "request": {
+        "productData": [
+            {
+                "name": "Material 1",
+                "materialIdentity": {
+                    "description": "Whatever description fits here best",
+                    "class": "Wood",
+                    "comments": "No comment on this one",
+                    "manufacturer": "BIMobject",
+                    "cost": 500,
+                    "url": "http://www.bimobject.com"
+                },
+                "materialGraphics": {
+                    "shadingColor": [
+                        60,
+                        60,
+                        60
+                    ],
+                    "transparency": 50
+                },
+                "materialAppearance": {
+                    "color": [
+                        60,
+                        60,
+                        60
+                    ],
+                    "texture": "sokol.png",
+                    "gloss": 20,
+                    "reflectivity": 20,
+                    "transparency": 0
+                }
+            }
+        ],
+        "productPageData": {}
+    },
+    "result": {
+        "object_name": "commons_Placeable_LCF_name.lcf"
+    }
+}

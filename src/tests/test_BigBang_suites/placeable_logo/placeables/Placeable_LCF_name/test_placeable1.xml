@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="00000000-0000-0000-0000-000000007E57" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
+	<MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>
+</Ancestry>
+
+<CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
+	<Macro>
+		<MName><![CDATA["Library_version_19"]]></MName>
+		<MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>
+	</Macro>
+</CalledMacros>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_2D SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[    
+	
+text2 0, 0, str(iVersionNumber[1][1], 8, 0)
+
+for _i = 1 to vardim1(sMaterialS)
+	text2 0, _i, sMaterialS[_i]
+next _i
+
+]]>
+</Script_2D>
+
+<!-- GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT ===== GDL SCRIPT -->
+
+<Script_UI SectVersion="20" SectionFlags="0" SubIdent="0">
+<![CDATA[    
+	
+LOGO_HEIGHT = 30
+
+if sLogoName <> "Default_logo" then
+	ui_pict sLogoName, 50, LOGO_HEIGHT + 50, wCompLogo, LOGO_HEIGHT
+endif
+
+]]>
+</Script_UI>
+
+<Copyright SectVersion="1" SectionFlags="0" SubIdent="0">
+	<Author>BIMobject</Author>
+	<License>
+		<Type>CC BY-ND</Type>
+		<Version>3.0</Version>
+	</License>
+</Copyright>
+
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+		<AutoHotspots>no</AutoHotspots>
+		<StatBits>
+			<STBit_FixSize/>
+		</StatBits>
+		<WDLeftFrame>0</WDLeftFrame>
+		<WDRightFrame>0</WDRightFrame>
+		<WDTopFrame>0</WDTopFrame>
+		<WDBotFrame>0</WDBotFrame>
+		<LayFlags>65535</LayFlags>
+		<WDMirrorThickness>0</WDMirrorThickness>
+		<WDWallInset>0</WDWallInset>
+		<SymbolColor>0</SymbolColor>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Width"]]></Description>
+			<Value>1.2</Value>
+		</Length>
+		<Length Name="B">
+			<Description><![CDATA["Depth"]]></Description>
+			<Value>0.6</Value>
+		</Length>
+		<Length Name="zzyzx">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>0.5</Value>
+		</Length>
+		<String Name="sMaterialS">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="14" SecondDimension="0">
+				<AVal Row="1"><![CDATA[""]]></AVal>
+				<AVal Row="2"><![CDATA[""]]></AVal>
+				<AVal Row="3"><![CDATA[""]]></AVal>
+				<AVal Row="4"><![CDATA[""]]></AVal>
+				<AVal Row="5"><![CDATA[""]]></AVal>
+				<AVal Row="6"><![CDATA[""]]></AVal>
+				<AVal Row="7"><![CDATA[""]]></AVal>
+				<AVal Row="8"><![CDATA[""]]></AVal>
+				<AVal Row="9"><![CDATA[""]]></AVal>
+				<AVal Row="10"><![CDATA[""]]></AVal>
+				<AVal Row="11"><![CDATA[""]]></AVal>
+				<AVal Row="12"><![CDATA[""]]></AVal>
+				<AVal Row="13"><![CDATA[""]]></AVal>
+				<AVal Row="14"><![CDATA[""]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="sMaterialValS">
+			<Description><![CDATA["Material values' string array"]]></Description>
+			<ArrayValues FirstDimension="14" SecondDimension="0">
+				<AVal Row="1"><![CDATA[""]]></AVal>
+				<AVal Row="2"><![CDATA[""]]></AVal>
+				<AVal Row="3"><![CDATA[""]]></AVal>
+				<AVal Row="4"><![CDATA[""]]></AVal>
+				<AVal Row="5"><![CDATA[""]]></AVal>
+				<AVal Row="6"><![CDATA[""]]></AVal>
+				<AVal Row="7"><![CDATA[""]]></AVal>
+				<AVal Row="8"><![CDATA[""]]></AVal>
+				<AVal Row="9"><![CDATA[""]]></AVal>
+				<AVal Row="10"><![CDATA[""]]></AVal>
+				<AVal Row="11"><![CDATA[""]]></AVal>
+				<AVal Row="12"><![CDATA[""]]></AVal>
+				<AVal Row="13"><![CDATA[""]]></AVal>
+				<AVal Row="14"><![CDATA[""]]></AVal>
+			</ArrayValues>
+		</String>
+		<String Name="sLogoName">
+			<Description><![CDATA[""]]></Description>
+			<Value><![CDATA["Placeable_LCF_name_logo"]]></Value>
+		</String>
+		<Integer Name="wCompLogo">
+			<Description><![CDATA[""]]></Description>
+			<Value>30</Value>
+		</Integer>
+		<Integer Name="iMacroLibVersion">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iVersionNumber">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Unique/>
+			</Flags>
+			<ArrayValues FirstDimension="1" SecondDimension="2">
+				<AVal Column="1" Row="1">20200101</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+			</ArrayValues>
+		</Integer>
+
+		<!-- gs_list: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="gs_list">
+			<Description><![CDATA["Parameters for Listing"]]></Description>
+		</Title>
+	</Parameters>
+</ParamSection>
+
+</Symbol>

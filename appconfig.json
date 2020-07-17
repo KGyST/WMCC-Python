@@ -1,0 +1,17 @@
+{
+  "DEBUG": true,
+  "CLEANUP": false,
+  "MULTIPROCESS": false,
+  "WMCC_PATH": "D:\\Git\\WMCC Python",
+  "TARGET_GDL_DIR_NAME": "src\\Target",
+  "ARCHICAD_LOCATION": "src\\archicad\\LP_XMLConverter_18",
+  "APP_LOG_FILE_LOCATION": "D:\\Git\\WMCC Python\\myapp.log",
+  "WORKER_LOG_FILE_LOCATION": "D:\\Git\\WMCC Python\\worker\\worker.log",
+  "LOGLEVEL": 10,
+  "JOBDATA": "jobQueue.json",
+  "RESULTDATA":"resultQueue.json",
+  "CONTENT_DIR_NAME": "D:\\Git\\WMCC ARCHICAD content",
+  "COMMONS_DIR_NAME": "_commons",
+  "CONNECTION_STRING": "Endpoint=sb://sb-wmmc-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PpeIClSmS6S615ul5wv0Nos6+HM2SuJOcbmvbb5afRA=",
+  "SERVICEBUS_QUEUE_NAME": "taskqueue_local"
+}

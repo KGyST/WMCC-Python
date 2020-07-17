@@ -1,0 +1,47 @@
+{
+  "0": {
+    "title": "Unspecified error",
+    "description": "An unspecified error occured",
+    "constant": "ERR_UNSPECIFIED"
+  },
+  "1": {
+    "title": "Nonexisting category",
+    "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name",
+    "constant": "ERR_NONEXISTING_CATEGORY"
+  },
+  "2": {
+    "title": "Nonexisting main version",
+    "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name",
+    "constant": "ERR_NONEXISTING_VERSION"
+  },
+  "3": {
+    "title": "Nonexisting source object",
+    "description": "The Source object Object refers to doesn't exist or there is a typo in Source object name in category data file or the associated filename",
+    "constant": "ERR_NONEXISTING_OBJECT"
+  },
+  "4": {
+    "title": "An error occured during gsm compilation",
+    "description": "LP_XMLConverter.exe printed out some kind of error",
+    "constant": "ERR_GSM_COMPILATION_ERROR"
+  },
+  "5": {
+    "title": "0 indexing in array, NOT done",
+    "description": "Call and/or associated database entry wants to write an array[0] while GDL arrays' indexing starts from 1",
+    "constant": "ERR_ARRAY_ZERO_INDEXING"
+  },
+  "6": {
+    "title": "Nonexisting translator",
+    "description": "Call contains a parameter that cannot be translated into an ARCHICAD parameter or there is a typo in translation file",
+    "constant": "ERR_NONEXISTING_TRANSLATOR"
+  },
+  "7": {
+    "title": "Malformed request",
+    "description": "At least one required field is missing from request",
+    "constant": "ERR_MALFORMED_REQUEST"
+  },
+  "8": {
+    "title": "Bad parameter type",
+    "description": "A parameter is given a bad data, like string instead of int.",
+    "constant": "ERR_BAD_PARAM_TYPE"
+  }
+}

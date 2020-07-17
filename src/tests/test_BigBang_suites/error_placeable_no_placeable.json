@@ -1,0 +1,33 @@
+{
+    "description": "Expected error: placeable: nonexisting placeable",
+    "endpoint": "/",
+    "request": {
+        "productName": "Placeable_LCF_name",
+        "template": {
+            "materialParameters": [],
+            "materials": [],
+            "ARCHICAD_template": {
+                "category": "tests",
+                "main_macroset_version": "19",
+                "source_file": "nonexisting_placeable",
+                "parameters": {}
+            }
+        },
+        "variationsData": [
+            {
+                "variationName": "test_placeable1",
+                "parameters": [],
+                "materialParameters": [],
+                "dataParameters": []
+            }
+        ]
+    },
+    "result": {
+        "error_message": {
+            "title": "Nonexisting source object",
+            "description": "The Source object Object refers to doesn't exist or there is a typo in Source object name in category data file or the associated filename",
+            "constant": "ERR_NONEXISTING_OBJECT"
+        },
+        "additional_data": "nonexisting_placeable"
+    }
+}

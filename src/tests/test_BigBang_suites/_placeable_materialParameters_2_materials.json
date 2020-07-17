@@ -1,0 +1,49 @@
+{
+  "description": "Placeable: materialParameters with 2 materials",
+  "endpoint": "/",
+  "request": {
+    "productName": "Placeable_LCF_name",
+    "template": {
+      "materialParameters": [],
+      "materials": [{
+                "name": "Test material 1",
+                "RGB": [
+                    255,
+                    0,
+                    0
+                ]
+            },
+			{
+                "name": "Test material 2",
+                "RGB": [
+                    0,
+                    255,
+                    0
+                ]
+            }],
+      "ARCHICAD_template": {
+        "category": "tests",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable_2",
+        "parameters": {}
+      }
+    },
+    "variationsData": [
+      {
+        "variationName": "test_placeable1",
+        "parameters": [],
+        "materialParameters": [
+        {
+          "name": "Test Material Parameter",
+          "value": "Test material"
+        }
+      ],
+        "dataParameters": []
+      }
+    ]
+  },
+  "result": {
+    "macroset_name": "macroset_tests_19_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+}
+}

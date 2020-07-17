@@ -4,6 +4,7 @@ packages
 myapp.log
 wsgi_myapp.log
 src/Target2
+src/tests/test_BigBang_errors/*
 
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
@@ -17,7 +18,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+#build/
 develop-eggs/
 downloads/
 eggs/

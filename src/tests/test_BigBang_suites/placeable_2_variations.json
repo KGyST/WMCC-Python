@@ -1,0 +1,43 @@
+{
+  "description": "Placeables: 2 variations with generic translations using parameters, one given in mm, one in inches",
+  "endpoint": "/",
+  "request": {
+    "productName": "Placeable_LCF_name",
+    "template": {
+      "materialParameters": [],
+      "materials": [],
+      "ARCHICAD_template": {
+        "category": "tests",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable",
+        "parameters": []
+      }
+    },
+    "variationsData": [
+      {
+        "variationName": "test_placeable1",
+        "parameters": [{
+                    "name": "Height",
+                    "value": "1000.0",
+                    "selectedUnit": "mm"
+                }],
+        "materialParameters": [],
+        "dataParameters": []
+      },
+      {
+        "variationName": "test_placeable2",
+        "parameters": [{
+                    "name": "Height",
+                    "value": "200.0",
+                    "selectedUnit": "in"
+                }],
+        "materialParameters": [],
+        "dataParameters": []
+      }
+    ]
+  },
+  "result": {
+	"macroset_name": "macroset_tests_19_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+  }
+}

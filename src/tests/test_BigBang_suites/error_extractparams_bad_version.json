@@ -1,0 +1,19 @@
+{
+    "description": "Expected error: extractparams: bad version",
+    "endpoint": "/extractparams",
+    "request": {
+        "category": "tests",
+        "main_version": "nonexisting_version",
+        "object_path": "surfaces\\nonexisting_macro.xml"
+    },
+    "result": {
+        "message": {
+            "error_message": {
+                "title": "Nonexisting main version",
+                "description": "The Main version Object has doesn't exist or there is a typo in Main version name in category data  or the associated folder name",
+                "constant": "ERR_NONEXISTING_VERSION"
+            },
+            "additional_data": {}
+        }
+    }
+}

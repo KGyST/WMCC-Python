@@ -1,0 +1,16 @@
+{
+  "description": "Createmacroset: a basic test",
+  "endpoint": "/createmacroset",
+  "request": {
+    "category": "tests",
+    "main_version": "19",
+	"minor_version": "20200518"
+  },
+  "result": {
+    "LCFName": "macroset_tests_19.json",
+    "category": "tests",
+    "main_version": "19",
+    "minor_version ": "20200518",
+	"macroset_name": "macroset_tests_19_20200518"
+}
+}
