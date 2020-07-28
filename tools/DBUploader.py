@@ -76,7 +76,7 @@ def uploadSingleRecord(inObjectData):
     global devPosts, prodPosts
 
     res = prodPosts.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
-    print(res.__repr__() )
+    # print(res.__repr__() )
 
 
 def uploadRecords(inObjectNameS):
@@ -99,6 +99,8 @@ def uploadRecords(inObjectNameS):
                 objectData = devPosts.find_one({"name": objName})
                 print(objectData["name"])
                 uploadSingleRecord(objectData)
+            else:
+                print(f"Object is not marked to be uploaded: {objName}")
     else:
         _i = 1
         for objectData in  devPosts.find({"ARCHICAD_template": {"$exists": True}}):
@@ -106,6 +108,8 @@ def uploadRecords(inObjectNameS):
                 print(f"{_i}: {objectData['name']}")
                 uploadSingleRecord(objectData)
                 _i += 1
+            else:
+                print(f"Object is not marked to be uploaded: {objectData['name']}")
 
 
 if __name__ == "__main__":

@@ -107,18 +107,21 @@ class TestCase_BigBang(unittest.TestCase):
     def BigBangTestCaseFactory(inTestData, inDir, inFileName):
         def func(inObj):
             outFileName = os.path.join(inDir + "_errors", inFileName)
-            s = ssl.SSLContext()
-            conn = http.client.HTTPSConnection(SERVER_URL, context=s)
+            if "localhost" in SERVER_URL:
+                conn = http.client.HTTPConnection(SERVER_URL)
+            else:
+                s = ssl.SSLContext()
+                conn = http.client.HTTPSConnection(SERVER_URL, context=s)
             headers = {"Content-Type": "application/json"}
             endp = inTestData["endpoint"]
             req = inTestData["request"]
             conn.request("POST", endp, json.dumps(req), headers)
             response = conn.getresponse()
 
-            if response.code > 399:
-                #FIXME to remove this as there are expected errors already
-                print(f"*** Internal Server Error: {response.code} {response.reason} {SERVER_URL} {endp}***")
-                conn.request("POST", "/resetjobqueue", "", headers)
+            # if response.code > 399:
+            #     #FIXME to remove this as there are expected errors already
+            #     print(f"*** Internal Server Error: {response.code} {response.reason} {SERVER_URL} {endp}***")
+            #     conn.request("POST", "/resetjobqueue", "", headers)
 
             responseJSON = json.loads(response.read())
 

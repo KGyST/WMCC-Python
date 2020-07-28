@@ -207,43 +207,46 @@ class ResetJobQueue(Resource):
 
 class CreateMaterials(Resource):
     def post(self):
-        data = request.get_json()
+        try:
+            data = request.get_json()
 
-        pid = str(uuid.uuid4()).upper()
-        logging.debug("".join(["/creatematerials ", "PID: ", str(pid)]))
+            pid = str(uuid.uuid4()).upper()
+            logging.debug("".join(["/creatematerials ", "PID: ", str(pid)]))
 
-        #-----------------------------------
-        #FIXME some better productName; main_macroset_version
-        data = {
-            "productName": "Placeable_LCF_name",
-            "template": {
-                "materialParameters": [],
-                "materials": [{"name": m["name"],
-                               **m["materialGraphics"],
-                               **m["materialAppearance"],
-                               }  for m in data["productData"]],
-                "ARCHICAD_template": {
-                    "category": "commons",
-                    "main_macroset_version": "18",
-                }
-            },
-            "variationsData": []
-        }
+            #-----------------------------------
+            #FIXME some better productName; main_macroset_version
+            data = {
+                "productName": data["productName"],
+                "template": {
+                    "materialParameters": [],
+                    "materials": [{"name": m["variationName"],
+                                   **{p["name"]: p["value"] for p in m["materialAppearanceParameters"]},
+                                   }  for m in data["variationsData"]],
+                    "ARCHICAD_template": {
+                        "category": "commons",
+                        "main_macroset_version": "18",
+                    }
+                },
+                "variationsData": []
+            }
 
-        #-----------------------------------
+            #-----------------------------------
 
-        enQueueJob("/creatematerials", data, pid)
+            enQueueJob("/creatematerials", data, pid)
 
-        return getResult(pid)
+            return getResult(pid)
+        except Exception:
+            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data})
 
 
-api.add_resource(ArchicadEngine, '/')
-api.add_resource(CreateMaterials, '/creatematerials')
-api.add_resource(CreateLCFEngine, '/createmacroset')
-api.add_resource(ParameterExtractorEngine, '/extractparams')
-api.add_resource(ReceiveFile_Test, '/setfile')
-api.add_resource(ResetJobQueue, '/resetjobqueue')
+api.add_resource(ArchicadEngine,            '/')
+api.add_resource(CreateMaterials,           '/creatematerials')
+api.add_resource(ParameterExtractorEngine,  '/extractparams')
 
+# To be REMOVED:
+api.add_resource(ResetJobQueue,             '/resetjobqueue')
+api.add_resource(CreateLCFEngine,           '/createmacroset')
+api.add_resource(ReceiveFile_Test,          '/setfile')
 
 
 if __name__ == '__main__':

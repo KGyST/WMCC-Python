@@ -1061,7 +1061,11 @@ class SourceFile(GeneralFile):
     def __init__(self, relPath, **kwargs):
         global projectPath
         super(SourceFile, self).__init__(relPath, **kwargs)
-        self.fullPath = os.path.join(CONTENT_DIR_NAME, projectPath, relPath)
+        if not "root_path" in kwargs:
+            self.fullPath = os.path.join(CONTENT_DIR_NAME, projectPath, relPath)
+        else:
+            # For files not in project folder, like surface definition macros in _commons
+            self.fullPath = os.path.join(kwargs["root_path"], relPath)
 
 
 class DestFile(GeneralFile):
@@ -1141,9 +1145,9 @@ class XMLFile(GeneralFile):
 
 
 class SourceXML (XMLFile, SourceFile):
-    def __init__(self, relPath):
+    def __init__(self, relPath, **kwargs):
         global all_keywords
-        super(SourceXML, self).__init__(relPath)
+        super(SourceXML, self).__init__(relPath, **kwargs)
         self.calledMacros   = {}
         self.parentSubTypes = []
         self.scripts        = {}
@@ -1426,7 +1430,7 @@ def resetAll():
     all_keywords.clear()
 
 
-def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[]):
+def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[], **kwargs):
     """
     scanning input dir recursively to set up xml and image files' list
     :param inFile:  folder actually to be scanned
@@ -1444,7 +1448,7 @@ def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[])
                 # if it's NOT a directory
                 if not os.path.isdir(src):
                     if os.path.splitext(os.path.basename(f))[1].upper() in (".XML", ):
-                        sf = SourceXML(os.path.relpath(src, inRootFolder))
+                        sf = SourceXML(os.path.relpath(src, inRootFolder), **kwargs)
                         # replacement_dict[sf._name.upper()] = sf
                         replacement_dict[sf.name.upper()] = sf
                     else:
@@ -1457,7 +1461,7 @@ def scanFolders (inFile, inRootFolder, library_images=False, folders_to_skip=[])
                             source_pict_dict[sI.fileNameWithExt.upper()] = sI
                             sI.isEncodedImage = library_images
                 elif os.path.relpath(src, CONTENT_DIR_NAME) not in folders_to_skip:
-                    scanFolders(src, inRootFolder, library_images=library_images, folders_to_skip=folders_to_skip)
+                    scanFolders(src, inRootFolder, library_images=library_images, folders_to_skip=folders_to_skip, **kwargs)
             except KeyError:
                 logging.warning("KeyError %s" % f)
                 continue
@@ -1606,6 +1610,12 @@ def unitConvert(inParameterName,
     if not inTranslationLib:
         #No translation needed
         return inParameterValue
+
+    if inTranslationLib["Measurement"]  == "hexTriplet":
+        # #FFFFFF to [255, 255, 255] and so on
+        if inParameterValue[0] == "#":
+            inParameterValue = inParameterValue[1:]
+        inParameterValue = list(int(inParameterValue[i:i + 2], 16) for i in (0, 2, 4))
 
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]
@@ -1863,6 +1873,7 @@ def createBrandedProduct(inData):
 
     #FIXME putting common files (mostly materials) to a separate dir
     # scanFolders(commonsDir, commonsDir, library_images=False)
+    scanFolders(commonsDir, commonsDir, root_path=commonsDir)
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'] if 'macro_folders' in subCategory else [])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
 
@@ -1880,9 +1891,9 @@ def createBrandedProduct(inData):
         #FIXME organize it into a factory class
         availableMaterials = []
         for material in inData['template']['materials']:
-            availableMaterials += [material["name"]]                    #  + "_" + family_name
+            availableMaterials += [material["name"]]
             materialMacro = addFile(MATERIAL_BASE_OBJECT,
-                                    targetFileName=material["name"]) #  + "_" + family_name
+                                    targetFileName=material["name"])
             if materialMacro:
                 for parameter in [p for p in material.keys() if p != "name" and p!= "base64_encoded_texture"] :
                     try:
@@ -1936,7 +1947,7 @@ def createBrandedProduct(inData):
             macro_lib_version = -1
             _dest_dict = {}
 
-        #Forrest, why did this happen?
+        # Forrest, why did this happen?
         for k, v in _dest_dict.items():
             if isinstance(v, dict):
                 v = StrippedDestXML(v['name'],
@@ -2130,10 +2141,8 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     """
     :return:
     """
-    # tempdir = os.path.join(tempfile.mkdtemp(), "library")
     tempdir = tempfile.mkdtemp()
     tempPicDir = tempfile.mkdtemp()
-    # tempPicDir = os.path.join(tempfile.mkdtemp(), "library_images")
 
     logging.debug("tempdir: %s" % tempdir)
     logging.debug("tempPicDir: %s" % tempPicDir)
@@ -2340,9 +2349,7 @@ def processOneXML(inData):
 
     # ---------------------Ancestries--------------------
 
-    # FIXME not clear, check, writes an extra empty mainunid field
     # FIXME ancestries to be used in param checking
-    # FIXME this is unclear what id does
     for m in mdp.findall("./Ancestry/" + dest.sourceFile.ID):
         guid = m.text
         if guid.upper() in id_dict:
