@@ -1615,7 +1615,7 @@ def unitConvert(inParameterName,
         # #FFFFFF to [255, 255, 255] and so on
         if inParameterValue[0] == "#":
             inParameterValue = inParameterValue[1:]
-        inParameterValue = list(int(inParameterValue[i:i + 2], 16) for i in (0, 2, 4))
+        return list(int(inParameterValue[i:i + 2], 16) for i in (0, 2, 4))
 
     if type(inParameterValue) == list:
         return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]

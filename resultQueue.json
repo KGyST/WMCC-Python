@@ -266,5 +266,43 @@
             }
         },
         "traceback": "Traceback (most recent call last):\n  File \"D:/Git/WMCC Python/worker/worker.py\", line 77, in testWorker\n    result = createBrandedProduct(job['data'])\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1902, in createBrandedProduct\n    material[parameter],\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1622, in unitConvert\n    if \"Measurement\" in inTranslationLib[\"ARCHICAD\"]:\nValueError: could not convert string to float: '#FFFFFF'\n"
+    },
+    "BDADC476-64AC-49B1-8D4F-1322F8384195": {
+        "object_name": "commons_Generic material.lcf",
+        "base64_encoded_object": "R0xDRmXAeh4AAQAAAAAAAAAAABgAAAAATUFJTgAAAAAAAAAAAAAAAAAAABQ="
+    },
+    "B9AEDB99-3AD0-4A5F-945A-3EC9B07D27FB": {
+        "error_message": {
+            "title": "Unspecified error",
+            "description": "An unspecified error occured",
+            "constant": "ERR_UNSPECIFIED"
+        },
+        "additional_data": {
+            "error_message": [
+                "'int' object is not subscriptable"
+            ],
+            "request": {
+                "productName": "Generic material",
+                "template": {
+                    "materialParameters": [],
+                    "materials": [
+                        {
+                            "name": "Generic material",
+                            "Colour": "#FFFFFF",
+                            "Texture": null,
+                            "Transparency": "0",
+                            "Glossiness": "0",
+                            "Reflectivity": "0"
+                        }
+                    ],
+                    "ARCHICAD_template": {
+                        "category": "commons",
+                        "main_macroset_version": "18"
+                    }
+                },
+                "variationsData": []
+            }
+        },
+        "traceback": "Traceback (most recent call last):\n  File \"D:/Git/WMCC Python/worker/worker.py\", line 77, in testWorker\n    result = createBrandedProduct(job['data'])\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1906, in createBrandedProduct\n    translationDict\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1621, in unitConvert\n    return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1621, in <listcomp>\n    return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1616, in unitConvert\n    if inParameterValue[0] == \"#\":\nTypeError: 'int' object is not subscriptable\n"
     }
 }
