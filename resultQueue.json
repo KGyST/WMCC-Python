@@ -304,5 +304,42 @@
             }
         },
         "traceback": "Traceback (most recent call last):\n  File \"D:/Git/WMCC Python/worker/worker.py\", line 77, in testWorker\n    result = createBrandedProduct(job['data'])\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1906, in createBrandedProduct\n    translationDict\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1621, in unitConvert\n    return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1621, in <listcomp>\n    return [unitConvert(inParameterName, par, inTranslationLib) for par in inParameterValue]\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1616, in unitConvert\n    if inParameterValue[0] == \"#\":\nTypeError: 'int' object is not subscriptable\n"
+    },
+    "B6668AB2-A855-4773-A914-196E3734C9E1": {
+        "error_message": {
+            "title": "Unspecified error",
+            "description": "An unspecified error occured",
+            "constant": "ERR_UNSPECIFIED"
+        },
+        "additional_data": {
+            "error_message": [
+                "name"
+            ],
+            "request": {
+                "productName": "Generic material",
+                "template": {
+                    "materialParameters": [],
+                    "materials": [
+                        {
+                            "Name": "Generic material",
+                            "Colour": "#FFFFFF",
+                            "Texture": "Chessmate.png",
+                            "Transparency": "0",
+                            "Glossiness": "0",
+                            "Reflectivity": "0",
+                            "Description": null,
+                            "Class": null,
+                            "Comments": null
+                        }
+                    ],
+                    "ARCHICAD_template": {
+                        "category": "commons",
+                        "main_macroset_version": "18"
+                    }
+                },
+                "variationsData": []
+            }
+        },
+        "traceback": "Traceback (most recent call last):\n  File \"D:/Git/WMCC Python/worker/worker.py\", line 76, in testWorker\n    result = createBrandedProduct(job['data'])\n  File \"D:\\Git\\WMCC Python\\src\\WMCC.py\", line 1894, in createBrandedProduct\n    availableMaterials += [material[\"name\"]]\nKeyError: 'name'\n"
     }
 }

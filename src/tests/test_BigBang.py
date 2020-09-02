@@ -1,3 +1,5 @@
+#FIXME keep track and print out a string of unsuccessful tests for pasting them into TEST_ONLY environment variable
+
 import unittest
 import os
 import json
@@ -87,7 +89,7 @@ class TestSuite_BigBang(unittest.TestSuite):
                     test_case.maxDiff = None
                     self.addTest(test_case)
                 except json.decoder.JSONDecodeError:
-                    print(fileName)
+                    print(f"Filename: {fileName}")
 
         super(TestSuite_BigBang, self).__init__(self._tests)
 
@@ -118,17 +120,7 @@ class TestCase_BigBang(unittest.TestCase):
             conn.request("POST", endp, json.dumps(req), headers)
             response = conn.getresponse()
 
-            # if response.code > 399:
-            #     #FIXME to remove this as there are expected errors already
-            #     print(f"*** Internal Server Error: {response.code} {response.reason} {SERVER_URL} {endp}***")
-            #     conn.request("POST", "/resetjobqueue", "", headers)
-
             responseJSON = json.loads(response.read())
-
-            # if responseJSON == {'message': 'Internal Server Error'}:
-            #     print("*********Internal Server Error********")
-            #     conn.request("POST", "/resetjobqueue", "", headers)
-            #     responseJSON = json.loads(conn.getresponse().read())
 
             conn.close()
 
@@ -220,6 +212,7 @@ class TestCase_BigBang(unittest.TestCase):
                 inObj.assertEqual(inTestData["result"], responseJSON)
             except AssertionError:
                 print(inTestData["description"])
+                print(f"Filename: {inFileName[:-5]}")
                 with open(outFileName, "w") as outputFile:
                     inTestData.update({"result": responseJSON})
                     json.dump(inTestData, outputFile, indent=4)

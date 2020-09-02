@@ -216,12 +216,12 @@ class CreateMaterials(Resource):
             #-----------------------------------
             #FIXME some better productName; main_macroset_version
             data = {
-                "productName": data["productName"],
+                "productName": data["ProductName"],
                 "template": {
                     "materialParameters": [],
-                    "materials": [{"name": m["variationName"],
-                                   **{p["name"]: p["value"] for p in m["materialAppearanceParameters"]},
-                                   }  for m in data["variationsData"]],
+                    "materials": [{"name": m["VariationName"],
+                                   **{p["Name"]: p["Value"] for p in m["Parameters"]},
+                                   }  for m in data["VariationsData"]],
                     "ARCHICAD_template": {
                         "category": "commons",
                         "main_macroset_version": "18",
@@ -236,7 +236,7 @@ class CreateMaterials(Resource):
 
             return getResult(pid)
         except Exception:
-            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data})
+            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data if data else None})
 
 
 api.add_resource(ArchicadEngine,            '/')

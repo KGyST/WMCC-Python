@@ -2,71 +2,110 @@
     "description": "Material: 2 basic",
     "endpoint": "/creatematerials",
     "request": {
-        "productData": [
+        "productName": "MaterialTestName",
+        "template": {
+            "Materials": [],
+            "archicadTemplate": {}
+        },
+        "variationsData": [
             {
-                "name": "Material 1",
-                "materialIdentity": {
-                    "description": "Whatever description fits here best",
-                    "class": "Wood",
-                    "comments": "No comment on this one",
-                    "manufacturer": "BIMobject",
-                    "cost": 500,
-                    "url": "http://www.bimobject.com"
-                },
-                "materialGraphics": {
-                    "shadingColor": [
-                        60,
-                        60,
-                        60
-                    ],
-                    "transparency": 50
-                },
-                "materialAppearance": {
-                    "color": [
-                        60,
-                        60,
-                        60
-                    ],
-                    "texture": "sokol.png",
-                    "gloss": 20,
-                    "reflectivity": 20,
-                    "transparency": 0
-                }
+                "variationName": "MaterialTest 1",
+                "dataParameters": [
+                    {
+                        "name": "Description",
+                        "value": "Test material description",
+                        "category": null
+                    },
+                    {
+                        "name": "Class",
+                        "value": "Test material class",
+                        "category": null
+                    },
+                    {
+                        "name": "Comments",
+                        "value": "Test material comment",
+                        "category": null
+                    }
+                ],
+                "materialAppearanceParameters": [
+                    {
+                        "name": "Colour",
+                        "value": "#FFFFFF",
+                        "category": null
+                    },
+                    {
+                        "name": "Texture",
+                        "value": null,
+                        "category": null
+                    },
+                    {
+                        "name": "Transparency",
+                        "value": "0",
+                        "category": null
+                    },
+                    {
+                        "name": "Glossiness",
+                        "value": "0",
+                        "category": null
+                    },
+                    {
+                        "name": "Reflectivity",
+                        "value": "0",
+                        "category": null
+                    }
+                ]
             },
             {
-                "name": "Material 2",
-                "materialIdentity": {
-                    "description": "Another simple description",
-                    "class": "Wood",
-                    "comments": "No comment here either",
-                    "manufacturer": "BIMobject",
-                    "cost": 500,
-                    "url": "http://www.bimobject.com"
-                },
-                "materialGraphics": {
-                    "shadingColor": [
-                        255,
-                        0,
-                        0
-                    ],
-                    "transparency": 0
-                },
-                "materialAppearance": {
-                    "color": [
-                        255,
-                        0,
-                        0
-                    ],
-                    "texture": "pono.png",
-                    "gloss": 20,
-                    "reflectivity": 20,
-                    "transparency": 0
-                }
+                "variationName": "MaterialTest 2",
+                "dataParameters": [
+                    {
+                        "name": "Description",
+                        "value": "Test material description 2",
+                        "category": null
+                    },
+                    {
+                        "name": "Class",
+                        "value": "Test material class 2",
+                        "category": null
+                    },
+                    {
+                        "name": "Comments",
+                        "value": "Test material comment 2",
+                        "category": null
+                    }
+                ],
+                "materialAppearanceParameters": [
+                    {
+                        "name": "Colour",
+                        "value": "#000000",
+                        "category": null
+                    },
+                    {
+                        "name": "Texture",
+                        "value": null,
+                        "category": null
+                    },
+                    {
+                        "name": "Transparency",
+                        "value": "1",
+                        "category": null
+                    },
+                    {
+                        "name": "Glossiness",
+                        "value": "1",
+                        "category": null
+                    },
+                    {
+                        "name": "Reflectivity",
+                        "value": "1",
+                        "category": null
+                    }
+                ]
             }
         ],
         "productPageData": {}
     },
     "result": {
-        "object_name": "commons_Placeable_LCF_name.lcf"
+        "object_name": "commons_MaterialTestName.lcf"
     }
 }
