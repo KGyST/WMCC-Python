@@ -24,15 +24,14 @@
     },
     "variationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [
+        "VariationName": "test_placeable1",
+        "Parameters": [
 			{
 				"selectedUnit": "mm",
-				"name": "Height",
-				"value": "3000.0"
-			}],
-        "materialParameters": [],
-        "dataParameters": []
+				"Name": "Height",
+				"Group": 1,
+				"Value": "3000.0"
+			}]
       }
     ]
   },

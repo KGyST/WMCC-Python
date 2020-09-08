@@ -93,6 +93,28 @@ class ArchicadEngine(Resource):
     def post(self):
         data = request.get_json()
 
+        # -----------------------------------
+        data = {
+            **data,
+            "template":  {**data["template"],
+                          "materials": [{**m,
+                                         "name": m["Name"], } for m in data["template"]["materials"]]},
+            "variationsData": [{**vD,
+                                "variationName": vD["VariationName"],
+                                "parameters": [{**p,
+                                                "name": p["Name"],
+                                                "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 1],
+                                "materialParameters": [{**p,
+                                                "name": p["Name"],
+                                                "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 2 or p["Group"] == 4],
+                                "dataParameters": [{**p,
+                                                "name": p["Name"],
+                                                "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
+                                } for vD in data["variationsData"]],
+        }
+
+        # -----------------------------------
+
         pid = str(uuid.uuid4()).upper()
         logging.debug("".join(["/", "PID: ", str(pid)]))
         enQueueJob("/", data, pid)
@@ -216,12 +238,12 @@ class CreateMaterials(Resource):
             #-----------------------------------
             #FIXME some better productName; main_macroset_version
             data = {
-                "productName": data["ProductName"],
+                **data,
                 "template": {
                     "materialParameters": [],
                     "materials": [{"name": m["VariationName"],
                                    **{p["Name"]: p["Value"] for p in m["Parameters"]},
-                                   }  for m in data["VariationsData"]],
+                                   }  for m in data["variationsData"]],
                     "ARCHICAD_template": {
                         "category": "commons",
                         "main_macroset_version": "18",

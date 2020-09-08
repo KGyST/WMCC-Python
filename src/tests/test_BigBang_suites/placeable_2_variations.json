@@ -15,24 +15,22 @@
     },
     "variationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [{
-                    "name": "Height",
-                    "value": "1000.0",
+        "VariationName": "test_placeable1",
+        "Parameters": [{
+                    "Name": "Height",
+                    "Value": "1000.0",
+					"Group": 1,
                     "selectedUnit": "mm"
-                }],
-        "materialParameters": [],
-        "dataParameters": []
+                }]
       },
       {
-        "variationName": "test_placeable2",
-        "parameters": [{
-                    "name": "Height",
-                    "value": "200.0",
+        "VariationName": "test_placeable2",
+        "Parameters": [{
+                    "Name": "Height",
+                    "Value": "200.0",
+					"Group": 1,
                     "selectedUnit": "in"
-                }],
-        "materialParameters": [],
-        "dataParameters": []
+                }]
       }
     ]
   },

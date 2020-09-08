@@ -9,48 +9,54 @@
         },
         "variationsData": [
             {
-                "variationName": "MaterialTest 1",
-                "dataParameters": [
+                "VariationName": "MaterialTest 1",
+                "Parameters": [
                     {
-                        "name": "Description",
-                        "value": "Test material description",
+                        "Name": "Description",
+                        "Value": "Test material description",
+						"Group": 5,
                         "category": null
                     },
                     {
-                        "name": "Class",
-                        "value": "Test material class",
+                        "Name": "Class",
+                        "Value": "Test material class",
+						"Group": 5,
                         "category": null
                     },
                     {
-                        "name": "Comments",
-                        "value": "Test material comment",
+                        "Name": "Comments",
+                        "Value": "Test material comment",
+						"Group": 5,
                         "category": null
-                    }
-                ],
-                "materialAppearanceParameters": [
-                    {
-                        "name": "Colour",
-                        "value": "#FFFFFF",
+                    },
+					{
+                        "Name": "Colour",
+                        "Value": "#FFFFFF",
+						"Group": 4,
                         "category": null
                     },
                     {
-                        "name": "Texture",
-                        "value": null,
+                        "Name": "Texture",
+                        "Value": null,
+						"Group": 4,
                         "category": null
                     },
                     {
-                        "name": "Transparency",
-                        "value": "0",
+                        "Name": "Transparency",
+                        "Value": "0",
+						"Group": 4,
                         "category": null
                     },
                     {
-                        "name": "Glossiness",
-                        "value": "0",
+                        "Name": "Glossiness",
+                        "Value": "0",
+						"Group": 4,
                         "category": null
                     },
                     {
-                        "name": "Reflectivity",
-                        "value": "0",
+                        "Name": "Reflectivity",
+                        "Value": "0",
+						"Group": 4,
                         "category": null
                     }
                 ]
