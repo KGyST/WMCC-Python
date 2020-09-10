@@ -1,0 +1,10 @@
+{
+  "description": "Resetjobqueue: tests",
+  "endpoint": "/resetjobqueue",
+  "request": {
+  },
+  "result": {
+    "result": "OK",
+    "jobs_killed": ""
+}
+}

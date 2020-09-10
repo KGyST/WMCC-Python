@@ -15,16 +15,16 @@
     },
     "variationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [],
-        "materialParameters": [],
-        "dataParameters": [{
-                    "name": "Test parameter 1",
-                    "value": "Test value 1"
+        "VariationName": "test_placeable1",
+        "Parameters": [{
+                    "Name": "Test parameter 1",
+					"Group": 3,
+                    "Value": "Test value 1"
                 },
                 {
-                    "name": "Test parameter 2",
-                    "value": "Test value 2"
+                    "Name": "Test parameter 2",
+					"Group": 3,
+                    "Value": "Test value 2"
                 }]
       }
     ]

@@ -30,7 +30,7 @@
     },
     "variationsData": [
       {
-        "variationName": "test_placeable1",
+        "VariationName": "test_placeable1",
         "parameters": [],
         "materialParameters": [
         {

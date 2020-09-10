@@ -15,10 +15,8 @@
         },
         "variationsData": [
             {
-                "variationName": "test_placeable1",
-                "parameters": [],
-                "materialParameters": [],
-                "dataParameters": []
+                "VariationName": "test_placeable1",
+                "Parameters": []
             }
         ]
     },
@@ -44,6 +42,8 @@
                 },
                 "variationsData": [
                     {
+                        "VariationName": "test_placeable1",
+                        "Parameters": [],
                         "variationName": "test_placeable1",
                         "parameters": [],
                         "materialParameters": [],
