@@ -239,11 +239,12 @@ class CreateMaterials(Resource):
             #FIXME some better productName; main_macroset_version
             data = {
                 **data,
+                "productName": data["ProductName"],
                 "template": {
                     "materialParameters": [],
                     "materials": [{"name": m["VariationName"],
                                    **{p["Name"]: p["Value"] for p in m["Parameters"]},
-                                   }  for m in data["variationsData"]],
+                                   }  for m in data["VariationsData"]],
                     "ARCHICAD_template": {
                         "category": "commons",
                         "main_macroset_version": "18",
