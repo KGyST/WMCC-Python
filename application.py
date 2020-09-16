@@ -98,7 +98,7 @@ class ArchicadEngine(Resource):
             **data,
             "template":  {**data["Template"],
                           "materials": [{**m,
-                                         "name": m["Name"], } for m in data["template"]["materials"]]},
+                                         "name": m["Name"], } for m in data["Template"]["materials"]]},
             "variationsData": [{**vD,
                                 "variationName": vD["VariationName"],
                                 "parameters": [{**p,
