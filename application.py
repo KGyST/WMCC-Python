@@ -96,7 +96,7 @@ class ArchicadEngine(Resource):
         # -----------------------------------
         data = {
             **data,
-            "template":  {**data["template"],
+            "template":  {**data["Template"],
                           "materials": [{**m,
                                          "name": m["Name"], } for m in data["template"]["materials"]]},
             "variationsData": [{**vD,
@@ -110,7 +110,7 @@ class ArchicadEngine(Resource):
                                 "dataParameters": [{**p,
                                                 "name": p["Name"],
                                                 "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
-                                } for vD in data["variationsData"]],
+                                } for vD in data["VariationsData"]],
         }
 
         # -----------------------------------
