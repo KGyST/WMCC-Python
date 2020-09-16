@@ -96,6 +96,7 @@ class ArchicadEngine(Resource):
         # -----------------------------------
         data = {
             **data,
+            "productName": data["ProductName"],
             "template":  {**data["Template"],
                           "materials": [{**m,
                                          "name": m["Name"], } for m in data["Template"]["Materials"]]},
