@@ -96,9 +96,12 @@ class ArchicadEngine(Resource):
         # -----------------------------------
         data = {
             **data,
-            "template":  {**data["template"],
+            "productName": data["ProductName"],
+            "template":  {**data["Template"],
                           "materials": [{**m,
-                                         "name": m["Name"], } for m in data["template"]["materials"]]},
+                                         "name": m["Name"], } for m in data["Template"]["Materials"]],
+                          "ARCHICAD_template": data["Template"]["ArchicadTemplate"],
+                          },
             "variationsData": [{**vD,
                                 "variationName": vD["VariationName"],
                                 "parameters": [{**p,
@@ -110,7 +113,7 @@ class ArchicadEngine(Resource):
                                 "dataParameters": [{**p,
                                                 "name": p["Name"],
                                                 "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
-                                } for vD in data["variationsData"]],
+                                } for vD in data["VariationsData"]],
         }
 
         # -----------------------------------
@@ -239,11 +242,12 @@ class CreateMaterials(Resource):
             #FIXME some better productName; main_macroset_version
             data = {
                 **data,
+                "productName": data["ProductName"],
                 "template": {
                     "materialParameters": [],
                     "materials": [{"name": m["VariationName"],
                                    **{p["Name"]: p["Value"] for p in m["Parameters"]},
-                                   }  for m in data["variationsData"]],
+                                   }  for m in data["VariationsData"]],
                     "ARCHICAD_template": {
                         "category": "commons",
                         "main_macroset_version": "18",
