@@ -2,12 +2,12 @@
     "description": "Material: 2 basic",
     "endpoint": "/creatematerials",
     "request": {
-        "productName": "MaterialTestName",
-        "template": {
+        "ProductName": "MaterialTestName",
+        "Template": {
             "Materials": [],
-            "archicadTemplate": {}
+            "ArchicadTemplate": {}
         },
-        "variationsData": [
+        "VariationsData": [
             {
                 "VariationName": "MaterialTest 1",
                 "Parameters": [
