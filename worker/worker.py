@@ -59,7 +59,6 @@ def testWorker():
 
         while True:
             job = json.loads(str(message))
-            message.complete()
 
             logging.debug(f"**** Job started: {job['PID']} ****")
 
@@ -91,6 +90,7 @@ def testWorker():
                 json.dump(resultDict, resultFile, indent=4)
 
             resultFile.close()
+            message.complete()
             message = queue_receiver.next()
 
 

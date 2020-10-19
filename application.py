@@ -93,6 +93,35 @@ class ArchicadEngine(Resource):
     def post(self):
         data = request.get_json()
 
+        # -----------------------------------
+
+        try:
+            data = {
+                **data,
+                "productName": data["ProductName"],
+                "template":  {**data["Template"],
+                              "materials": [{**m,
+                                             "name": m["Name"], } for m in data["Template"]["Materials"]],
+                              "ARCHICAD_template": data["Template"]["ArchicadTemplate"],
+                              },
+                "variationsData": [{**vD,
+                                    "variationName": vD["VariationName"],
+                                    "parameters": [{**p,
+                                                    "name": p["Name"],
+                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 1],
+                                    "materialParameters": [{**p,
+                                                    "name": p["Name"],
+                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 2 or p["Group"] == 4],
+                                    "dataParameters": [{**p,
+                                                    "name": p["Name"],
+                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
+                                    } for vD in data["VariationsData"]],
+            }
+        except KeyError:
+            raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": data})
+
+        # -----------------------------------
+
         pid = str(uuid.uuid4()).upper()
         logging.debug("".join(["/", "PID: ", str(pid)]))
         enQueueJob("/", data, pid)
@@ -215,20 +244,24 @@ class CreateMaterials(Resource):
 
             #-----------------------------------
             #FIXME some better productName; main_macroset_version
-            data = {
-                "productName": data["productName"],
-                "template": {
-                    "materialParameters": [],
-                    "materials": [{"name": m["variationName"],
-                                   **{p["name"]: p["value"] for p in m["materialAppearanceParameters"]},
-                                   }  for m in data["variationsData"]],
-                    "ARCHICAD_template": {
-                        "category": "commons",
-                        "main_macroset_version": "18",
-                    }
-                },
-                "variationsData": []
-            }
+            try:
+                data = {
+                    **data,
+                    "productName": data["ProductName"],
+                    "template": {
+                        "materialParameters": [],
+                        "materials": [{"name": m["VariationName"],
+                                       **{p["Name"]: p["Value"] for p in m["Parameters"]},
+                                       }  for m in data["VariationsData"]],
+                        "ARCHICAD_template": {
+                            "category": "commons",
+                            "main_macroset_version": "18",
+                        }
+                    },
+                    "variationsData": []
+                }
+            except KeyError:
+                raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": data})
 
             #-----------------------------------
 
@@ -236,7 +269,7 @@ class CreateMaterials(Resource):
 
             return getResult(pid)
         except Exception:
-            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data})
+            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data if data else None})
 
 
 api.add_resource(ArchicadEngine,            '/')

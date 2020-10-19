@@ -2,11 +2,10 @@
   "description": "Placeable: advanced material with texture",
   "endpoint": "/",
   "request": {
-    "productName": "Placeable_LCF_name",
-    "template": {
-      "materialParameters": [],
-      "materials": [{
-                "name": "Test material",
+    "ProductName": "Placeable_LCF_name",
+    "Template": {
+      "Materials": [{
+                "Name": "Test material",
                 "RGB": [
                     255,
                     0,
@@ -37,19 +36,17 @@
 				"base64_encoded_texture": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TpSItDnaQ4pChOlkQv3CUKhbBQmkrtOpgcukXNGlIUlwcBdeCgx-LVQcXZ10dXAVB8APEydFJ0UVK_F9SaBHjwXE_3t173L0DhGaVqWbPOKBqlpFOxMVcflUMvEJABCGImJaYqSczi1l4jq97-Ph6F-NZ3uf-HCGlYDLAJxLPMd2wiDeIZzYtnfM-cZiVJYX4nHjMoAsSP3JddvmNc8lhgWeGjWx6njhMLJa6WO5iVjZU4iniqKJqlC_kXFY4b3FWq3XWvid_YbCgrWS4TnMYCSwhiRR1JKOOCqqwEKNVI8VEmvbjHv6I40-RSyZXBYwcC6hBheT4wf_gd7dmcXLCTQrGgd4X2_4YAQK7QKth29_Htt06AfzPwJXW8deawOwn6Y2OFj0CBraBi-uOJu8BlzvA0JMuGZIj-WkKxSLwfkbflAcGb4H-Nbe39j5OH4AsdbV8AxwcAqMlyl73eHdfd2__nmn39wPE1nLI80qBYwAAAAlwSFlzAAAuIwAALiMBeKU_dgAAAAd0SU1FB-QCGg0hKcKQCXMAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAFUlEQVQI1wXBAQEAAACAEP9PF1CpMCnkBftjnTYAAAAAAElFTkSuQmCC"
             }
 ],
-      "ARCHICAD_template": {
+      "ArchicadTemplate": {
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
         "parameters": []
       }
     },
-    "variationsData": [
+    "VariationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [],
-        "materialParameters": [],
-        "dataParameters": []
+        "VariationName": "test_placeable1",
+        "Parameters": []
       }
     ]
   },

@@ -2,41 +2,37 @@
     "description": "Expected error: placeable: malformed request",
     "endpoint": "/",
     "request": {
-        "productName": "Placeable_LCF_name",
-        "template": {
-            "materialParameters": [],
-            "materials": []
+        "ProductName": "Placeable_LCF_name",
+        "Template": {
+            "Materials": []
         },
-        "variationsData": [
+        "VariationsData": [
             {
-                "variationName": "test_placeable1",
-                "parameters": [],
-                "materialParameters": [],
-                "dataParameters": []
+                "VariationName": "test_placeable1",
+                "Parameters": []
             }
         ]
     },
     "result": {
-        "error_message": {
-            "title": "Malformed request",
-            "description": "At least one required field is missing from request",
-            "constant": "ERR_MALFORMED_REQUEST"
-        },
-        "additional_data": {
-            "request": {
-                "productName": "Placeable_LCF_name",
-                "template": {
-                    "materialParameters": [],
-                    "materials": []
-                },
-                "variationsData": [
-                    {
-                        "variationName": "test_placeable1",
-                        "parameters": [],
-                        "materialParameters": [],
-                        "dataParameters": []
-                    }
-                ]
+        "message": {
+            "error_message": {
+                "title": "Malformed request",
+                "description": "At least one required field is missing from request",
+                "constant": "ERR_MALFORMED_REQUEST"
+            },
+            "additional_data": {
+                "request": {
+                    "ProductName": "Placeable_LCF_name",
+                    "Template": {
+                        "Materials": []
+                    },
+                    "VariationsData": [
+                        {
+                            "VariationName": "test_placeable1",
+                            "Parameters": []
+                        }
+                    ]
+                }
             }
         }
     }

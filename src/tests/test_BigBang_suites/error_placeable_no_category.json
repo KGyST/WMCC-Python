@@ -2,23 +2,20 @@
     "description": "Expected error: placeable: bad category",
     "endpoint": "/",
     "request": {
-        "productName": "Placeable_LCF_name",
-        "template": {
-            "materialParameters": [],
-            "materials": [],
-            "ARCHICAD_template": {
+        "ProductName": "Placeable_LCF_name",
+        "Template": {
+            "Materials": [],
+            "ArchicadTemplate": {
                 "category": "bad_category",
                 "main_macroset_version": "19",
                 "source_file": "test_placeable",
                 "parameters": {}
             }
         },
-        "variationsData": [
+        "VariationsData": [
             {
-                "variationName": "test_placeable1",
-                "parameters": [],
-                "materialParameters": [],
-                "dataParameters": []
+                "VariationName": "test_placeable1",
+                "Parameters": []
             }
         ]
     },
@@ -31,9 +28,31 @@
         "additional_data": {
             "category": "bad_category",
             "request": {
+                "ProductName": "Placeable_LCF_name",
+                "Template": {
+                    "Materials": [],
+                    "ArchicadTemplate": {
+                        "category": "bad_category",
+                        "main_macroset_version": "19",
+                        "source_file": "test_placeable",
+                        "parameters": {}
+                    }
+                },
+                "VariationsData": [
+                    {
+                        "VariationName": "test_placeable1",
+                        "Parameters": []
+                    }
+                ],
                 "productName": "Placeable_LCF_name",
                 "template": {
-                    "materialParameters": [],
+                    "Materials": [],
+                    "ArchicadTemplate": {
+                        "category": "bad_category",
+                        "main_macroset_version": "19",
+                        "source_file": "test_placeable",
+                        "parameters": {}
+                    },
                     "materials": [],
                     "ARCHICAD_template": {
                         "category": "bad_category",
@@ -44,6 +63,8 @@
                 },
                 "variationsData": [
                     {
+                        "VariationName": "test_placeable1",
+                        "Parameters": [],
                         "variationName": "test_placeable1",
                         "parameters": [],
                         "materialParameters": [],

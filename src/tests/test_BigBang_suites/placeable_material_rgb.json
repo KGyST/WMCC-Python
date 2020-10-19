@@ -2,30 +2,27 @@
   "description": "Placeable: material with simple RGB values",
   "endpoint": "/",
   "request": {
-    "productName": "Placeable_LCF_name",
-    "template": {
-      "materialParameters": [],
-      "materials": [{
-                "name": "Test material",
+    "ProductName": "Placeable_LCF_name",
+    "Template": {
+      "Materials": [{
+                "Name": "Test material",
                 "RGB": [
                     255,
                     0,
                     0
                 ]
             }],
-      "ARCHICAD_template": {
+      "ArchicadTemplate": {
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
         "parameters": []
       }
     },
-    "variationsData": [
+    "VariationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [],
-        "materialParameters": [],
-        "dataParameters": []
+        "VariationName": "test_placeable1",
+        "Parameters": []
       }
     ]
   },

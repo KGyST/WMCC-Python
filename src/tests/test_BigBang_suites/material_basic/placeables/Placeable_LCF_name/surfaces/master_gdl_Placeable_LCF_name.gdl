@@ -1,5 +1,0 @@
-﻿
-	call "Material 1" parameters  sSurfaceName = "Material 1"
-
-file_dependence \
-	"Material 1"

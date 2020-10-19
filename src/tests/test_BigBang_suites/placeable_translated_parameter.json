@@ -2,11 +2,10 @@
   "description": "Placeable: Translated parameters",
   "endpoint": "/",
   "request": {
-    "productName": "Placeable_LCF_name",
-    "template": {
-      "materialParameters": [],
-      "materials": [],
-      "ARCHICAD_template": {
+    "ProductName": "Placeable_LCF_name",
+    "Template": {
+      "Materials": [],
+      "ArchicadTemplate": {
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
@@ -22,17 +21,16 @@
 		}
       }
     },
-    "variationsData": [
+    "VariationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [
+        "VariationName": "test_placeable1",
+        "Parameters": [
 			{
 				"selectedUnit": "mm",
-				"name": "Height",
-				"value": "3000.0"
-			}],
-        "materialParameters": [],
-        "dataParameters": []
+				"Name": "Height",
+				"Group": 1,
+				"Value": "3000.0"
+			}]
       }
     ]
   },

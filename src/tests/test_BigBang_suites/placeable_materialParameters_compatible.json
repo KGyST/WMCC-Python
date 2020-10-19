@@ -2,12 +2,11 @@
   "description": "Placeable: materialParameters with one translated material and material compatible source",
   "endpoint": "/",
   "request": {
-    "productName": "Placeable_LCF_name",
-    "template": {
-      "materialParameters": [],
-      "materials": [
+    "ProductName": "Placeable_LCF_name",
+    "Template": {
+      "Materials": [
         {
-          "name": "Test material",
+          "Name": "Test material",
           "RGB": [
             255,
             0,
@@ -15,7 +14,7 @@
           ]
         }
       ],
-      "ARCHICAD_template": {
+      "ArchicadTemplate": {
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable_2",
@@ -29,17 +28,16 @@
         }
       }
     },
-    "variationsData": [
+    "VariationsData": [
       {
-        "variationName": "test_placeable1",
-        "parameters": [],
-        "materialParameters": [
+        "VariationName": "test_placeable1",
+        "Parameters": [
           {
-            "name": "Test Material Parameter",
-            "value": "Test material"
-          }
-        ],
-        "dataParameters": []
+            "Name": "Test Material Parameter",
+			"Group": 2,
+            "Value": "Test material"
+			}
+        ]
       }
     ]
   },
