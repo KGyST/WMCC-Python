@@ -1,0 +1,8 @@
+<String Name="BO_real">
+			<Description><![CDATA["Related"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+			<Value><![CDATA[""]]></Value>
+		</String>
+		

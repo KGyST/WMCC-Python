@@ -1,0 +1,9 @@
+<Length Name="ac_wall_height">
+			<Description><![CDATA["Wall Height"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+			</Flags>
+			<Value>2.7</Value>
+		</Length>
+		

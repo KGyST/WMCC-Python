@@ -1,0 +1,12 @@
+<Integer Name="iBeamFamilys">
+			<Description><![CDATA["Beam Types:"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="2" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">1</AVal>
+			</ArrayValues>
+		</Integer>
+		

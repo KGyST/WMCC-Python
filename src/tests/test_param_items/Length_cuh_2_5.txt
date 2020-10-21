@@ -1,0 +1,28 @@
+<Length Name="ac_wd_poly">
+			<Description><![CDATA["Window - Door Polygon"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+			</Flags>
+			<ArrayValues FirstDimension="2" SecondDimension="9">
+				<AVal Column="1" Row="1">0.1016</AVal>
+				<AVal Column="2" Row="1">1</AVal>
+				<AVal Column="3" Row="1">0.9</AVal>
+				<AVal Column="4" Row="1">1</AVal>
+				<AVal Column="5" Row="1">2.1</AVal>
+				<AVal Column="6" Row="1">2</AVal>
+				<AVal Column="7" Row="1">2.1</AVal>
+				<AVal Column="8" Row="1">2</AVal>
+				<AVal Column="9" Row="1">0.9</AVal>
+				<AVal Column="1" Row="2">0.1016</AVal>
+				<AVal Column="2" Row="2">2.5</AVal>
+				<AVal Column="3" Row="2">0</AVal>
+				<AVal Column="4" Row="2">2.5</AVal>
+				<AVal Column="5" Row="2">2.1</AVal>
+				<AVal Column="6" Row="2">3.5</AVal>
+				<AVal Column="7" Row="2">2.1</AVal>
+				<AVal Column="8" Row="2">3.5</AVal>
+				<AVal Column="9" Row="2">0</AVal>
+			</ArrayValues>
+		</Length>
+		

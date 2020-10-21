@@ -1,0 +1,16 @@
+<Length Name="ac_top_poly">
+			<Description><![CDATA["Top Polygon of the Wall"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="2">
+				<AVal Column="1" Row="1">0</AVal>
+				<AVal Column="2" Row="1">2.7</AVal>
+				<AVal Column="1" Row="2">3</AVal>
+				<AVal Column="2" Row="2">2.7</AVal>
+				<AVal Column="1" Row="3">4.5</AVal>
+				<AVal Column="2" Row="3">1.7</AVal>
+			</ArrayValues>
+		</Length>
+		

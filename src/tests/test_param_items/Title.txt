@@ -1,0 +1,7 @@
+<Title Name="BO_Title">
+			<Description><![CDATA["BIMobject Information"]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+		</Title>
+		

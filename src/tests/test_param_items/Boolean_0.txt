@@ -1,0 +1,8 @@
+<Boolean Name="bJointAngle1">
+			<Description><![CDATA["Override Joint 1 Angle"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Boolean>
+		

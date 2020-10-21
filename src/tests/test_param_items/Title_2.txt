@@ -1,0 +1,7 @@
+<Title Name="beamParams">
+			<Description><![CDATA["Beams"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+		</Title>
+		

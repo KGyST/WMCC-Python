@@ -1,0 +1,12 @@
+<Length Name="customBeamOverlaps">
+			<Description><![CDATA["Beam Overlap"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="2" SecondDimension="0">
+				<AVal Row="1">0.25</AVal>
+				<AVal Row="2">0.25</AVal>
+			</ArrayValues>
+		</Length>
+		

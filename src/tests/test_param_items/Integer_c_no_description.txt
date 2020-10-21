@@ -1,0 +1,9 @@
+<Integer Name="iFamily">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>10000</Value>
+		</Integer>
+		

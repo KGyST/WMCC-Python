@@ -1,0 +1,8 @@
+<FillPattern Name="fillTypePanel">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>24</Value>
+		</FillPattern>
+		

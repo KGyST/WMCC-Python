@@ -1,0 +1,405 @@
+<String Name="sSaved_BO_params">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="44" SecondDimension="9">
+				<AVal Column="1" Row="1"><![CDATA["KS-QUADRO 12-1,8-DM"]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA["KS-QUADRO 16-1,8-DM"]]></AVal>
+				<AVal Column="3" Row="1"><![CDATA["KS-QUADRO 20-1,8-DM"]]></AVal>
+				<AVal Column="4" Row="1"><![CDATA["KS-QUADRO 20-2,0-DM"]]></AVal>
+				<AVal Column="5" Row="1"><![CDATA["KS-QUADRO 20-2,2-DM"]]></AVal>
+				<AVal Column="6" Row="1"><![CDATA["KS-QUADRO E 12-1,8-DM"]]></AVal>
+				<AVal Column="7" Row="1"><![CDATA["KS-QUADRO E 20-1,8-DM"]]></AVal>
+				<AVal Column="8" Row="1"><![CDATA["KS-QUADRO E 12-2,0-DM"]]></AVal>
+				<AVal Column="9" Row="1"><![CDATA["KS-QUADRO E 20-2,0-DM"]]></AVal>
+				<AVal Column="1" Row="2"><![CDATA["ks_quadro_12_1-8_dm"]]></AVal>
+				<AVal Column="2" Row="2"><![CDATA["ks_quadro_16_1-8_dm"]]></AVal>
+				<AVal Column="3" Row="2"><![CDATA["ks_quadro_20_1-8_dm"]]></AVal>
+				<AVal Column="4" Row="2"><![CDATA["ks_quadro_20_2-0_dm"]]></AVal>
+				<AVal Column="5" Row="2"><![CDATA["ks_quadro_20_2-2_dm"]]></AVal>
+				<AVal Column="6" Row="2"><![CDATA["ks_quadro_e_12_1-8_dm"]]></AVal>
+				<AVal Column="7" Row="2"><![CDATA["ks_quadro_e_20_1-8_dm"]]></AVal>
+				<AVal Column="8" Row="2"><![CDATA["ks_quadro_e_12_2-0_dm"]]></AVal>
+				<AVal Column="9" Row="2"><![CDATA["ks_quadro_e_20_2-0_dm"]]></AVal>
+				<AVal Column="1" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="2" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="3" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="4" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="5" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="6" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="7" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="8" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="9" Row="3"><![CDATA["KS-Quadro"]]></AVal>
+				<AVal Column="1" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="4"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="5"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="6"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="7"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="8"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="9"><![CDATA["401cc650-dff5-4da5-bed9-25def03ba888"]]></AVal>
+				<AVal Column="2" Row="9"><![CDATA["0dabfabc-4f72-496c-b806-27a2d374b91b"]]></AVal>
+				<AVal Column="3" Row="9"><![CDATA["d564e658-b3c5-411e-b26c-562b15de8d0b"]]></AVal>
+				<AVal Column="4" Row="9"><![CDATA["cbbfbe52-ddd7-4bdc-8cf9-f6e0fe8b4ff8"]]></AVal>
+				<AVal Column="5" Row="9"><![CDATA["53014c22-cd8f-4645-aecd-1f91f2776afc"]]></AVal>
+				<AVal Column="6" Row="9"><![CDATA["6689a474-644c-41f2-8cea-62a100bcec0d"]]></AVal>
+				<AVal Column="7" Row="9"><![CDATA["3ef20693-c88e-4ebf-9d63-6dd421230fd8"]]></AVal>
+				<AVal Column="8" Row="9"><![CDATA["64e4325a-2265-4a2b-9e28-59b3f1908a1c"]]></AVal>
+				<AVal Column="9" Row="9"><![CDATA["f391d8d0-29ca-4b5d-b097-f500fae494ee"]]></AVal>
+				<AVal Column="1" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_12_1-8_dm"]]></AVal>
+				<AVal Column="2" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_16_1-8_dm"]]></AVal>
+				<AVal Column="3" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_20_1-8_dm"]]></AVal>
+				<AVal Column="4" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_20_2-0_dm"]]></AVal>
+				<AVal Column="5" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_20_2-2_dm"]]></AVal>
+				<AVal Column="6" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_e_12_1-8_dm"]]></AVal>
+				<AVal Column="7" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_e_20_1-8_dm"]]></AVal>
+				<AVal Column="8" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_e_12_2-0_dm"]]></AVal>
+				<AVal Column="9" Row="10"><![CDATA["http://bimobject.com/ks-quadro/product/ks_quadro_e_20_2-0_dm"]]></AVal>
+				<AVal Column="1" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_12_1-8_dm"]]></AVal>
+				<AVal Column="2" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_16_1-8_dm"]]></AVal>
+				<AVal Column="3" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_20_1-8_dm"]]></AVal>
+				<AVal Column="4" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_20_2-0_dm"]]></AVal>
+				<AVal Column="5" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_20_2-2_dm"]]></AVal>
+				<AVal Column="6" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_e_12_1-8_dm"]]></AVal>
+				<AVal Column="7" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_e_20_1-8_dm"]]></AVal>
+				<AVal Column="8" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_e_12_2-0_dm"]]></AVal>
+				<AVal Column="9" Row="11"><![CDATA["bimobject.com/ks-quadro/product/ks_quadro_e_20_2-0_dm"]]></AVal>
+				<AVal Column="1" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="12"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="13"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="3" Row="13"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="5" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="6" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="7" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="8" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="9" Row="13"><![CDATA["http://www.ks-quadro.de/ks-quadro-system/ks-quadro/system.html"]]></AVal>
+				<AVal Column="1" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="14"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="15"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="16"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="2" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="3" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="4" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="5" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="6" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="7" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="8" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="9" Row="17"><![CDATA["Stone"]]></AVal>
+				<AVal Column="1" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="18"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="2" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="3" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="4" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="5" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="6" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="7" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="8" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="9" Row="19"><![CDATA["Bricks & Blocks"]]></AVal>
+				<AVal Column="1" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="2" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="3" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="4" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="5" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="6" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="7" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="8" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="9" Row="20"><![CDATA["Building Element"]]></AVal>
+				<AVal Column="1" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="2" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="3" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="4" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="5" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="6" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="7" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="8" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="9" Row="21"><![CDATA["301316"]]></AVal>
+				<AVal Column="1" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="2" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="3" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="4" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="5" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="6" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="7" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="8" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="9" Row="22"><![CDATA["L321"]]></AVal>
+				<AVal Column="1" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="2" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="3" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="4" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="5" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="6" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="7" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="8" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="9" Row="23"><![CDATA["Bricks"]]></AVal>
+				<AVal Column="1" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="2" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="3" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="4" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="5" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="6" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="7" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="8" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="9" Row="24"><![CDATA["SS-25-12-10"]]></AVal>
+				<AVal Column="1" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="2" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="3" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="4" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="5" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="6" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="7" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="8" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="9" Row="25"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="1" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="2" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="3" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="4" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="5" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="6" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="7" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="8" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="9" Row="26"><![CDATA["Pr_20_93_52_27"]]></AVal>
+				<AVal Column="1" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="2" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="3" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="4" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="5" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="6" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="7" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="8" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="9" Row="27"><![CDATA["Engineering bricks"]]></AVal>
+				<AVal Column="1" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="2" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="3" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="4" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="5" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="6" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="7" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="8" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="9" Row="28"><![CDATA["25-12-10"]]></AVal>
+				<AVal Column="1" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="2" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="3" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="4" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="5" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="6" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="7" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="8" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="9" Row="29"><![CDATA["Brick Panel Wall Systems"]]></AVal>
+				<AVal Column="1" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="2" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="3" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="4" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="5" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="6" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="7" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="8" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="9" Row="30"><![CDATA["23-13 21 00"]]></AVal>
+				<AVal Column="1" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="2" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="3" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="4" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="5" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="6" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="7" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="8" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="9" Row="31"><![CDATA["Blocks and Bricks"]]></AVal>
+				<AVal Column="1" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="2" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="3" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="4" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="5" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="6" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="7" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="8" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="9" Row="32"><![CDATA["13 42 00"]]></AVal>
+				<AVal Column="1" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="2" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="3" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="4" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="5" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="6" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="7" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="8" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="9" Row="33"><![CDATA["Building Modules"]]></AVal>
+				<AVal Column="1" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="2" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="3" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="4" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="5" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="6" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="7" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="8" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="9" Row="34"><![CDATA["B2010"]]></AVal>
+				<AVal Column="1" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="2" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="3" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="4" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="5" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="6" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="7" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="8" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="9" Row="35"><![CDATA["Exterior Walls"]]></AVal>
+				<AVal Column="1" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="2" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="3" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="4" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="5" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="6" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="7" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="8" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="9" Row="36"><![CDATA[""]]></AVal>
+				<AVal Column="1" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="37"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="38"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="39"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="40"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="41"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="42"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="43"><![CDATA["All"]]></AVal>
+				<AVal Column="1" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="2" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="3" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="4" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="5" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="6" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="7" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="8" Row="44"><![CDATA["All"]]></AVal>
+				<AVal Column="9" Row="44"><![CDATA["All"]]></AVal>
+			</ArrayValues>
+		</String>
+		

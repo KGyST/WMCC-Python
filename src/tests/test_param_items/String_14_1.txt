@@ -1,0 +1,20 @@
+<String Name="sMaterialS">
+			<Description><![CDATA[""]]></Description>
+			<ArrayValues FirstDimension="14" SecondDimension="0">
+				<AVal Row="1"><![CDATA["RAL5011-Steel_Blue"]]></AVal>
+				<AVal Row="2"><![CDATA["RAL3011-Dark_Red"]]></AVal>
+				<AVal Row="3"><![CDATA["RAL3011-Dark_Red"]]></AVal>
+				<AVal Row="4"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="5"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="6"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="7"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="8"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="9"><![CDATA["Glass"]]></AVal>
+				<AVal Row="10"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="11"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="12"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="13"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+				<AVal Row="14"><![CDATA["RAL3005-Wine_Red"]]></AVal>
+			</ArrayValues>
+		</String>
+		

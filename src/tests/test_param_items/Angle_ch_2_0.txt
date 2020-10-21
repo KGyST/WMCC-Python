@@ -1,0 +1,12 @@
+<Angle Name="ac_angles">
+			<Description><![CDATA["Side Angles"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+			</Flags>
+			<ArrayValues FirstDimension="1" SecondDimension="2">
+				<AVal Column="1" Row="1">90</AVal>
+				<AVal Column="2" Row="1">90</AVal>
+			</ArrayValues>
+		</Angle>
+		

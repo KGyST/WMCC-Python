@@ -1,0 +1,13 @@
+<Integer Name="iVersionNumber">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<ArrayValues FirstDimension="2" SecondDimension="2">
+				<AVal Column="1" Row="1">20170822</AVal>
+				<AVal Column="2" Row="1">0</AVal>
+				<AVal Column="1" Row="2">20170907</AVal>
+				<AVal Column="2" Row="2">11</AVal>
+			</ArrayValues>
+		</Integer>
+		
