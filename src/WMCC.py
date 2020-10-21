@@ -33,14 +33,14 @@ from lxml import etree
 #------------------ Temporary constants------------------
 
 
-OUTPUT_XML                  = True      # To retain xmls
+OUTPUT_XML                  = True                          # To retain xmls
 APP_CONFIG                  = "appconfig.json"
 
 with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     DEBUG                       = appJSON["DEBUG"]
     MULTIPROCESS                = appJSON["MULTIPROCESS"]
-    CLEANUP                     = appJSON["CLEANUP"]  # Do cleanup after finish
+    CLEANUP                     = appJSON["CLEANUP"]        # Do cleanup after finish
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     WMCC_PATH                   = appJSON["WMCC_PATH"]
     TARGET_GDL_DIR_NAME         = os.path.join(WMCC_PATH, appJSON["TARGET_GDL_DIR_NAME"])
@@ -50,7 +50,6 @@ with open(APP_CONFIG, "r") as ac:
     COMMONS_DIR_PATH            = os.path.join(CONTENT_DIR_NAME, appJSON["COMMONS_DIR_NAME"])
     CATEGORY_DATA_JSON          = os.path.join(CONTENT_DIR_NAME, "categoryData.json")
 
-    JOBDATA_PATH                = appJSON["JOBDATA"]
     RESULTDATA_PATH             = appJSON["RESULTDATA"]
     APP_LOG_FILE_LOCATION       = appJSON["APP_LOG_FILE_LOCATION"]
     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
@@ -65,12 +64,14 @@ with open(APP_CONFIG, "r") as ac:
                     'warning':  30,
                     'error':    40,
                     'critical': 50,
+
                     'NOTSET':   0,
                     'DEBUG':    10,
                     'INFO':     20,
                     'WARNING':  30,
                     'ERROR':    40,
                     'CRITICAL': 50,
+
                     '0':        0,
                     '10':       10,
                     '20':       20,
@@ -250,11 +251,13 @@ class ParamSection:
         if not isinstance(inParam, etree._Comment):
             self.__paramDict[inParName] = inParam
 
-    def insertAfter(self, inParName, inEtree):
-        self.__paramList.insert(self.__getIndex(inParName) + 1, inEtree)
+    def insertAfter(self, inParName, inParam):
+        self.__paramList.insert(self.__getIndex(inParName) + 1, inParam)
+        self.__paramDict[inParam.name] = inParam
 
-    def insertBefore(self, inParName, inEtree):
-        self.__paramList.insert(self.__getIndex(inParName), inEtree)
+    def insertBefore(self, inParName, inParam):
+        self.__paramList.insert(self.__getIndex(inParName), inParam)
+        self.__paramDict[inParam.name] = inParam
 
     def insertAsChild(self, inParentParName, inPar):
         """
@@ -325,7 +328,9 @@ class ParamSection:
     def toEtree(self):
         eTree = etree.Element("ParamSection", SectVersion=self.SectVersion, SectionFlags=self.SectionFlags, SubIdent=self.SubIdent, )
         eTree.text = '\n\t'
-        eTree.append(etree.fromstring(self.__header))
+        _headerEtree = etree.fromstring(self.__header)
+        _headerEtree.tail = '\n\t'
+        eTree.append(_headerEtree)
         eTree.tail = '\n'
 
         parTree = etree.Element("Parameters")
