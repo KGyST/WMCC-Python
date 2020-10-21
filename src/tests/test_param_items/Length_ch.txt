@@ -1,0 +1,9 @@
+<Length Name="xPanelSize">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0.1</Value>
+		</Length>
+		

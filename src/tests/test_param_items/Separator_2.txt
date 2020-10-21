@@ -1,0 +1,7 @@
+<Separator Name="BO_Separator">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+			</Flags>
+		</Separator>
+		

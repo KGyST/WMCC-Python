@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Resetting parameter, only value-->
+<Root Command="ac_line_type" OriginalXML="original2.xml">
+<Value>1</Value>
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Length"]]></Description>
+			<Value>4.5</Value>
+		</Length>
+		<Integer Name="iNtegerArray1d">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="0">
+				<AVal Row="1">1</AVal>
+				<AVal Row="2">2</AVal>
+				<AVal Row="3">3</AVal>
+			</ArrayValues>
+		</Integer>
+		<Integer Name="iNtegerArray2d">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="2">
+				<AVal Column="1" Row="1">1</AVal>
+				<AVal Column="2" Row="1">2</AVal>
+				<AVal Column="1" Row="2">3</AVal>
+				<AVal Column="2" Row="2">4</AVal>
+				<AVal Column="1" Row="3">5</AVal>
+				<AVal Column="2" Row="3">3</AVal>
+			</ArrayValues>
+		</Integer>
+		<Angle Name="gs_shutPanel_louverAngle">
+			<Description><![CDATA["Louver Angle"]]></Description>
+			<Value>30</Value>
+		</Angle>
+		<RealNum Name="BO_width">
+			<Description><![CDATA["Width (mm):"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		<Integer Name="BO_edinum">
+			<Description><![CDATA["Edition number:"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+		<Boolean Name="AC_show2DHotspotsIn3D">
+			<Description><![CDATA["Show 2D Hotspots in 3D"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		<Material Name="gs_shutPanel_materialMain">
+			<Description><![CDATA["Shutter Panel Surface"]]></Description>
+			<Value>15</Value>
+		</Material>
+		<Integer Name="UIiDetLineTypeLow">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>11</Value>
+		</Integer>
+		<LineType Name="ac_line_type">
+			<Description><![CDATA["Line Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</LineType>
+		<FillPattern Name="gs_sunShade_cutFillType">
+			<Description><![CDATA["Cut Fill Type"]]></Description>
+			<Value>65</Value>
+		</FillPattern>
+		<PenColor Name="gs_sunShade_unCutLinesPen">
+			<Description><![CDATA["Uncut Line Pen"]]></Description>
+			<Value>1</Value>
+		</PenColor>
+		<String Name="gs_shutPanel_type">
+			<Description><![CDATA["Panel Type"]]></Description>
+			<Value><![CDATA["Style 1"]]></Value>
+		</String>
+
+		<!-- iFamily: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Integer Name="iFamily">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>10000</Value>
+		</Integer>
+		<Integer Name="iThickness">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+
+		<!-- detlevel: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="detlevel">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Integer Name="iDetLevel2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>-1</Value>
+		</Integer>
+	</Parameters>
+</ParamSection>
+</Root>

@@ -1,0 +1,8 @@
+<FillPattern Name="gs_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>65</Value>
+		</FillPattern>
+		

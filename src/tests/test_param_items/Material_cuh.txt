@@ -1,0 +1,10 @@
+<Material Name="ac_left_mat">
+			<Description><![CDATA["Left Side Material"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Material>
+		

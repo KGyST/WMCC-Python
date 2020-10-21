@@ -1,0 +1,10 @@
+<PenColor Name="ac_cont_pen">
+			<Description><![CDATA["Contour Pen"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</PenColor>
+		

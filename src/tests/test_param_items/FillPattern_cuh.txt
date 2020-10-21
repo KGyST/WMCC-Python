@@ -1,0 +1,10 @@
+<FillPattern Name="ac_fill_type">
+			<Description><![CDATA["Fill Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</FillPattern>
+		

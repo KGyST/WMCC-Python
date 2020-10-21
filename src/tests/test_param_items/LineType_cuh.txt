@@ -1,0 +1,10 @@
+<LineType Name="ac_line_type">
+			<Description><![CDATA["Line Type"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</LineType>
+		

@@ -1,0 +1,8 @@
+<Length Name="A">
+			<Description><![CDATA["X Dimension"]]></Description>
+			<Flags>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>1</Value>
+		</Length>
+		

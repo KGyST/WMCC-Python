@@ -21,7 +21,6 @@ from src.WMCC import (
     RESULTDATA_PATH,
     LOGLEVEL,
     APP_LOG_FILE_LOCATION,
-    JOBDATA_PATH,
     WMCCException
 )
 
@@ -179,61 +178,6 @@ class ReceiveFile_Test(Resource):
         return ({"result": "00, OK, 00, 00"})
 
 
-class ResetJobQueue(Resource):
-    # To be REMOVED
-    def post(self):
-        if not os.path.exists(JOBDATA_PATH):
-            jobQueue = {
-                "isJobActive": False,
-                "jobList": [] ,
-                "worker_pid": 0
-            }
-            with open(JOBDATA_PATH, "w") as jobFile:
-                json.dump(jobQueue, jobFile, indent=4)
-
-        while not os.access(JOBDATA_PATH, os.R_OK):
-            time.sleep(1)
-
-        with open(JOBDATA_PATH, "r") as jobFile:
-            jobQueue = json.load(jobFile)
-
-            kill = functools.partial(os.kill, signal.SIGTERM)
-
-            jobsToKill = [str(j['PID']) for j in jobQueue["jobList"]]
-            if "activeJobPID" in jobQueue:
-                jobsToKill += [str(jobQueue["activeJobPID"])]
-            logging.info('Jobs killed: ' + ' '.join(jobsToKill))
-
-            map(kill, [j['PID'] for j in jobQueue["jobList"]])
-
-        jobQueue = {
-            "isJobActive": False,
-            "jobList": [],
-            "worker_pid": 0}
-
-        while not os.access(JOBDATA_PATH, os.W_OK):
-            time.sleep(1)
-
-        with open(JOBDATA_PATH, "w") as jobFile:
-            json.dump(jobQueue, jobFile, indent=4)
-
-        resultDict = {}
-
-        if not os.path.exists(RESULTDATA_PATH):
-            resultDict = {}
-            with open(RESULTDATA_PATH, "w") as resultFile:
-                json.dump(resultDict, resultFile, indent=4)
-
-        while not os.access(RESULTDATA_PATH, os.W_OK):
-            time.sleep(1)
-
-        with open(RESULTDATA_PATH, "w") as resultFile:
-            json.dump(resultDict, resultFile, indent=4)
-
-        return {'result': 'OK',
-                'jobs_killed': ' '.join(jobsToKill)}
-
-
 class CreateMaterials(Resource):
     def post(self):
         try:
@@ -277,7 +221,6 @@ api.add_resource(CreateMaterials,           '/creatematerials')
 api.add_resource(ParameterExtractorEngine,  '/extractparams')
 
 # To be REMOVED:
-api.add_resource(ResetJobQueue,             '/resetjobqueue')
 api.add_resource(CreateLCFEngine,           '/createmacroset')
 api.add_resource(ReceiveFile_Test,          '/setfile')
 

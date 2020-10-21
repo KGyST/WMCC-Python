@@ -1,0 +1,8 @@
+<String Name="BO_techcert">
+			<Description><![CDATA["Technical description:"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value><![CDATA["http://www2.incepa.com.br/produtos/rv_alpes_snow_33x60/informacoestecnicas"]]></Value>
+		</String>
+		

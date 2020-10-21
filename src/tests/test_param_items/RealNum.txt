@@ -1,0 +1,8 @@
+<RealNum Name="BO_weight">
+			<Description><![CDATA["Weight Net (Kg):"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</RealNum>
+		

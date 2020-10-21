@@ -1,0 +1,8 @@
+<Material Name="ac_left_mat">
+			<Description><![CDATA["Left Side Surface"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>0</Value>
+		</Material>
+		

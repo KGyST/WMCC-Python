@@ -1,0 +1,10 @@
+<Integer Name="ac_wall_resol">
+			<Description><![CDATA["Wall Resolution"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Integer>
+		

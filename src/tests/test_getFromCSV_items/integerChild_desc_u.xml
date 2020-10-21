@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root Command="iNtegerTest -c detlevel -u -d Teszt description" OriginalXML="original.xml">
+<Value>1</Value>
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Length"]]></Description>
+			<Value>4.5</Value>
+		</Length>
+
+		<!-- iFamily: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Integer Name="iFamily">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>10000</Value>
+		</Integer>
+		<Integer Name="iThickness">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+
+		<!-- detlevel: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="detlevel">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Integer Name="iDetLevel2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>-1</Value>
+		</Integer>
+		<Integer Name="iNtegerTest">
+			<Description><![CDATA["Teszt description"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+			</Flags>
+			<Value>1</Value>
+		</Integer>
+	</Parameters>
+</ParamSection>
+</Root>

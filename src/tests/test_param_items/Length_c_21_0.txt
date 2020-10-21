@@ -1,0 +1,30 @@
+<Length Name="xPosDivs2">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="21" SecondDimension="0">
+				<AVal Row="1">0</AVal>
+				<AVal Row="2">0.61</AVal>
+				<AVal Row="3">1.22</AVal>
+				<AVal Row="4">1.83</AVal>
+				<AVal Row="5">2.44</AVal>
+				<AVal Row="6">3.05</AVal>
+				<AVal Row="7">3.66</AVal>
+				<AVal Row="8">4.27</AVal>
+				<AVal Row="9">4.88</AVal>
+				<AVal Row="10">5.49</AVal>
+				<AVal Row="11">6.1</AVal>
+				<AVal Row="12">6.71</AVal>
+				<AVal Row="13">7.32</AVal>
+				<AVal Row="14">7.93</AVal>
+				<AVal Row="15">8.54</AVal>
+				<AVal Row="16">9.15</AVal>
+				<AVal Row="17">9.76</AVal>
+				<AVal Row="18">10.37</AVal>
+				<AVal Row="19">10.98</AVal>
+				<AVal Row="20">11.59</AVal>
+				<AVal Row="21">12.2</AVal>
+			</ArrayValues>
+		</Length>
+		

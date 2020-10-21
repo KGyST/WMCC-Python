@@ -1,0 +1,10 @@
+<Length Name="ac_wall_radius">
+			<Description><![CDATA["Wall Radius"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+				<ParFlg_Unique/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>0</Value>
+		</Length>
+		

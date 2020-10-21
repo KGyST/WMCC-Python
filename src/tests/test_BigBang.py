@@ -17,7 +17,7 @@ TEST_ONLY   = os.environ['TEST_ONLY']  if "TEST_ONLY"  in os.environ else ""    
 print(f"Server URL: {SERVER_URL} \n")
 
 _SRC        = r".."
-APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
+APP_CONFIG  = os.path.join(_SRC, "..", r"appconfig.json")   #FIXME relative path not elegant here
 with open(APP_CONFIG, "r") as ac:
     APP_JSON = json.load(ac)
     CONTENT_DIR_NAME            = APP_JSON["CONTENT_DIR_NAME"]

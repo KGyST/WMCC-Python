@@ -1,0 +1,8 @@
+<Boolean Name="bHalfStone">
+			<Description><![CDATA["Half Block Joints"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>1</Value>
+		</Boolean>
+		

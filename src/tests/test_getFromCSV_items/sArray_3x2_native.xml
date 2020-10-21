@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root Command="sTestNative -a iFamily -y -d ÁŁvíztűrő tükörfúrógép" OriginalXML="original.xml" TestCSV="sArray_3x2_native.csv">
+<Value></Value>
+<ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
+	<ParamSectHeader>
+		<Version>22</Version>
+	</ParamSectHeader>
+	<Parameters>
+		<Length Name="A">
+			<Description><![CDATA["Length"]]></Description>
+			<Value>4.5</Value>
+		</Length>
+
+		<!-- iFamily: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Integer Name="iFamily">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_BoldName/>
+				<ParFlg_Hidden/>
+			</Flags>
+			<Value>10000</Value>
+		</Integer>
+		<String Name="sTestNative">
+			<Description><![CDATA["ÁŁvíztűrő tükörfúrógép"]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<ArrayValues FirstDimension="3" SecondDimension="2">
+				<AVal Column="1" Row="1"><![CDATA["Árvíztűrő tükörfúrógép"]]></AVal>
+				<AVal Column="2" Row="1"><![CDATA["Teszt string 1 2"]]></AVal>
+				<AVal Column="1" Row="2"><![CDATA["Teszt string 2 1"]]></AVal>
+				<AVal Column="2" Row="2"><![CDATA["Teszt string 2 2"]]></AVal>
+				<AVal Column="1" Row="3"><![CDATA["Teszt string 3 1"]]></AVal>
+				<AVal Column="2" Row="3"><![CDATA["Teszt string 3 2"]]></AVal>
+			</ArrayValues>
+		</String>
+		<Integer Name="iThickness">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>4</Value>
+		</Integer>
+
+		<!-- detlevel: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
+
+		<Title Name="detlevel">
+			<Description><![CDATA[""]]></Description>
+		</Title>
+		<Integer Name="iDetLevel2D">
+			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
+			<Value>-1</Value>
+		</Integer>
+	</Parameters>
+</ParamSection>
+</Root>
