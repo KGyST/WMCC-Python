@@ -13,3 +13,5 @@ Werkzeug
 
 azure-servicebus
 azure-common
+
+pymongo

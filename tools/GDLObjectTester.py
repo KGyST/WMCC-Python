@@ -8,12 +8,12 @@ CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q
 SERVER_URL = "wmcc.ad.bimobject.com"
 CLEANUP = True
 
-_SRC        = r"..\src"
+_SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
 with open(APP_CONFIG, "r") as ac:
     APP_JSON = json.load(ac)
     CONTENT_DIR_NAME            = APP_JSON["CONTENT_DIR_NAME"]
-    ARCHICAD_LOCATION           = os.path.join(_SRC, "archicad", "LP_XMLConverter_18")
+    ARCHICAD_LOCATION           = os.path.join(_SRC, "src", "archicad", "LP_XMLConverter_18")
 
 def getSingleObject(inObjectData):
     s = ssl.SSLContext()
@@ -21,23 +21,38 @@ def getSingleObject(inObjectData):
     headers = {"Content-Type": "application/json"}
     endp = "/"
     req = {
-        "productName": inObjectData["name"],
-        "template": {
-            "materials": inObjectData["materials"],
-            "ARCHICAD_template": inObjectData["ARCHICAD_template"]
+        "ProductName": inObjectData["name"],
+        "Template": {
+            "Materials": [{**m,
+                           "Name": m['name']} for m in inObjectData["materials"]],
+            "ArchicadTemplate": inObjectData["ARCHICAD_template"]
         },
-        "variationsData": [
+        "VariationsData": [
             {
-                "variationName": inObjectData["name"] + "_teszt",
-                "parameters": [{
-                    "name": p["name"],
-                    "selectedUnit": "mm",
-                    "category": None,
-                    "value": min(max(p["min_value"], 1000), p["max_value"]),
-                } for p in inObjectData["parameters"]],
-                "materialParameters": [{"name": i,
-                                        "value": inObjectData["materials"][0]["name"],
-                                        "category": None} for i in inObjectData["material_parameters"]],
+                "VariationName": inObjectData["name"] + "_teszt",
+                "Parameters": [{
+                    "Name": p["name"],
+                    "SelectedUnit": "mm",
+                    "Category": None,
+                    "Value": min(max(p["min_value"], 1000), p["max_value"]),
+                    "StorageType": 1,
+                    "Group": 1,
+                    "MinValue": p["min_value"],
+                    "MaxValue": p["max_value"],
+                } for p in inObjectData["parameters"] if p["group"] == "dimensional"] + \
+              [{
+                  "Name": p["name"],
+                  "SelectedUnit": None,
+                  "Category": None,
+                  "Value": "Teszt_%s" % p["name"] ,
+                  "StorageType": None,
+                  "Group": 2,
+                  "MinValue": None,
+                  "MaxValue": None,
+              } for p in inObjectData["parameters"] if p["group"] == "material"],
+                # "materialParameters": [{"name": i,
+                #                         "value": inObjectData["materials"][0]["name"],
+                #                         "category": None} for i in inObjectData["material_parameters"]],
                 "dataParameters": [],
             }
         ],

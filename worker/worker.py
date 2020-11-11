@@ -55,43 +55,41 @@ def testWorker():
     queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
 
     with queue_client.get_receiver() as queue_receiver:
-        message = queue_receiver.next()
+        with queue_receiver:
+            for message in queue_receiver:
+                job = json.loads(str(message))
 
-        while True:
-            job = json.loads(str(message))
+                logging.debug(f"**** Job started: {job['PID']} ****")
 
-            logging.debug(f"**** Job started: {job['PID']} ****")
+                endPoint = job['endPoint']
 
-            endPoint = job['endPoint']
+                resultDict = {}
 
-            resultDict = {}
+                try:
+                    if endPoint == "/":
+                        result = createBrandedProduct(job['data'])
+                    elif endPoint == "/createmacroset":
+                        #FIXME remove this since not called anymore through web, now only for tests
+                        result = buildMacroSet(job['data'])
+                    elif endPoint == "/creatematerials":
+                        result = createBrandedProduct(job['data'])
+                except WMCCException as e:
+                    result = e.description
+                except Exception as e:
+                    we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"error_message": e.args,
+                                                                                       "request": job['data']})
+                    result = we.description
 
-            try:
-                if endPoint == "/":
-                    result = createBrandedProduct(job['data'])
-                elif endPoint == "/createmacroset":
-                    #FIXME remove this since not called anymore through web, now only for tests
-                    result = buildMacroSet(job['data'])
-                elif endPoint == "/creatematerials":
-                    result = createBrandedProduct(job['data'])
-            except WMCCException as e:
-                result = e.description
-            except Exception as e:
-                we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"error_message": e.args,
-                                                                                   "request": job['data']})
-                result = we.description
+                if os.path.exists(RESULTDATA_PATH):
+                    resultDict = json.load(open(RESULTDATA_PATH, "r"))
 
-            if os.path.exists(RESULTDATA_PATH):
-                resultDict = json.load(open(RESULTDATA_PATH, "r"))
+                resultDict.update({str(job["PID"]): result})
 
-            resultDict.update({str(job["PID"]): result})
+                with open(RESULTDATA_PATH, "w") as resultFile:
+                    json.dump(resultDict, resultFile, indent=4)
 
-            with open(RESULTDATA_PATH, "w") as resultFile:
-                json.dump(resultDict, resultFile, indent=4)
-
-            resultFile.close()
-            message.complete()
-            message = queue_receiver.next()
+                resultFile.close()
+                message.complete()
 
 
 if __name__ == '__main__':

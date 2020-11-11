@@ -55,8 +55,6 @@ dictConfig({
 })
 
 
-
-
 api = Api(app)
 
 def getResult(inPID):
@@ -80,7 +78,6 @@ def getResult(inPID):
                 time.sleep(1)
             with open(RESULTDATA_PATH, "w") as resultFile:
                 json.dump(resultQueue, resultFile, indent=4)
-
     return result
 
 
