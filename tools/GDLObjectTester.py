@@ -34,7 +34,7 @@ def getSingleObject(inObjectData):
                     "Name": p["name"],
                     "SelectedUnit": "mm",
                     "Category": None,
-                    "Value": min(max(p["min_value"], 1000), p["max_value"]),
+                    "Value": min(max(p["min_value"], 999), p["max_value"]),
                     "StorageType": 1,
                     "Group": 1,
                     "MinValue": p["min_value"],

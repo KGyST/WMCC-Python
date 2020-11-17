@@ -1,0 +1,62 @@
+import pymongo
+
+import os, json, shutil, sys
+import pprint
+
+CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
+SERVER_URL = "wmcc.ad.bimobject.com"
+CLEANUP = True
+
+_SRC        = r".."
+APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
+with open(APP_CONFIG, "r") as ac:
+    APP_JSON = json.load(ac)
+    CONTENT_DIR_NAME            = APP_JSON["CONTENT_DIR_NAME"]
+    ARCHICAD_LOCATION           = os.path.join(_SRC, "src", "archicad", "LP_XMLConverter_18")
+
+translation_dir = json.load(open(os.path.join(CONTENT_DIR_NAME, "translations.json"), "r"))
+
+def getParams(inObjectData):
+    global translation_dir
+    _parameters = []
+    _materials = []
+
+    for parameter in inObjectData['parameters']:
+        if parameter['name'] not in translation_dir["parameters"]:
+            if parameter['group'] == "dimensional":
+                _parameters.append(parameter['name'])
+            else:
+                _materials.append(parameter['name'])
+
+    if _parameters:
+        print("Parameters:")
+    for p in _parameters:
+        print(f"\t {p}")
+
+    if _materials:
+        print("Materials:")
+    for m in _materials:
+        print(f"\t {m}")
+
+
+def getObjects(inObjectNameS):
+    client = pymongo.MongoClient(CONNECTION_STRING)
+
+    db = client['falcon-dev']
+    posts = db['templates']
+
+    if inObjectNameS:
+        for objName in inObjectNameS:
+            objectData = posts.find_one({"name": objName})
+            # pprint.pprint(objectData)
+            print(f"\n\n{objectData['name']}")
+            getParams(objectData)
+    else:
+        _i = 1
+        for objectData in  posts.find({"ARCHICAD_template": {"$exists": True}}):
+            print(f"\n\n{_i}: {objectData['name']}")
+            getParams(objectData)
+            _i += 1
+
+if __name__ == "__main__":
+    getObjects(sys.argv[1:])
