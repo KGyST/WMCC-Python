@@ -40,6 +40,7 @@ with open(APP_CONFIG, "r") as ac:
     appJSON                     = json.load(ac)
     DEBUG                       = appJSON["DEBUG"]
     MULTIPROCESS                = appJSON["MULTIPROCESS"]
+    DUMP_OUT_REQUEST            = appJSON["DUMP_OUT_REQUEST"]
     CLEANUP                     = appJSON["CLEANUP"]        # Do cleanup after finish
     LOGLEVEL                    = appJSON["LOGLEVEL"]
     WMCC_PATH                   = appJSON["WMCC_PATH"]
@@ -1912,9 +1913,9 @@ def createBrandedProduct(inData):
                             translationDict
                         )
                     except KeyError:
+                        logging.debug("Parameter that cannot be translated: %s" % parameter)
                         # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
                         continue
-
 
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
@@ -2223,12 +2224,11 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     with Popen(x2lCommand, stdout=PIPE, stderr=PIPE, stdin=DEVNULL) as proc:
         _out, _err = proc.communicate()
 
-        if "rror" in str(_out):
-            # FIXME bullshit errors
-            raise WMCCException(WMCCException.ERR_GSM_COMPILATION_ERROR, additional_data={"x2lCommand": x2lCommand,
-                                                                                      "std_out": _out,
-                                                                                      "std_err": _err})
-            pass
+        if "Error" in str(_out) or "error" in (str(_out)):
+            # raise WMCCException(WMCCException.ERR_GSM_COMPILATION_ERROR, additional_data={"x2lCommand": x2lCommand,
+            #                                                                           "std_out": _out,
+            #                                                                           "std_err": _err})
+            logging.error("x2lCommand: %s std_out: %s std_err: %s" % (x2lCommand, _out, _err))
         else:
             logging.info(f"Success: {_out} (error: {_err}) ")
             print(f"Success: {_out} (error: {_err}) ")

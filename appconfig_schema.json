@@ -58,6 +58,10 @@
   "WEBHOOK_PATH": {
     "type": "string"
   },
+  "DUMP_OUT_REQUEST": {
+    "type": "boolean",
+    "description": "If true, write to log all request bodies. To be armed only manually when debugging on server."
+  },
   "required": [
     "DEBUG",
     "CLEANUP",

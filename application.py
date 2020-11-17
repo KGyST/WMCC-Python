@@ -21,6 +21,7 @@ from src.WMCC import (
     RESULTDATA_PATH,
     LOGLEVEL,
     APP_LOG_FILE_LOCATION,
+    DUMP_OUT_REQUEST,
     WMCCException
 )
 
@@ -88,6 +89,8 @@ class ArchicadEngine(Resource):
 
     def post(self):
         data = request.get_json()
+        if DUMP_OUT_REQUEST:
+            logging.debug("request: %s" % data)
 
         # -----------------------------------
 
@@ -179,6 +182,9 @@ class CreateMaterials(Resource):
     def post(self):
         try:
             data = request.get_json()
+
+            if DUMP_OUT_REQUEST:
+                logging.debug("request: %s" % data)
 
             pid = str(uuid.uuid4()).upper()
             logging.debug("".join(["/creatematerials ", "PID: ", str(pid)]))
