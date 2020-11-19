@@ -63,7 +63,7 @@ class GoogleSpreadsheetConnector(object):
 
         except (NoGoogleCredentialsException, WindowsError):
             flow = InstalledAppFlow.from_client_config(client_config,
-                                                       GoogleSpreadsheetConnector.GOOGLE_SPREADSHEET_SCOPES)
+                                                       GoogleSpreadsheetConnector.GOOGLE_SPREADSHEET_SCOPES, inSheetName=inSheetName)
             self.googleCreds = flow.run_local_server()
 
             with open('token.pickle', 'wb') as token:
@@ -77,7 +77,7 @@ class GoogleSpreadsheetConnector(object):
                               includeGridData=True).execute()['sheets'][0]['properties']['title']
 
         if inSheetName:
-            _sheets = [s['properties']['name'] for s in sheet.get(spreadsheetId=inSpreadsheetID,
+            _sheets = [s['properties']['title'] for s in sheet.get(spreadsheetId=inSpreadsheetID,
                                   includeGridData=True).execute()['sheets']]
             if inSheetName in _sheets:
                 sheetName = inSheetName
@@ -116,9 +116,9 @@ class ArgParse(argparse.ArgumentParser):
             pass
 
 
-def configureObjectsDB(inParaams):
+def configureObjectsDB(inParams):
     SSIDRegex = "/spreadsheets/d/([a-zA-Z0-9-_]+)"
-    findall = re.findall(SSIDRegex, inParaams[0])
+    findall = re.findall(SSIDRegex, inParams[0])
     if findall:
         SpreadsheetID = findall[0]
     else:
@@ -126,7 +126,10 @@ def configureObjectsDB(inParaams):
     print(f"SpreadsheetID: {SpreadsheetID}")
 
     try:
-        googleSpreadsheet = GoogleSpreadsheetConnector(SpreadsheetID)
+        if inParams[1]:
+            googleSpreadsheet = GoogleSpreadsheetConnector(SpreadsheetID, inParams[1])
+        else:
+            googleSpreadsheet = GoogleSpreadsheetConnector(SpreadsheetID)
     except googleapiclient.errors.HttpError:
         print(("HttpError: Spreadsheet ID (%s) seems to be invalid" % SSIDRegex))
         return

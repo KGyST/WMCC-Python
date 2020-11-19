@@ -1,0 +1,6 @@
+google-api-core
+google-api-python-client
+google-auth
+google-auth-httplib2
+gootle-auth-oauthlib
+googleapis-commons-protos
