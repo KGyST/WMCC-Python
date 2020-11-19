@@ -10,6 +10,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 import pickle
+from bson.objectid import ObjectId
 
 COL_NUMBER              = 0
 COL_DEVELOPED_OK        = 1
@@ -20,11 +21,18 @@ COL_DEVELOPER           = 5
 COL_AC_OBJECT_NAME      = 6
 
 CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
+TEMPLATE_TABLE = 'templates'
+DB_DEV = 'falcon-dev'
+# DB_STAG = 'falcon-stag'
+DB_PROD = 'archos'
+
+PROD_STRING = "prod"
+
 SERVER_URL = "wmcc.ad.bimobject.com"
 CLEANUP = True
 GOOGLE_SPREADSHEET_ID = "1uwGtx7b2LKGpjUWmS1csyTf-O19rZpVtvJvHZCz7HmI"
 
-_SRC = r"..\src"
+_SRC = r".."
 APP_CONFIG = os.path.join(_SRC, r"appconfig.json")
 with open(APP_CONFIG, "r") as ac:
     APP_JSON = json.load(ac)
@@ -98,26 +106,29 @@ class GoogleSpreadsheetConnector(object):
 def uploadSingleRecord(inObjectData, inTargetDataBase):
     global devPosts
 
-    res = inTargetDataBase.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
-    # print(res.__repr__() )
+    if inTargetDataBase.find_one({"name": inObjectData["name"]}):
+        res = inTargetDataBase.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
+        # print(res.__repr__() )
+        print(f"Updated: {inObjectData['name']} in {inTargetDataBase.database.name}")
+    else:
+        print(f"ERROR: {inTargetDataBase.database.name} has no entry {inObjectData['name']}")
 
 
 def uploadRecords(inObjectNameS):
-    if inObjectNameS[0] == "prod":
-        isProduction = True
-        inObjectNameS[0] = inObjectNameS[1:]
-    else:
-        isProduction = False
+    # if inObjectNameS[0] == PROD_STRING:
+    #     isProduction = True
+    #     inObjectNameS = inObjectNameS[1:]
+    # else:
+    #     isProduction = False
 
     global gs, devPosts, prodPosts
     client = pymongo.MongoClient(CONNECTION_STRING)
 
-    devDB = client['falcon-dev']
-    devPosts = devDB['templates']
+    devPosts = client[DB_DEV][TEMPLATE_TABLE]
 
-    stagingTable = client['archos']['templates']
+    # stagingTable = client[DB_STAG][TEMPLATE_TABLE]
 
-    prodTable= client['archos']['templates']
+    prodTable= client[DB_PROD][TEMPLATE_TABLE]
 
     gs = GoogleSpreadsheetConnector(GOOGLE_SPREADSHEET_ID)
 
@@ -127,22 +138,22 @@ def uploadRecords(inObjectNameS):
         for objName in inObjectNameS:
             if objName in gsDict:
                 objectData = devPosts.find_one({"name": objName})
-                print(objectData["name"])
-                uploadSingleRecord(objectData, stagingTable)
-                if isProduction:
-                    uploadSingleRecord(objectData, prodTable)
+                # print(objectData["name"])
+                # uploadSingleRecord(objectData, stagingTable)
+                # if isProduction:
+                uploadSingleRecord(objectData, prodTable)
             else:
                 print(f"Object is not marked to be uploaded: {objName}")
     else:
         # Update all
-        _i = 1
+        # _i = 1
         for objectData in  devPosts.find({"ARCHICAD_template": {"$exists": True}}):
             if objectData["name"] in gsDict:
-                print(f"{_i}: {objectData['name']}")
-                uploadSingleRecord(objectData, stagingTable)
-                if isProduction:
-                    uploadSingleRecord(objectData, prodTable)
-                _i += 1
+                # print(f"{_i}: {objectData['name']}")
+                # uploadSingleRecord(objectData, stagingTable)
+                # if isProduction:
+                uploadSingleRecord(objectData, prodTable)
+                # _i += 1
             else:
                 print(f"Object is not marked to be uploaded: {objectData['name']}")
 
