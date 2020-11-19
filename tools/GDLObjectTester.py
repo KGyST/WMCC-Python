@@ -106,6 +106,8 @@ def getSingleObject(inObjectData):
 
     if CLEANUP:
         shutil.rmtree(tempDir)
+    else:
+        print(f"tempDir: {tempDir}")
 
 
 def getObjects(inObjectNameS):

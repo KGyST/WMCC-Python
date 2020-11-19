@@ -1913,8 +1913,9 @@ def createBrandedProduct(inData):
                             translationDict
                         )
                     except KeyError:
-                        logging.debug("Parameter that cannot be translated: %s" % parameter)
-                        # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
+                        if parameter not in ("Name", "texture", ):
+                            logging.info("Parameter that cannot be translated: %s" % parameter)
+                            # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
                         continue
 
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name

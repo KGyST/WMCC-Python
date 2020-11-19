@@ -23,18 +23,20 @@ def getParams(inObjectData):
 
     for parameter in inObjectData['parameters']:
         if parameter['name'] not in translation_dir["parameters"]:
-            if parameter['group'] == "dimensional":
-                _parameters.append(parameter['name'])
-            else:
-                _materials.append(parameter['name'])
+            if  "translations" not in inObjectData["ARCHICAD_template"] \
+            or  parameter['name'] not in inObjectData["ARCHICAD_template"]["translations"]:
+                if parameter['group'] == "dimensional":
+                    _parameters.append(parameter['name'])
+                else:
+                    _materials.append(parameter['name'])
 
     if _parameters:
-        print("Parameters:")
+        print("Dimensional parameters:")
     for p in _parameters:
         print(f"\t {p}")
 
     if _materials:
-        print("Materials:")
+        print("Material parameters:")
     for m in _materials:
         print(f"\t {m}")
 
@@ -49,12 +51,12 @@ def getObjects(inObjectNameS):
         for objName in inObjectNameS:
             objectData = posts.find_one({"name": objName})
             # pprint.pprint(objectData)
-            print(f"\n\n{objectData['name']}")
+            print(f"\n\n{objectData['name']} ({objectData['category']})")
             getParams(objectData)
     else:
         _i = 1
         for objectData in  posts.find({"ARCHICAD_template": {"$exists": True}}):
-            print(f"\n\n{_i}: {objectData['name']}")
+            print(f"\n\n{_i}: {objectData['name']} ({objectData['category']}")
             getParams(objectData)
             _i += 1
 
