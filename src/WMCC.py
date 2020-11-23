@@ -20,7 +20,7 @@ import io
 # from time import sleep
 import hashlib
 from werkzeug.exceptions import HTTPException
-from azure.servicebus import ServiceBusClient, QueueClient, Message
+from azure.servicebus import ServiceBusClient, QueueClient, Message, ServiceBusError
 # import sys
 import traceback
 
@@ -2392,4 +2392,10 @@ def enQueueJob(inEndPoint, inData, inPID):
                "data":      inData,
                "PID":       inPID}
 
-    queue_client.send(Message(json.dumps(jobData)))
+    while True:
+        #ServiceBusError handling by retrying
+        try:
+            queue_client.send(Message(json.dumps(jobData)))
+            break
+        except ServiceBusError as e:
+            logging.warning("ServiceBusError: %s" % e)

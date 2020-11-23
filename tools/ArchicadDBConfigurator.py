@@ -1,17 +1,10 @@
-import re, sys
+import re
 
 import googleapiclient.errors
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow, Flow
+from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 import pickle
-
-COL_ID          = 0
-COL_AC_NAME     = 1
-COL_CATEGORY    = 2
-COL_MAIN_VER    = 3
-COL_FIRST_DATA  = 4
 
 import pymongo
 
@@ -21,6 +14,12 @@ from bson.objectid import ObjectId
 
 import argparse
 
+COL_ID          = 0
+COL_REVIT_NAME  = 1
+COL_AC_NAME     = 2
+COL_CATEGORY    = 3
+COL_MAIN_VER    = 4
+COL_FIRST_DATA  = 5
 
 CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
 DB_NAME = 'falcon-dev'
@@ -139,6 +138,15 @@ def configureObjectsDB(inParams):
     db = client[DB_NAME]
     posts = db[TABLE_NAME]
 
+    ap = ArgParse(add_help=False)
+    ap.add_argument("-i", "--integer", action='store_true')
+    ap.add_argument("-n", "--number", action='store_true')
+    ap.add_argument("-p", "--parameter", action='store_true')
+    ap.add_argument("-u", "--unit")
+    ap.add_argument("-t", "--type")
+    ap.add_argument("-1", "--firstposition")
+    ap.add_argument("-2", "--secondposition")
+
     for row in googleSpreadsheet:
         objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
 
@@ -149,14 +157,6 @@ def configureObjectsDB(inParams):
         for firstRow, cell in zip(googleSpreadsheet.headers, row[COL_FIRST_DATA:]):
             splitPars = firstRow.split(" ")
             parName = splitPars[0]
-            ap = ArgParse(add_help=False)
-            ap.add_argument("-i", "--integer", action='store_true')
-            ap.add_argument("-n", "--number", action='store_true')
-            ap.add_argument("-p", "--parameter", action='store_true')
-            ap.add_argument("-u", "--unit")
-            ap.add_argument("-t", "--type")
-            ap.add_argument("-1", "--firstposition")
-            ap.add_argument("-2", "--secondposition")
 
             parsedArgs = ap.parse_known_args(splitPars)[0]
 
@@ -169,7 +169,7 @@ def configureObjectsDB(inParams):
                     else:
                         _v = cell
                     _par = {   "name":  parName,
-                                "value": _v, }
+                               "value": _v, }
                     if parsedArgs.type:
                         _par["Type"] = parsedArgs.type
                     if parsedArgs.firstposition:
@@ -187,14 +187,15 @@ def configureObjectsDB(inParams):
                         _trans["ARCHICAD"]["SecondPosition"] = int(parsedArgs.secondposition)
                     _translations[cell] = _trans
 
-
-
         ARCHICAD_template= {
             "category": row[COL_CATEGORY],
             "main_macroset_version": row[COL_MAIN_VER],
-            "source_file": row[COL_AC_NAME],
-            "parameters":   _parmameters,
-            "translations": _translations}
+            "source_file": row[COL_AC_NAME], }
+
+        if _parmameters:
+            ARCHICAD_template["parameters"] = _parmameters
+        if _translations:
+            ARCHICAD_template["translations"] = _translations
 
         pprint.pprint(ARCHICAD_template)
 

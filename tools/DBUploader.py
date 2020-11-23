@@ -1,16 +1,12 @@
 import pymongo
 
-import os, ssl, http.client, json, tempfile, base64, shutil, sys
-import pprint
+import os, json, sys
 
-import googleapiclient.errors
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 
 import pickle
-from bson.objectid import ObjectId
 
 COL_NUMBER              = 0
 COL_DEVELOPED_OK        = 1
