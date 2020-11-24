@@ -13,7 +13,7 @@ import re
 
 FOLDER      = "test_BigBang"
 SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
-TEST_ONLY   = os.environ['TEST_ONLY']  if "TEST_ONLY"  in os.environ else ""            # Delimiter: ; without space
+TEST_ONLY   = os.environ['TEST_ONLY']  if "TEST_ONLY"  in os.environ else ""            # Delimiter: ; without space, filenames without ext
 print(f"Server URL: {SERVER_URL} \n")
 
 _SRC        = r".."
@@ -64,6 +64,7 @@ class FileName(str):
                 return True
         else:
             return str(self).upper() > str(other).upper()
+
 
 class TestSuite_BigBang(unittest.TestSuite):
     def __init__(self):

@@ -1792,46 +1792,54 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
         secondPosition = None
 
         if parameterName in inTranslationDict["parameters"]:
-            translatedParameterName = inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]
-            translationDict = inTranslationDict["parameters"][parameterName]
-            if 'selectedUnit' in parameter:
-                translationDict["Measurement"] = parameter['selectedUnit']
+            if isinstance(inTranslationDict["parameters"][parameterName]['ARCHICAD'], list):
+                #Special case when one UI value drives more AC params
+                translatedParameterNameS = [tPN["Name"] for tPN in inTranslationDict["parameters"][parameterName]['ARCHICAD']]
+                translationDictS = [{**inTranslationDict["parameters"][parameterName],
+                                    "ARCHICAD": iTD} for iTD in inTranslationDict["parameters"][parameterName]['ARCHICAD']]
+            else:
+                translatedParameterNameS = [inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]]
+                translationDict = inTranslationDict["parameters"][parameterName]
+                if 'selectedUnit' in parameter:
+                    translationDict["Measurement"] = parameter['selectedUnit']
+                translationDictS = [translationDict]
         else:
-            translatedParameterName = parameterName
-            translationDict = None
+            translatedParameterNameS = [parameterName]
+            translationDictS = [None]
 
-        if translatedParameterName in inDestItem.parameters:
-            if translationDict is not None:
-                if "FirstPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
-                    firstPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["FirstPosition"]
+        for translatedParameterName, translationDict in zip(translatedParameterNameS, translationDictS):
+            if translatedParameterName in inDestItem.parameters:
+                if translationDict is not None:
+                    if "FirstPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
+                        firstPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["FirstPosition"]
 
-                    if "SecondPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
-                        secondPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["SecondPosition"]
+                        if "SecondPosition" in inTranslationDict["parameters"][parameterName]['ARCHICAD']:
+                            secondPosition = inTranslationDict["parameters"][parameterName]['ARCHICAD']["SecondPosition"]
 
-            if "FirstPosition" in parameter:
-                firstPosition = parameter["FirstPosition"]
+                if "FirstPosition" in parameter:
+                    firstPosition = parameter["FirstPosition"]
 
-            if "SecondPosition" in parameter:
-                secondPosition = parameter["SecondPosition"]
+                if "SecondPosition" in parameter:
+                    secondPosition = parameter["SecondPosition"]
 
-            if firstPosition:
-                inDestItem.parameters[translatedParameterName][firstPosition][1]  = unitConvert(
-                    parameterName,
-                    parameter["value"],
-                    translationDict)
-                if secondPosition:
-                    inDestItem.parameters[translatedParameterName][firstPosition][secondPosition] = unitConvert(
+                if firstPosition:
+                    inDestItem.parameters[translatedParameterName][firstPosition][1]  = unitConvert(
+                        parameterName,
+                        parameter["value"],
+                        translationDict)
+                    if secondPosition:
+                        inDestItem.parameters[translatedParameterName][firstPosition][secondPosition] = unitConvert(
+                            parameterName,
+                            parameter["value"],
+                            translationDict)
+                else:
+                    inDestItem.parameters[translatedParameterName] = unitConvert(
                         parameterName,
                         parameter["value"],
                         translationDict)
             else:
-                inDestItem.parameters[translatedParameterName] = unitConvert(
-                    parameterName,
-                    parameter["value"],
-                    translationDict)
-        else:
-            #FIXME if parameter is not in translationDict it's thrown
-            logging.warning(f"Parameter {parameterName} is NOT used in {inDestItem.name}")
+                #FIXME if parameter is not in translationDict it's thrown
+                logging.warning(f"Parameter {parameterName} is NOT used in {inDestItem.name}")
 
 
 def createBrandedProduct(inData):
