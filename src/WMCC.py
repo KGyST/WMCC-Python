@@ -1604,14 +1604,8 @@ def unitConvert(inParameterName,
     :inSecondPosition:  position if in array
     :return:            float; NOT string
     """
-    #FIXME into a separate json
-    _UnitLib = {"m": 1,
-                "cm": 0.01,
-                "mm" : 0.001,
-                "in" : 0.0254,
-                "percent": 0.01,
-                "normal": 1,
-                "byte": 1.00/255.0, }
+    with open(os.path.join(CONTENT_DIR_NAME, "units.json")) as _ul:
+        _UnitLib = json.load(_ul)
 
     if not inTranslationLib:
         #No translation needed

@@ -437,11 +437,11 @@ define material	sSurfaceName 20,
 		</RealNum>
 		<RealNum Name="rShining">
 			<Description><![CDATA[""]]></Description>
-			<Value>0</Value>
+			<Value>0.8</Value>
 		</RealNum>
 		<RealNum Name="rReflectivity">
 			<Description><![CDATA[""]]></Description>
-			<Value>0</Value>
+			<Value>0.9</Value>
 		</RealNum>
 
 		<!-- WMCC_Texture: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
@@ -481,7 +481,7 @@ define material	sSurfaceName 20,
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value>0</Value>
+			<Value>0.7</Value>
 		</RealNum>
 		<RealNum Name="rTransparency_attenuation">
 			<Description><![CDATA[""]]></Description>

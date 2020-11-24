@@ -19,14 +19,13 @@
                     },
                     {
                         "Name": "Class",
-                        "Value": "Test material class",							"Group": 5,
+                        "Value": "Test material class",
 						"Group": 5,
-
                         "category": null
                     },
                     {
                         "Name": "Comments",
-                        "Value": "Test material comment",						"Group": 5,
+                        "Value": "Test material comment",
 						"Group": 5,
                         "category": null
                     },
@@ -97,19 +96,19 @@
                     },
                     {
                         "Name": "Transparency",
-                        "Value": "1",
+                        "Value": "70",
 						"Group": 4,
                         "category": null
                     },
                     {
                         "Name": "Glossiness",
-                        "Value": "1",
+                        "Value": "80",
 						"Group": 4,
                         "category": null
                     },
                     {
                         "Name": "Reflectivity",
-                        "Value": "1",
+                        "Value": "90",
 						"Group": 4,
                         "category": null
                     }

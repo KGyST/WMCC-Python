@@ -3,8 +3,11 @@ import pymongo
 import os, ssl, http.client, json, tempfile, base64, shutil, sys
 import pprint
 from subprocess import Popen, PIPE, DEVNULL
+from bson.objectid import ObjectId
 
 CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
+MONGO_TABLE = 'falcon-dev'
+
 SERVER_URL = "wmcc.ad.bimobject.com"
 CLEANUP = True
 
@@ -113,7 +116,7 @@ def getSingleObject(inObjectData):
 def getObjects(inObjectNameS):
     client = pymongo.MongoClient(CONNECTION_STRING)
 
-    db = client['falcon-dev']
+    db = client[MONGO_TABLE]
     posts = db['templates']
 
     try:
@@ -128,6 +131,11 @@ def getObjects(inObjectNameS):
         if inObjectNameS:
             for objName in inObjectNameS:
                 objectData = posts.find_one({"name": objName})
+                if not objectData:
+                    objectData = posts.find_one({"_id": ObjectId(objName)})
+                if not objectData:
+                    print(f'MISSING object from DB: {objName}')
+                    continue
                 # pprint.pprint(objectData)
                 print(objectData["name"])
                 getSingleObject(objectData)
@@ -137,10 +145,10 @@ def getObjects(inObjectNameS):
                 print(f"{_i}: {objectData['name']}")
                 getSingleObject(objectData)
                 _i += 1
-    except PermissionError:
-        print("PermissionError")
-    except OSError:
-        print("OSError")
+    except PermissionError as e:
+        print(f"PermissionError {e}")
+    except OSError as e:
+        print(f"OSError {e.strerror}")
 
 if __name__ == "__main__":
     getObjects(sys.argv[1:])
