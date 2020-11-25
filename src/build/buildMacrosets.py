@@ -1,4 +1,4 @@
-import WMCC
+from WMCC import APP_CONFIG, buildMacroSet
 import os
 import json
 import datetime
@@ -14,7 +14,7 @@ ONLY_CAT    = os.environ["ONLY_CAT"] if "ONLY_CAT" in os.environ else None
 if "CONTENT_DIR_NAME" in os.environ:
     CONTENT_DIR_NAME = os.environ["CONTENT_DIR_NAME"]
 else:
-    with open(WMCC.APP_CONFIG, "r") as ac:
+    with open(APP_CONFIG, "r") as ac:
         appJSON = json.load(ac)
 
         CONTENT_DIR_NAME = appJSON["CONTENT_DIR_NAME"]
@@ -40,7 +40,7 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
                 data["minor_version"] = datetime.date.today().strftime("%Y%m%d")
                 data['path'] = mainVersion["macro_folders"]
 
-                result = WMCC.buildMacroSet(data)
+                result = buildMacroSet(data)
 
                 for macroFolder in mainVersion["macro_folders"]:
                     _macroFolderPath = os.path.join(CONTENT_DIR_NAME, macroFolder)
