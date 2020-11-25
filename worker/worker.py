@@ -1,5 +1,5 @@
 import os
-from azure.servicebus import ServiceBusClient, QueueClient, Message, MessageLockExpired
+from azure.servicebus import ServiceBusClient, exceptions
 
 import json
 import logging
@@ -54,9 +54,9 @@ def testWorker():
     with open(RESULTDATA_PATH, "w") as resultFile:
         json.dump({} , resultFile, indent=4)
 
-    queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
+    queue_client = ServiceBusClient.from_connection_string(CONNECTION_STRING)
 
-    with queue_client.get_receiver() as queue_receiver:
+    with queue_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME) as queue_receiver:
         with queue_receiver:
             for message in queue_receiver:
                 job = json.loads(str(message))
@@ -92,8 +92,8 @@ def testWorker():
 
                 resultFile.close()
                 try:
-                    message.complete()
-                except MessageLockExpired:
+                    queue_receiver.complete_message(message)
+                except exceptions.MessageLockLostError:
                     logging.error("MessageLockExpired exception caught")
 
 

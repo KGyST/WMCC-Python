@@ -6,14 +6,10 @@ from flask_restful import Resource, Api
 from logging.config import dictConfig
 import os
 import json
-import functools
 import logging
 
 import time
-import signal
 import uuid
-
-from azure.servicebus import ServiceBusClient, QueueClient, Message
 
 from src.WMCC import (
     extractParams,

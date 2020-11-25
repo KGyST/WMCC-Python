@@ -13,7 +13,8 @@ Werkzeug
 
 azure-servicebus
 azure-common
-azure-storage-queue
+oauthlib
+requests-oauthlib
 
 pymongo
 dnspython

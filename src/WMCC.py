@@ -17,12 +17,11 @@ import http.client, http.server, urllib.request, urllib.parse, urllib.error, os,
 import logging
 from PIL import Image
 import io
-# from time import sleep
 import hashlib
 from werkzeug.exceptions import HTTPException
-from azure.servicebus import ServiceBusClient, QueueClient, Message, ServiceBusError
-# import sys
 import traceback
+
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, exceptions
 
 #------------------ External modules------------------
 
@@ -2388,7 +2387,8 @@ def processOneXML(inData):
 # ---------------------Job queue--------------------
 
 def enQueueJob(inEndPoint, inData, inPID):
-    queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
+    # queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
+    queue_client = ServiceBusClient.from_connection_string(CONNECTION_STRING).get_queue_sender(SERVICEBUS_QUEUE_NAME)
 
     jobData = {"endPoint":  inEndPoint,
                "data":      inData,
@@ -2397,7 +2397,7 @@ def enQueueJob(inEndPoint, inData, inPID):
     while True:
         #ServiceBusError handling by retrying
         try:
-            queue_client.send(Message(json.dumps(jobData)))
+            queue_client.send_messages(ServiceBusMessage(json.dumps(jobData)))
             break
-        except ServiceBusError as e:
+        except exceptions.ServiceBusError as e:
             logging.warning("ServiceBusError: %s" % e)
