@@ -21,7 +21,8 @@ import hashlib
 from werkzeug.exceptions import HTTPException
 import traceback
 
-from azure.servicebus import ServiceBusClient, ServiceBusMessage, exceptions
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.core import exceptions
 
 #------------------ External modules------------------
 
