@@ -158,7 +158,11 @@ def configureObjectsDB(inParams):
             splitPars = firstRow.split(" ")
             parName = splitPars[0]
 
-            parsedArgs = ap.parse_known_args(splitPars)[0]
+            try:
+                parsedArgs = ap.parse_known_args(splitPars)[0]
+            except TypeError as e:
+                print(f"ERROR: Bad parametrization: {firstRow}")
+                return
 
             if cell.replace(" ", ""):
                 if parsedArgs.parameter:
@@ -185,7 +189,12 @@ def configureObjectsDB(inParams):
                         _trans["ARCHICAD"]["FirstPosition"] = int(parsedArgs.firstposition)
                     if parsedArgs.secondposition:
                         _trans["ARCHICAD"]["SecondPosition"] = int(parsedArgs.secondposition)
-                    _translations[cell] = _trans
+                    if cell not in _translations:
+                        _translations[cell] = _trans
+                    else:
+                        if not isinstance(_translations[cell]["ARCHICAD"], list):
+                            _translations[cell]["ARCHICAD"]  = [_translations[cell]["ARCHICAD"]]
+                        _translations[cell]["ARCHICAD"].append(_trans["ARCHICAD"])
 
         ARCHICAD_template= {
             "category": row[COL_CATEGORY],
