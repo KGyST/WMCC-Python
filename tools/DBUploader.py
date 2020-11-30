@@ -103,6 +103,7 @@ def uploadSingleRecord(inObjectData, inTargetDataBase):
     global devPosts
 
     if inTargetDataBase.find_one({"name": inObjectData["name"]}):
+        #FIXME to search for name and category etc or exit if more than one instance
         res = inTargetDataBase.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
         # print(res.__repr__() )
         print(f"Updated: {inObjectData['name']} in {inTargetDataBase.database.name}")

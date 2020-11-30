@@ -133,6 +133,8 @@ def configureObjectsDB(inParams):
         print(("HttpError: Spreadsheet ID (%s) seems to be invalid" % SSIDRegex))
         return
 
+    objectsToProcess = set(inParams[2:]) if inParams[2:] else set()
+
     client = pymongo.MongoClient(CONNECTION_STRING)
 
     db = client[DB_NAME]
@@ -148,68 +150,74 @@ def configureObjectsDB(inParams):
     ap.add_argument("-2", "--secondposition")
 
     for row in googleSpreadsheet:
-        objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
+        if objectsToProcess\
+            and (row[0] in objectsToProcess
+                 or row[1] in objectsToProcess):
+            objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
+            if not objectData:
+                print(f"ERROR: {row[COL_REVIT_NAME]} not found in Database")
+                continue
 
-        print(f"{objectData['name']}")
-        _parmameters = []
-        _translations = {}
+            print(f"{objectData['name']}")
+            _parmameters = []
+            _translations = {}
 
-        for firstRow, cell in zip(googleSpreadsheet.headers, row[COL_FIRST_DATA:]):
-            splitPars = firstRow.split(" ")
-            parName = splitPars[0]
+            for firstRow, cell in zip(googleSpreadsheet.headers, row[COL_FIRST_DATA:]):
+                splitPars = firstRow.split(" ")
+                parName = splitPars[0]
 
-            try:
-                parsedArgs = ap.parse_known_args(splitPars)[0]
-            except TypeError as e:
-                print(f"ERROR: Bad parametrization: {firstRow}")
-                return
+                try:
+                    parsedArgs = ap.parse_known_args(splitPars)[0]
+                except TypeError as e:
+                    print(f"ERROR: Bad parametrization: {firstRow}")
+                    return
 
-            if cell.replace(" ", ""):
-                if parsedArgs.parameter:
-                    if parsedArgs.integer:
-                        _v = int(cell)
-                    elif parsedArgs.number:
-                        _v = float(cell)
+                if cell.replace(" ", ""):
+                    if parsedArgs.parameter:
+                        if parsedArgs.integer:
+                            _v = int(cell)
+                        elif parsedArgs.number:
+                            _v = float(cell)
+                        else:
+                            _v = cell
+                        _par = {   "name":  parName,
+                                   "value": _v, }
+                        if parsedArgs.type:
+                            _par["Type"] = parsedArgs.type
+                        if parsedArgs.firstposition:
+                            _par["FirstPosition"] = parsedArgs.firstposition
+                        if parsedArgs.secondposition:
+                            _par["SecondPosition"] = parsedArgs.secondposition
+                        _parmameters.append(_par)
                     else:
-                        _v = cell
-                    _par = {   "name":  parName,
-                               "value": _v, }
-                    if parsedArgs.type:
-                        _par["Type"] = parsedArgs.type
-                    if parsedArgs.firstposition:
-                        _par["FirstPosition"] = parsedArgs.firstposition
-                    if parsedArgs.secondposition:
-                        _par["SecondPosition"] = parsedArgs.secondposition
-                    _parmameters.append(_par)
-                else:
-                    _trans = {"ARCHICAD": {"Name": parName, }}
-                    if parsedArgs.unit:
-                        _trans["ARCHICAD"][ "Measurement"] = parsedArgs.unit
-                    if parsedArgs.firstposition:
-                        _trans["ARCHICAD"]["FirstPosition"] = int(parsedArgs.firstposition)
-                    if parsedArgs.secondposition:
-                        _trans["ARCHICAD"]["SecondPosition"] = int(parsedArgs.secondposition)
-                    if cell not in _translations:
-                        _translations[cell] = _trans
-                    else:
-                        if not isinstance(_translations[cell]["ARCHICAD"], list):
-                            _translations[cell]["ARCHICAD"]  = [_translations[cell]["ARCHICAD"]]
-                        _translations[cell]["ARCHICAD"].append(_trans["ARCHICAD"])
+                        _trans = {"ARCHICAD": {"Name": parName, }}
+                        if parsedArgs.unit:
+                            _trans["ARCHICAD"][ "Measurement"] = parsedArgs.unit
+                        if parsedArgs.firstposition:
+                            _trans["ARCHICAD"]["FirstPosition"] = int(parsedArgs.firstposition)
+                        if parsedArgs.secondposition:
+                            _trans["ARCHICAD"]["SecondPosition"] = int(parsedArgs.secondposition)
+                        if cell not in _translations:
+                            _translations[cell] = _trans
+                        else:
+                            if not isinstance(_translations[cell]["ARCHICAD"], list):
+                                _translations[cell]["ARCHICAD"]  = [_translations[cell]["ARCHICAD"]]
+                            _translations[cell]["ARCHICAD"].append(_trans["ARCHICAD"])
 
-        ARCHICAD_template= {
-            "category": row[COL_CATEGORY],
-            "main_macroset_version": row[COL_MAIN_VER],
-            "source_file": row[COL_AC_NAME], }
+            ARCHICAD_template= {
+                "category": row[COL_CATEGORY],
+                "main_macroset_version": row[COL_MAIN_VER],
+                "source_file": row[COL_AC_NAME], }
 
-        if _parmameters:
-            ARCHICAD_template["parameters"] = _parmameters
-        if _translations:
-            ARCHICAD_template["translations"] = _translations
+            if _parmameters:
+                ARCHICAD_template["parameters"] = _parmameters
+            if _translations:
+                ARCHICAD_template["translations"] = _translations
 
-        pprint.pprint(ARCHICAD_template)
+            pprint.pprint(ARCHICAD_template)
 
-        res = db[TABLE_NAME].update_one({"_id": ObjectId(row[COL_ID])},
-                                        {"$set": {"ARCHICAD_template": ARCHICAD_template}})
+            res = db[TABLE_NAME].update_one({"_id": ObjectId(row[COL_ID])},
+                                            {"$set": {"ARCHICAD_template": ARCHICAD_template}})
 
 
 if __name__ == "__main__":
