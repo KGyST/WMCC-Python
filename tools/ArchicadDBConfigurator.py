@@ -57,12 +57,10 @@ class GoogleSpreadsheetConnector(object):
                     self.googleCreds.refresh(Request())
                 else:
                     raise NoGoogleCredentialsException
-            else:
-                raise NoGoogleCredentialsException
 
-        except (NoGoogleCredentialsException, WindowsError):
+        except (NoGoogleCredentialsException, WindowsError, FileNotFoundError):
             flow = InstalledAppFlow.from_client_config(client_config,
-                                                       GoogleSpreadsheetConnector.GOOGLE_SPREADSHEET_SCOPES, inSheetName=inSheetName)
+                                                       GoogleSpreadsheetConnector.GOOGLE_SPREADSHEET_SCOPES)
             self.googleCreds = flow.run_local_server()
 
             with open('token.pickle', 'wb') as token:
