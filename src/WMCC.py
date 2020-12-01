@@ -2007,9 +2007,8 @@ def createBrandedProduct(inData):
                                       v['relPath'],
                                       v['dirName'],
                                     StrippedSourceImage(v['sourceFile']['fileNameWithOutExt'],
-                                                        v['sourceFile']['relPath'],
-                                                        v['sourceFile']['dirName'],
-                                                        v['sourceFile']['sourceFile'], ))
+                                                        v['sourceFile']['fullPath'],
+                                                        v['sourceFile']['isEncodedImage'], ))
                 _pict_dict[k] = v
 
         dest_dict.update(_dest_dict)
