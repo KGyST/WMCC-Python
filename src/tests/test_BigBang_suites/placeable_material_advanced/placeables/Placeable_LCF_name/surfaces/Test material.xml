@@ -184,9 +184,9 @@ define material	sSurfaceName 20,
         C4D_CHLUM_BRIGHTNESS =      1,
         C4D_CHLUM_MIXMODE = "Normal",
         C4D_CHLUM_MIXSTRENGTH =      1,
-        C4D_CHTRA_STATE =      0,
+        C4D_CHTRA_STATE =      1,
         C4D_CHTRA_COLOR = tmp_C4D_CHTRA_COLOR,
-        C4D_CHTRA_BRIGHTNESS =      1,
+        C4D_CHTRA_BRIGHTNESS =      rTransparency,
         C4D_CHTRA_REFRACTION =      1,
         C4D_CHTRA_INTERNALREFLECTIONS =      1,
         C4D_CHTRA_EXITREFLECTION =      1,
@@ -200,9 +200,9 @@ define material	sSurfaceName 20,
         C4D_CHTRA_MINSAMPLES =      5,
         C4D_CHTRA_MAXSAMPLES =    128,
         C4D_CHTRA_ACCURACY =          0.5,
-        C4D_CHREF_STATE =      0,
+        C4D_CHREF_STATE =      1,
         C4D_CHREF_COLOR = tmp_C4D_CHREF_COLOR,
-        C4D_CHREF_BRIGHTNESS =      1,
+        C4D_CHREF_BRIGHTNESS =      rReflectivity,
         C4D_CHREF_ADDITIVE =      0,
         C4D_CHREF_USEBUMP =      1,
         C4D_CHREF_MIXMODE = "Normal",
@@ -261,7 +261,7 @@ define material	sSurfaceName 20,
         C4D_CHALP_PREMULTIPLIED =      0,
         C4D_CHSPE_STATE =      1,
         C4D_CHSPE_COLOR = tmp_C4D_CHSPE_COLOR,
-        C4D_CHSPE_BRIGHTNESS =      1,
+        C4D_CHSPE_BRIGHTNESS =      rShining,
         C4D_CHSPE_MIXMODE = "Normal",
         C4D_CHSPE_MIXSTRENGTH =      1,
         C4D_CHSPE_MODE = "Plastic",
@@ -271,7 +271,7 @@ define material	sSurfaceName 20,
         C4D_CHSPE_INNERWIDTH =      0,
         C4D_CHGLO_STATE =      0,
         C4D_CHGLO_COLOR = tmp_C4D_CHGLO_COLOR,
-        C4D_CHGLO_BRIGHTNESS =      1,
+        C4D_CHGLO_BRIGHTNESS =      0,
         C4D_CHGLO_INNERSTRENGTH =      1,
         C4D_CHGLO_OUTERSTRENGTH =      5,
         C4D_CHGLO_RADIUS =     10,
@@ -429,13 +429,17 @@ define material	sSurfaceName 20,
 		</Integer>
 		<RealNum Name="rAmbient">
 			<Description><![CDATA[""]]></Description>
-			<Value>0.67</Value>
+			<Value>0.7</Value>
 		</RealNum>
 		<RealNum Name="rDiffuse">
 			<Description><![CDATA[""]]></Description>
 			<Value>0.95</Value>
 		</RealNum>
 		<RealNum Name="rShining">
+			<Description><![CDATA[""]]></Description>
+			<Value>0</Value>
+		</RealNum>
+		<RealNum Name="rReflectivity">
 			<Description><![CDATA[""]]></Description>
 			<Value>0</Value>
 		</RealNum>
@@ -453,26 +457,19 @@ define material	sSurfaceName 20,
 			<Value><![CDATA["Chessmate"]]></Value>
 		</String>
 		<Length Name="wTexture">
-			<Description><![CDATA[""]]></Description>
+			<Description><![CDATA["Texture width in pixels"]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
 			<Value>0.2</Value>
 		</Length>
 		<Length Name="hTexture">
-			<Description><![CDATA[""]]></Description>
+			<Description><![CDATA["Texture height in pixels"]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
 			<Value>0.1</Value>
 		</Length>
-		<Integer Name="iTexture">
-			<Description><![CDATA[""]]></Description>
-			<Flags>
-				<ParFlg_Child/>
-			</Flags>
-			<Value>0</Value>
-		</Integer>
 
 		<!-- WMCC_Transparency: PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK -->
 
@@ -508,6 +505,9 @@ define material	sSurfaceName 20,
 		</RealNum>
 		<Integer Name="iSpecularColorS">
 			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
 			<ArrayValues FirstDimension="3" SecondDimension="0">
 				<AVal Row="1">0</AVal>
 				<AVal Row="2">255</AVal>
@@ -522,6 +522,9 @@ define material	sSurfaceName 20,
 		</Title>
 		<Integer Name="iEmissionColorS">
 			<Description><![CDATA[""]]></Description>
+			<Flags>
+				<ParFlg_Child/>
+			</Flags>
 			<ArrayValues FirstDimension="3" SecondDimension="0">
 				<AVal Row="1">0</AVal>
 				<AVal Row="2">0</AVal>
@@ -553,6 +556,10 @@ define material	sSurfaceName 20,
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
+			<Value>0</Value>
+		</Integer>
+		<Integer Name="iTexture">
+			<Description><![CDATA[""]]></Description>
 			<Value>0</Value>
 		</Integer>
 	</Parameters>

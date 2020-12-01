@@ -112,8 +112,10 @@ class ArchicadEngine(Resource):
                                                     "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
                                     } for vD in data["VariationsData"]],
             }
-        except KeyError:
-            raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": data})
+        except KeyError as e:
+            raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={
+                "key": e.args,
+                "request": data})
 
         # -----------------------------------
 

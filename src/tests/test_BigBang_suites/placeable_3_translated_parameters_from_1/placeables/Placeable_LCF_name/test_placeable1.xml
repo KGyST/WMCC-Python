@@ -6,7 +6,7 @@
 
 <CalledMacros SectVersion="2" SectionFlags="0" SubIdent="0">
 	<Macro>
-		<MName><![CDATA["Library_version_19"]]></MName>
+		<MName><![CDATA["Library_version_18"]]></MName>
 		<MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>
 	</Macro>
 </CalledMacros>
@@ -76,12 +76,16 @@ endif
 		</Length>
 		<Length Name="B">
 			<Description><![CDATA["Depth"]]></Description>
-			<Value>3</Value>
+			<Value>0.6</Value>
 		</Length>
 		<Length Name="zzyzx">
 			<Description><![CDATA["Height"]]></Description>
 			<Value>0.5</Value>
 		</Length>
+		<RealNum Name="rA">
+			<Description><![CDATA["Height"]]></Description>
+			<Value>3000</Value>
+		</RealNum>
 		<String Name="sMaterialS">
 			<Description><![CDATA[""]]></Description>
 			<ArrayValues FirstDimension="14" SecondDimension="0">
@@ -138,7 +142,7 @@ endif
 				<ParFlg_Unique/>
 			</Flags>
 			<ArrayValues FirstDimension="1" SecondDimension="2">
-				<AVal Column="1" Row="1">20200101</AVal>
+				<AVal Column="1" Row="1">20200514</AVal>
 				<AVal Column="2" Row="1">0</AVal>
 			</ArrayValues>
 		</Integer>

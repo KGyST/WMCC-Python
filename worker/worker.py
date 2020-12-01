@@ -93,7 +93,7 @@ def testWorker():
                 resultFile.close()
                 try:
                     queue_receiver.complete_message(message)
-                except exceptions.MessageLockLostError:
+                except (exceptions.MessageLockLostError, exceptions.ServiceBusError):
                     logging.error("MessageLockExpired exception caught")
 
 

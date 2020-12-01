@@ -1633,6 +1633,7 @@ def unitConvert(inParameterName,
                                  "Available inner frame materials",
                                  "Available outer frame materials",
                                  }:
+            #FIXME material parameters to be put somewhere else, in content repo
             return inParameterValue + "_" + family_name
         else:
             return inParameterValue
