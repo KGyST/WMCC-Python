@@ -1336,20 +1336,21 @@ class StrippedSourceImage:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inName, inFullPath, inGUID):
-        self.name = inName
+    def __init__(self, inFileNameWithOutExt, inFullPath, inIsEncodedImage):
+        self.fileNameWithOutExt = inFileNameWithOutExt
         self.fullPath = inFullPath
+        self.isEncodedImage = inIsEncodedImage
 
 
 class StrippedDestImage:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inName, inGUID, inRelPath, inMD5, inSourceFile):
-        self.name = inName
+    def __init__(self, inFileNameWithOutExt, inRelPath, inDirName, inSourceFile):
+        self.fileNameWithOutExt = inFileNameWithOutExt
         self.relPath = inRelPath
+        self.dirName = inDirName
         self.sourceFile = inSourceFile
-
 
 # -------------------/data classes -------------------------------------------------------------------------------------
 
@@ -1780,16 +1781,23 @@ def buildMacroSet(inData):
         _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, v.sourceFile.guid, )
         _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, v.md5, _sourceFile, )
 
+    _stripped_pict_dict = {}
+
+    for k, v in pict_dict.items():
+        _sourceFile = StrippedSourceImage(v.sourceFile.fileNameWithOutExt, v.sourceFile.fullPath, v.sourceFile.isEncodedImage, )
+        _stripped_pict_dict[k] = StrippedDestImage(v.fileNameWithOutExt, v.relPath, v.dirName, _sourceFile, )
+
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
     jsonData = json.dumps(json.loads(jsonpickle.encode({  "minor_version": str(minor_version),
-                                    "objects": _stripped_dest_dict}, )), indent=4)
+                                                          "objects": _stripped_dest_dict,
+                                                          "pictures": _stripped_pict_dict})), indent=4)
 
     returnDict = {'LCFName': _fileNameWithoutExtension + ".json",
-                 "category": category,
-                 "main_version": main_version,
-                 "minor_version ": minor_version,
-                 "base64_encoded_macroset": encoded_lcf,
-                 "macroset_name": os.path.splitext(os.path.split(targetLCFFullPath)[1])[0]}
+                  "category": category,
+                  "main_version": main_version,
+                  "minor_version ": minor_version,
+                  "base64_encoded_macroset": encoded_lcf,
+                  "macroset_name": os.path.splitext(os.path.split(targetLCFFullPath)[1])[0]}
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
@@ -1816,7 +1824,7 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
             if isinstance(inTranslationDict["parameters"][parameterName]['ARCHICAD'], list):
                 #Special case when one UI value drives more AC params
                 translatedParameterNameS = [tPN["Name"] for tPN in inTranslationDict["parameters"][parameterName]['ARCHICAD']]
-                    translationDictS = [{**inTranslationDict["parameters"][parameterName],
+                translationDictS = [{**inTranslationDict["parameters"][parameterName],
                                     "Measurement": parameter['selectedUnit'],
                                     "ARCHICAD": iTD} for iTD in inTranslationDict["parameters"][parameterName]['ARCHICAD']]
             else:
@@ -1975,9 +1983,11 @@ def createBrandedProduct(inData):
             inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read(), classes=(StrippedSourceXML, StrippedDestXML))
             macro_lib_version = inputJson["minor_version"]
             _dest_dict = inputJson["objects"]
+            _pict_dict = inputJson["pictures"]
         except FileNotFoundError:
             macro_lib_version = -1
             _dest_dict = {}
+            _pict_dict = {}
 
         # Forrest, why did this happen?
         for k, v in _dest_dict.items():
@@ -1991,7 +2001,16 @@ def createBrandedProduct(inData):
                                                       v['sourceFile']['guid'], ))
                 _dest_dict[k] = v
 
+        for k, v in _pict_dict.items():
+            if isinstance(v, dict):
+                v = StrippedDestImage(v['name'],
+                                    v['relPath'],
+                                    StrippedSourceImage(v['sourceFile']['fileNameWithOutExt'],
+                                                      v['sourceFile']['fullPath'], ))
+                _pict_dict[k] = v
+
         dest_dict.update(_dest_dict)
+        pict_dict.update(_pict_dict)
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
         dest_sourcenames    = {d.sourceFile.name.upper(): d         for d in dest_dict.values()}
 
