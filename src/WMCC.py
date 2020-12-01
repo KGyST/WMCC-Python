@@ -1331,6 +1331,26 @@ class StrippedDestXML:
         self.md5 = inMD5
         self.sourceFile = inSourceFile
 
+
+class StrippedSourceImage:
+    """
+    Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
+    """
+    def __init__(self, inName, inFullPath, inGUID):
+        self.name = inName
+        self.fullPath = inFullPath
+
+
+class StrippedDestImage:
+    """
+    Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
+    """
+    def __init__(self, inName, inGUID, inRelPath, inMD5, inSourceFile):
+        self.name = inName
+        self.relPath = inRelPath
+        self.sourceFile = inSourceFile
+
+
 # -------------------/data classes -------------------------------------------------------------------------------------
 
 class WMCCException(HTTPException):
@@ -1796,7 +1816,8 @@ def setParameter(inJSONSection, inDestItem, inTranslationDict):
             if isinstance(inTranslationDict["parameters"][parameterName]['ARCHICAD'], list):
                 #Special case when one UI value drives more AC params
                 translatedParameterNameS = [tPN["Name"] for tPN in inTranslationDict["parameters"][parameterName]['ARCHICAD']]
-                translationDictS = [{**inTranslationDict["parameters"][parameterName],
+                    translationDictS = [{**inTranslationDict["parameters"][parameterName],
+                                    "Measurement": parameter['selectedUnit'],
                                     "ARCHICAD": iTD} for iTD in inTranslationDict["parameters"][parameterName]['ARCHICAD']]
             else:
                 translatedParameterNameS = [inTranslationDict["parameters"][parameterName]['ARCHICAD']["Name"]]
