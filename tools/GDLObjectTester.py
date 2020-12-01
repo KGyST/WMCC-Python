@@ -35,7 +35,7 @@ def getSingleObject(inObjectData):
                 "VariationName": inObjectData["name"] + "_teszt",
                 "Parameters": [{
                     "Name": p["name"],
-                    "SelectedUnit": "mm",
+                    "selectedUnit": "mm",
                     "Category": None,
                     "Value": min(max(p["min_value"], 999), p["max_value"]),
                     "StorageType": 1,
@@ -45,7 +45,7 @@ def getSingleObject(inObjectData):
                 } for p in inObjectData["parameters"] if p["group"] == "dimensional"] + \
               [{
                   "Name": p["name"],
-                  "SelectedUnit": None,
+                  "selectedUnit": None,
                   "Category": None,
                   "Value": "Teszt_%s" % p["name"] ,
                   "StorageType": None,

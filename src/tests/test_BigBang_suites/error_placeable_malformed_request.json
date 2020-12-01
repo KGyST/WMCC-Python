@@ -21,6 +21,9 @@
                 "constant": "ERR_MALFORMED_REQUEST"
             },
             "additional_data": {
+                "key": [
+                    "ArchicadTemplate"
+                ],
                 "request": {
                     "ProductName": "Placeable_LCF_name",
                     "Template": {

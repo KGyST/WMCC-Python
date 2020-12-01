@@ -1336,9 +1336,9 @@ class StrippedSourceImage:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inFileNameWithOutExt, inFullPath, inIsEncodedImage):
+    def __init__(self, inFileNameWithOutExt, inRelPath, inIsEncodedImage):
         self.fileNameWithOutExt = inFileNameWithOutExt
-        self.fullPath = inFullPath
+        self.relPath = inRelPath
         self.isEncodedImage = inIsEncodedImage
 
 
@@ -1784,7 +1784,7 @@ def buildMacroSet(inData):
     _stripped_pict_dict = {}
 
     for k, v in pict_dict.items():
-        _sourceFile = StrippedSourceImage(v.sourceFile.fileNameWithOutExt, v.sourceFile.fullPath, v.sourceFile.isEncodedImage, )
+        _sourceFile = StrippedSourceImage(v.sourceFile.fileNameWithOutExt, v.sourceFile.relPath, v.sourceFile.isEncodedImage, )
         _stripped_pict_dict[k] = StrippedDestImage(v.fileNameWithOutExt, v.relPath, v.dirName, _sourceFile, )
 
     jsonPathName = os.path.join(TARGET_GDL_DIR_NAME, _fileNameWithoutExtension + ".json")
@@ -2007,7 +2007,7 @@ def createBrandedProduct(inData):
                                       v['relPath'],
                                       v['dirName'],
                                     StrippedSourceImage(v['sourceFile']['fileNameWithOutExt'],
-                                                        v['sourceFile']['fullPath'],
+                                                        v['sourceFile']['relPath'],
                                                         v['sourceFile']['isEncodedImage'], ))
                 _pict_dict[k] = v
 
@@ -2231,18 +2231,20 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
             shutil.copytree(os.path.join(_picdir, f), os.path.join(tempPicDir, f))
 
     for f in list(pict_dict.keys()):
-        if pict_dict[f].sourceFile.isEncodedImage:
-            try:
-                shutil.copyfile(os.path.join(sourceImageDirName, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
-            except IOError:
-                os.makedirs(os.path.join(tempPicDir, pict_dict[f].dirName))
-                shutil.copyfile(os.path.join(sourceImageDirName, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
-        else:
-            try:
-                shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
-            except IOError:
-                os.makedirs(os.path.join(targetGDLDirName, pict_dict[f].dirName))
-                shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
+        if "fullPath" in pict_dict[f].sourceFile.__dict__:
+            #Huge workaround
+            if pict_dict[f].sourceFile.isEncodedImage:
+                try:
+                    shutil.copyfile(os.path.join(sourceImageDirName, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
+                except IOError:
+                    os.makedirs(os.path.join(tempPicDir, pict_dict[f].dirName))
+                    shutil.copyfile(os.path.join(sourceImageDirName, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
+            else:
+                try:
+                    shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
+                except IOError:
+                    os.makedirs(os.path.join(targetGDLDirName, pict_dict[f].dirName))
+                    shutil.copyfile(pict_dict[f].sourceFile.fullPath, os.path.join(targetGDLDirName, pict_dict[f].relPath))
 
     x2lCommand = '"%s" x2l -img "%s" "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), tempPicDir, tempdir, targetGDLDirName)
     logging.debug(r"x2l Command being executed...\n%s" % x2lCommand)
