@@ -2003,10 +2003,13 @@ def createBrandedProduct(inData):
 
         for k, v in _pict_dict.items():
             if isinstance(v, dict):
-                v = StrippedDestImage(v['name'],
-                                    v['relPath'],
+                v = StrippedDestImage(v['fileNameWithOutExt'],
+                                      v['relPath'],
+                                      v['dirName'],
                                     StrippedSourceImage(v['sourceFile']['fileNameWithOutExt'],
-                                                      v['sourceFile']['fullPath'], ))
+                                                        v['sourceFile']['relPath'],
+                                                        v['sourceFile']['dirName'],
+                                                        v['sourceFile']['sourceFile'], ))
                 _pict_dict[k] = v
 
         dest_dict.update(_dest_dict)
