@@ -1990,6 +1990,7 @@ def createBrandedProduct(inData):
             _pict_dict = {}
 
         # Forrest, why did this happen?
+        # To be removed
         for k, v in _dest_dict.items():
             if isinstance(v, dict):
                 v = StrippedDestXML(v['name'],
@@ -2231,8 +2232,10 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
             shutil.copytree(os.path.join(_picdir, f), os.path.join(tempPicDir, f))
 
     for f in list(pict_dict.keys()):
-        if "fullPath" in pict_dict[f].sourceFile.__dict__:
-            #Huge workaround
+        _t = type(pict_dict[f])
+        if _t is not StrippedDestImage:
+        # if "fullPath" in pict_dict[f].sourceFile.__dict__:
+            #Huge workaround, because of isinstance not working
             if pict_dict[f].sourceFile.isEncodedImage:
                 try:
                     shutil.copyfile(os.path.join(sourceImageDirName, pict_dict[f].sourceFile.relPath), os.path.join(tempPicDir, pict_dict[f].relPath))
@@ -2344,10 +2347,14 @@ def processOneXML(inData):
                 t = re.sub(dest_dict[dI].sourceFile.name, dest_dict[dI].name, t, flags=re.IGNORECASE)
 
             for pr in sorted(pict_dict.keys(), key=lambda x: -len(x)):
-                # Replacing images
+                # Replacing images and other resource
                 fromRE = pict_dict[pr].sourceFile.fileNameWithOutExt
                 if fromRE.upper() in tUpper:
                     if family_name:
+                        for ch in ['(', ')', '[', ']', '.', ]:
+                            #Since regex, some chars are to be escaped
+                            if ch in fromRE:
+                                fromRE = fromRE.replace(ch, "\\" + ch)
                         fromRE += '(?!' + family_name + ')'
                     t = re.sub(fromRE, pict_dict[pr].fileNameWithOutExt, t, flags=re.IGNORECASE)
 

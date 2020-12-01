@@ -1,4 +1,4 @@
-from WMCC import APP_CONFIG, buildMacroSet
+from src.WMCC import APP_CONFIG, buildMacroSet
 import os
 import json
 import datetime
