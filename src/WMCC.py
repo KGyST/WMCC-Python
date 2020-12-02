@@ -1985,6 +1985,7 @@ def createBrandedProduct(inData):
             _dest_dict = inputJson["objects"]
             _pict_dict = inputJson["pictures"]
         except FileNotFoundError:
+            logging.info(f"Category .json not found: {JSONFileName}")
             macro_lib_version = -1
             _dest_dict = {}
             _pict_dict = {}

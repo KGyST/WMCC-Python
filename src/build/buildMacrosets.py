@@ -28,7 +28,8 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
     del categoryData["commons"]
 
     for cat in categoryData:
-        if TEST == (cat in TEST_CATS) and (cat == ONLY_CAT or not ONLY_CAT):
+        #TEST == (cat in TEST_CATS) and ()
+        if cat == ONLY_CAT or not ONLY_CAT:
             logging.info(f"Building category: {cat}")
             print(f"Building category: {cat}")
             data["category"] = cat
