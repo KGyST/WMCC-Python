@@ -1989,29 +1989,6 @@ def createBrandedProduct(inData):
             _dest_dict = {}
             _pict_dict = {}
 
-        # Forrest, why did this happen?
-        # To be removed
-        for k, v in _dest_dict.items():
-            if isinstance(v, dict):
-                v = StrippedDestXML(v['name'],
-                                    v['guid'],
-                                    v['relPath'],
-                                    v['md5'],
-                                    StrippedSourceXML(v['sourceFile']['name'],
-                                                      v['sourceFile']['fullPath'],
-                                                      v['sourceFile']['guid'], ))
-                _dest_dict[k] = v
-
-        for k, v in _pict_dict.items():
-            if isinstance(v, dict):
-                v = StrippedDestImage(v['fileNameWithOutExt'],
-                                      v['relPath'],
-                                      v['dirName'],
-                                    StrippedSourceImage(v['sourceFile']['fileNameWithOutExt'],
-                                                        v['sourceFile']['relPath'],
-                                                        v['sourceFile']['isEncodedImage'], ))
-                _pict_dict[k] = v
-
         dest_dict.update(_dest_dict)
         pict_dict.update(_pict_dict)
         id_dict             = {d.sourceFile.guid.upper(): d.guid    for d in dest_dict.values()}
@@ -2351,7 +2328,7 @@ def processOneXML(inData):
                 fromRE = pict_dict[pr].sourceFile.fileNameWithOutExt
                 if fromRE.upper() in tUpper:
                     if family_name:
-                        for ch in ['(', ')', '[', ']', '.', ]:
+                        for ch in '\'{}()[].!"$^':
                             #Since regex, some chars are to be escaped
                             if ch in fromRE:
                                 fromRE = fromRE.replace(ch, "\\" + ch)
