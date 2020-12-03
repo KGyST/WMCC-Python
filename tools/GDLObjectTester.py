@@ -118,6 +118,9 @@ def checkMaterialString(objectData):
         for char in '<>\/:"?':
             if char in mat['name']:
                 print(f"WARNING: material name cannot be converted to a proper filename: {mat['name']}")
+                return
+    getSingleObject(objectData)
+
 
 
 def getObjects(inObjectNameS):
@@ -145,13 +148,11 @@ def getObjects(inObjectNameS):
                     continue
                 # pprint.pprint(objectData)
                 print(objectData["name"])
-                getSingleObject(objectData)
                 checkMaterialString(objectData)
         else:
             _i = 1
             for objectData in  posts.find({"ARCHICAD_template": {"$exists": True}}):
                 print(f"{_i}: {objectData['name']}")
-                getSingleObject(objectData)
                 checkMaterialString(objectData)
                 _i += 1
     except PermissionError as e:
