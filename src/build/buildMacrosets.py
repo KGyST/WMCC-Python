@@ -38,7 +38,7 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
             for mV in category:
                 mainVersion = category[mV]
                 data["main_version"] = mV
-                data["minor_version"] = datetime.date.today().strftime("%Y%m%d")
+                data["minor_version"] = datetime.date.today().strftime("%Y%m%d") if cat not in TEST_CATS else "20200518"
                 data['path'] = mainVersion["macro_folders"]
 
                 result = buildMacroSet(data)
