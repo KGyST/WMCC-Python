@@ -117,7 +117,7 @@ def checkMaterialString(objectData):
     for mat in objectData["materials"]:
         for char in '<>\/:"?':
             if char in mat['name']:
-                print(f"WARNING: material name cannot be converted to a proper filename: {mat['name']}")
+                print(f"ERROR: object not downloaded: material name cannot be converted to a proper filename: {mat['name']}")
                 return
     getSingleObject(objectData)
 

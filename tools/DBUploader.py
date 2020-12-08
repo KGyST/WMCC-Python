@@ -8,13 +8,19 @@ from google.auth.transport.requests import Request
 
 import pickle
 
+from bson.objectid import ObjectId
+
+from pprint import pprint
+
 COL_NUMBER              = 0
 COL_DEVELOPED_OK        = 1
 COL_TESTED_OK           = 2
 COL_AC_CATEGORY         = 3
 COL_REVIT_OBJECT_NAME   = 4
-COL_DEVELOPER           = 5
-COL_AC_OBJECT_NAME      = 6
+COL_OBJECT_ID_DEV       = 5
+COL_OBJECT_ID_PROD      = 6
+COL_DEVELOPER           = 7
+COL_AC_OBJECT_NAME      = 8
 
 CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
 TEMPLATE_TABLE = 'templates'
@@ -37,6 +43,10 @@ with open(APP_CONFIG, "r") as ac:
 
 COL_OBJECT_NAME = 4
 COL_COMPILE_OK  = 1
+
+resultDir = {"Updated": 0,
+          "ERROR: More objects with the same name": [],
+          "ERROR: DB has no entry": []}
 
 
 # ------------------- Google Spreadsheet API connectivity --------------------------------------------------------------
@@ -99,16 +109,27 @@ class GoogleSpreadsheetConnector(object):
             print('No data found.')
 
 
-def uploadSingleRecord(inObjectData, inTargetDataBase):
-    global devPosts
+def uploadSingleRecord(inObjectData, inTargetDataBase, inPodID):
+    global devPosts, resultDir
 
-    if inTargetDataBase.find_one({"name": inObjectData["name"]}):
+    if inPodID:
         #FIXME to search for name and category etc or exit if more than one instance
-        res = inTargetDataBase.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
+        res = inTargetDataBase.update_one({"_id": ObjectId(inPodID)}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
         # print(res.__repr__() )
         print(f"Updated: {inObjectData['name']} in {inTargetDataBase.database.name}")
+        resultDir["Updated"] += 1
     else:
-        print(f"ERROR: {inTargetDataBase.database.name} has no entry {inObjectData['name']}")
+        found_count = inTargetDataBase.find({"name": inObjectData["name"]}).count()
+        if  found_count == 0:
+            print(f"ERROR: {inTargetDataBase.database.name} has no entry {inObjectData['name']}")
+            resultDir["ERROR: DB has no entry"] += [inObjectData['name']]
+        elif found_count == 1:
+            res = inTargetDataBase.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
+            print(f"Updated: {inObjectData['name']} in {inTargetDataBase.database.name}")
+            resultDir["Updated"] += 1
+        else:
+            print(f"ERROR: More objects with the name {inObjectData['name']} in {inTargetDataBase.database.name}, you have to update object's id (in target DB) to column F")
+            resultDir["ERROR: More objects with the same name"] += [inObjectData['name']]
 
 
 def uploadRecords(inObjectNameS):
@@ -129,27 +150,48 @@ def uploadRecords(inObjectNameS):
 
     gs = GoogleSpreadsheetConnector(GOOGLE_SPREADSHEET_ID)
 
-    gsDict = {row[4] for row in gs.values if len(row) > 4 and row[COL_DEVELOPED_OK] == 'OK' and row[COL_TESTED_OK] == 'OK'}
+    ready_to_update_dict = {row[COL_REVIT_OBJECT_NAME]: {COL_OBJECT_ID_DEV: row[COL_OBJECT_ID_DEV],
+                                                         COL_OBJECT_ID_PROD: row[COL_OBJECT_ID_PROD]}
+                                                            for row in gs.values if len(row) > 4
+                                                                and row[COL_DEVELOPED_OK] == 'OK'
+                                                                and row[COL_TESTED_OK] == 'OK'}
+    ready_to_update_dict.update({row[COL_OBJECT_ID_DEV]: {COL_OBJECT_ID_DEV: row[COL_OBJECT_ID_DEV],
+                                                         COL_OBJECT_ID_PROD: row[COL_OBJECT_ID_PROD]}
+                                                            for row in gs.values if len(row) > 4
+                                                                and row[COL_DEVELOPED_OK] == 'OK'
+                                                                and row[COL_TESTED_OK] == 'OK'
+                                                                and row[COL_OBJECT_ID_DEV]})
 
+    #Such a mess
     if inObjectNameS:
         for objName in inObjectNameS:
-            if objName in gsDict:
-                objectData = devPosts.find_one({"name": objName})
-                # print(objectData["name"])
-                # uploadSingleRecord(objectData, stagingTable)
-                # if isProduction:
-                uploadSingleRecord(objectData, prodTable)
+            if objName in ready_to_update_dict:
+                if ready_to_update_dict[objName][COL_OBJECT_ID_DEV]:
+                    objectData = devPosts.find_one({"_id": ObjectId(ready_to_update_dict[objName][COL_OBJECT_ID_DEV])})
+                    uploadSingleRecord(objectData, prodTable, ready_to_update_dict[objName][COL_OBJECT_ID_PROD])
+                else:
+                    found_count = devPosts.find({"name": objName}).count()
+                    if found_count == 0:
+                        print(f"ERROR: Dev DB  has no entry {objName}")
+                    elif found_count == 1:
+                        objectData = devPosts.find_one({"name": objName})
+                        uploadSingleRecord(objectData, prodTable)
+                        # print(objectData["name"])
+                        # uploadSingleRecord(objectData, stagingTable)
+                        # if isProduction:
+                    else:
+                        print(f"ERROR: Dev DB has more entries with name {objName}, You have to fill _id value in column F")
             else:
                 print(f"Object is not marked to be uploaded: {objName}")
     else:
         # Update all
         # _i = 1
         for objectData in  devPosts.find({"ARCHICAD_template": {"$exists": True}}):
-            if objectData["name"] in gsDict:
+            if objectData["name"] in ready_to_update_dict:
                 # print(f"{_i}: {objectData['name']}")
                 # uploadSingleRecord(objectData, stagingTable)
                 # if isProduction:
-                uploadSingleRecord(objectData, prodTable)
+                uploadSingleRecord(objectData, prodTable, ready_to_update_dict[objectData["name"]][COL_OBJECT_ID_PROD])
                 # _i += 1
             else:
                 print(f"Object is not marked to be uploaded: {objectData['name']}")
@@ -157,3 +199,5 @@ def uploadRecords(inObjectNameS):
 
 if __name__ == "__main__":
     uploadRecords(sys.argv[1:])
+    print("* * * RESULTS * * *")
+    pprint(resultDir)
