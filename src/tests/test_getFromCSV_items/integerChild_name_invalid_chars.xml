@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Root Command="iNtegerTestWithMoreThan32CharactersLong -c detlevel -d Teszt árvíztűrő tükörfúrógép" OriginalXML="original.xml">
+<Root Command="1i-N+v/a*l?i:d'Chars -c detlevel -d Teszt árvíztűrő tükörfúrógép" OriginalXML="original.xml">
 <Value>1</Value>
-<Note>Inserting parameter name longer than 32 chars</Note>
+<Note>Inserting bad parameter name</Note>
 <ParamSection SectVersion="22" SectionFlags="0" SubIdent="0">
 	<ParamSectHeader>
 		<Version>22</Version>
@@ -42,13 +42,13 @@
 			</Flags>
 			<Value>-1</Value>
 		</Integer>
-		<Integer Name="iNtegerTestWithMoreThan32Charac">
+		<String Name="_i_N_v_a_l_i_d_Chars">
 			<Description><![CDATA["Teszt árvíztűrő tükörfúrógép"]]></Description>
 			<Flags>
 				<ParFlg_Child/>
 			</Flags>
-			<Value>1</Value>
-		</Integer>
+			<Value><![CDATA["1"]]></Value>
+		</String>
 	</Parameters>
 </ParamSection>
 </Root>

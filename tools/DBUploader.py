@@ -45,8 +45,12 @@ COL_OBJECT_NAME = 4
 COL_COMPILE_OK  = 1
 
 resultDir = {"Updated": 0,
-          "ERROR: More objects with the same name": [],
-          "ERROR: DB has no entry": []}
+             "Skipped": 0,
+          "ERROR: More objects with the same name in Prod DB": set(),
+          "ERROR: DB has no entry in Prod DB": set(),
+          "ERROR: More objects with the same name in Dev DB": set(),
+          "ERROR: DB has no entry in Dev DB": set(),
+             }
 
 
 # ------------------- Google Spreadsheet API connectivity --------------------------------------------------------------
@@ -122,14 +126,14 @@ def uploadSingleRecord(inObjectData, inTargetDataBase, inPodID):
         found_count = inTargetDataBase.find({"name": inObjectData["name"]}).count()
         if  found_count == 0:
             print(f"ERROR: {inTargetDataBase.database.name} has no entry {inObjectData['name']}")
-            resultDir["ERROR: DB has no entry"] += [inObjectData['name']]
+            resultDir["ERROR: DB has no entry in Prod DB"].add(inObjectData['name'])
         elif found_count == 1:
             res = inTargetDataBase.update_one({"name": inObjectData["name"]}, {"$set": {"ARCHICAD_template": inObjectData["ARCHICAD_template"]}})
             print(f"Updated: {inObjectData['name']} in {inTargetDataBase.database.name}")
             resultDir["Updated"] += 1
         else:
             print(f"ERROR: More objects with the name {inObjectData['name']} in {inTargetDataBase.database.name}, you have to update object's id (in target DB) to column F")
-            resultDir["ERROR: More objects with the same name"] += [inObjectData['name']]
+            resultDir["ERROR: More objects with the same name in Prod DB"].add(inObjectData['name'])
 
 
 def uploadRecords(inObjectNameS):
@@ -139,7 +143,7 @@ def uploadRecords(inObjectNameS):
     # else:
     #     isProduction = False
 
-    global gs, devPosts, prodPosts
+    global gs, devPosts, prodPosts, resultDir
     client = pymongo.MongoClient(CONNECTION_STRING)
 
     devPosts = client[DB_DEV][TEMPLATE_TABLE]
@@ -172,7 +176,8 @@ def uploadRecords(inObjectNameS):
                 else:
                     found_count = devPosts.find({"name": objName}).count()
                     if found_count == 0:
-                        print(f"ERROR: Dev DB  has no entry {objName}")
+                        print(f"ERROR: Dev DB has no entry {objName}")
+                        resultDir["ERROR: More objects with the same name in Dev DB"].add(objName)
                     elif found_count == 1:
                         objectData = devPosts.find_one({"name": objName})
                         uploadSingleRecord(objectData, prodTable)
@@ -181,8 +186,10 @@ def uploadRecords(inObjectNameS):
                         # if isProduction:
                     else:
                         print(f"ERROR: Dev DB has more entries with name {objName}, You have to fill _id value in column F")
+                        resultDir["ERROR: More objects with the same name in Dev DB"].add(objName)
             else:
                 print(f"Object is not marked to be uploaded: {objName}")
+                resultDir["Skipped"] += 1
     else:
         # Update all
         # _i = 1
@@ -195,6 +202,7 @@ def uploadRecords(inObjectNameS):
                 # _i += 1
             else:
                 print(f"Object is not marked to be uploaded: {objectData['name']}")
+                resultDir["Skipped"] += 1
 
 
 if __name__ == "__main__":

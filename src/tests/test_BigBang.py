@@ -90,7 +90,7 @@ class TestSuite_BigBang(unittest.TestSuite):
                     test_case.maxDiff = None
                     self.addTest(test_case)
                 except json.decoder.JSONDecodeError:
-                    print(f"Filename: {fileName}")
+                    print(f"JSONDecodeError - Filename: {fileName}")
 
         super(TestSuite_BigBang, self).__init__(self._tests)
 

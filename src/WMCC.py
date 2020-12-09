@@ -694,6 +694,9 @@ class ResizeableGDLDict(dict):
 
 
 class Param(object):
+    NAME_REGEX_MATCH    = '[a-zA-Z_~][a-zA-Z_~0-9]*'
+    NAME_MAX_LENGTH     = 31
+
     tagBackList = ["", "Length", "Angle", "RealNum", "Integer", "Boolean", "String", "Material",
                    "LineType", "FillPattern", "PenColor", "Separator", "Title", "Comment"]
 
@@ -720,8 +723,11 @@ class Param(object):
             if inTypeStr:
                 self.iType  = self.getTypeFromString(inTypeStr)
 
-            self.name   = inName
-            if len(self.name) > 32 and self.iType != PAR_COMMENT: self.name = self.name[:32]
+            if re.match(Param.NAME_REGEX_MATCH, inName) or inType == PAR_COMMENT:
+                self.name   = inName
+            else:
+                self.name   = re.sub('[^a-zA-Z_~]', '_', inName[0]) + re.sub('[^a-zA-Z_~0-9]', '_', inName[1:])
+            if len(self.name) > Param.NAME_MAX_LENGTH and self.iType != PAR_COMMENT: self.name = self.name[:Param.NAME_MAX_LENGTH]
             if inValue is not None:
                 self.value = inValue
 
@@ -1147,7 +1153,7 @@ class XMLFile(GeneralFile):
 
     @name.setter
     def name(self, inName):
-        self._name   = inName
+        self._name = re.sub('[\\\\/:*?"<>|]' , "_", inName)
 
 
 class SourceXML (XMLFile, SourceFile):
@@ -1985,33 +1991,10 @@ def createBrandedProduct(inData):
             _dest_dict = inputJson["objects"]
             _pict_dict = inputJson["pictures"]
         except FileNotFoundError:
-            logging.info(f"Category .json not found: {JSONFileName}")
+            logging.info(f"Category .json not found: {JSONFileName}, thus no macroset")
             macro_lib_version = -1
             _dest_dict = {}
             _pict_dict = {}
-
-        # Forrest, why did this happen?
-        # To be removed
-        # for k, v in _dest_dict.items():
-        #     if isinstance(v, dict):
-        #         v = StrippedDestXML(v['name'],
-        #                             v['guid'],
-        #                             v['relPath'],
-        #                             v['md5'],
-        #                             StrippedSourceXML(v['sourceFile']['name'],
-        #                                               v['sourceFile']['fullPath'],
-        #                                               v['sourceFile']['guid'], ))
-        #         _dest_dict[k] = v
-        #
-        # for k, v in _pict_dict.items():
-        #     if isinstance(v, dict):
-        #         v = StrippedDestImage(v['fileNameWithOutExt'],
-        #                               v['relPath'],
-        #                               v['dirName'],
-        #                             StrippedSourceImage(v['sourceFile']['fileNameWithOutExt'],
-        #                                                 v['sourceFile']['relPath'],
-        #                                                 v['sourceFile']['isEncodedImage'], ))
-        #         _pict_dict[k] = v
 
         dest_dict.update(_dest_dict)
         pict_dict.update(_pict_dict)

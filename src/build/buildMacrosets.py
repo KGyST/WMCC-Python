@@ -36,6 +36,9 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
 
             category = categoryData[cat]
             for mV in category:
+                if not categoryData[cat][mV]['macro_folders']:
+                    print(f"Empty category, not built: {cat} {mV}")
+                    continue
                 mainVersion = category[mV]
                 data["main_version"] = mV
                 data["minor_version"] = datetime.date.today().strftime("%Y%m%d") if cat not in TEST_CATS else "20200518"
