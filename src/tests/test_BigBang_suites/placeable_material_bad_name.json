@@ -1,0 +1,33 @@
+{
+  "description": "Placeable: material with invalid material name",
+  "endpoint": "/",
+  "request": {
+    "ProductName": "Placeable_LCF_name",
+    "Template": {
+      "Materials": [{
+                "Name": "T\\e/s:t*m?a\"t<e>r|ial",
+                "RGB": [
+                    255,
+                    0,
+                    0
+                ]
+            }],
+      "ArchicadTemplate": {
+        "category": "tests",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable",
+        "parameters": []
+      }
+    },
+    "VariationsData": [
+      {
+        "VariationName": "test_placeable1",
+        "Parameters": []
+      }
+    ]
+  },
+  "result": {
+    "macroset_name": "macroset_tests_19_20200518.lcf",
+    "object_name": "tests_Placeable_LCF_name.lcf"
+}
+}
