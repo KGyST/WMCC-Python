@@ -803,6 +803,7 @@ class Param(object):
         :param inData:
         :return:
         """
+        #FIXME try-excep TypeError loop for conversion error messages
         if type(inData) == list:
             return list(map (self.__toFormat, inData))
         if self.iType in (PAR_LENGTH, PAR_REAL, PAR_ANGLE):
