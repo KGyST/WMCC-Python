@@ -132,7 +132,7 @@ endif
 				<ParFlg_Unique/>
 			</Flags>
 			<ArrayValues FirstDimension="1" SecondDimension="2">
-				<AVal Column="1" Row="1">20200101</AVal>
+				<AVal Column="1" Row="1">19700101</AVal>
 				<AVal Column="2" Row="1">0</AVal>
 			</ArrayValues>
 		</Integer>

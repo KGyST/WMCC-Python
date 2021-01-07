@@ -1,77 +1,80 @@
 {
-    "description": "Expected error: placeable: bad category",
-    "endpoint": "/",
-    "request": {
+  "description": "Expected error: placeable: nonexisting category",
+  "endpoint": "/",
+  "hasMacroset": false,
+  "request": {
+    "ProductName": "Placeable_LCF_name",
+    "Webhook": "localhost:8080",
+    "Template": {
+      "Materials": [],
+      "ArchicadTemplate": {
+        "category": "bad_category",
+        "main_macroset_version": "19",
+        "source_file": "test_placeable",
+        "parameters": {}
+      }
+    },
+    "VariationsData": [
+      {
+        "VariationName": "test_placeable1",
+        "Parameters": []
+      }
+    ]
+  },
+  "result": {
+    "error_message": {
+      "title": "Nonexisting category",
+      "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name",
+      "constant": "ERR_NONEXISTING_CATEGORY"
+    },
+    "additional_data": {
+      "category": "bad_category",
+      "request": {
         "ProductName": "Placeable_LCF_name",
+        "Webhook": "localhost:8080",
         "Template": {
-            "Materials": [],
-            "ArchicadTemplate": {
-                "category": "bad_category",
-                "main_macroset_version": "19",
-                "source_file": "test_placeable",
-                "parameters": {}
-            }
+          "Materials": [],
+          "ArchicadTemplate": {
+            "category": "bad_category",
+            "main_macroset_version": "19",
+            "source_file": "test_placeable",
+            "parameters": {}
+          }
         },
         "VariationsData": [
-            {
-                "VariationName": "test_placeable1",
-                "Parameters": []
-            }
-        ]
-    },
-    "result": {
-        "error_message": {
-            "title": "Nonexisting category",
-            "description": "The Category Object is in doesn't exist or there is a typo in Category name in category data or the associated folder name",
-            "constant": "ERR_NONEXISTING_CATEGORY"
-        },
-        "additional_data": {
+          {
+            "VariationName": "test_placeable1",
+            "Parameters": []
+          }
+        ],
+        "productName": "Placeable_LCF_name",
+        "template": {
+          "Materials": [],
+          "ArchicadTemplate": {
             "category": "bad_category",
-            "request": {
-                "ProductName": "Placeable_LCF_name",
-                "Template": {
-                    "Materials": [],
-                    "ArchicadTemplate": {
-                        "category": "bad_category",
-                        "main_macroset_version": "19",
-                        "source_file": "test_placeable",
-                        "parameters": {}
-                    }
-                },
-                "VariationsData": [
-                    {
-                        "VariationName": "test_placeable1",
-                        "Parameters": []
-                    }
-                ],
-                "productName": "Placeable_LCF_name",
-                "template": {
-                    "Materials": [],
-                    "ArchicadTemplate": {
-                        "category": "bad_category",
-                        "main_macroset_version": "19",
-                        "source_file": "test_placeable",
-                        "parameters": {}
-                    },
-                    "materials": [],
-                    "ARCHICAD_template": {
-                        "category": "bad_category",
-                        "main_macroset_version": "19",
-                        "source_file": "test_placeable",
-                        "parameters": {}
-                    }
-                },
-                "variationsData": [
-                    {
-                        "VariationName": "test_placeable1",
-                        "Parameters": [],
-                        "variationName": "test_placeable1",
-                        "parameters": [],
-                        "materialParameters": [],
-                        "dataParameters": []
-                    }
-                ]
-            }
-        }
+            "main_macroset_version": "19",
+            "source_file": "test_placeable",
+            "parameters": {}
+          },
+          "materials": [],
+          "ARCHICAD_template": {
+            "category": "bad_category",
+            "main_macroset_version": "19",
+            "source_file": "test_placeable",
+            "parameters": {}
+          }
+        },
+        "variationsData": [
+          {
+            "VariationName": "test_placeable1",
+            "Parameters": [],
+            "variationName": "test_placeable1",
+            "parameters": [],
+            "materialParameters": [],
+            "dataParameters": []
+          }
+        ]
+      }
     }
+  }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="91D64543-0000-0000-0000-000000007E57" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
+<Symbol IsArchivable="yes" IsPlaceable="yes" MainGUID="00000000-0000-0000-0000-000000007E57" MigrationValue="Normal" Owner="1196638531" Signature="1196644685" Version="34">
 <Ancestry SectVersion="1" SectionFlags="0" SubIdent="0" Template="no">
 	<MainGUID>00000000-0000-0000-0000-000000007E57</MainGUID>
 </Ancestry>
@@ -142,7 +142,7 @@ endif
 				<ParFlg_Unique/>
 			</Flags>
 			<ArrayValues FirstDimension="1" SecondDimension="2">
-				<AVal Column="1" Row="1">20200514</AVal>
+				<AVal Column="1" Row="1">19700101</AVal>
 				<AVal Column="2" Row="1">0</AVal>
 			</ArrayValues>
 		</Integer>

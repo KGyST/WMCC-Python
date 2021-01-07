@@ -28,7 +28,6 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
     del categoryData["commons"]
 
     for cat in categoryData:
-        #TEST == (cat in TEST_CATS) and ()
         if cat == ONLY_CAT or not ONLY_CAT:
             logging.info(f"Building category: {cat}")
             print(f"Building category: {cat}")
@@ -41,23 +40,24 @@ with open(CATEGORY_DATA_JSON, "r") as cD:
                     continue
                 mainVersion = category[mV]
                 data["main_version"] = mV
-                data["minor_version"] = datetime.date.today().strftime("%Y%m%d") if cat not in TEST_CATS else "20200518"
+                data["minor_version"] = category[mV]["minor_version"] if "minor_version" in category[mV] else datetime.date.today().strftime("%Y%m%d")
                 data['path'] = mainVersion["macro_folders"]
 
                 result = buildMacroSet(data)
 
-                for macroFolder in mainVersion["macro_folders"]:
-                    _macroFolderPath = os.path.join(CONTENT_DIR_NAME, macroFolder)
-                    if TEST:
-                        shutil.copytree(_macroFolderPath, os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)))
+                # for macroFolder in mainVersion["macro_folders"]:
+                ##This part is for removing macro folders for production stuff
+                    # _macroFolderPath = os.path.join(CONTENT_DIR_NAME, macroFolder)
+                    # if TEST:
+                    #     shutil.copytree(_macroFolderPath, os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)))
 
-                    if CLEANUP:
-                        shutil.rmtree(_macroFolderPath)
-                        print(f"Removed macro folder: {_macroFolderPath}")
+                    # if CLEANUP:
+                    #     shutil.rmtree(_macroFolderPath)
+                    #     print(f"Removed macro folder: {_macroFolderPath}")
 
-                    if TEST:
-                        shutil.move(os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)),
-                                    _macroFolderPath)
+                    # if TEST:
+                    #     shutil.move(os.path.join(CONTENT_DIR_NAME, os.path.dirname(macroFolder), "_" + os.path.basename(macroFolder)),
+                    #                 _macroFolderPath)
         else:
             print(f"Not built category: {cat}")
 

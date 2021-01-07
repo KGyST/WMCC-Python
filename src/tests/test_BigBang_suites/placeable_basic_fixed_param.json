@@ -3,17 +3,18 @@
   "endpoint": "/",
   "request": {
     "ProductName": "Placeable_LCF_name",
+	"Webhook": "localhost:8080",
     "Template": {
       "Materials": [],
       "ArchicadTemplate": {
         "category": "tests",
         "main_macroset_version": "19",
         "source_file": "test_placeable",
-        "parameters": [          
-			{
+        "parameters": [
+          {
             "name": "A",
             "Type": "PAR_LENGTH",
-            "value": 1.00
+            "value": 1.0
           }
         ]
       }
@@ -26,7 +27,7 @@
     ]
   },
   "result": {
-    "macroset_name": "macroset_tests_19_20200518.lcf",
-    "object_name": "tests_Placeable_LCF_name.lcf"
-}
+    "placeableName": "tests_Placeable_LCF_name.lcf",
+    "macrosetName": "macroset_tests_19_19700101.lcf"
+  }
 }

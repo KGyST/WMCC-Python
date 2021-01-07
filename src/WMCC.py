@@ -1,5 +1,5 @@
 import os.path
-from os import listdir, chdir
+from os import listdir
 import uuid
 import re
 import tempfile
@@ -17,12 +17,13 @@ import http.client, http.server, urllib.request, urllib.parse, urllib.error, os,
 import logging
 from PIL import Image
 import io
-import hashlib
 from werkzeug.exceptions import HTTPException
 import traceback
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.core import exceptions
+from azure.storage.blob import BlobServiceClient
+
 
 #------------------ External modules------------------
 
@@ -56,6 +57,8 @@ with open(APP_CONFIG, "r") as ac:
     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
     CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
     SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
+    STORAGE_NAME                = appJSON["STORAGE_NAME"]
+    RESULT_CONTAINER_NAME       = appJSON["RESULT_CONTAINER_NAME"]
 
 
     if isinstance(LOGLEVEL, str):
@@ -129,6 +132,10 @@ PAR_PEN         = 10
 PAR_SEPARATOR   = 11
 PAR_TITLE       = 12
 PAR_COMMENT     = 13
+#TODO lamp related stuff
+PAR_LIGHTSWITCH = 14    #0..1?
+PAR_COLORRGB    = 15    #0..1?
+PAR_INTENSITY   = 16    #0..100?
 
 PAR_TYPELIST = [
     "PAR_UNKNOWN",
@@ -145,6 +152,9 @@ PAR_TYPELIST = [
     "PAR_SEPARATOR",
     "PAR_TITLE",
     "PAR_COMMENT",
+    "PAR_LIGHTSWITCH",
+    "PAR_COLORRGB",
+    "PAR_INTENSITY",
     ]
 
 PARFLG_CHILD    = 1
@@ -503,6 +513,12 @@ class ParamSection:
                 elif parsedArgs.type in ("Comment", ):
                     parType = PAR_COMMENT
                     parName = " " + parName + ": PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK "
+                elif parsedArgs.type in ("LightSwitch",):
+                    parType = PAR_LIGHTSWITCH
+                elif parsedArgs.type in ("ColorRGB",):
+                    parType = PAR_COLORRGB
+                elif parsedArgs.type in ("Intensity",):
+                    parType = PAR_INTENSITY
                 param = self.createParam(parName, inCol, inArrayValues, parType)
             else:
                 param = self.createParam(parName, inCol, inArrayValues)
@@ -598,9 +614,9 @@ class ParamSection:
 
         if not inArrayValues:
             arrayValues = None
-            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL,):
+            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL, PAR_COLORRGB,):
                 inParValue = float(inParValue)
-            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN,):
+            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN, PAR_INTENSITY,  PAR_LIGHTSWITCH,):
                 inParValue = int(inParValue)
             elif parType in (PAR_BOOL,):
                 inParValue = bool(int(inParValue))
@@ -610,9 +626,9 @@ class ParamSection:
                 inParValue = None
         else:
             inParValue = None
-            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL,):
+            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL, PAR_COLORRGB,):
                 arrayValues = [float(x) if type(x) != list else [float(y) for y in x] for x in inArrayValues]
-            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN,):
+            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN, PAR_INTENSITY,  PAR_LIGHTSWITCH,):
                 arrayValues = [int(x) if type(x) != list else [int(y) for y in x] for x in inArrayValues]
             elif parType in (PAR_BOOL,):
                 arrayValues = [bool(int(x)) if type(x) != list else [bool(int(y)) for y in x] for x in inArrayValues]
@@ -698,7 +714,8 @@ class Param(object):
     NAME_MAX_LENGTH     = 31
 
     tagBackList = ["", "Length", "Angle", "RealNum", "Integer", "Boolean", "String", "Material",
-                   "LineType", "FillPattern", "PenColor", "Separator", "Title", "Comment"]
+                   "LineType", "FillPattern", "PenColor", "Separator", "Title", "Comment",
+                   "LightSwitch", "ColorRGB", "Intensity", ]
 
     flagBackList =["", "Child", "Bold", "Unique", "Hidden", ]
 
@@ -806,12 +823,12 @@ class Param(object):
         #FIXME try-excep TypeError loop for conversion error messages
         if type(inData) == list:
             return list(map (self.__toFormat, inData))
-        if self.iType in (PAR_LENGTH, PAR_REAL, PAR_ANGLE):
+        if self.iType in (PAR_LENGTH, PAR_REAL, PAR_ANGLE, PAR_COLORRGB,):
             # self.digits = 2
             return float(inData)
-        elif self.iType in (PAR_INT, PAR_MATERIAL, PAR_PEN, PAR_LINETYPE, PAR_MATERIAL):
+        elif self.iType in (PAR_INT, PAR_MATERIAL, PAR_PEN, PAR_LINETYPE, PAR_MATERIAL, PAR_LIGHTSWITCH, PAR_INTENSITY,):
             return int(inData)
-        elif self.iType in (PAR_BOOL, ):
+        elif self.iType in (PAR_BOOL,):
             return bool(int(inData))
         elif self.iType in (PAR_SEPARATOR, PAR_TITLE, ):
             return None
@@ -856,7 +873,7 @@ class Param(object):
 
     @property
     def eTree(self):
-        if self.iType < PAR_COMMENT:
+        if self.iType != PAR_COMMENT:
             tagString = self.tagBackList[self.iType]
             elem = etree.Element(tagString, Name=self.name)
             nTabs = 3 if self.desc or self.flags is not None or self.value is not None or self.aVals is not None else 2
@@ -1017,6 +1034,12 @@ class Param(object):
             return PAR_SEPARATOR
         elif inString in ("Title"):
             return PAR_TITLE
+        elif inString in ("LightSwitch"):
+            return PAR_LIGHTSWITCH
+        elif inString in ("ColorRGB"):
+            return PAR_COLORRGB
+        elif inString in ("Intensity"):
+            return PAR_INTENSITY
 
 # -------------------/parameter classes --------------------------------------------------------------------------------
 
@@ -1331,11 +1354,10 @@ class StrippedDestXML:
     """
     Dummy placeholder class for writing out calledmacros' data for calling (name, guid).
     """
-    def __init__(self, inName, inGUID, inRelPath, inMD5, inSourceFile):
+    def __init__(self, inName, inGUID, inRelPath, inSourceFile):
         self.name = inName
         self.guid = inGUID
         self.relPath = inRelPath
-        self.md5 = inMD5
         self.sourceFile = inSourceFile
 
 
@@ -1604,7 +1626,9 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
     else:
         source_image_dir_name = '"' + source_image_dir_name + '"'
 
-    targetLCFFullPath = os.path.join(TARGET_GDL_DIR_NAME, fileNameWithoutExtension + '.lcf')
+    targetLCFDir = tempfile.mkdtemp()
+
+    targetLCFFullPath = os.path.join(targetLCFDir, fileNameWithoutExtension + '.lcf')
     output = r'"%s" createcontainer "%s" "%s"' % (os.path.join(ARCHICAD_LOCATION, 'LP_XMLConverter.exe'), targetLCFFullPath, tempGDLDirName)
     if source_image_dir_name:
         output += '"' + source_image_dir_name + '"'
@@ -1617,7 +1641,7 @@ def createLCF(tempGDLDirName, fileNameWithoutExtension):
 
     logging.info("*****LCF CREATION FINISHED SUCCESFULLY******")
 
-    return targetLCFFullPath
+    return targetLCFDir
 
 
 def unitConvert(inParameterName,
@@ -1687,6 +1711,7 @@ def extractParams(inData):
             if category     not in settingsJSON:            raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY)
             if main_version not in settingsJSON[category]:  raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION)
 
+
     params = SourceXML(os.path.join(CONTENT_DIR_NAME, projectPath, inData["object_path"])).parameters.returnParamsAsDict()
     return {p: {
         "name": params[p].name,
@@ -1737,7 +1762,7 @@ def buildMacroSet(inData):
         subCategory = settingsJSON[category][main_version]
         projectPath = subCategory["path"]
         imagePath = subCategory["image_path"] if "image_path" in subCategory else ""
-        subCategory["current_minor_version"] = int(minor_version)
+        subCategory["minor_version"] = int(minor_version)
 
     resetAll()
 
@@ -1777,16 +1802,20 @@ def buildMacroSet(inData):
 
     _fileNameWithoutExtension = "macroset_" + inData["category"] + "_" + main_version
 
-    targetLCFFullPath = createLCF(tempGDLDirName, _fileNameWithoutExtension + "_" + str(minor_version))
+    macroFileName = _fileNameWithoutExtension + "_" + str(minor_version)
 
-    with open(targetLCFFullPath, "rb") as lcfFile:
+    targetLCFDir = createLCF(tempGDLDirName, macroFileName)
+
+    shutil.copyfile(os.path.join(targetLCFDir, macroFileName) + ".lcf", os.path.join(TARGET_GDL_DIR_NAME, macroFileName) + ".lcf")
+
+    with open(os.path.join(targetLCFDir, macroFileName) + ".lcf", "rb") as lcfFile:
         encoded_lcf = base64.urlsafe_b64encode(lcfFile.read()).decode("utf-8")
 
     _stripped_dest_dict = {}
 
     for k, v in dest_dict.items():
         _sourceFile = StrippedSourceXML(v.sourceFile.name, v.sourceFile.fullPath, v.sourceFile.guid, )
-        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, v.md5, _sourceFile, )
+        _stripped_dest_dict[k] = StrippedDestXML(v.name, v.guid, v.relPath, _sourceFile, )
 
     _stripped_pict_dict = {}
 
@@ -1804,7 +1833,7 @@ def buildMacroSet(inData):
                   "main_version": main_version,
                   "minor_version ": minor_version,
                   "base64_encoded_macroset": encoded_lcf,
-                  "macroset_name": os.path.splitext(os.path.split(targetLCFFullPath)[1])[0]}
+                  "macroset_name": os.path.splitext(os.path.split(targetLCFDir)[1])[0]}
 
     with open(jsonPathName, "w") as file:
         file.write(jsonData)
@@ -1905,14 +1934,17 @@ def createBrandedProduct(inData):
             commonsDir = os.path.join(COMMONS_DIR_PATH, main_version)
             projectPath = subCategory["path"]
             imagePath = subCategory["imagePath"] if "imagePath" in subCategory else projectPath
-            minor_version = subCategory["current_minor_version"]
-            if "minor_version" in AC_templateData:
+            if "minor_version" in subCategory:
+                minor_version = subCategory["minor_version"]
+            elif "minor_version" in AC_templateData:
                 minor_version = AC_templateData["minor_version"]
+            else:
+                minor_version = datetime.date.today().strftime("%Y%m%d")
         except KeyError:
             if "template" not in inData:                        raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": inData})
             if "ARCHICAD_template" not in inData["template"]:   raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": inData})
-            if category not in AC_templateData:                 raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY, additional_data={"category": category, "request": inData})
-            if main_version not in category:                    raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION,  additional_data={"main_version": main_version, "request": inData})
+            if category not in settingsJSON:                    raise WMCCException(WMCCException.ERR_NONEXISTING_CATEGORY, additional_data={"category": category, "request": inData})
+            if main_version not in settingsJSON[category]:      raise WMCCException(WMCCException.ERR_NONEXISTING_VERSION,  additional_data={"main_version": main_version, "request": inData})
 
     source_image_dir_name = os.path.join(CONTENT_DIR_NAME, imagePath)
     source_xml_dir_name = os.path.join(CONTENT_DIR_NAME, projectPath)
@@ -1960,12 +1992,24 @@ def createBrandedProduct(inData):
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
 
                 # --------- textures -----------
-                if 'base64_encoded_texture' in material:
+                if 'Texture' in material and material['Texture']:
                     if not os.path.exists(os.path.join(tempGDLDirName, 'surfaces')):
                         os.makedirs(os.path.join(tempGDLDirName, 'surfaces'))
-                    with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
-                        textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
-                    materialMacro.parameters['sTextureName'] = os.path.splitext(material['name'] + "_texture.png")[0]
+
+                    container_name = "archicad-local"
+                    connect_str = "DefaultEndpointsProtocol=https;AccountName=falconestorage;AccountKey=xUepXBEtdcKEp74pOfw0iqv6weQmA5YQPsITR7BzmFA4/j/UdFqoKC3Ja0bv4PbxO9HKvwjkZ1PQ3+jC56ezZA==;EndpointSuffix=core.windows.net"
+
+                    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+                    container_client = blob_service_client.get_container_client(container_name)
+
+                    blob_client = blob_service_client.get_blob_client(container=container_name, blob=material["Texture"])
+
+                    with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), "wb") as download_file:
+                        download_file.write(blob_client.download_blob().readall())
+
+                    # with open(os.path.join(tempGDLDirName, 'surfaces', material['name'] + "_texture.png"), 'wb') as textureFile:
+                    #     textureFile.write(base64.urlsafe_b64decode(material['base64_encoded_texture']))
+                    materialMacro.parameters['sTextureName'] = material['name'] + "_texture"
 
         # --------- logo -----------
         _logo = None
@@ -1987,13 +2031,13 @@ def createBrandedProduct(inData):
         placeableS = []
 
         try:
-            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read(), classes=(StrippedSourceXML, StrippedDestXML))
-            macro_lib_version = inputJson["minor_version"]
+            inputJson = jsonpickle.decode(open(os.path.join(TARGET_GDL_DIR_NAME, JSONFileName)).read())
+            minor_version = macro_lib_version = inputJson["minor_version"]
             _dest_dict = inputJson["objects"]
             _pict_dict = inputJson["pictures"]
         except FileNotFoundError:
             logging.info(f"Category .json not found: {JSONFileName}, thus no macroset")
-            macro_lib_version = -1
+            macro_lib_version = "-1"
             _dest_dict = {}
             _pict_dict = {}
 
@@ -2087,38 +2131,23 @@ def createBrandedProduct(inData):
 
     fileName = AC_templateData["category"] + "_" + family_name
 
-    targetLCFFullPath = createLCF(tempGDLDirName, fileName)
+    targetLCFDir = createLCF(tempGDLDirName, fileName)
 
-    _paceableName = fileName + ".lcf"
-    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + macro_lib_version + ".lcf" if int(macro_lib_version) > 0 else None
+    _placeableName = fileName + ".lcf"
+    _macrosetName = 'macroset' + "_" + AC_templateData["category"] + "_" + main_version + "_" + str(macro_lib_version) + ".lcf" if int(macro_lib_version) > 0 else None
 
-    returnDict =  createResponeFiles(_paceableName, _macrosetName, )
+    returnDict = {
+        "placeableName": _placeableName,
+        }
+
+    if _macrosetName:
+        returnDict.update({"macrosetName": _macrosetName})
 
     if CLEANUP:
         shutil.rmtree(tempGDLDirName)
-        os.remove(os.path.join(TARGET_GDL_DIR_NAME, _paceableName))
+        os.remove(os.path.join(TARGET_GDL_DIR_NAME, _placeableName))
 
-    return returnDict
-
-
-def createResponeFiles(inFileName,
-                       inMacrosetName = "", ):
-    """
-    Creates finished objects
-    """
-    result = {}
-    if inMacrosetName:
-        with open(os.path.join(TARGET_GDL_DIR_NAME, inMacrosetName), "rb") as macroSet:
-            _macrosetData = base64.urlsafe_b64encode(macroSet.read()).decode("utf-8")
-            result.update({ "macroset_name":            inMacrosetName,
-                            "base64_encoded_macroset":  _macrosetData,})
-
-    with open(os.path.join(TARGET_GDL_DIR_NAME, inFileName), "rb") as placeableObject:
-        _placeableObjectData = base64.urlsafe_b64encode(placeableObject.read()).decode("utf-8")
-        result.update({ "object_name": inFileName,
-                        "base64_encoded_object": _placeableObjectData,})
-
-    return result
+    return returnDict, targetLCFDir
 
 
 def uploadFinishedObject(inFileName,
@@ -2200,13 +2229,9 @@ def startConversion(targetGDLDirName = TARGET_GDL_DIR_NAME, sourceImageDirName='
     if MULTIPROCESS:
         logging.debug(f"CPU count: {mp.cpu_count()}")
         _pool = mp.Pool(mp.cpu_count())
-        _results = _pool.map(processOneXML, pool_map)
     else:
         for _p in pool_map:
-            _results.append(processOneXML(_p))
-
-    for _xml, _res in zip(pool_map, _results):
-        _xml["dest"].md5 = _res
+            processOneXML(_p)
 
     _picdir =  ADDITIONAL_IMAGE_DIR_NAME
 
@@ -2415,12 +2440,6 @@ def processOneXML(inData):
     with open(destPath, "wb") as file_handle:
         resultXML = etree.tostring(mdp, pretty_print=True, encoding="UTF-8", )
         file_handle.write(resultXML)
-
-    m = hashlib.md5()
-    m.update(resultXML)
-    macroMD5 = m.hexdigest()
-
-    return macroMD5
 
 # ---------------------Job queue--------------------
 
