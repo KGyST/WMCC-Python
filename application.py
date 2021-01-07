@@ -93,24 +93,23 @@ class ArchicadEngine(Resource):
         try:
             data = {
                 **data,
-                "productName": data["ProductName"],
-                "template":  {**data["Template"],
-                              "materials": [{**m,
-                                             "name": m["Name"], } for m in data["Template"]["Materials"]],
-                              "ARCHICAD_template": data["Template"]["ArchicadTemplate"],
+                "productName": data["productData"]["productName"],
+                "template":  {
+                                # **data["productData"]["template"],
+                              "materials": data["productData"]["materialData"],
+                              "ARCHICAD_template": data["archicadTemplate"],
                               },
                 "variationsData": [{**vD,
-                                    "variationName": vD["VariationName"],
                                     "parameters": [{**p,
-                                                    "name": p["Name"],
-                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 1],
+                                                    "name": p["name"],
+                                                    "value": p["value"],} for p in vD["parameters"] if p["group"] == "dimensional"],
                                     "materialParameters": [{**p,
-                                                    "name": p["Name"],
-                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 2 or p["Group"] == 4],
+                                                    "name": p["name"],
+                                                    "value": p["value"],} for p in vD["parameters"] if p["group"] == "material" or p["group"] == "materialAppearance"],
                                     "dataParameters": [{**p,
-                                                    "name": p["Name"],
-                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
-                                    } for vD in data["VariationsData"]],
+                                                    "name": p["name"],
+                                                    "value": p["value"],} for p in vD["parameters"] if p["group"] == "data"],
+                                    } for vD in data["productData"]["variationsData"]],
             }
         except KeyError as e:
             raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={
@@ -123,22 +122,8 @@ class ArchicadEngine(Resource):
         logging.debug("".join(["/", "PID: ", str(pid)]))
         enQueueJob("/", data, pid)
 
-        return getResult(pid)
-
-
-class CreateLCFEngine(Resource):
-    """
-    Creating macroset, to be used by internal GDL developers
-    """
-    def post(self):
-        data = request.get_json()
-
-        pid = str(uuid.uuid4()).upper()
-        logging.debug("".join(["/createmacroset", "PID: ", str(pid)]))
-
-        enQueueJob("/createmacroset", data, pid)
-
-        return getResult(pid)
+        return {}
+        # return getResult(pid)
 
 
 class ParameterExtractorEngine(Resource):
@@ -149,31 +134,6 @@ class ParameterExtractorEngine(Resource):
         data = request.get_json()
         params = extractParams(data)
         return params
-
-
-class ReceiveFile_Test(Resource):
-    """
-    dummy class mimicing receiver side, only for testing purposes
-    """
-    def post(self):
-        import os
-        import base64
-        import logging
-        TARGET_DIR = os.path.join(r".\src", r"Target2")
-
-        data = request.get_json()
-
-        logging.info(f"ReceiveFile_Test {data['object_name']} ")
-
-        with open(os.path.join(TARGET_DIR, data['object_name']), 'wb') as objectFile:
-            decode = base64.urlsafe_b64decode(data['base64_encoded_object'])
-            objectFile.write(decode)
-
-        with open(os.path.join(TARGET_DIR, data['macroset_name']), 'wb') as objectFile:
-            decode = base64.urlsafe_b64decode(data['base64_encoded_macroset'])
-            objectFile.write(decode)
-
-        return ({"result": "00, OK, 00, 00"})
 
 
 class CreateMaterials(Resource):
@@ -192,12 +152,12 @@ class CreateMaterials(Resource):
             try:
                 data = {
                     **data,
-                    "productName": data["ProductName"],
+                    "productName": data["productData"]["productName"],
                     "template": {
                         "materialParameters": [],
-                        "materials": [{"name": m["VariationName"],
-                                       **{p["Name"]: p["Value"] for p in m["Parameters"]},
-                                       }  for m in data["VariationsData"]],
+                        "materials": [{"name": m["variationName"],
+                                       **{p["name"]: p["value"] for p in m["parameters"]},
+                                       }  for m in data["productData"]["variationsData"]],
                         "ARCHICAD_template": {
                             "category": "commons",
                             "main_macroset_version": "18",
@@ -205,25 +165,24 @@ class CreateMaterials(Resource):
                     },
                     "variationsData": []
                 }
-            except KeyError:
-                raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": data})
+            except KeyError as e:
+                raise WMCCException(WMCCException.ERR_MALFORMED_REQUEST, additional_data={"request": data,
+                                                                                          "error": e, })
 
             #-----------------------------------
 
             enQueueJob("/creatematerials", data, pid)
 
-            return getResult(pid)
-        except Exception:
-            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data if data else None})
+            # return getResult(pid)
+            return {}
+        except Exception as e:
+            raise WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"request": data if data else None,
+                                                                                "error": e, })
 
 
 api.add_resource(ArchicadEngine,            '/')
 api.add_resource(CreateMaterials,           '/creatematerials')
 api.add_resource(ParameterExtractorEngine,  '/extractparams')
-
-# To be REMOVED:
-api.add_resource(CreateLCFEngine,           '/createmacroset')
-api.add_resource(ReceiveFile_Test,          '/setfile')
 
 
 if __name__ == '__main__':

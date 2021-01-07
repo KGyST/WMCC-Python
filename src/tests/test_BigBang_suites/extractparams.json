@@ -4,7 +4,8 @@
   "request": {
 	"category": "tests",
     "main_version": "19",
-    "object_path": "test_placeable.xml"
+    "object_path": "test_placeable.xml",
+	"Webhook": "localhost:8080"
 },
   "result": {
     "A": {

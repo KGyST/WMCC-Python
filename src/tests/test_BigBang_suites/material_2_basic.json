@@ -1,123 +1,125 @@
 {
-    "description": "Material: 2 basic",
-    "endpoint": "/creatematerials",
-    "request": {
-        "ProductName": "MaterialTestName",
-        "Template": {
-            "Materials": [],
-            "ArchicadTemplate": {}
-        },
-        "VariationsData": [
-            {
-                "VariationName": "MaterialTest 1",
-                "Parameters": [
-                    {
-                        "Name": "Description",
-                        "Value": "Test material description",
-						"Group": 5,
-                        "category": null
-                    },
-                    {
-                        "Name": "Class",
-                        "Value": "Test material class",
-						"Group": 5,
-                        "category": null
-                    },
-                    {
-                        "Name": "Comments",
-                        "Value": "Test material comment",
-						"Group": 5,
-                        "category": null
-                    },
-                    {
-                        "Name": "Colour",
-                        "Value": "#FFFFFF",
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Texture",
-                        "Value": null,
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Transparency",
-                        "Value": "0",
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Glossiness",
-                        "Value": "0",
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Reflectivity",
-                        "Value": "0",
-						"Group": 4,
-                        "category": null
-                    }
-                ]
-            },
-            {
-                "VariationName": "MaterialTest 2",
-                "Parameters": [
-                    {
-                        "Name": "Description",
-                        "Value": "Test material description 2",
-						"Group": 5,
-                        "category": null
-                    },
-                    {
-                        "Name": "Class",
-                        "Value": "Test material class 2",
-						"Group": 5,
-                        "category": null
-                    },
-                    {
-                        "Name": "Comments",
-                        "Value": "Test material comment 2",
-						"Group": 5,
-                        "category": null
-                    },
-                    {
-                        "Name": "Colour",
-                        "Value": "#000000",
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Texture",
-                        "Value": null,
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Transparency",
-                        "Value": "70",
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Glossiness",
-                        "Value": "80",
-						"Group": 4,
-                        "category": null
-                    },
-                    {
-                        "Name": "Reflectivity",
-                        "Value": "90",
-						"Group": 4,
-                        "category": null
-                    }
-                ]
-            }
-        ],
-        "productPageData": {}
+  "description": "Material: 2 basic",
+  "endpoint": "/creatematerials",
+  "hasMacroset": false,
+  "request": {
+    "ProductName": "MaterialTestName",
+	"Webhook": "localhost:8080",
+    "Template": {
+      "Materials": [],
+      "ArchicadTemplate": {}
     },
-    "result": {
-        "object_name": "commons_MaterialTestName.lcf"
-    }
+    "VariationsData": [
+      {
+        "VariationName": "MaterialTest 1",
+        "Parameters": [
+          {
+            "Name": "Description",
+            "Value": "Test material description",
+            "Group": 5,
+            "category": null
+          },
+          {
+            "Name": "Class",
+            "Value": "Test material class",
+            "Group": 5,
+            "category": null
+          },
+          {
+            "Name": "Comments",
+            "Value": "Test material comment",
+            "Group": 5,
+            "category": null
+          },
+          {
+            "Name": "Colour",
+            "Value": "#FFFFFF",
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Texture",
+            "Value": null,
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Transparency",
+            "Value": "0",
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Glossiness",
+            "Value": "0",
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Reflectivity",
+            "Value": "0",
+            "Group": 4,
+            "category": null
+          }
+        ]
+      },
+      {
+        "VariationName": "MaterialTest 2",
+        "Parameters": [
+          {
+            "Name": "Description",
+            "Value": "Test material description 2",
+            "Group": 5,
+            "category": null
+          },
+          {
+            "Name": "Class",
+            "Value": "Test material class 2",
+            "Group": 5,
+            "category": null
+          },
+          {
+            "Name": "Comments",
+            "Value": "Test material comment 2",
+            "Group": 5,
+            "category": null
+          },
+          {
+            "Name": "Colour",
+            "Value": "#000000",
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Texture",
+            "Value": null,
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Transparency",
+            "Value": "70",
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Glossiness",
+            "Value": "80",
+            "Group": 4,
+            "category": null
+          },
+          {
+            "Name": "Reflectivity",
+            "Value": "90",
+            "Group": 4,
+            "category": null
+          }
+        ]
+      }
+    ],
+    "productPageData": {}
+  },
+  "result": {
+    "placeableName": "commons_MaterialTestName.lcf"
+  }
 }

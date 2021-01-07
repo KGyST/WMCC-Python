@@ -185,7 +185,7 @@ def uploadRecords(inObjectNameS):
                         # uploadSingleRecord(objectData, stagingTable)
                         # if isProduction:
                     else:
-                        print(f"ERROR: Dev DB has more entries with name {objName}, You have to fill _id value in column F")
+                        print(f"ERROR: Dev DB has more entries with name {objName}, You have to fill _id value in column F and G")
                         resultDir["ERROR: More objects with the same name in Dev DB"].add(objName)
             else:
                 print(f"Object is not marked to be uploaded: {objName}")

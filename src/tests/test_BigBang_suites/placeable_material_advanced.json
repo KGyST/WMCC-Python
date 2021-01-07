@@ -3,37 +3,40 @@
   "endpoint": "/",
   "request": {
     "ProductName": "Placeable_LCF_name",
+	"Webhook": "localhost:8080",
     "Template": {
-      "Materials": [{
-                "Name": "Test material",
-                "RGB": [
-                    255,
-                    0,
-                    0
-                ],
-				"rDiffuse": 0.95,
-				"rShining": 0,
-				"sTextureName": "Chessmate",
-				"wTexture": 0.2,
-				"hTexture": 0.1,
-				"iTexture": 0,
-				"rTransparency": 0.5,
-				"rTransparency_attenuation": 0,
-				"rSpecular": 0.08,
-				"iSpecularColorS": [
-					0,
-					255,
-					0
-				],
-				"iEmissionColorS": [
-					0,
-					0,
-					255
-				],
-				"rEmission_attenuation": 0,
-				"iFill": 0,
-				"iFillColor": 0
-            }],
+      "Materials": [
+        {
+          "Name": "Test material",
+          "RGB": [
+            255,
+            0,
+            0
+          ],
+          "rDiffuse": 0.95,
+          "rShining": 0,
+          "sTextureName": "Chessmate",
+          "wTexture": 0.2,
+          "hTexture": 0.1,
+          "iTexture": 0,
+          "rTransparency": 0.5,
+          "rTransparency_attenuation": 0,
+          "rSpecular": 0.08,
+          "iSpecularColorS": [
+            0,
+            255,
+            0
+          ],
+          "iEmissionColorS": [
+            0,
+            0,
+            255
+          ],
+          "rEmission_attenuation": 0,
+          "iFill": 0,
+          "iFillColor": 0
+        }
+      ],
       "ArchicadTemplate": {
         "category": "tests",
         "main_macroset_version": "19",
@@ -49,7 +52,7 @@
     ]
   },
   "result": {
-    "macroset_name": "macroset_tests_19_20200518.lcf",
-    "object_name": "tests_Placeable_LCF_name.lcf"
-}
+    "placeableName": "tests_Placeable_LCF_name.lcf",
+    "macrosetName": "macroset_tests_19_19700101.lcf"
+  }
 }

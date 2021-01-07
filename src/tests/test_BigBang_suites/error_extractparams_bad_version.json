@@ -4,7 +4,8 @@
     "request": {
         "category": "tests",
         "main_version": "nonexisting_version",
-        "object_path": "surfaces\\nonexisting_macro.xml"
+        "object_path": "surfaces\\nonexisting_macro.xml",
+		"Webhook": "localhost:8080"
     },
     "result": {
         "message": {

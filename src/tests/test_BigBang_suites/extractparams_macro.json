@@ -4,7 +4,8 @@
     "request": {
         "category": "tests",
         "main_version": "19",
-        "object_path": "macros\\LibraryGlobals13_test.xml"
+        "object_path": "macros\\LibraryGlobals13_test.xml",
+		"Webhook": "localhost:8080"
     },
     "result": {
         "A": {

@@ -3,6 +3,7 @@
   "endpoint": "/",
   "request": {
     "ProductName": "Placeable_LCF_name",
+	"Webhook": "localhost:8080",
     "Template": {
       "Materials": [],
       "ArchicadTemplate": {
@@ -10,32 +11,33 @@
         "main_macroset_version": "19",
         "source_file": "test_placeable",
         "parameters": [],
-		"translations": {
-			"Height": {
-				"Measurement": "mm",
-				"ARCHICAD": {
-					"Name": "A",
-					"Measurement": "m"
-				}
-			}
-		}
+        "translations": {
+          "Height": {
+            "Measurement": "mm",
+            "ARCHICAD": {
+              "Name": "A",
+              "Measurement": "m"
+            }
+          }
+        }
       }
     },
     "VariationsData": [
       {
         "VariationName": "test_placeable1",
         "Parameters": [
-			{
-				"selectedUnit": "mm",
-				"Name": "Height",
-				"Group": 1,
-				"Value": "3000.0"
-			}]
+          {
+            "selectedUnit": "mm",
+            "Name": "Height",
+            "Group": 1,
+            "Value": "3000.0"
+          }
+        ]
       }
     ]
   },
   "result": {
-    "macroset_name": "macroset_tests_19_20200518.lcf",
-    "object_name": "tests_Placeable_LCF_name.lcf"
-}
+    "placeableName": "tests_Placeable_LCF_name.lcf",
+    "macrosetName": "macroset_tests_19_19700101.lcf"
+  }
 }

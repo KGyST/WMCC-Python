@@ -1,8 +1,10 @@
 {
     "description": "Expected error: placeable: nonexisting placeable",
     "endpoint": "/",
+	"hasMacroset": false,
     "request": {
         "ProductName": "Placeable_LCF_name",
+		"Webhook": "localhost:8080",
         "Template": {
             "Materials": [],
             "ArchicadTemplate": {

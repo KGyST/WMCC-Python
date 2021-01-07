@@ -3,6 +3,7 @@
   "endpoint": "/",
   "request": {
     "ProductName": "Placeable_LCF_name",
+	"Webhook": "localhost:8080",
     "Template": {
       "Materials": [
         {
@@ -34,15 +35,15 @@
         "Parameters": [
           {
             "Name": "Test Material Parameter",
-			"Group": 2,
+            "Group": 2,
             "Value": "Test material"
-			}
+          }
         ]
       }
     ]
   },
   "result": {
-    "macroset_name": "macroset_tests_19_20200518.lcf",
-    "object_name": "tests_Placeable_LCF_name.lcf"
+    "placeableName": "tests_Placeable_LCF_name.lcf",
+    "macrosetName": "macroset_tests_19_19700101.lcf"
   }
 }
