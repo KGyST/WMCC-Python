@@ -119,7 +119,10 @@ def testWorker():
                             blob_client.upload_blob(placeable, overwrite=True)
                         req = {"Name": result["placeableName"],
                                "DownloadUrl": result["placeableURL"]}
-                        conn.request("POST", endp, json.dumps(req), headers)
+                        try:
+                            conn.request("POST", endp, json.dumps(req), headers)
+                        except http.client.ResponseNotReady:
+                            logging.error("ResponseNotReady")
                         response = conn.getresponse()
 
                     if "macrosetName" in result:
@@ -132,7 +135,10 @@ def testWorker():
                             blob_client.upload_blob(macroset, overwrite=True)
                         req = {"Name": result["macrosetName"],
                                "DownloadUrl": result["macrosetURL"]}
-                        conn.request("POST", endp, json.dumps(req), headers)
+                        try:
+                            conn.request("POST", endp, json.dumps(req), headers)
+                        except http.client.ResponseNotReady:
+                            logging.error("ResponseNotReady")
                         response = conn.getresponse()
 
                     if not response:
