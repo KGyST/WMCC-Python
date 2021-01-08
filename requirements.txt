@@ -14,6 +14,7 @@ Werkzeug
 azure-servicebus
 azure-common
 azure-core
+azure-storage-blob
 oauthlib
 requests-oauthlib
 
