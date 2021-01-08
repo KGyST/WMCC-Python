@@ -8,7 +8,7 @@ from logging.config import dictConfig
 import uuid
 from urllib.parse import urlparse
 
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
+from azure.storage.blob import BlobServiceClient
 
 import http, ssl
 
@@ -25,7 +25,8 @@ from src.WMCC import (
     CLEANUP,
     WMCCException,
     STORAGE_NAME,
-    RESULT_CONTAINER_NAME
+    RESULT_CONTAINER_NAME,
+    RESULT_CONN_STRING
 )
 
 if isinstance(LOGLEVEL, str):
@@ -62,7 +63,7 @@ dictConfig({
 def testWorker():
     logging.info("worker started")
     container_name  = RESULT_CONTAINER_NAME
-    connect_str     = os.getenv("RESULT_CONN_STRING")
+    connect_str     = RESULT_CONN_STRING
 
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     # container_client = blob_service_client.get_container_client(container_name)
