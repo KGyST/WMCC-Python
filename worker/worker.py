@@ -104,7 +104,7 @@ def testWorker():
                     s = ssl.SSLContext()
                     conn = http.client.HTTPSConnection(job["data"]["host"], context=s)
                 headers = {"Content-Type": "application/json",
-                           "Authorization": f"{job['data']['authToken']}"}
+                           "Authorization": f"Bearer  {job['data']['authToken']}"}
 
                 response = None
 
