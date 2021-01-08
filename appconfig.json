@@ -15,5 +15,6 @@
   "SERVICEBUS_QUEUE_NAME": "taskqueue_local",
   "DUMP_OUT_REQUEST": true,
   "STORAGE_NAME": "falconestorage",
-  "RESULT_CONTAINER_NAME": "archicad-local"
+  "RESULT_CONTAINER_NAME": "archicad-local",
+  "RESULT_CONN_STRING": "DefaultEndpointsProtocol=https;AccountName=falconestorage;AccountKey=xUepXBEtdcKEp74pOfw0iqv6weQmA5YQPsITR7BzmFA4/j/UdFqoKC3Ja0bv4PbxO9HKvwjkZ1PQ3+jC56ezZA==;EndpointSuffix=core.windows.net"
 }

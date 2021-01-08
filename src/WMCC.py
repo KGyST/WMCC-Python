@@ -59,6 +59,7 @@ with open(APP_CONFIG, "r") as ac:
     SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
     STORAGE_NAME                = appJSON["STORAGE_NAME"]
     RESULT_CONTAINER_NAME       = appJSON["RESULT_CONTAINER_NAME"]
+    RESULT_CONN_STRING          = appJSON["RESULT_CONN_STRING"]
 
 
     if isinstance(LOGLEVEL, str):
