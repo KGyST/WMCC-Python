@@ -2,8 +2,14 @@
   "description": "Expected error: placeable: malformed request",
   "endpoint": "/",
   "request": {
-    "ProductName": "Placeable_LCF_name",
-    "Webhook": "localhost:8080",
+    "productData": {
+      "productName": "Placeable_LCF_name",
+      "materialData": []
+    },
+    "authToken": "",
+    "host": "127.0.0.1:4443",
+    "archicadCallbackForObject": "127.0.0.1:4443/6",
+    "archicadCallbackForMacroset": "127.0.0.1:4443/61",
     "Template": {
       "Materials": []
     },
@@ -23,11 +29,17 @@
       },
       "additional_data": {
         "key": [
-          "ArchicadTemplate"
+          "archicadTemplate"
         ],
         "request": {
-          "ProductName": "Placeable_LCF_name",
-          "Webhook": "localhost:8080",
+          "productData": {
+            "productName": "Placeable_LCF_name",
+            "materialData": []
+          },
+          "authToken": "",
+          "host": "127.0.0.1:4443",
+          "archicadCallbackForObject": "127.0.0.1:4443/6",
+          "archicadCallbackForMacroset": "127.0.0.1:4443/61",
           "Template": {
             "Materials": []
           },

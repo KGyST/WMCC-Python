@@ -1,25 +1,31 @@
 {
     "description": "Expected error: placeable: nonexisting placeable",
     "endpoint": "/",
-	"hasMacroset": false,
     "request": {
-        "ProductName": "Placeable_LCF_name",
-		"Webhook": "localhost:8080",
-        "Template": {
-            "Materials": [],
-            "ArchicadTemplate": {
-                "category": "tests",
-                "main_macroset_version": "19",
-                "source_file": "nonexisting_placeable",
-                "parameters": {}
-            }
-        },
-        "VariationsData": [
-            {
-                "VariationName": "test_placeable1",
-                "Parameters": []
-            }
-        ]
+    "productData": {
+      "productName": "Placeable_LCF_name",
+      "materialData": [],
+	  "variationsData": [
+		{
+			"variationName": "test_placeable1",
+			"parameters": []
+		}
+		]
+    },
+	"archicadTemplate": {
+		"category": "tests",
+		"hasMacroSet": false,
+		"main_macroset_version": "19",
+		"source_file": "nonexisting_placeable",
+		"parameters": {}
+            },
+    "authToken": "",
+    "host": "127.0.0.1:4443",
+    "archicadCallbackForObject": "127.0.0.1/6",
+    "archicadCallbackForMacroset": "127.0.0.1/61",
+        "template": {
+            "Materials": []
+        }
     },
     "result": {
         "error_message": {

@@ -2,12 +2,11 @@
   "description": "Placeable: material with simple RGB values",
   "endpoint": "/",
   "request": {
-    "ProductName": "Placeable_LCF_name",
-	"Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [
+    "productData": {
+      "productName": "Placeable_LCF_name",
+      "materialData": [
         {
-          "Name": "Test material",
+          "name": "Test material",
           "RGB": [
             255,
             0,
@@ -15,19 +14,25 @@
           ]
         }
       ],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "19",
-        "source_file": "test_placeable",
-        "parameters": []
-      }
+      "variationsData": [
+        {
+          "variationName": "test_placeable1",
+          "parameters": []
+        }
+      ]
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": []
-      }
-    ]
+    "authToken": "",
+    "host": "127.0.0.1:4443",
+    "archicadCallbackForObject": "127.0.0.1:4443/6/",
+    "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+    "archicadTemplate": {
+      "category": "tests",
+      "hasMacroSet": true,
+      "main_macroset_version": "19",
+      "source_file": "test_placeable",
+      "parameters": []
+    },
+    "template": ""
   },
   "result": {
     "placeableName": "tests_Placeable_LCF_name.lcf",

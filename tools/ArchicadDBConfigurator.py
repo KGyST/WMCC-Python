@@ -13,6 +13,7 @@ import pprint
 from bson.objectid import ObjectId
 
 import argparse
+import os, json
 
 COL_ID          = 0
 COL_REVIT_NAME  = 1
@@ -24,6 +25,12 @@ COL_FIRST_DATA  = 5
 CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q.azure.mongodb.net/test?authSource=admin&replicaSet=Archos-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
 DB_NAME = 'falcon-dev'
 TABLE_NAME = 'templates'
+
+_SRC        = r".."
+APP_CONFIG  = os.path.join(_SRC, r"appconfig.json")
+with open(APP_CONFIG, "r") as ac:
+    APP_JSON = json.load(ac)
+    CONTENT_DIR_NAME            = APP_JSON["CONTENT_DIR_NAME"]
 
 class NoGoogleCredentialsException(Exception):
     pass
@@ -148,9 +155,10 @@ def configureObjectsDB(inParams):
     ap.add_argument("-2", "--secondposition")
 
     for row in googleSpreadsheet:
-        if objectsToProcess\
-            and (row[0] in objectsToProcess
-                 or row[1] in objectsToProcess):
+        if  not objectsToProcess\
+        or  objectsToProcess\
+            and (   row[0] in objectsToProcess
+                or  row[1] in objectsToProcess):
             objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
             if not objectData:
                 print(f"ERROR: {row[COL_REVIT_NAME]} not found in Database")
@@ -202,8 +210,13 @@ def configureObjectsDB(inParams):
                                 _translations[cell]["ARCHICAD"]  = [_translations[cell]["ARCHICAD"]]
                             _translations[cell]["ARCHICAD"].append(_trans["ARCHICAD"])
 
+            with open(os.path.join(CONTENT_DIR_NAME, "categoryData.json"), "r") as cDF:
+                _category = json.load(cDF)
+            _hasMacroset = True if _category[row[COL_CATEGORY]][row[COL_MAIN_VER]]["macro_folders"] else False
+
             ARCHICAD_template= {
                 "category": row[COL_CATEGORY],
+                "hasMacroSet": _hasMacroset,
                 "main_macroset_version": row[COL_MAIN_VER],
                 "source_file": row[COL_AC_NAME], }
 

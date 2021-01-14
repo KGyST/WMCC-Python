@@ -19,7 +19,7 @@ FOLDER      = "test_BigBang"
 SERVER_URL  = os.environ['SERVER_URL'] if "SERVER_URL" in os.environ else "localhost"
 TEST_ONLY   = os.environ['TEST_ONLY']  if "TEST_ONLY"  in os.environ else ""            # Delimiter: ; without space, filenames without ext
 print(f"Server URL: {SERVER_URL} \n")
-RECEIVER_SERVER_PORT = 8080
+RECEIVER_SERVER_PORT = 4443
 
 _SRC        = r".."
 APP_CONFIG  = os.path.join(_SRC, "..", r"appconfig.json")   #FIXME relative path not elegant here
@@ -33,12 +33,13 @@ TEST_SEQUENCE_LIST = ['resetjobqueue', "extractparams", "error", "create_macrose
 
 class myHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global responseJSON, isMacroset
+        global responseJSON, hasMacroSet
 
         content_len = int(self.headers.get('Content-Length'))
         _response = json.loads(self.rfile.read(content_len).decode("utf-8"))
         if "Name" in _response:
-            if not "macroset_" in _response["Name"]:
+            if "/6/" in self.path:
+                # "/6/" for placeable objects, "/61/" for macrosets
                 responseJSON.update({   "placeableName": _response["Name"],
                                         "placeableURL":  _response["DownloadUrl"]})
             else:
@@ -50,10 +51,9 @@ class myHandler(BaseHTTPRequestHandler):
 
         self.wfile.write("HTTP/1.1 200 Ok".encode("utf-8"))
 
-        server.server_close()
+        if not hasMacroSet or "macrosetName" in responseJSON:
+            server.server_close()
 
-
-server = HTTPServer(('', RECEIVER_SERVER_PORT), myHandler)
 
 container_name = "archicad-local"
 connect_str = "DefaultEndpointsProtocol=https;AccountName=falconestorage;AccountKey=xUepXBEtdcKEp74pOfw0iqv6weQmA5YQPsITR7BzmFA4/j/UdFqoKC3Ja0bv4PbxO9HKvwjkZ1PQ3+jC56ezZA==;EndpointSuffix=core.windows.net"
@@ -146,15 +146,10 @@ class TestCase_BigBang(unittest.TestCase):
     @staticmethod
     def BigBangTestCaseFactory(inTestData, inDir, inFileName):
         def func(inObj):
-            global responseJSON, server, isPlaceable
-            isPlaceable = True
+            global responseJSON, server, hasMacroSet
+            hasMacroSet = "archicadTemplate" in inTestData["request"] and inTestData["request"]["archicadTemplate"]["hasMacroSet"]
 
             outFileName = os.path.join(inDir + "_errors", inFileName)
-            if "localhost" in SERVER_URL:
-                conn = http.client.HTTPConnection(SERVER_URL)
-            else:
-                s = ssl.SSLContext()
-                conn = http.client.HTTPSConnection(SERVER_URL, context=s)
 
             if "textures" in inTestData:
                 for textureToUpload in inTestData["textures"]:
@@ -163,6 +158,12 @@ class TestCase_BigBang(unittest.TestCase):
                     with open(os.path.join(inDir + "_suites", textureToUpload), "rb") as tF:
                         blob_client.upload_blob(tF, overwrite=True)
 
+            #FIXME non-ssl should be removed
+            if "localhost" in SERVER_URL:
+                conn = http.client.HTTPConnection(SERVER_URL)
+            else:
+                s = ssl.SSLContext()
+                conn = http.client.HTTPSConnection(SERVER_URL, context=s)
             headers = {"Content-Type": "application/json"}
             endp = inTestData["endpoint"]
             req = inTestData["request"]
@@ -172,21 +173,12 @@ class TestCase_BigBang(unittest.TestCase):
 
             if not responseJSON:
                 try:
+                    server = HTTPServer(('', RECEIVER_SERVER_PORT), myHandler)
+                    server.socket = ssl.wrap_socket (server.socket, certfile='../../tools/temp_server.pem', server_side=True)
                     server.serve_forever()
                 except IOError:
                     conn.close()
                     server.shutdown()
-                    server = HTTPServer(('', RECEIVER_SERVER_PORT), myHandler)
-
-                    if (not "hasMacroset" in inTestData) or inTestData["hasMacroset"]:
-                        #By default test cases have macroset
-                        try:
-                            isPlaceable = False
-                            server.serve_forever()
-                        except IOError:
-                            conn.close()
-                            server.shutdown()
-                            server = HTTPServer(('', RECEIVER_SERVER_PORT), myHandler)
 
             # FIXME actual day not tested
             # minor_version = datetime.date.today().strftime("%Y%m%d")
@@ -276,6 +268,8 @@ class TestCase_BigBang(unittest.TestCase):
                                                     f.write(receivedString)
                                         with open(os.path.join(root, receivedTestFile), "r") as receivedTest:
                                             inObj.assertEqual(originalTest.read(), receivedTest.read())
+                                except FileNotFoundError:
+                                    pass
                             except (AssertionError, FileNotFoundError) as a:
                                 targetFolderPath = os.path.join(FOLDER + "_errors", inFileName[:-5], folderToExtract, relPath)
 

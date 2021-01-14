@@ -1,27 +1,32 @@
 {
-  "description": "Placeable: create with target macro date",
-  "endpoint": "/",
-  "request": {
-    "ProductName": "Placeable_LCF_name",
-	"Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "19",
-        "source_file": "test_placeable",
-        "parameters": []
-      }
+    "description": "Placeable: create with target macro date",
+    "endpoint": "/",
+    "request": {
+        "productData": {
+            "productName": "Placeable_LCF_name",
+            "materialData": [],
+            "variationsData": [
+                {
+                    "variationName": "test_placeable1",
+                    "parameters": []
+                }
+            ]
+        },
+        "archicadTemplate": {
+            "category": "tests",
+            "main_macroset_version": "19",
+            "source_file": "test_placeable",
+            "parameters": [],
+            "hasMacroSet": true
+        },
+        "authToken": "",
+        "host": "127.0.0.1:4443",
+        "archicadCallbackForObject": "127.0.0.1:4443/6/",
+        "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+        "template": ""
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": []
-      }
-    ]
-  },
-  "result": {
-    "placeableName": "tests_Placeable_LCF_name.lcf",
-    "macrosetName": "macroset_tests_19_19700101.lcf"
-  }
+    "result": {
+        "placeableName": "tests_Placeable_LCF_name.lcf",
+        "macrosetName": "macroset_tests_19_19700101.lcf"
+    }
 }
