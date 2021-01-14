@@ -1,25 +1,31 @@
 {
   "description": "Expected error: placeable: nonexisting version",
   "endpoint": "/",
-  "hasMacroset": false,
   "request": {
-    "ProductName": "Placeable_LCF_name",
-    "Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "bad_version",
-        "source_file": "test_placeable",
-        "parameters": {}
-      }
+    "productData": {
+      "productName": "Placeable_LCF_name",
+      "materialData": [],
+      "variationsData": [
+        {
+          "variationName": "test_placeable1",
+          "parameters": []
+        }
+      ]
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": []
-      }
-    ]
+    "archicadTemplate": {
+      "category": "tests",
+      "hasMacroSet": false,
+      "main_macroset_version": "bad_version",
+      "source_file": "test_placeable",
+      "parameters": {}
+    },
+    "authToken": "",
+    "host": "127.0.0.1:4443",
+    "archicadCallbackForObject": "127.0.0.1:4443/6",
+    "archicadCallbackForMacroset": "127.0.0.1:4443/61",
+    "template": {
+      "Materials": []
+    }
   },
   "result": {
     "error_message": {
@@ -30,44 +36,40 @@
     "additional_data": {
       "main_version": "bad_version",
       "request": {
-        "ProductName": "Placeable_LCF_name",
-        "Webhook": "localhost:8080",
-        "Template": {
-          "Materials": [],
-          "ArchicadTemplate": {
-            "category": "tests",
-            "main_macroset_version": "bad_version",
-            "source_file": "test_placeable",
-            "parameters": {}
-          }
+        "productData": {
+          "productName": "Placeable_LCF_name",
+          "materialData": [],
+          "variationsData": [
+            {
+              "variationName": "test_placeable1",
+              "parameters": []
+            }
+          ]
         },
-        "VariationsData": [
-          {
-            "VariationName": "test_placeable1",
-            "Parameters": []
-          }
-        ],
-        "productName": "Placeable_LCF_name",
+        "archicadTemplate": {
+          "category": "tests",
+          "hasMacroSet": false,
+          "main_macroset_version": "bad_version",
+          "source_file": "test_placeable",
+          "parameters": {}
+        },
+        "authToken": "",
+        "host": "127.0.0.1:4443",
+        "archicadCallbackForObject": "127.0.0.1:4443/6",
+        "archicadCallbackForMacroset": "127.0.0.1:4443/61",
         "template": {
-          "Materials": [],
-          "ArchicadTemplate": {
-            "category": "tests",
-            "main_macroset_version": "bad_version",
-            "source_file": "test_placeable",
-            "parameters": {}
-          },
           "materials": [],
           "ARCHICAD_template": {
             "category": "tests",
+            "hasMacroSet": false,
             "main_macroset_version": "bad_version",
             "source_file": "test_placeable",
             "parameters": {}
           }
         },
+        "productName": "Placeable_LCF_name",
         "variationsData": [
           {
-            "VariationName": "test_placeable1",
-            "Parameters": [],
             "variationName": "test_placeable1",
             "parameters": [],
             "materialParameters": [],

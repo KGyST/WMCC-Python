@@ -1,122 +1,127 @@
 {
   "description": "Material: 2 basic",
   "endpoint": "/creatematerials",
-  "hasMacroset": false,
   "request": {
-    "ProductName": "MaterialTestName",
-	"Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {}
+    "archicadTemplate": {
+      "hasMacroSet": false
     },
-    "VariationsData": [
-      {
-        "VariationName": "MaterialTest 1",
-        "Parameters": [
-          {
-            "Name": "Description",
-            "Value": "Test material description",
-            "Group": 5,
-            "category": null
-          },
-          {
-            "Name": "Class",
-            "Value": "Test material class",
-            "Group": 5,
-            "category": null
-          },
-          {
-            "Name": "Comments",
-            "Value": "Test material comment",
-            "Group": 5,
-            "category": null
-          },
-          {
-            "Name": "Colour",
-            "Value": "#FFFFFF",
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Texture",
-            "Value": null,
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Transparency",
-            "Value": "0",
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Glossiness",
-            "Value": "0",
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Reflectivity",
-            "Value": "0",
-            "Group": 4,
-            "category": null
-          }
-        ]
-      },
-      {
-        "VariationName": "MaterialTest 2",
-        "Parameters": [
-          {
-            "Name": "Description",
-            "Value": "Test material description 2",
-            "Group": 5,
-            "category": null
-          },
-          {
-            "Name": "Class",
-            "Value": "Test material class 2",
-            "Group": 5,
-            "category": null
-          },
-          {
-            "Name": "Comments",
-            "Value": "Test material comment 2",
-            "Group": 5,
-            "category": null
-          },
-          {
-            "Name": "Colour",
-            "Value": "#000000",
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Texture",
-            "Value": null,
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Transparency",
-            "Value": "70",
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Glossiness",
-            "Value": "80",
-            "Group": 4,
-            "category": null
-          },
-          {
-            "Name": "Reflectivity",
-            "Value": "90",
-            "Group": 4,
-            "category": null
-          }
-        ]
-      }
-    ],
+    "productData": {
+      "productName": "MaterialTestName",
+      "materialData": [],
+      "variationsData": [
+        {
+          "variationName": "MaterialTest 1",
+          "parameters": [
+            {
+              "name": "Description",
+              "value": "Test material description",
+              "group": "material",
+              "category": null
+            },
+            {
+              "name": "Class",
+              "value": "Test material class",
+              "group": "material",
+              "category": null
+            },
+            {
+              "name": "Comments",
+              "value": "Test material comment",
+              "group": "material",
+              "category": null
+            },
+            {
+              "name": "Colour",
+              "value": "#FFFFFF",
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Texture",
+              "value": null,
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Transparency",
+              "value": "0",
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Glossiness",
+              "value": "0",
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Reflectivity",
+              "value": "0",
+              "group": "materialAppearance",
+              "category": null
+            }
+          ]
+        },
+        {
+          "variationName": "MaterialTest 2",
+          "parameters": [
+            {
+              "name": "Description",
+              "value": "Test material description 2",
+              "group": "material",
+              "category": null
+            },
+            {
+              "name": "Class",
+              "value": "Test material class 2",
+              "group": "material",
+              "category": null
+            },
+            {
+              "name": "Comments",
+              "value": "Test material comment 2",
+              "group": "material",
+              "category": null
+            },
+            {
+              "name": "Colour",
+              "value": "#000000",
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Texture",
+              "value": null,
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Transparency",
+              "value": "70",
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Glossiness",
+              "value": "80",
+              "group": "materialAppearance",
+              "category": null
+            },
+            {
+              "name": "Reflectivity",
+              "value": "90",
+              "group": "materialAppearance",
+              "category": null
+            }
+          ]
+        }
+      ]
+    },
+    "authToken": "",
+    "host": "127.0.0.1:4443",
+    "archicadCallbackForObject": "127.0.0.1:4443/6/",
+    "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+    "template": "",
     "productPageData": {}
   },
   "result": {

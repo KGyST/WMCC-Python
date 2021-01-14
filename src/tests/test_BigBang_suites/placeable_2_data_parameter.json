@@ -1,38 +1,47 @@
 {
-  "description": "Placeable: create basic with 2 data parameters, 19",
-  "endpoint": "/",
-  "request": {
-    "ProductName": "Placeable_LCF_name",
-	"Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "19",
-        "source_file": "test_placeable",
-        "parameters": []
-      }
+    "description": "Placeable: create basic with 2 data parameters, 19",
+    "endpoint": "/",
+    "request": {
+        "productData": {
+            "productName": "Placeable_LCF_name",
+            "materialData": [],
+            "variationsData": [
+                {
+                    "variationName": "test_placeable1",
+                    "parameters": [
+                        {
+                            "Name": "Test parameter 1",
+                            "Value": "Test value 1",
+                            "name": "Test parameter 1",
+                            "value": "Test value 1",
+                            "group": "data"
+                        },
+                        {
+                            "Name": "Test parameter 2",
+                            "Value": "Test value 2",
+                            "name": "Test parameter 2",
+                            "value": "Test value 2",
+                            "group": "data"
+                        }
+                    ]
+                }
+            ]
+        },
+        "archicadTemplate": {
+            "category": "tests",
+            "main_macroset_version": "19",
+            "source_file": "test_placeable",
+            "parameters": [],
+            "hasMacroSet": true
+        },
+        "authToken": "",
+        "host": "127.0.0.1:4443",
+        "archicadCallbackForObject": "127.0.0.1:4443/6/",
+        "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+        "template": ""
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": [
-          {
-            "Name": "Test parameter 1",
-            "Group": 3,
-            "Value": "Test value 1"
-          },
-          {
-            "Name": "Test parameter 2",
-            "Group": 3,
-            "Value": "Test value 2"
-          }
-        ]
-      }
-    ]
-  },
-  "result": {
-    "placeableName": "tests_Placeable_LCF_name.lcf",
-    "macrosetName": "macroset_tests_19_19700101.lcf"
-  }
+    "result": {
+        "placeableName": "tests_Placeable_LCF_name.lcf",
+        "macrosetName": "macroset_tests_19_19700101.lcf"
+    }
 }

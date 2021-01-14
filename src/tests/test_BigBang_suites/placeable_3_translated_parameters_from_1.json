@@ -1,49 +1,54 @@
 {
-  "description": "Placeable: 3 translated parameters form one common source, including more units, 18",
-  "endpoint": "/",
-  "request": {
-    "ProductName": "Placeable_LCF_name",
-    "Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "18",
-        "source_file": "test_placeable_3",
-        "parameters": [],
-        "translations": {
-          "Height": {
-            "Measurement": "mm",
-            "ARCHICAD": [
-              {
-                "Name": "A",
-                "Measurement": "m"
-              },
-              {
-                "Name": "rA",
-                "Measurement": "mm"
-              }
+    "description": "Placeable: 3 translated parameters form one common source, including more units, 18",
+    "endpoint": "/",
+    "request": {
+        "productData": {
+            "productName": "Placeable_LCF_name",
+            "materialData": [],
+            "variationsData": [
+                {
+                    "variationName": "test_placeable1",
+                    "parameters": [
+                        {
+                            "selectedUnit": "mm",
+                            "name": "Height",
+                            "value": "3000.0",
+                            "group": "dimensional"
+                        }
+                    ]
+                }
             ]
-          }
-        }
-      }
+        },
+        "archicadTemplate": {
+            "category": "tests",
+            "main_macroset_version": "18",
+            "source_file": "test_placeable_3",
+            "parameters": [],
+            "translations": {
+                "Height": {
+                    "Measurement": "mm",
+                    "ARCHICAD": [
+                        {
+                            "Name": "A",
+                            "Measurement": "m"
+                        },
+                        {
+                            "Name": "rA",
+                            "Measurement": "mm"
+                        }
+                    ]
+                }
+            },
+            "hasMacroSet": true
+        },
+        "authToken": "",
+        "host": "127.0.0.1:4443",
+        "archicadCallbackForObject": "127.0.0.1:4443/6/",
+        "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+        "template": ""
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": [
-          {
-            "selectedUnit": "mm",
-            "Name": "Height",
-            "Group": 1,
-            "Value": "3000.0"
-          }
-        ]
-      }
-    ]
-  },
-  "result": {
-    "placeableName": "tests_Placeable_LCF_name.lcf",
-    "macrosetName": "macroset_tests_18_19700101.lcf"
-  }
+    "result": {
+        "placeableName": "tests_Placeable_LCF_name.lcf",
+        "macrosetName": "macroset_tests_18_19700101.lcf"
+    }
 }

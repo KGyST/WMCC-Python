@@ -2,45 +2,51 @@
   "description": "Placeable: 2 translated parameters form one common source, 19",
   "endpoint": "/",
   "request": {
-    "ProductName": "Placeable_LCF_name",
-	"Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "19",
-        "source_file": "test_placeable_2",
-        "parameters": [],
-        "translations": {
-          "Height": {
-            "Measurement": "mm",
-            "ARCHICAD": [
-              {
-                "Name": "A",
-                "Measurement": "m"
-              },
-              {
-                "Name": "B",
-                "Measurement": "m"
-              }
-            ]
-          }
+    "productData": {
+      "variationsData": [
+        {
+          "variationName": "test_placeable1",
+          "parameters": [
+            {
+              "selectedUnit": "mm",
+              "name": "Height",
+              "group": "dimensional",
+              "value": "3000.0"
+            }
+          ]
+        }
+      ],
+      "materialData": [
+      ],
+      "productName": "Placeable_LCF_name"
+    },
+    "authToken": "",
+    "host": "127.0.0.1:4443",
+    "archicadCallbackForObject": "127.0.0.1:4443/6/",
+    "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+    "archicadTemplate": {
+      "category": "tests",
+      "hasMacroSet": true,
+      "main_macroset_version": "19",
+      "source_file": "test_placeable_2",
+      "parameters": [],
+      "translations": {
+        "Height": {
+          "Measurement": "mm",
+          "ARCHICAD": [
+            {
+              "Name": "A",
+              "Measurement": "m"
+            },
+            {
+              "Name": "B",
+              "Measurement": "m"
+            }
+          ]
         }
       }
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": [
-          {
-            "selectedUnit": "mm",
-            "Name": "Height",
-            "Group": 1,
-            "Value": "3000.0"
-          }
-        ]
-      }
-    ]
+    "template": ""
   },
   "result": {
     "placeableName": "tests_Placeable_LCF_name.lcf",

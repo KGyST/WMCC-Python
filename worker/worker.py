@@ -64,6 +64,8 @@ def testWorker():
     logging.info("worker started")
     container_name  = RESULT_CONTAINER_NAME
     connect_str     = RESULT_CONN_STRING
+    logger = logging.getLogger('azure.storage.blob')
+    logger.setLevel(logging.WARNING)
 
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     # container_client = blob_service_client.get_container_client(container_name)
@@ -98,18 +100,16 @@ def testWorker():
                                                                                        "request": job['data']})
                     result = we.description
 
-                if "localhost" in job["data"]["host"]:
-                    conn = http.client.HTTPConnection(job["data"]["host"])
-                else:
-                    s = ssl.SSLContext()
-                    conn = http.client.HTTPSConnection(job["data"]["host"], context=s)
+                SSLContext = ssl.SSLContext()
+
                 headers = {"Content-Type": "application/json",
-                           "Authorization": f"Bearer  {job['data']['authToken']}"}
+                           "Authorization": f"Bearer {job['data']['authToken']}"}
 
                 response = None
 
                 try:
                     if "placeableName" in result:
+                        conn = http.client.HTTPSConnection(job["data"]["host"], context=SSLContext)
                         endp = urlparse(job["data"]["archicadCallbackForObject"])
                         endp = "?".join((endp.path, endp.query,))
                         blobName = str(uuid.uuid4())
@@ -119,10 +119,15 @@ def testWorker():
                             blob_client.upload_blob(placeable, overwrite=True)
                         req = {"Name": result["placeableName"],
                                "DownloadUrl": result["placeableURL"]}
-                        conn.request("POST", endp, json.dumps(req), headers)
-                        response = conn.getresponse()
+                        try:
+                            conn.request("POST", endp, json.dumps(req), headers)
+                            response = conn.getresponse()
+                            conn.close()
+                        except http.client.ResponseNotReady:
+                            logging.error("ResponseNotReady archicadCallbackForObject")
 
                     if "macrosetName" in result:
+                        conn = http.client.HTTPSConnection(job["data"]["host"], context=SSLContext)
                         endp = urlparse(job["data"]["archicadCallbackForMacroset"])
                         endp = "?".join((endp.path, endp.query,))
                         blobName = str(uuid.uuid4())
@@ -132,15 +137,22 @@ def testWorker():
                             blob_client.upload_blob(macroset, overwrite=True)
                         req = {"Name": result["macrosetName"],
                                "DownloadUrl": result["macrosetURL"]}
-                        conn.request("POST", endp, json.dumps(req), headers)
-                        response = conn.getresponse()
+                        try:
+                            s = ssl.SSLContext()
+                            conn = http.client.HTTPSConnection(job["data"]["host"], context=s)
+                            response = None
+                            conn.request("POST", endp, json.dumps(req), headers)
+                            response = conn.getresponse()
+                        except http.client.ResponseNotReady:
+                            logging.error("ResponseNotReady archicadCallbackForMacroset")
 
                     if not response:
-                        conn.request("POST", endp, json.dumps(result), headers)
+                        conn = http.client.HTTPSConnection(job["data"]["host"], context=SSLContext)
+                        conn.request("POST", "/6/", json.dumps(result), headers)
                         response = conn.getresponse()
 
-                except (ConnectionRefusedError, ConnectionResetError):
-                    logging.debug("ConnectionRefusedError: nobody at receiver side")
+                except (ConnectionRefusedError, ConnectionResetError, TimeoutError) as e:
+                    logging.debug(f"ConnectionRefusedError: nobody at receiver side or timeout {e}")
 
                 if CLEANUP:
                     shutil.rmtree(result["placeableLCFPath"])

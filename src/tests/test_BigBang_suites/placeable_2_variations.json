@@ -1,45 +1,50 @@
 {
-  "description": "Placeables: 2 variations with generic translations using parameters, one given in mm, one in inches, 19",
-  "endpoint": "/",
-  "request": {
-    "ProductName": "Placeable_LCF_name",
-	"Webhook": "localhost:8080",
-    "Template": {
-      "Materials": [],
-      "ArchicadTemplate": {
-        "category": "tests",
-        "main_macroset_version": "19",
-        "source_file": "test_placeable",
-        "parameters": []
-      }
+    "description": "Placeables: 2 variations with generic translations using parameters, one given in mm, one in inches, 19",
+    "endpoint": "/",
+    "request": {
+        "productData": {
+            "productName": "Placeable_LCF_name",
+            "materialData": [],
+            "variationsData": [
+                {
+                    "variationName": "test_placeable1",
+                    "parameters": [
+                        {
+                            "selectedUnit": "mm",
+                            "name": "Height",
+                            "value": "1000.0",
+                            "group": "dimensional"
+                        }
+                    ]
+                },
+                {
+                    "variationName": "test_placeable2",
+                    "parameters": [
+                        {
+                            "selectedUnit": "in",
+                            "name": "Height",
+                            "value": "200.0",
+                            "group": "dimensional"
+                        }
+                    ]
+                }
+            ]
+        },
+        "archicadTemplate": {
+            "category": "tests",
+            "main_macroset_version": "19",
+            "source_file": "test_placeable",
+            "parameters": [],
+            "hasMacroSet": true
+        },
+        "authToken": "",
+        "host": "127.0.0.1:4443",
+        "archicadCallbackForObject": "127.0.0.1:4443/6/",
+        "archicadCallbackForMacroset": "127.0.0.1:4443/61/",
+        "template": ""
     },
-    "VariationsData": [
-      {
-        "VariationName": "test_placeable1",
-        "Parameters": [
-          {
-            "Name": "Height",
-            "Value": "1000.0",
-            "Group": 1,
-            "selectedUnit": "mm"
-          }
-        ]
-      },
-      {
-        "VariationName": "test_placeable2",
-        "Parameters": [
-          {
-            "Name": "Height",
-            "Value": "200.0",
-            "Group": 1,
-            "selectedUnit": "in"
-          }
-        ]
-      }
-    ]
-  },
-  "result": {
-    "placeableName": "tests_Placeable_LCF_name.lcf",
-    "macrosetName": "macroset_tests_19_19700101.lcf"
-  }
+    "result": {
+        "placeableName": "tests_Placeable_LCF_name.lcf",
+        "macrosetName": "macroset_tests_19_19700101.lcf"
+    }
 }
