@@ -1,0 +1,75 @@
+{
+    "description": "Material: 1 textured",
+    "endpoint": "/creatematerials",
+    "request": {
+		"ProductName": "MaterialTestName",
+		"Template": {
+            "Materials": [],
+            "ArchicadTemplate": {}
+        },
+		"VariationsData": [
+			{
+				"VariationName": "Material 1",
+				"Parameters": [
+					{
+						"category": null,
+						"Name": "Description",
+						"Value": "Test material description",
+						"Group": 5
+					},
+					{
+						"category": null,
+						"Name": "Class",
+						"Value": "Test material class",
+						"Group": 5
+					},
+					{
+						"category": null,
+						"Name": "Comments",
+						"Value": "Test material comment",
+						"Group": 5
+					},
+					{
+						"category": null,
+						"Name": "Colour",
+						"Value": "#FFFFFF",
+						"Group": 4
+					},
+					{
+						"category": null,
+						"Name": "Texture",
+						"Value": "test_texture.png",
+						"Group": 4
+					},
+					{
+						"category": null,
+						"Name": "Transparency",
+						"Value": "20",
+						"Group": 4
+					},
+					{
+						"category": null,
+						"Name": "Glossiness",
+						"Value": "40",
+						"Group": 4
+					},
+					{
+						"category": null,
+						"Name": "Reflectivity",
+						"Value": "60",
+						"Group": 4
+					},
+					{
+						"category": null,
+						"Name": "base64_encoded_texture",
+						"Value": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TpSItDnaQ4pChOlkQv3CUKhbBQmkrtOpgcukXNGlIUlwcBdeCgx-LVQcXZ10dXAVB8APEydFJ0UVK_F9SaBHjwXE_3t173L0DhGaVqWbPOKBqlpFOxMVcflUMvEJABCGImJaYqSczi1l4jq97-Ph6F-NZ3uf-HCGlYDLAJxLPMd2wiDeIZzYtnfM-cZiVJYX4nHjMoAsSP3JddvmNc8lhgWeGjWx6njhMLJa6WO5iVjZU4iniqKJqlC_kXFY4b3FWq3XWvid_YbCgrWS4TnMYCSwhiRR1JKOOCqqwEKNVI8VEmvbjHv6I40-RSyZXBYwcC6hBheT4wf_gd7dmcXLCTQrGgd4X2_4YAQK7QKth29_Htt06AfzPwJXW8deawOwn6Y2OFj0CBraBi-uOJu8BlzvA0JMuGZIj-WkKxSLwfkbflAcGb4H-Nbe39j5OH4AsdbV8AxwcAqMlyl73eHdfd2__nmn39wPE1nLI80qBYwAAAAlwSFlzAAAuIwAALiMBeKU_dgAAAAd0SU1FB-QCGg0hKcKQCXMAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAFUlEQVQI1wXBAQEAAACAEP9PF1CpMCnkBftjnTYAAAAAAElFTkSuQmCC",
+						"Group": 4
+					}
+                    ]
+                }
+            ]
+        },
+    "result": {
+        "object_name": "commons_MaterialTestName.lcf"
+    }
+}
