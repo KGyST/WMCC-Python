@@ -1450,6 +1450,10 @@ class GDL_values(GDLCommand):
 # -------------------/GDL writer classes --------------------------------------------------------------------------------------
 
 
+class NullValueException(Exception):
+    """If a parameter is passed with None value, we shouldn't do anything"""
+    pass
+
 
 def resetAll():
     dest_sourcenames.clear()
@@ -1632,6 +1636,9 @@ def unitConvert(inParameterName,
     :inSecondPosition:  position if in array
     :return:            float; NOT string
     """
+    if inParameterValue is None:
+        raise NullValueException
+
     with open(os.path.join(CONTENT_DIR_NAME, "units.json")) as _ul:
         _UnitLib = json.load(_ul)
 
@@ -1919,6 +1926,7 @@ def createBrandedProduct(inData):
 
     #FIXME putting common files (mostly materials) to a separate dir
     # scanFolders(commonsDir, commonsDir, library_images=False)
+    #FIXME this shouldn't be run all the here, just put its result into jsonpickle files
     scanFolders(commonsDir, commonsDir, root_path=commonsDir)
     scanFolders(source_xml_dir_name, source_xml_dir_name, library_images=False, folders_to_skip=subCategory['macro_folders'] if 'macro_folders' in subCategory else [])
     scanFolders(source_image_dir_name, source_image_dir_name, library_images=True)
@@ -1955,6 +1963,9 @@ def createBrandedProduct(inData):
                         if parameter not in ("Name", "texture", ):
                             logging.info("Parameter that cannot be translated: %s" % parameter)
                             # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
+                        continue
+                    except NullValueException:
+                        logging.debug(f"Parameter {parameter} passed with null value")
                         continue
 
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
