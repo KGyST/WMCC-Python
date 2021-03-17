@@ -26,7 +26,7 @@
         "VariationName": "test_placeable1",
         "Parameters": [
 			{
-				"selectedUnit": "mm",
+				"SelectedUnit": "mm",
 				"Name": "Height",
 				"Group": 1,
 				"Value": "3000.0"

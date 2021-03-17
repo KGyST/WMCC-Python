@@ -122,7 +122,6 @@ def checkMaterialString(objectData):
     getSingleObject(objectData)
 
 
-
 def getObjects(inObjectNameS):
     client = pymongo.MongoClient(CONNECTION_STRING)
 

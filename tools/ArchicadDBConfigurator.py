@@ -149,11 +149,17 @@ def configureObjectsDB(inParams):
 
     for row in googleSpreadsheet:
         if objectsToProcess\
-            and (row[0] in objectsToProcess
-                 or row[1] in objectsToProcess):
-            objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
-            if not objectData:
-                print(f"ERROR: {row[COL_REVIT_NAME]} not found in Database")
+            and (row[COL_ID] in objectsToProcess
+                 or row[COL_REVIT_NAME] in objectsToProcess):
+            if posts.count({"name": row[COL_REVIT_NAME]}) == 1:
+                objectData = posts.find_one({"name": row[COL_REVIT_NAME]})
+            elif row[COL_ID]:
+                objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
+                if not objectData:
+                    print(f"ERROR: {row[COL_REVIT_NAME]} not found in Database")
+                    continue
+            else:
+                print(f"ERROR: multiple objects AND no id")
                 continue
 
             print(f"{objectData['name']}")

@@ -19,7 +19,7 @@
                     "Name": "Height",
                     "Value": "1000.0",
 					"Group": 1,
-                    "selectedUnit": "mm"
+                    "SelectedUnit": "mm"
                 }]
       },
       {
@@ -28,7 +28,7 @@
                     "Name": "Height",
                     "Value": "200.0",
 					"Group": 1,
-                    "selectedUnit": "in"
+                    "SelectedUnit": "in"
                 }]
       }
     ]
