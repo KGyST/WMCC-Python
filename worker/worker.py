@@ -15,7 +15,9 @@ from src.WMCC import (
     WORKER_LOG_FILE_LOCATION,
     CONNECTION_STRING,
     SERVICEBUS_QUEUE_NAME,
-    WMCCException
+    WMCCException,
+    RABBITMQ,
+    RABBITMQ_HOST_URL,
 )
 
 if isinstance(LOGLEVEL, str):
@@ -49,53 +51,72 @@ dictConfig({
 })
 
 
-def testWorker():
+def worker_shell():
     logging.info("worker started")
     with open(RESULTDATA_PATH, "w") as resultFile:
         json.dump({} , resultFile, indent=4)
 
-    queue_client = ServiceBusClient.from_connection_string(CONNECTION_STRING)
+    if RABBITMQ:
+        import pika
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST_URL))
+        channel = connection.channel()
 
-    with queue_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME) as queue_receiver:
-        with queue_receiver:
-            for message in queue_receiver:
-                job = json.loads(str(message))
+        channel.queue_declare(queue=SERVICEBUS_QUEUE_NAME)
 
-                logging.debug(f"**** Job started: {job['PID']} ****")
+        channel.basic_consume(queue=SERVICEBUS_QUEUE_NAME, on_message_callback=worker_callback)
 
-                endPoint = job['endPoint']
+        channel.start_consuming()
+    else:
+        queue_client = ServiceBusClient.from_connection_string(CONNECTION_STRING)
 
-                resultDict = {}
+        with queue_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME) as queue_receiver:
+            with queue_receiver:
+                for message in queue_receiver:
+                    worker_callback(None, None, None, str(message))
 
-                try:
-                    if endPoint == "/":
-                        result = createBrandedProduct(job['data'])
-                    elif endPoint == "/createmacroset":
-                        #FIXME remove this since not called anymore through web, now only for tests
-                        result = buildMacroSet(job['data'])
-                    elif endPoint == "/creatematerials":
-                        result = createBrandedProduct(job['data'])
-                except WMCCException as e:
-                    result = e.description
-                except Exception as e:
-                    we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"error_message": e.args,
-                                                                                       "request": job['data']})
-                    result = we.description
+                    try:
+                        queue_receiver.complete_message(message)
+                    except (exceptions.MessageLockLostError, exceptions.ServiceBusError):
+                        logging.error("MessageLockExpired exception caught")
 
-                if os.path.exists(RESULTDATA_PATH):
-                    resultDict = json.load(open(RESULTDATA_PATH, "r"))
+def worker_callback(ch, method, properties, message):
+    job = json.loads(message)
 
-                resultDict.update({str(job["PID"]): result})
+    logging.debug(f"**** Job started: {job['PID']} ****")
 
-                with open(RESULTDATA_PATH, "w") as resultFile:
-                    json.dump(resultDict, resultFile, indent=4)
+    endPoint = job['endPoint']
 
-                resultFile.close()
-                try:
-                    queue_receiver.complete_message(message)
-                except (exceptions.MessageLockLostError, exceptions.ServiceBusError):
-                    logging.error("MessageLockExpired exception caught")
+    resultDict = {}
+
+    try:
+        if endPoint == "/":
+            result = createBrandedProduct(job['data'])
+        elif endPoint == "/createmacroset":
+            # FIXME remove this since not called anymore through web, now only for tests
+            result = buildMacroSet(job['data'])
+        elif endPoint == "/creatematerials":
+            result = createBrandedProduct(job['data'])
+    except WMCCException as e:
+        result = e.description
+    except Exception as e:
+        we = WMCCException(WMCCException.ERR_UNSPECIFIED, additional_data={"error_message": e.args,
+                                                                           "request": job['data']})
+        result = we.description
+
+    if os.path.exists(RESULTDATA_PATH):
+        resultDict = json.load(open(RESULTDATA_PATH, "r"))
+
+    resultDict.update({str(job["PID"]): result})
+
+    with open(RESULTDATA_PATH, "w") as resultFile:
+        json.dump(resultDict, resultFile, indent=4)
+
+    resultFile.close()
+
+    if ch and method:
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+
 
 
 if __name__ == '__main__':
-    testWorker()
+    worker_shell()
