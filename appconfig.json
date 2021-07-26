@@ -13,5 +13,7 @@
   "COMMONS_DIR_NAME": "_commons",
   "CONNECTION_STRING": "Endpoint=sb://sb-wmmc-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PpeIClSmS6S615ul5wv0Nos6+HM2SuJOcbmvbb5afRA=",
   "SERVICEBUS_QUEUE_NAME": "taskqueue_local",
-  "DUMP_OUT_REQUEST": true
+  "DUMP_OUT_REQUEST": true,
+  "RABBITMQ": false,
+  "RABBITMQ_HOST_URL": "localhost"
 }

@@ -56,6 +56,8 @@ with open(APP_CONFIG, "r") as ac:
     WORKER_LOG_FILE_LOCATION    = appJSON["WORKER_LOG_FILE_LOCATION"]
     CONNECTION_STRING           = appJSON["CONNECTION_STRING"]
     SERVICEBUS_QUEUE_NAME       = appJSON["SERVICEBUS_QUEUE_NAME"]
+    RABBITMQ                    = appJSON["RABBITMQ"]
+    RABBITMQ_HOST_URL           = appJSON["RABBITMQ_HOST_URL"]
 
 
     if isinstance(LOGLEVEL, str):
@@ -2436,17 +2438,28 @@ def processOneXML(inData):
 # ---------------------Job queue--------------------
 
 def enQueueJob(inEndPoint, inData, inPID):
-    # queue_client = QueueClient.from_connection_string(CONNECTION_STRING, SERVICEBUS_QUEUE_NAME)
-    queue_client = ServiceBusClient.from_connection_string(CONNECTION_STRING).get_queue_sender(SERVICEBUS_QUEUE_NAME)
-
     jobData = {"endPoint":  inEndPoint,
                "data":      inData,
                "PID":       inPID}
 
-    while True:
-        #ServiceBusError handling by retrying
-        try:
-            queue_client.send_messages(ServiceBusMessage(json.dumps(jobData)))
-            break
-        except exceptions.ServiceBusError as e:
-            logging.warning("ServiceBusError: %s" % e)
+    queue_client = ServiceBusClient.from_connection_string(CONNECTION_STRING).get_queue_sender(SERVICEBUS_QUEUE_NAME)
+
+    if RABBITMQ:
+        import pika
+
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=RABBITMQ_HOST_URL))
+        channel = connection.channel()
+
+        # channel.queue_declare(queue=SERVICEBUS_QUEUE_NAME)
+
+        channel.basic_publish(exchange='', routing_key=SERVICEBUS_QUEUE_NAME, body=json.dumps(jobData))
+        connection.close()
+    else:
+        while True:
+            #ServiceBusError handling by retrying
+            try:
+                queue_client.send_messages(ServiceBusMessage(json.dumps(jobData)))
+                break
+            except exceptions.ServiceBusError as e:
+                logging.warning("ServiceBusError: %s" % e)
