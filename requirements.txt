@@ -19,3 +19,5 @@ requests-oauthlib
 
 pymongo
 dnspython
+
+pika
