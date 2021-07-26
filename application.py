@@ -21,6 +21,13 @@ from src.WMCC import (
     WMCCException
 )
 
+GROUP_INVALID               = 0
+GROUP_DIMENSIONAL           = 1
+GROUP_MATERIAL              = 2
+GROUP_DATA                  = 3
+GROUP_MATERIALAPPEARANCE    = 4
+GROUP_MATERIALDATA          = 5
+
 if isinstance(LOGLEVEL, str):
     LOGLEVEL = {'notset':   0,
                 'debug':    10,
@@ -104,15 +111,13 @@ class ArchicadEngine(Resource):
                                     "parameters": [{**p,
                                                     "name": p["Name"],
                                                     "selectedUnit": p["SelectedUnit"],
-                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 1],
+                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == GROUP_DIMENSIONAL],
                                     "materialParameters": [{**p,
                                                     "name": p["Name"],
-                                                    "selectedUnit": p["SelectedUnit"],
-                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 2 or p["Group"] == 4],
+                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == GROUP_MATERIAL or p["Group"] == GROUP_MATERIALAPPEARANCE],
                                     "dataParameters": [{**p,
                                                     "name": p["Name"],
-                                                    "selectedUnit": p["SelectedUnit"],
-                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == 3],
+                                                    "value": p["Value"],} for p in vD["Parameters"] if p["Group"] == GROUP_DATA],
                                     } for vD in data["VariationsData"]],
             }
         except KeyError as e:
