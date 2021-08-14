@@ -73,7 +73,7 @@ def getResult(inPID):
                 resultQueue = json.load(resultFile)
             except json.JSONDecodeError:
                 #WTF
-                pass
+                resultQueue = {}
             if sPID in resultQueue:
                 result = resultQueue[sPID]
                 del resultQueue[sPID]
