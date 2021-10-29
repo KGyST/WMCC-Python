@@ -7,6 +7,8 @@ from logging.config import dictConfig
 
 os.chdir(r"..")
 
+logging.getLogger('pika').setLevel(logging.WARNING)
+
 from src.WMCC import (
     createBrandedProduct,
     buildMacroSet,

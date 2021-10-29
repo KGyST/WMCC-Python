@@ -9,6 +9,7 @@ CONNECTION_STRING = "mongodb+srv://template_writer:t0LMjZrGIB71ao5o@archos-ezw4q
 MONGO_TABLE = 'falcon-dev'
 
 SERVER_URL = "wmcc.ad.bimobject.com"
+# SERVER_URL = "localhost:5000"
 CLEANUP = True
 
 _SRC        = r".."
@@ -20,7 +21,8 @@ with open(APP_CONFIG, "r") as ac:
 
 def getSingleObject(inObjectData):
     s = ssl.SSLContext()
-    conn = http.client.HTTPSConnection(SERVER_URL, context=s)
+    # conn = http.client.HTTPSConnection(SERVER_URL, context=s)
+    conn = http.client.HTTPConnection(SERVER_URL)
     headers = {"Content-Type": "application/json"}
     endp = "/"
     req = {
@@ -35,7 +37,7 @@ def getSingleObject(inObjectData):
                 "VariationName": inObjectData["name"] + "_teszt",
                 "Parameters": [{
                     "Name": p["name"],
-                    "selectedUnit": "mm",
+                    "SelectedUnit": "mm",
                     "Category": None,
                     "Value": min(max(p["min_value"], 999), p["max_value"]),
                     "StorageType": 1,
@@ -45,7 +47,7 @@ def getSingleObject(inObjectData):
                 } for p in inObjectData["parameters"] if p["group"] == "dimensional"] + \
               [{
                   "Name": p["name"],
-                  "selectedUnit": None,
+                  "SelectedUnit": None,
                   "Category": None,
                   "Value": "Teszt_%s" % p["name"] ,
                   "StorageType": None,

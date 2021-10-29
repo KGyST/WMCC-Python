@@ -149,18 +149,23 @@ def configureObjectsDB(inParams):
 
     for row in googleSpreadsheet:
         if objectsToProcess\
-            and (row[COL_ID] in objectsToProcess
-                 or row[COL_REVIT_NAME] in objectsToProcess):
+        and (row[COL_ID] in objectsToProcess
+        or row[COL_REVIT_NAME] in objectsToProcess):
             if posts.count({"name": row[COL_REVIT_NAME]}) == 1:
                 objectData = posts.find_one({"name": row[COL_REVIT_NAME]})
             elif row[COL_ID]:
                 objectData = posts.find_one({"_id": ObjectId(row[COL_ID])})
+
                 if not objectData:
                     print(f"ERROR: {row[COL_REVIT_NAME]} not found in Database")
                     continue
             else:
-                print(f"ERROR: multiple objects AND no id")
-                continue
+                if row[COL_REVIT_NAME]:
+                    print(f"ERROR: multiple objects AND no id or id not found in dev DB: {row[COL_REVIT_NAME]}")
+                    continue
+                else:
+                    print(f"ERROR: No Revit name")
+                    continue
 
             print(f"{objectData['name']}")
             _parmameters = []
@@ -178,6 +183,7 @@ def configureObjectsDB(inParams):
 
                 if cell.replace(" ", ""):
                     if parsedArgs.parameter:
+                        # Fixed parameter
                         if parsedArgs.integer:
                             _v = int(cell)
                         elif parsedArgs.number:
@@ -194,6 +200,7 @@ def configureObjectsDB(inParams):
                             _par["SecondPosition"] = parsedArgs.secondposition
                         _parmameters.append(_par)
                     else:
+                        # Translation
                         _trans = {"ARCHICAD": {"Name": parName, }}
                         if parsedArgs.unit:
                             _trans["ARCHICAD"][ "Measurement"] = parsedArgs.unit
@@ -220,7 +227,9 @@ def configureObjectsDB(inParams):
 
             pprint.pprint(ARCHICAD_template)
 
-            res = db[TABLE_NAME].update_one({"_id": ObjectId(row[COL_ID])},
+            #FIXME error checking: If there is an unit for param in DB but not defined in Google Docs field
+
+            res = db[TABLE_NAME].update_one({"_id": ObjectId(objectData["_id"])},
                                             {"$set": {"ARCHICAD_template": ARCHICAD_template}})
 
 

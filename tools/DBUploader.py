@@ -113,7 +113,7 @@ class GoogleSpreadsheetConnector(object):
             print('No data found.')
 
 
-def uploadSingleRecord(inObjectData, inTargetDataBase, inPodID):
+def uploadSingleRecord(inObjectData, inTargetDataBase, inPodID = None):
     global devPosts, resultDir
 
     if inPodID:

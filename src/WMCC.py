@@ -32,6 +32,7 @@ from lxml import etree
 
 #------------------ Temporary constants------------------
 
+logging.getLogger('pika').setLevel(logging.WARNING)
 
 OUTPUT_XML                  = True                          # To retain xmls
 APP_CONFIG                  = "appconfig.json"
@@ -131,6 +132,10 @@ PAR_PEN         = 10
 PAR_SEPARATOR   = 11
 PAR_TITLE       = 12
 PAR_COMMENT     = 13
+#TODO lamp related stuff
+PAR_LIGHTSWITCH = 14    #0..1?
+PAR_COLORRGB    = 15    #0..1?
+PAR_INTENSITY   = 16    #0..100?
 
 PAR_TYPELIST = [
     "PAR_UNKNOWN",
@@ -147,6 +152,9 @@ PAR_TYPELIST = [
     "PAR_SEPARATOR",
     "PAR_TITLE",
     "PAR_COMMENT",
+    "PAR_LIGHTSWITCH",
+    "PAR_COLORRGB",
+    "PAR_INTENSITY",
     ]
 
 PARFLG_CHILD    = 1
@@ -505,6 +513,12 @@ class ParamSection:
                 elif parsedArgs.type in ("Comment", ):
                     parType = PAR_COMMENT
                     parName = " " + parName + ": PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK ===== PARAMETER BLOCK "
+                elif parsedArgs.type in ("LightSwitch",):
+                    parType = PAR_LIGHTSWITCH
+                elif parsedArgs.type in ("ColorRGB",):
+                    parType = PAR_COLORRGB
+                elif parsedArgs.type in ("Intensity",):
+                    parType = PAR_INTENSITY
                 param = self.createParam(parName, inCol, inArrayValues, parType)
             else:
                 param = self.createParam(parName, inCol, inArrayValues)
@@ -597,12 +611,13 @@ class ParamSection:
                 parType = PAR_ANGLE
             else:
                 parType = PAR_STRING
+                logging.warning("Unknown parameter type for parameter: %s" % inParName)
 
         if not inArrayValues:
             arrayValues = None
-            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL,):
+            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL, PAR_COLORRGB,):
                 inParValue = float(inParValue)
-            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN,):
+            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN, PAR_INTENSITY,  PAR_LIGHTSWITCH,):
                 inParValue = int(inParValue)
             elif parType in (PAR_BOOL,):
                 inParValue = bool(int(inParValue))
@@ -612,9 +627,9 @@ class ParamSection:
                 inParValue = None
         else:
             inParValue = None
-            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL,):
+            if parType in (PAR_LENGTH, PAR_ANGLE, PAR_REAL, PAR_COLORRGB,):
                 arrayValues = [float(x) if type(x) != list else [float(y) for y in x] for x in inArrayValues]
-            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN,):
+            elif parType in (PAR_INT, PAR_MATERIAL, PAR_LINETYPE, PAR_FILL, PAR_PEN, PAR_INTENSITY,  PAR_LIGHTSWITCH,):
                 arrayValues = [int(x) if type(x) != list else [int(y) for y in x] for x in inArrayValues]
             elif parType in (PAR_BOOL,):
                 arrayValues = [bool(int(x)) if type(x) != list else [bool(int(y)) for y in x] for x in inArrayValues]
@@ -700,7 +715,8 @@ class Param(object):
     NAME_MAX_LENGTH     = 31
 
     tagBackList = ["", "Length", "Angle", "RealNum", "Integer", "Boolean", "String", "Material",
-                   "LineType", "FillPattern", "PenColor", "Separator", "Title", "Comment"]
+                   "LineType", "FillPattern", "PenColor", "Separator", "Title", "Comment",
+                   "LightSwitch", "ColorRGB", "Intensity", ]
 
     flagBackList =["", "Child", "Bold", "Unique", "Hidden", ]
 
@@ -808,12 +824,12 @@ class Param(object):
         #FIXME try-excep TypeError loop for conversion error messages
         if type(inData) == list:
             return list(map (self.__toFormat, inData))
-        if self.iType in (PAR_LENGTH, PAR_REAL, PAR_ANGLE):
+        if self.iType in (PAR_LENGTH, PAR_REAL, PAR_ANGLE, PAR_COLORRGB,):
             # self.digits = 2
             return float(inData)
-        elif self.iType in (PAR_INT, PAR_MATERIAL, PAR_PEN, PAR_LINETYPE, PAR_MATERIAL):
+        elif self.iType in (PAR_INT, PAR_MATERIAL, PAR_PEN, PAR_LINETYPE, PAR_MATERIAL, PAR_LIGHTSWITCH, PAR_INTENSITY,):
             return int(inData)
-        elif self.iType in (PAR_BOOL, ):
+        elif self.iType in (PAR_BOOL,):
             return bool(int(inData))
         elif self.iType in (PAR_SEPARATOR, PAR_TITLE, ):
             return None
@@ -858,7 +874,7 @@ class Param(object):
 
     @property
     def eTree(self):
-        if self.iType < PAR_COMMENT:
+        if self.iType != PAR_COMMENT:
             tagString = self.tagBackList[self.iType]
             elem = etree.Element(tagString, Name=self.name)
             nTabs = 3 if self.desc or self.flags is not None or self.value is not None or self.aVals is not None else 2
@@ -1019,6 +1035,12 @@ class Param(object):
             return PAR_SEPARATOR
         elif inString in ("Title"):
             return PAR_TITLE
+        elif inString in ("LightSwitch"):
+            return PAR_LIGHTSWITCH
+        elif inString in ("ColorRGB"):
+            return PAR_COLORRGB
+        elif inString in ("Intensity"):
+            return PAR_INTENSITY
 
 # -------------------/parameter classes --------------------------------------------------------------------------------
 
@@ -1664,6 +1686,12 @@ def unitConvert(inParameterName,
                 return float(inParameterValue) \
                        * _UnitLib[inTranslationLib["Measurement"]] \
                        / _UnitLib[inTranslationLib["ARCHICAD"]["Measurement"]]
+            else:
+                logging.error(f"Parameter {inParameterName} coulcn't have been translated as no Unit to translate to has found in database (Measurement field)")
+                raise NullValueException
+                # return float(inParameterValue) \
+                #        * _UnitLib[inTranslationLib["Measurement"]] \
+                #        / 1
         elif inParameterName in {"Inner frame material",
                                  "Outer frame material",
                                  "Glazing",
@@ -1967,7 +1995,7 @@ def createBrandedProduct(inData):
                             # raise WMCCException(WMCCException.ERR_NONEXISTING_TRANSLATOR)
                         continue
                     except NullValueException:
-                        logging.debug(f"Parameter {parameter} passed with null value")
+                        logging.warning(f"Parameter {parameter} passed with null value")
                         continue
 
                 materialMacro.parameters["sSurfaceName"] = material["name"] + "_" + family_name
