@@ -1,0 +1,5 @@
+<LightSwitch Name="gs_ui_current_page">
+			<Description><![CDATA[""]]></Description>
+			<Value>1</Value>
+		</LightSwitch>
+		

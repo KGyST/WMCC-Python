@@ -1,0 +1,5 @@
+<ColorRGB Name="gs_ui_current_page">
+			<Description><![CDATA[""]]></Description>
+			<Value>1.0</Value>
+		</ColorRGB>
+		

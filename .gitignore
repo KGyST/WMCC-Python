@@ -1,0 +1,7 @@
+.idea/*
+Src/Target/*
+venv/*
+tools/test_objects/*
+*.pickle
+*.log
+*.pyc
